@@ -22,6 +22,20 @@ jobs:
       - name: Install Dependencies
         run: npm ci
         
+      - name: Check Secrets
+        run: |
+          echo "Checking if secrets are available:"
+          if [ -n "${{ secrets.NOTION_TOKEN }}" ]; then
+            echo "NOTION_TOKEN is set"
+            echo "Token length: ${#NOTION_TOKEN}"
+            echo "Token starts with: ${NOTION_TOKEN:0:6}..."
+          else
+            echo "NOTION_TOKEN is NOT set"
+          fi
+          echo "PROJECTS_NOTION_DATABASE_ID exists: ${{ secrets.PROJECTS_NOTION_DATABASE_ID != '' }}"
+          echo "BLOG_NOTION_DATABASE_ID exists: ${{ secrets.BLOG_NOTION_DATABASE_ID != '' }}"
+          echo "STAYS_NOTION_DATABASE_ID exists: ${{ secrets.STAYS_NOTION_DATABASE_ID != '' }}"
+
       - name: Build
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
