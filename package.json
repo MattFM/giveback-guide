@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node --no-deprecation ./node_modules/.bin/astro build",
-    "preview": "astro preview",
+    "preview": "wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
     "astro": "astro"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@chlorinec-pkgs/notion-astro-loader": "^1.1.0-0",
-    "flowbite-typography": "^1.0.5"
+    "flowbite-typography": "^1.0.5",
+    "wrangler": "^4.30.0"
   }
 }

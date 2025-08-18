@@ -1,0 +1,7 @@
+{
+  "name": "giveback-guide",
+  "compatibility_date": "2025-08-18",
+  "assets": {
+    "directory": "./dist"
+  }
+}
