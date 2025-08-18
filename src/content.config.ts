@@ -13,7 +13,7 @@ function getEnvVar(name: string): string {
 
 const posts = defineCollection({
 	loader: notionLoader({
-		auth: getEnvVar('BLOG_NOTION_TOKEN'),
+		auth: getEnvVar('NOTION_TOKEN'),
     database_id: getEnvVar('BLOG_NOTION_DATABASE_ID'),
 	  // Optional: tell loader where to store downloaded aws images, relative to 'src' directory
 	  // Default value is 'assets/images/notion'
@@ -39,7 +39,7 @@ const posts = defineCollection({
 
   const projects = defineCollection({
 	loader: notionLoader({
-		auth: getEnvVar('PROJECTS_NOTION_TOKEN'),
+		auth: getEnvVar('NOTION_TOKEN'),
     database_id: getEnvVar('PROJECTS_NOTION_DATABASE_ID'),
 	  // Optional: tell loader where to store downloaded aws images, relative to 'src' directory
 	  // Default value is 'assets/images/notion'
@@ -73,7 +73,7 @@ const posts = defineCollection({
 
   const stays = defineCollection({
 	loader: notionLoader({
-		auth: getEnvVar('STAYS_NOTION_TOKEN'),
+		auth: getEnvVar('NOTION_TOKEN'),
     database_id: getEnvVar('STAYS_NOTION_DATABASE_ID'),
 	  // Optional: tell loader where to store downloaded aws images, relative to 'src' directory
 	  // Default value is 'assets/images/notion'

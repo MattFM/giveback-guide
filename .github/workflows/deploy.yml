@@ -23,6 +23,11 @@ jobs:
         run: npm ci
         
       - name: Build
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          PROJECTS_NOTION_DATABASE_ID: ${{ secrets.PROJECTS_NOTION_DATABASE_ID }}
+          BLOG_NOTION_DATABASE_ID: ${{ secrets.BLOG_NOTION_DATABASE_ID }}
+          STAYS_NOTION_DATABASE_ID: ${{ secrets.STAYS_NOTION_DATABASE_ID }}
         run: npm run build
         
       - name: Deploy to Cloudflare Workers
