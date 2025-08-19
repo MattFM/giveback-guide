@@ -1,0 +1,117 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Login">
+    <section class="max-w-2xl mx-auto px-4 py-8">
+        <h1 class="text-4xl font-extrabold mb-8 text-center">Welcome Back</h1>
+        
+        <!-- Social Sign In Buttons -->
+        <div class="grid gap-4 mb-6">
+            <button id="googleLogin" type="button" 
+                class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 w-full">
+                <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5 mr-2"/>
+                Sign in with Google
+            </button>
+            
+            <button id="appleLogin" type="button" 
+                class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 w-full">
+                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"></path>
+                </svg>
+                Sign in with Apple
+            </button>
+        </div>
+
+        <div class="inline-flex items-center justify-center w-full">
+            <hr class="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+            <span class="absolute px-3 font-medium text-gray-500 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900">or</span>
+        </div>
+
+        <!-- Magic URL form -->
+        <form id="magicURLForm" class="space-y-6">
+            <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                <input type="email" id="email" name="email" required 
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="name@company.com">
+            </div>
+            <div>
+                <button type="submit" 
+                    class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    Send Magic Link
+                </button>
+            </div>
+            <div id="success-message" class="text-sm text-green-600 dark:text-green-500 text-center hidden"></div>
+            <div id="error-message" class="text-sm text-red-600 dark:text-red-500 text-center hidden"></div>
+        </form>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
+            By continuing, you agree to our 
+            <a href="/terms" class="text-primary-600 hover:underline dark:text-primary-500">Terms of Service</a> and 
+            <a href="/privacy" class="text-primary-600 hover:underline dark:text-primary-500">Privacy Policy</a>.
+        </p>
+    </section>
+</MainLayout>
+
+<script>
+    import { createMagicURLSession, createGoogleSession, createAppleSession } from '../../lib/appwrite';
+
+    // Magic URL Form Handler
+    const form = document.getElementById('magicURLForm') as HTMLFormElement;
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+
+    if (form && errorMessage && successMessage) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            
+            try {
+                const formData = new FormData(form);
+                const email = formData.get('email') as string;
+
+                await createMagicURLSession(email);
+                successMessage.textContent = 'Magic link sent! Please check your email.';
+                successMessage.classList.remove('hidden');
+                form.reset();
+            } catch (error) {
+                errorMessage.textContent = error instanceof Error ? error.message : 'Failed to send magic link';
+                errorMessage.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Social Login Handlers
+    const googleButton = document.getElementById('googleLogin');
+    const appleButton = document.getElementById('appleLogin');
+
+    if (googleButton) {
+        googleButton.addEventListener('click', async () => {
+            try {
+                await createGoogleSession();
+                // This will redirect to Google, so no need for additional handling
+            } catch (error) {
+                if (errorMessage) {
+                    errorMessage.textContent = 'Failed to initialize Google login';
+                    errorMessage.classList.remove('hidden');
+                }
+            }
+        });
+    }
+
+    if (appleButton) {
+        appleButton.addEventListener('click', async () => {
+            try {
+                await createAppleSession();
+                // This will redirect to Apple, so no need for additional handling
+            } catch (error) {
+                if (errorMessage) {
+                    errorMessage.textContent = 'Failed to initialize Apple login';
+                    errorMessage.classList.remove('hidden');
+                }
+            }
+        });
+    }
+</script>

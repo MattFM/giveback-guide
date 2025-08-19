@@ -1,0 +1,56 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Dashboard">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white shadow-sm rounded-lg p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold">Dashboard</h1>
+                <button id="logoutBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Logout
+                </button>
+            </div>
+            <div id="userInfo" class="mb-6">
+                Loading...
+            </div>
+        </div>
+    </div>
+</MainLayout>
+
+<script>
+    import { getCurrentUser, logout } from '../../lib/appwrite';
+
+    // Check if user is logged in
+    const checkAuth = async () => {
+        const user = await getCurrentUser();
+        if (!user) {
+            window.location.href = '/auth/login';
+            return;
+        }
+
+        const userInfo = document.getElementById('userInfo');
+        if (userInfo) {
+            userInfo.innerHTML = `
+                <p><strong>Name:</strong> ${user.name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+            `;
+        }
+    };
+
+    // Handle logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await logout();
+                window.location.href = '/auth/login';
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+    }
+
+    // Check auth on page load
+    checkAuth();
+</script>
