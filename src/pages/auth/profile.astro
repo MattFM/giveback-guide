@@ -7,28 +7,44 @@ import MainLayout from '../../layouts/MainLayout.astro';
         <div class="p-6"> <!-- flattened container: no border/box -->
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h1 class="text-2xl font-semibold">Profile</h1>
-                    <p class="text-sm text-gray-500">Edit your profile</p>
+                    <h1 class="text-2xl font-semibold">Your Profile</h1>
                 </div>
                 <a href="/auth/dashboard" class="text-sm text-primary-600 hover:underline">Back to dashboard</a>
             </div>
 
-            <div id="profileArea">
-                Loading...
-            </div>
+            <div class="space-y-6">
+                <!-- Profile section -->
+                <section id="profileSection" class="bg-gray-50 p-6 rounded-md">
+                    <div class="mb-2">
+                        <h2 class="text-lg font-medium">Profile</h2>
+                        <p class="text-sm text-gray-500">Edit your profile</p>
+                    </div>
+                    <div id="profileArea">Loading...</div>
+                </section>
 
-            <!-- Danger: subtle trigger that opens a confirmation modal -->
-            <div class="mt-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-sm font-semibold text-red-700">Danger zone</h3>
-                        <p class="text-sm text-gray-500">Account deletion is irreversible. Open the confirmation modal to proceed.</p>
+                <!-- Newsletter section (separate from the profile form) -->
+                <section id="newsletterSection" class="bg-gray-50 p-6 rounded-md">
+                    <div class="mb-2">
+                        <h2 class="text-lg font-medium">Newsletter</h2>
+                        <p class="text-sm text-gray-500">Manage your subscription preferences</p>
                     </div>
-                    <div>
-                        <button id="deleteTriggerBtn" class="text-sm text-red-600 hover:underline cursor-pointer">Delete account</button>
+                    <div id="newsletterArea">
+                        <!-- populated by JS -->
                     </div>
-                </div>
-            </div>
+                </section>
+
+                <!-- Danger section -->
+                <section id="dangerSection" class="bg-gray-50 p-6 rounded-md">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-red-700">Danger zone</h3>
+                            <p class="text-sm text-gray-500">Account deletion is irreversible. Open the confirmation modal to proceed.</p>
+                        </div>
+                        <div>
+                            <button id="deleteTriggerBtn" class="text-sm text-red-600 hover:underline cursor-pointer">Delete account</button>
+                        </div>
+                    </div>
+                </section>
 
             <!-- Confirmation modal (hidden until triggered) -->
             <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
@@ -52,7 +68,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { getCurrentUser, updateAccountName, deleteAccount } from '../../lib/appwrite';
+    import { getCurrentUser, updateAccountName, deleteAccount, updateAccountPreference } from '../../lib/appwrite';
 
     // Flowbite toast helper
     const ensureToastContainer = () => {
@@ -164,12 +180,85 @@ import MainLayout from '../../layouts/MainLayout.astro';
             });
         }
 
-        // Modal wiring for deletion confirmation
+        // Newsletter preference wiring: render newsletter section below the form
+            // create a separate newsletter wrapper so it is not part of the profile form
+            const existingNewsletter = document.getElementById('newsletterArea');
+            let newsletterArea = existingNewsletter;
+            if (!newsletterArea) {
+                const newsletterWrapper = document.createElement('div');
+                newsletterWrapper.className = 'mt-6';
+                newsletterWrapper.innerHTML = `
+                    <p class="text-sm text-gray-500">Newsletter</p>
+                    <div id="newsletterArea" class="mt-2"></div>
+                `;
+                profileArea.appendChild(newsletterWrapper);
+                newsletterArea = document.getElementById('newsletterArea');
+            }
+        const renderNewsletter = (prefs: any) => {
+            if (!newsletterArea) return;
+            const subscribed = !!(prefs && prefs.newsletter === true);
+            if (subscribed) {
+                newsletterArea.innerHTML = `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-md">
+                        <div class="text-sm text-gray-700">You are subscribed to the newsletter.</div>
+                        <button id="unsubscribeBtn" class="px-3 py-1 text-sm text-red-600 hover:underline cursor-pointer">Unsubscribe</button>
+                    </div>
+                `;
+            } else {
+                newsletterArea.innerHTML = `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-md">
+                        <div class="text-sm text-gray-700">You're not subscribed to the newsletter.</div>
+                        <button id="subscribeBtn" class="px-3 py-1 text-sm bg-primary-600 text-white rounded-md cursor-pointer">Subscribe</button>
+                    </div>
+                `;
+            }
+
+            // wire buttons
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            const unsubscribeBtn = document.getElementById('unsubscribeBtn');
+
+            if (subscribeBtn) {
+                subscribeBtn.addEventListener('click', async () => {
+                    try {
+                        await updateAccountPreference('newsletter', true);
+                        showToast('success', 'Subscribed to newsletter');
+                        // reflect change
+                        renderNewsletter({ newsletter: true });
+                    } catch (err) {
+                        console.error('Subscribe failed', err);
+                        showToast('error', 'Failed to subscribe');
+                    }
+                });
+            }
+
+            if (unsubscribeBtn) {
+                unsubscribeBtn.addEventListener('click', async () => {
+                    try {
+                        await updateAccountPreference('newsletter', false);
+                        showToast('success', 'Unsubscribed from newsletter');
+                        renderNewsletter({ newsletter: false });
+                    } catch (err) {
+                        console.error('Unsubscribe failed', err);
+                        showToast('error', 'Failed to unsubscribe');
+                    }
+                });
+            }
+        };
+
+        // Initialize newsletter area from user prefs
+        try {
+            const prefs = (user && user.prefs) ? user.prefs : (user && user.preferences) ? user.preferences : (user && user.$id ? user : null);
+            renderNewsletter(prefs || {});
+        } catch (err) {
+            renderNewsletter({});
+        }
+
+    // Modal wiring for deletion confirmation
         const deleteTriggerBtn = document.getElementById('deleteTriggerBtn');
         const deleteModal = document.getElementById('deleteModal');
-        const modalDangerInput = document.getElementById('modalDangerInput') as HTMLInputElement | null;
-        const modalCancelBtn = document.getElementById('modalCancelBtn') as HTMLButtonElement | null;
-        const modalConfirmBtn = document.getElementById('modalConfirmBtn') as HTMLButtonElement | null;
+    const modalDangerInput = document.getElementById('modalDangerInput') as HTMLInputElement | null;
+    const modalCancelBtn = document.getElementById('modalCancelBtn') as HTMLButtonElement | null;
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn') as HTMLButtonElement | null;
 
         const openModal = () => {
             if (deleteModal) deleteModal.classList.remove('hidden');

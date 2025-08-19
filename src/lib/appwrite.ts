@@ -86,6 +86,47 @@ export const deleteAccount = async () => {
     }
 };
 
+export const updateAccountPreference = async (key: string, value: any) => {
+    try {
+        const accAny = account as any;
+
+        // Try common patterns for updating preferences on different SDK versions
+        const attempts: Array<() => Promise<any>> = [];
+
+        // 1) updatePrefs({ key: value })
+        attempts.push(async () => {
+            if (typeof accAny.updatePrefs === 'function') return await accAny.updatePrefs({ [key]: value });
+            throw new Error('updatePrefs not available');
+        });
+
+        // 2) update({ prefs: { key: value } })
+        attempts.push(async () => {
+            if (typeof accAny.update === 'function') return await accAny.update({ prefs: { [key]: value } });
+            throw new Error('update not available');
+        });
+
+        // 3) updatePreferences or updatePrefs with two args
+        attempts.push(async () => {
+            if (typeof accAny.updatePreferences === 'function') return await accAny.updatePreferences({ [key]: value });
+            if (typeof accAny.updatePrefs === 'function') return await accAny.updatePrefs(undefined, { [key]: value });
+            throw new Error('no known prefs method');
+        });
+
+        const errors: string[] = [];
+        for (const fn of attempts) {
+            try {
+                return await fn();
+            } catch (e: any) {
+                errors.push(e?.message || String(e));
+            }
+        }
+
+        throw new Error(`Failed to update preference: ${errors.join(' | ')}`);
+    } catch (err) {
+        throw err;
+    }
+};
+
 export const logout = async () => {
     try {
         await account.deleteSession('current');
