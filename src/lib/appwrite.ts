@@ -9,25 +9,18 @@ export const account = new Account(client);
 // Auth helper functions
 export const createMagicURLSession = async (email: string) => {
     try {
+        // Use the current origin in the browser (so localhost during dev).
+        // Fall back to the production verify URL when running server-side.
+        const redirectUrl = typeof window !== 'undefined'
+            ? `${window.location.origin}/auth/verify`
+            : 'https://giveback.guide/auth/verify';
+
         await account.createMagicURLToken(
             'unique()',
             email,
-            'https://giveback.guide/auth/verify' // Update this with your domain
+            redirectUrl
         );
         return true;
-    } catch (error) {
-        throw error;
-    }
-};
-
-export const createGoogleSession = async () => {
-    try {
-        const googleProvider = 'google' as any; // Type assertion for now
-        await account.createOAuth2Session(
-            googleProvider,
-            'https://giveback.guide/auth/dashboard',
-            'https://giveback.guide/auth/login'
-        );
     } catch (error) {
         throw error;
     }
