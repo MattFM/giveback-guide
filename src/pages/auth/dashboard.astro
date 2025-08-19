@@ -4,22 +4,99 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
 <MainLayout title="Dashboard">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white shadow-sm rounded-lg p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold">Dashboard</h1>
-                <button id="logoutBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-                    Logout
-                </button>
+        <div class="p-6"> <!-- flattened container: removed border/background/shadow -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="rounded-full overflow-hidden w-12 h-12 bg-gray-100 flex items-center justify-center">
+                        <!-- avatar populated by JS -->
+                        <img id="userAvatar" alt="avatar" class="w-full h-full object-cover hidden" />
+                        <svg id="userAvatarPlaceholder" class="w-6 h-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11c1.657 0 3-1.343 3-3S17.657 5 16 5s-3 1.343-3 3 1.343 3 3 3zM4 21v-1a4 4 0 014-4h8a4 4 0 014 4v1" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold" id="dashTitle">Dashboard</h1>
+                        <p class="text-sm text-gray-500" id="dashSubtitle">Welcome back</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="logoutBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 cursor-pointer">Logout</button>
+                </div>
             </div>
-            <div id="userInfo" class="mb-6">
+            <div class="mb-6">
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Saved items</p>
+                            <div class="mt-2 text-2xl font-bold" id="savedCount">—</div>
+                        </div>
+
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500">Lists</p>
+                            <div class="mt-2 text-2xl font-bold" id="listsCount">—</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p>Future: users will be able to create custom lists and save projects & stays into those lists. For now, you can view all saved items.</p>
+                        <div class="mt-3">
+                            <a href="/account/saved" class="text-sm text-primary-600 hover:underline cursor-pointer">View saved items</a>
+                            <span class="mx-2 text-gray-400">•</span>
+                            <a href="/account/lists" class="text-sm text-primary-600 hover:underline cursor-pointer">View lists</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="userInfo" class="prose prose-sm text-sm text-gray-700">
                 Loading...
+            </div>
+
+            <!-- Profile and danger sections (inline collapsible using Flowbite) -->
+            <div class="mt-6">
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Profile</p>
+                            <p id="profileEmail" class="text-sm text-gray-600">—</p>
+                        </div>
+
+                        <div class="flex flex-col items-end gap-2">
+                            <button data-collapse-toggle="editCollapse" type="button" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Edit profile</button>
+                            <button data-collapse-toggle="deleteCollapse" type="button" class="px-3 py-2 bg-white border border-red-600 text-red-600 rounded-md cursor-pointer">Danger zone</button>
+                        </div>
+                    </div>
+
+                    <div id="editCollapse" class="hidden mt-4">
+                        <form id="editForm" class="space-y-3">
+                            <div>
+                                <label for="editNameInput" class="block text-sm font-medium text-gray-700">Name</label>
+                                <input id="editNameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                            </div>
+                            <div class="flex items-center justify-end">
+                                <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Save</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="deleteCollapse" class="hidden mt-4">
+                        <p class="text-sm text-gray-600">Deleting your account is permanent. To confirm, type <code>DELETE</code> below and press Delete account.</p>
+                        <div class="mt-3">
+                            <input id="deleteConfirmInput" placeholder="Type DELETE to confirm" class="block w-full rounded-md border-gray-300 shadow-sm" />
+                        </div>
+                        <div class="flex items-center justify-end mt-3">
+                            <button id="performDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer" disabled>Delete account</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </MainLayout>
 
 <script>
-    import { getCurrentUser, logout } from '../../lib/appwrite';
+    import { getCurrentUser, logout, updateAccountName, deleteAccount } from '../../lib/appwrite';
 
     // Check if user is logged in
     const checkAuth = async () => {
@@ -30,11 +107,69 @@ import MainLayout from '../../layouts/MainLayout.astro';
         }
 
         const userInfo = document.getElementById('userInfo');
-        if (userInfo) {
-            userInfo.innerHTML = `
-                <p><strong>Name:</strong> ${user.name}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-            `;
+            if (userInfo) {
+            // populate profile summary and header greeting
+            const profileEmail = document.getElementById('profileEmail');
+            const dashSubtitle = document.getElementById('dashSubtitle');
+            if (dashSubtitle) dashSubtitle.textContent = user.name ? `Welcome back, ${user.name}` : 'Welcome';
+            if (profileEmail) profileEmail.textContent = user.email || '';
+
+            // wire collapsible edit
+            const editToggle = document.querySelector('[data-collapse-toggle="editCollapse"]');
+            const editCollapse = document.getElementById('editCollapse');
+            const editInput = document.getElementById('editNameInput') as HTMLInputElement | null;
+            const editFormInline = document.getElementById('editForm') as HTMLFormElement | null;
+
+            if (editToggle && editCollapse) {
+                editToggle.addEventListener('click', () => {
+                    editCollapse.classList.toggle('hidden');
+                    if (editInput) editInput.value = user.name || '';
+                });
+            }
+
+            if (editFormInline && editInput) {
+                editFormInline.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await updateAccountName(editInput.value);
+                        // refresh
+                        checkAuth();
+                    } catch (err) {
+                        console.error('Update failed', err);
+                        alert('Failed to update profile');
+                    }
+                });
+            }
+
+            // wire delete collapse
+            const deleteToggle = document.querySelector('[data-collapse-toggle="deleteCollapse"]');
+            const deleteCollapse = document.getElementById('deleteCollapse');
+            const deleteInput = document.getElementById('deleteConfirmInput') as HTMLInputElement | null;
+            const performDeleteBtn = document.getElementById('performDeleteBtn') as HTMLButtonElement | null;
+
+            if (deleteToggle && deleteCollapse) {
+                deleteToggle.addEventListener('click', () => {
+                    deleteCollapse.classList.toggle('hidden');
+                    if (deleteInput) deleteInput.value = '';
+                    if (performDeleteBtn) performDeleteBtn.disabled = true;
+                });
+            }
+
+            if (deleteInput && performDeleteBtn) {
+                deleteInput.addEventListener('input', () => {
+                    performDeleteBtn.disabled = deleteInput.value !== 'DELETE';
+                });
+
+                performDeleteBtn.addEventListener('click', async () => {
+                    try {
+                        await deleteAccount();
+                        window.location.href = '/auth/login';
+                    } catch (err) {
+                        console.error('Delete failed', err);
+                        alert('Failed to delete account');
+                    }
+                });
+            }
         }
     };
 
@@ -50,6 +185,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
             }
         });
     }
+
+    // (profile and delete handlers attached after DOM is populated in checkAuth)
 
     // Check auth on page load
     checkAuth();

@@ -35,6 +35,26 @@ export const getCurrentUser = async () => {
     }
 };
 
+export const updateAccountName = async (name: string) => {
+    try {
+    // Call SDK update method; cast to any to avoid mismatches in type defs between SDK versions
+    const updated = await (account as any).update({ name });
+        return updated;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteAccount = async () => {
+    try {
+    // Deletes the currently logged-in user's account
+    await (account as any).delete();
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const logout = async () => {
     try {
         await account.deleteSession('current');
