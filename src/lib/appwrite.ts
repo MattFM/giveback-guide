@@ -33,19 +33,6 @@ export const createGoogleSession = async () => {
     }
 };
 
-export const createAppleSession = async () => {
-    try {
-        const appleProvider = 'apple' as any; // Type assertion for now
-        await account.createOAuth2Session(
-            appleProvider,
-            'https://giveback.guide/auth/dashboard',
-            'https://giveback.guide/auth/login'
-        );
-    } catch (error) {
-        throw error;
-    }
-};
-
 export const getCurrentUser = async () => {
     try {
         const user = await account.get();
