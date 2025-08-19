@@ -16,7 +16,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                     </div>
                     <div>
                         <h1 class="text-2xl font-semibold" id="dashTitle">Dashboard</h1>
-                        <p class="text-sm text-gray-500" id="dashSubtitle">Welcome back</p>
+                        <a id="dashSubtitle" href="/auth/profile" class="text-sm text-gray-500 hover:underline">Edit your profile</a>
                     </div>
                 </div>
 
@@ -26,24 +26,49 @@ import MainLayout from '../../layouts/MainLayout.astro';
             </div>
             <div class="mb-6">
                 <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500">Saved items</p>
-                            <div class="mt-2 text-2xl font-bold" id="savedCount">—</div>
+                    <!-- Stats row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 bg-white rounded-lg flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Saved items</p>
+                                <div class="mt-2 text-2xl font-bold" id="savedCount">—</div>
+                            </div>
+                            <div class="text-sm text-gray-400">Projects & Stays</div>
                         </div>
 
-                        <div class="text-right">
-                            <p class="text-sm text-gray-500">Lists</p>
-                            <div class="mt-2 text-2xl font-bold" id="listsCount">—</div>
+                        <div class="p-4 bg-white rounded-lg flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Lists</p>
+                                <div class="mt-2 text-2xl font-bold" id="listsCount">—</div>
+                            </div>
+                            <div class="text-sm text-gray-400">Custom collections</div>
                         </div>
                     </div>
 
-                    <div class="mt-4 text-sm text-gray-600">
-                        <p>Future: users will be able to create custom lists and save projects & stays into those lists. For now, you can view all saved items.</p>
-                        <div class="mt-3">
-                            <a href="/account/saved" class="text-sm text-primary-600 hover:underline cursor-pointer">View saved items</a>
-                            <span class="mx-2 text-gray-400">•</span>
-                            <a href="/account/lists" class="text-sm text-primary-600 hover:underline cursor-pointer">View lists</a>
+                    <!-- My Lists section -->
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="text-lg font-semibold">My Lists</h3>
+                                <p class="text-sm text-gray-500">Create lists to save projects and stays for later.</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="createListBtn" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Create new list</button>
+                            </div>
+                        </div>
+
+                        <!-- Create form (hidden by default) -->
+                        <div id="newListForm" class="hidden mb-4">
+                            <div class="flex gap-2">
+                                <input id="newListName" type="text" placeholder="List name" class="flex-1 px-3 py-2 border rounded-md" />
+                                <button id="addListBtn" class="px-3 py-2 bg-green-600 text-white rounded-md cursor-pointer">Add</button>
+                                <button id="cancelListBtn" class="px-3 py-2 bg-gray-200 rounded-md cursor-pointer">Cancel</button>
+                            </div>
+                        </div>
+
+                        <!-- Lists placeholder -->
+                        <div id="listsContainer" class="space-y-3">
+                            <div class="p-4 bg-white rounded-lg border border-dashed border-gray-200 text-sm text-gray-500">You don't have any lists yet. Create one to get started.</div>
                         </div>
                     </div>
                 </div>
@@ -51,45 +76,6 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
             <div id="userInfo" class="prose prose-sm text-sm text-gray-700">
                 Loading...
-            </div>
-
-            <!-- Profile and danger sections (inline collapsible using Flowbite) -->
-            <div class="mt-6">
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500">Profile</p>
-                            <p id="profileEmail" class="text-sm text-gray-600">—</p>
-                        </div>
-
-                        <div class="flex flex-col items-end gap-2">
-                            <button data-collapse-toggle="editCollapse" type="button" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Edit profile</button>
-                            <button data-collapse-toggle="deleteCollapse" type="button" class="px-3 py-2 bg-white border border-red-600 text-red-600 rounded-md cursor-pointer">Danger zone</button>
-                        </div>
-                    </div>
-
-                    <div id="editCollapse" class="hidden mt-4">
-                        <form id="editForm" class="space-y-3">
-                            <div>
-                                <label for="editNameInput" class="block text-sm font-medium text-gray-700">Name</label>
-                                <input id="editNameInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                            </div>
-                            <div class="flex items-center justify-end">
-                                <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Save</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="deleteCollapse" class="hidden mt-4">
-                        <p class="text-sm text-gray-600">Deleting your account is permanent. To confirm, type <code>DELETE</code> below and press Delete account.</p>
-                        <div class="mt-3">
-                            <input id="deleteConfirmInput" placeholder="Type DELETE to confirm" class="block w-full rounded-md border-gray-300 shadow-sm" />
-                        </div>
-                        <div class="flex items-center justify-end mt-3">
-                            <button id="performDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer" disabled>Delete account</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -107,69 +93,34 @@ import MainLayout from '../../layouts/MainLayout.astro';
         }
 
         const userInfo = document.getElementById('userInfo');
-            if (userInfo) {
+        if (userInfo) {
             // populate profile summary and header greeting
-            const profileEmail = document.getElementById('profileEmail');
             const dashSubtitle = document.getElementById('dashSubtitle');
-            if (dashSubtitle) dashSubtitle.textContent = user.name ? `Welcome back, ${user.name}` : 'Welcome';
-            if (profileEmail) profileEmail.textContent = user.email || '';
+            const dashTitle = document.getElementById('dashTitle');
 
-            // wire collapsible edit
-            const editToggle = document.querySelector('[data-collapse-toggle="editCollapse"]');
-            const editCollapse = document.getElementById('editCollapse');
-            const editInput = document.getElementById('editNameInput') as HTMLInputElement | null;
-            const editFormInline = document.getElementById('editForm') as HTMLFormElement | null;
+            // Title: personalise when we have a name
+            if (dashTitle) dashTitle.textContent = user.name ? `Hi, ${user.name}` : 'Dashboard';
 
-            if (editToggle && editCollapse) {
-                editToggle.addEventListener('click', () => {
-                    editCollapse.classList.toggle('hidden');
-                    if (editInput) editInput.value = user.name || '';
-                });
-            }
+            // Subtitle: ensure it links to profile (markup already set)
+            if (dashSubtitle) dashSubtitle.textContent = 'Edit profile';
 
-            if (editFormInline && editInput) {
-                editFormInline.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    try {
-                        await updateAccountName(editInput.value);
-                        // refresh
-                        checkAuth();
-                    } catch (err) {
-                        console.error('Update failed', err);
-                        alert('Failed to update profile');
-                    }
-                });
-            }
+            // Fill userInfo with useful summary and a profile action
+            userInfo.innerHTML = `
+                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                    <div>
+                        <p class="text-sm text-gray-500">Signed in as</p>
+                        <p class="text-base font-medium text-gray-900">${user.name || user.email || 'Member'}</p>
+                        <p class="text-sm text-gray-500">${user.email || ''}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="/auth/profile" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Edit profile</a>
+                    </div>
+                </div>
+            `;
 
-            // wire delete collapse
-            const deleteToggle = document.querySelector('[data-collapse-toggle="deleteCollapse"]');
-            const deleteCollapse = document.getElementById('deleteCollapse');
-            const deleteInput = document.getElementById('deleteConfirmInput') as HTMLInputElement | null;
-            const performDeleteBtn = document.getElementById('performDeleteBtn') as HTMLButtonElement | null;
+            // Edit moved to the dedicated profile page; no inline edit here.
 
-            if (deleteToggle && deleteCollapse) {
-                deleteToggle.addEventListener('click', () => {
-                    deleteCollapse.classList.toggle('hidden');
-                    if (deleteInput) deleteInput.value = '';
-                    if (performDeleteBtn) performDeleteBtn.disabled = true;
-                });
-            }
-
-            if (deleteInput && performDeleteBtn) {
-                deleteInput.addEventListener('input', () => {
-                    performDeleteBtn.disabled = deleteInput.value !== 'DELETE';
-                });
-
-                performDeleteBtn.addEventListener('click', async () => {
-                    try {
-                        await deleteAccount();
-                        window.location.href = '/auth/login';
-                    } catch (err) {
-                        console.error('Delete failed', err);
-                        alert('Failed to delete account');
-                    }
-                });
-            }
+            // Danger zone moved to profile page; no delete handlers here.
         }
     };
 
@@ -190,4 +141,70 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
     // Check auth on page load
     checkAuth();
+
+    // --- Client-side lists UI (placeholders) ---
+    const createListBtn = document.getElementById('createListBtn');
+    const newListForm = document.getElementById('newListForm');
+    const cancelListBtn = document.getElementById('cancelListBtn');
+    const addListBtn = document.getElementById('addListBtn');
+    const newListName = document.getElementById('newListName');
+    const listsContainer = document.getElementById('listsContainer');
+    const listsCount = document.getElementById('listsCount');
+    const savedCount = document.getElementById('savedCount');
+
+    // Initial placeholder counts
+    if (listsCount) listsCount.textContent = '0';
+    if (savedCount) savedCount.textContent = '0';
+
+    if (createListBtn) {
+        createListBtn.addEventListener('click', () => {
+            newListForm?.classList.remove('hidden');
+            (newListName as HTMLInputElement)?.focus();
+        });
+    }
+
+    if (cancelListBtn) {
+        cancelListBtn.addEventListener('click', () => {
+            newListForm?.classList.add('hidden');
+            (newListName as HTMLInputElement).value = '';
+        });
+    }
+
+    if (addListBtn) {
+        addListBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = (newListName as HTMLInputElement).value.trim();
+            if (!name) return;
+
+            // Add placeholder list item
+            const el = document.createElement('div');
+            el.className = 'p-4 bg-white rounded-lg flex items-center justify-between';
+            el.innerHTML = `
+                <div>
+                    <div class="font-medium">${name}</div>
+                    <div class="text-sm text-gray-500">0 items</div>
+                </div>
+                <div>
+                    <a href="#" class="text-primary-600 hover:underline cursor-pointer">View</a>
+                </div>
+            `;
+
+            // If first placeholder message exists, remove it
+            if (listsContainer) {
+                const firstChild = listsContainer.querySelector('div');
+                if (firstChild && firstChild.classList.contains('border-dashed')) {
+                    listsContainer.innerHTML = '';
+                }
+                listsContainer.appendChild(el);
+
+                // Update counts (placeholders)
+                const current = parseInt(listsCount?.textContent || '0', 10) || 0;
+                if (listsCount) listsCount.textContent = String(current + 1);
+            }
+
+            // reset form
+            (newListName as HTMLInputElement).value = '';
+            newListForm?.classList.add('hidden');
+        });
+    }
 </script>

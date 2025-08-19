@@ -37,9 +37,40 @@ export const getCurrentUser = async () => {
 
 export const updateAccountName = async (name: string) => {
     try {
-    // Call SDK update method; cast to any to avoid mismatches in type defs between SDK versions
-    const updated = await (account as any).update({ name });
-        return updated;
+    // Try several common SDK method signatures to be resilient to differences
+    const accAny = account as any;
+    const errors: string[] = [];
+
+    // 1) Common newer SDK: updateName(name)
+    try {
+        if (typeof accAny.updateName === 'function') {
+            return await accAny.updateName(name);
+        }
+    } catch (e: any) {
+        errors.push(`updateName(name) failed: ${e?.message || e}`);
+    }
+
+    // 2) Generic update object: update({ name })
+    try {
+        if (typeof accAny.update === 'function') {
+            return await accAny.update({ name });
+        }
+    } catch (e: any) {
+        errors.push(`update({name}) failed: ${e?.message || e}`);
+    }
+
+    // 3) Older variants: updateName(userId, name) or update({ userId, name })
+    try {
+        if (typeof accAny.updateName === 'function') {
+            // try calling with two params in case signature expects userId first
+            return await accAny.updateName(undefined, name);
+        }
+    } catch (e: any) {
+        errors.push(`updateName(undefined, name) failed: ${e?.message || e}`);
+    }
+
+    // If none worked, throw useful diagnostic
+    throw new Error(`Account update failed. Attempts: ${errors.join(' | ') || 'no methods available'}.`);
     } catch (error) {
         throw error;
     }
