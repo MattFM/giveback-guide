@@ -29,7 +29,11 @@ import MainLayout from '../../layouts/MainLayout.astro';
                         <p class="text-sm text-gray-500">Manage your subscription preferences</p>
                     </div>
                     <div id="newsletterArea">
-                        <!-- populated by JS -->
+                        <!-- populated by JS -->[Error] ReferenceError: Can't find variable: account
+	(anonymous function) (recorder.js:1:102159)
+	Console Evaluation (Console Evaluation 2:9)
+	Console Evaluation (Console Evaluation 2:4)
+	Console Evaluation (Console Evaluation 2:11)
                     </div>
                 </section>
 
@@ -68,15 +72,15 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { getCurrentUser, updateAccountName, deleteAccount, updateAccountPreference } from '../../lib/appwrite';
+    import { account, getCurrentUser, updateAccountName, deleteAccount, updateAccountPreference } from '../../lib/appwrite';
 
-    // Flowbite toast helper
+    // Toast helpers
     const ensureToastContainer = () => {
         let container = document.getElementById('toastContainer');
         if (!container) {
             container = document.createElement('div');
             container.id = 'toastContainer';
-            container.className = 'fixed top-6 right-6 z-50 flex flex-col items-end gap-2';
+            container.className = 'fixed top-20 right-6 z-50 flex flex-col items-end gap-2';
             document.body.appendChild(container);
         }
         return container as HTMLElement;
@@ -85,7 +89,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const showToast = (type: 'success' | 'error', message: string) => {
         const container = ensureToastContainer();
         const toast = document.createElement('div');
-        toast.className = 'flex items-center p-4 w-full max-w-xs text-gray-500 rounded-lg shadow';
+        toast.className = 'flex items-center p-4 w-full max-w-xs text-gray-700 bg-white rounded-lg shadow ring-1 ring-black/5';
         toast.setAttribute('role', 'alert');
         toast.innerHTML = `
             <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500'}">
@@ -102,15 +106,44 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
         container.appendChild(toast);
 
-        // Auto remove after 4s
-        setTimeout(() => toast.remove(), 4000);
+        // Auto remove after 6s
+        setTimeout(() => toast.remove(), 6000);
     };
 
+    // Worker URL
+    const WORKER_URL = 'https://spring-block-2fcc.matt-c4f.workers.dev';
+
+    async function callMailerLite(action: 'subscribe' | 'unsubscribe', subscriberId = undefined, email = undefined, name = undefined) {
+        const jwtResp = await account.createJWT();
+        const jwt = jwtResp?.jwt;
+        if (!jwt) throw new Error('Failed to create Appwrite JWT');
+
+        const bodyObj: any = { action };
+        if (email) bodyObj.email = String(email).toLowerCase().trim();
+        if (name) bodyObj.name = String(name).trim();
+        if (subscriberId) bodyObj.subscriberId = subscriberId;
+
+        const resp = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + jwt
+            },
+            body: JSON.stringify(bodyObj)
+        });
+
+        const text = await resp.text();
+        let json = null;
+        try { json = JSON.parse(text); } catch (e) { json = text; }
+
+        return { httpStatus: resp.status, ok: resp.ok, raw: json };
+    }
+
+    // renderProfile: builds the DOM and wires handlers
     const renderProfile = (user: any) => {
         const profileArea = document.getElementById('profileArea');
         if (!profileArea) return;
 
-        // Immediately-editable form; email is disabled but visible
         profileArea.innerHTML = `
             <div class="space-y-4">
                 <form id="profileForm" class="space-y-4" novalidate>
@@ -132,13 +165,12 @@ import MainLayout from '../../layouts/MainLayout.astro';
             </div>
         `;
 
-    const profileForm = document.getElementById('profileForm') as HTMLFormElement | null;
-    const nameInput = document.getElementById('nameInput') as HTMLInputElement | null;
-    const emailInput = document.getElementById('emailInput') as HTMLInputElement | null;
-    const saveBtn = document.getElementById('saveBtn') as HTMLButtonElement | null;
-    const saveStatus = document.getElementById('saveStatus');
+        const profileForm = document.getElementById('profileForm') as HTMLFormElement | null;
+        const nameInput = document.getElementById('nameInput') as HTMLInputElement | null;
+        const emailInput = document.getElementById('emailInput') as HTMLInputElement | null;
+        const saveBtn = document.getElementById('saveBtn') as HTMLButtonElement | null;
+        const saveStatus = document.getElementById('saveStatus');
 
-        // Track initial value to detect changes
         let initialName = (user.name || '').trim();
 
         if (nameInput) {
@@ -149,8 +181,6 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 if (saveStatus) saveStatus.classList.add('hidden');
             });
         }
-
-    // Reset button removed — users can revert by reloading the page if needed
 
         if (profileForm && nameInput) {
             profileForm.addEventListener('submit', async (e) => {
@@ -180,20 +210,20 @@ import MainLayout from '../../layouts/MainLayout.astro';
             });
         }
 
-        // Newsletter preference wiring: render newsletter section below the form
-            // create a separate newsletter wrapper so it is not part of the profile form
-            const existingNewsletter = document.getElementById('newsletterArea');
-            let newsletterArea = existingNewsletter;
-            if (!newsletterArea) {
-                const newsletterWrapper = document.createElement('div');
-                newsletterWrapper.className = 'mt-6';
-                newsletterWrapper.innerHTML = `
-                    <p class="text-sm text-gray-500">Newsletter</p>
-                    <div id="newsletterArea" class="mt-2"></div>
-                `;
-                profileArea.appendChild(newsletterWrapper);
-                newsletterArea = document.getElementById('newsletterArea');
-            }
+        // Newsletter UI
+        const existingNewsletter = document.getElementById('newsletterArea');
+        let newsletterArea = existingNewsletter;
+        if (!newsletterArea) {
+            const newsletterWrapper = document.createElement('div');
+            newsletterWrapper.className = 'mt-6';
+            newsletterWrapper.innerHTML = `
+                <p class="text-sm text-gray-500">Newsletter</p>
+                <div id="newsletterArea" class="mt-2"></div>
+            `;
+            profileArea.appendChild(newsletterWrapper);
+            newsletterArea = document.getElementById('newsletterArea');
+        }
+
         const renderNewsletter = (prefs: any) => {
             if (!newsletterArea) return;
             const subscribed = !!(prefs && prefs.newsletter === true);
@@ -213,20 +243,36 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 `;
             }
 
-            // wire buttons
             const subscribeBtn = document.getElementById('subscribeBtn');
             const unsubscribeBtn = document.getElementById('unsubscribeBtn');
 
             if (subscribeBtn) {
                 subscribeBtn.addEventListener('click', async () => {
                     try {
+                        const emailVal = (emailInput && emailInput.value) ? emailInput.value : (user && user.email) ? user.email : null;
+                        const nameVal = (nameInput && nameInput.value) ? nameInput.value : (user && user.name) ? user.name : null;
+                        const result = await callMailerLite('subscribe', undefined, emailVal, nameVal);
+
+                        const raw = result?.raw || {};
+                        const emailErrors = raw?.errors?.email || null;
+                        const unsubscribedBlocked = result?.httpStatus === 422 || (Array.isArray(emailErrors) && emailErrors.some((s: any) => /unsubscribed/i.test(String(s))));
+
+                        if (unsubscribedBlocked) {
+                            showToast('error', "To resubscribe, you'll need to contact us directly via the contact page.");
+                            console.warn('MailerLite blocked re-subscribe:', raw);
+                            return;
+                        }
+
+                        const sid = raw?.subscriberId || raw?.subscriber || raw?.data?.id || raw?.id || null;
+                        if (sid) {
+                            try { await updateAccountPreference('ml_subscriber_id', sid); } catch (e) { console.error('Failed to persist ml id', e); }
+                        }
                         await updateAccountPreference('newsletter', true);
                         showToast('success', 'Subscribed to newsletter');
-                        // reflect change
                         renderNewsletter({ newsletter: true });
                     } catch (err) {
                         console.error('Subscribe failed', err);
-                        showToast('error', 'Failed to subscribe');
+                        showToast('error', ((err as any) && ((err as any).message || (err as any).toString())) || 'Failed to subscribe');
                     }
                 });
             }
@@ -234,12 +280,24 @@ import MainLayout from '../../layouts/MainLayout.astro';
             if (unsubscribeBtn) {
                 unsubscribeBtn.addEventListener('click', async () => {
                     try {
+                        // Best-effort: try reading prefs from the current user object
+                        let subscriberId = null;
+                        try {
+                            const userObj = await getCurrentUser();
+                            const p = userObj && ((userObj as any).prefs || (userObj as any).preferences || {});
+                            subscriberId = p && (p.ml_subscriber_id || p.mlSubscriberId || null);
+                        } catch (e) {
+                            // ignore
+                        }
+
+                        const emailVal = (emailInput && emailInput.value) ? emailInput.value : (user && user.email) ? user.email : null;
+                        const result = await callMailerLite('unsubscribe', subscriberId, emailVal);
                         await updateAccountPreference('newsletter', false);
                         showToast('success', 'Unsubscribed from newsletter');
                         renderNewsletter({ newsletter: false });
                     } catch (err) {
                         console.error('Unsubscribe failed', err);
-                        showToast('error', 'Failed to unsubscribe');
+                        showToast('error', ((err as any) && ((err as any).message || (err as any).toString())) || 'Failed to unsubscribe');
                     }
                 });
             }
@@ -253,12 +311,12 @@ import MainLayout from '../../layouts/MainLayout.astro';
             renderNewsletter({});
         }
 
-    // Modal wiring for deletion confirmation
+        // Modal wiring for deletion confirmation
         const deleteTriggerBtn = document.getElementById('deleteTriggerBtn');
         const deleteModal = document.getElementById('deleteModal');
-    const modalDangerInput = document.getElementById('modalDangerInput') as HTMLInputElement | null;
-    const modalCancelBtn = document.getElementById('modalCancelBtn') as HTMLButtonElement | null;
-    const modalConfirmBtn = document.getElementById('modalConfirmBtn') as HTMLButtonElement | null;
+        const modalDangerInput = document.getElementById('modalDangerInput') as HTMLInputElement | null;
+        const modalCancelBtn = document.getElementById('modalCancelBtn') as HTMLButtonElement | null;
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn') as HTMLButtonElement | null;
 
         const openModal = () => {
             if (deleteModal) deleteModal.classList.remove('hidden');
