@@ -14,12 +14,23 @@ export const createMagicURLSession = async (email: string) => {
         const redirectUrl = typeof window !== 'undefined'
             ? `${window.location.origin}/auth/verify`
             : 'https://giveback.guide/auth/verify';
+        // Use the SDK's magic URL session creation which sends a magic link
+        // email to the user that contains the parameters the client-side
+        // verification handler expects (userId & secret).
+        // Different Appwrite SDK versions expose this as createMagicURLSession.
+        const accAny = account as any;
+        if (typeof accAny.createMagicURLSession === 'function') {
+            await accAny.createMagicURLSession(email, redirectUrl);
+            return true;
+        }
 
-        await account.createMagicURLToken(
-            'unique()',
-            email,
-            redirectUrl
-        );
+        // Fallback: try the token-based method if present (older/newer SDKs)
+        if (typeof accAny.createMagicURLToken === 'function') {
+            await accAny.createMagicURLToken('unique()', email, redirectUrl);
+            return true;
+        }
+
+        throw new Error('No supported magic link method available on Appwrite SDK');
         return true;
     } catch (error) {
         throw error;

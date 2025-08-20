@@ -1,0 +1,172 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Welcome">
+  <div class="max-w-2xl mx-auto px-4 py-12">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
+      <div class="mb-6 text-center">
+        <h1 class="text-2xl font-extrabold">Welcome to Giveback Guide</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">A few quick questions to personalise your experience.</p>
+      </div>
+
+      <form id="onboardForm" class="space-y-4">
+        <div>
+          <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-200">First name</label>
+          <input id="firstName" name="name" type="text" required placeholder="Your first name" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-2" />
+        </div>
+
+        <div class="flex items-start gap-3">
+          <input id="newsletter" name="newsletter" type="checkbox" class="mt-1" />
+          <label for="newsletter" class="text-sm text-gray-700 dark:text-gray-200">I'd like to receive the newsletter</label>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <input id="consent" name="consent" type="checkbox" required class="mt-1" />
+          <label for="consent" class="text-sm text-gray-700 dark:text-gray-200">I agree to the <a href="/terms" class="text-primary-600 hover:underline">Terms</a> and <a href="/privacy" class="text-primary-600 hover:underline">Privacy Policy</a></label>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="submitBtn" type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md">Continue</button>
+          <button id="skipBtn" type="button" class="px-4 py-2 border rounded-md">Skip for now</button>
+        </div>
+
+        <div id="formMessage" class="text-sm hidden"></div>
+      </form>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  import { account, getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/appwrite';
+
+  const WORKER_URL = 'https://spring-block-2fcc.matt-c4f.workers.dev';
+
+  const form = document.getElementById('onboardForm') as HTMLFormElement | null;
+  const firstName = document.getElementById('firstName') as HTMLInputElement | null;
+  const newsletter = document.getElementById('newsletter') as HTMLInputElement | null;
+  const consent = document.getElementById('consent') as HTMLInputElement | null;
+  const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
+  const skipBtn = document.getElementById('skipBtn') as HTMLButtonElement | null;
+  const formMessage = document.getElementById('formMessage') as HTMLElement | null;
+
+  const showMessage = (msg: string, isError = false) => {
+    if (!formMessage) return;
+    formMessage.textContent = msg;
+    formMessage.classList.remove('hidden');
+    formMessage.classList.toggle('text-red-600', isError);
+    formMessage.classList.toggle('text-green-600', !isError);
+  };
+
+  // Call MailerLite worker (same pattern as profile page)
+  async function callMailerLite(action: 'subscribe' | 'unsubscribe', subscriberId: string | undefined = undefined, email: string | undefined = undefined, name: string | undefined = undefined) {
+    const jwtResp: any = await account.createJWT();
+    const jwt = jwtResp?.jwt;
+    if (!jwt) throw new Error('Failed to create Appwrite JWT');
+
+    const bodyObj: any = { action };
+    if (email) bodyObj.email = String(email).toLowerCase().trim();
+    if (name) bodyObj.name = String(name).trim();
+    if (subscriberId) bodyObj.subscriberId = subscriberId;
+
+    const resp = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwt
+      },
+      body: JSON.stringify(bodyObj)
+    });
+
+    const text = await resp.text();
+    try { return { httpStatus: resp.status, ok: resp.ok, raw: JSON.parse(text) }; } catch (e) { return { httpStatus: resp.status, ok: resp.ok, raw: text }; }
+  }
+
+  const saveProfileAndMaybeSubscribe = async (nameVal: string, subscribe: boolean) => {
+    try {
+      // Update name in Appwrite
+      await updateAccountName(nameVal);
+      // Persist newsletter preference
+      await updateAccountPreference('newsletter', !!subscribe);
+
+      if (subscribe) {
+        // Get current user email
+        const user: any = await getCurrentUser();
+        const email = user?.email as string | undefined;
+        try {
+          const result: any = await callMailerLite('subscribe', undefined, email, nameVal);
+          const raw = result?.raw || {};
+          const sid = raw?.subscriberId || raw?.subscriber || raw?.data?.id || raw?.id || null;
+          if (sid) {
+            try { await updateAccountPreference('ml_subscriber_id', sid); } catch (e) { console.error('Failed to persist ml id', e); }
+          }
+        } catch (e) {
+          // Non-blocking: show a warning but let onboarding continue
+          console.warn('MailerLite subscribe failed', e);
+          showMessage('Saved, but newsletter subscription failed. You can update this later in profile.', true);
+        }
+      }
+
+      showMessage('Profile saved. Redirecting...', false);
+      setTimeout(() => window.location.href = '/auth/dashboard', 900);
+    } catch (err: any) {
+      console.error('Onboarding save failed', err);
+      showMessage((err && err.message) ? err.message : 'Failed to save profile', true);
+    }
+  };
+
+  // Ensure user is authenticated; if not, send back to login
+  (async () => {
+    const user: any = await getCurrentUser();
+    if (!user) {
+      window.location.href = '/auth/login';
+      return;
+    }
+
+    // Prefill if name already present
+    if (user.name && firstName) (firstName as HTMLInputElement).value = user.name;
+
+    // If user already has preferences set and name present, skip onboarding
+    const prefs = (user as any).prefs || (user as any).preferences || {};
+    if ((user.name && String(user.name).trim()) && (prefs && typeof prefs.newsletter !== 'undefined')) {
+      // Already onboarded
+      window.location.href = '/auth/dashboard';
+      return;
+    }
+  })();
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!consent || !(consent as HTMLInputElement).checked) {
+        showMessage('You must agree to the terms and privacy policy to continue.', true);
+        return;
+      }
+
+      const nameVal = firstName ? String((firstName as HTMLInputElement).value).trim() : '';
+      if (!nameVal) {
+        showMessage('Please enter your first name', true);
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+      }
+
+      await saveProfileAndMaybeSubscribe(nameVal, !!(newsletter && (newsletter as HTMLInputElement).checked));
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue';
+      }
+    });
+  }
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', async () => {
+      // allow skipping onboarding; just redirect
+      window.location.href = '/auth/dashboard';
+    });
+  }
+</script>

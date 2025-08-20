@@ -28,12 +28,39 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
     if (userId && secret) {
         try {
+            // Prefer a dynamic call in case SDK surface differs between versions
+            const accAny = account as any;
+            const methodExists = typeof accAny.updateMagicURLSession === 'function';
+            if (!methodExists) {
+                // Try alternative method names or fail early with diagnostics
+                throw new Error('Appwrite SDK does not expose updateMagicURLSession on account object');
+            }
+
             // Update the Magic URL session
-            await account.updateMagicURLSession(userId, secret);
+            await accAny.updateMagicURLSession(userId, secret);
             updateStatus('Login successful! Redirecting...');
-            window.location.href = '/auth/dashboard';
+            // After verifying, send user to onboarding. The onboarding page will
+            // decide whether the user still needs to complete profile/preferences
+            // or can be forwarded to the dashboard.
+            window.location.href = '/auth/onboarding';
         } catch (error) {
-            updateStatus('Invalid or expired magic link. Please try again.', true);
+            // Detailed diagnostics for debugging magic link problems
+            console.error('Magic link verification error:', error);
+            const diagnostics = [];
+            diagnostics.push(`userId=${userId}`);
+            diagnostics.push(`secret=${secret ? '[present]' : '[missing]'}`);
+            try {
+                const accProto = Object.getPrototypeOf(account) || {};
+                const protoNames = Object.getOwnPropertyNames(accProto).filter(Boolean).join(', ');
+                diagnostics.push(`account proto methods: ${protoNames}`);
+            } catch (e) {
+                diagnostics.push('account proto inspection failed');
+            }
+
+            updateStatus(`Invalid or expired magic link. ${((error as any)?.message) || ''}`.trim(), true);
+            // Also append a brief debug note to the console (do not expose sensitive secrets in UI)
+            console.debug('Magic link diagnostics:', diagnostics.join(' | '));
+
             setTimeout(() => {
                 window.location.href = '/auth/login';
             }, 3000);
