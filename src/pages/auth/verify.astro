@@ -40,35 +40,16 @@ import MainLayout from '../../layouts/MainLayout.astro';
             await accAny.updateMagicURLSession(userId, secret);
             updateStatus('Login successful! Redirecting...');
 
-            // Diagnostics: fetch the account/user object and log it so we can
-            // inspect which user was actually authenticated after the magic link.
-            try {
-                const freshUser = await account.get();
-                console.debug('Post-verify current user:', freshUser);
-            } catch (e) {
-                console.debug('Failed to fetch current user after verify', e);
-            }
+            // Proceed after verification
             // After verifying, send user to onboarding. The onboarding page will
             // decide whether the user still needs to complete profile/preferences
             // or can be forwarded to the dashboard.
             window.location.href = '/auth/onboarding';
         } catch (error) {
-            // Detailed diagnostics for debugging magic link problems
-            console.error('Magic link verification error:', error);
-            const diagnostics = [];
-            diagnostics.push(`userId=${userId}`);
-            diagnostics.push(`secret=${secret ? '[present]' : '[missing]'}`);
-            try {
-                const accProto = Object.getPrototypeOf(account) || {};
-                const protoNames = Object.getOwnPropertyNames(accProto).filter(Boolean).join(', ');
-                diagnostics.push(`account proto methods: ${protoNames}`);
-            } catch (e) {
-                diagnostics.push('account proto inspection failed');
-            }
 
+            // Log the error and show a friendly message
+            console.error('Magic link verification error:', error);
             updateStatus(`Invalid or expired magic link. ${((error as any)?.message) || ''}`.trim(), true);
-            // Also append a brief debug note to the console (do not expose sensitive secrets in UI)
-            console.debug('Magic link diagnostics:', diagnostics.join(' | '));
 
             setTimeout(() => {
                 window.location.href = '/auth/login';

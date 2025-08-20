@@ -3,35 +3,34 @@ import MainLayout from '../../layouts/MainLayout.astro';
 ---
 
 <MainLayout title="Welcome">
-  <div class="max-w-2xl mx-auto px-4 py-12">
-    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
+  <div class="max-w-screen-md mx-auto px-4 py-16 lg:py-24">
+    <div class="max-w-xl mx-auto">
       <div class="mb-6 text-center">
-        <h1 class="text-2xl font-extrabold">Welcome to Giveback Guide</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">A few quick questions to personalise your experience.</p>
+        <h1 class="mb-2 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white">Welcome to Giveback Guide</h1>
+        <p class="text-base text-gray-500 dark:text-gray-400">A few quick questions to personalise your experience.</p>
       </div>
 
-      <form id="onboardForm" class="space-y-4">
+      <form id="onboardForm" class="space-y-6">
         <div>
           <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-200">First name</label>
-          <input id="firstName" name="name" type="text" required placeholder="Your first name" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 p-2" />
+          <input id="firstName" name="name" type="text" required placeholder="Your first name" class="mt-1 block w-full text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 p-3" />
         </div>
 
-        <div class="flex items-start gap-3">
-          <input id="newsletter" name="newsletter" type="checkbox" class="mt-1" />
+        <div class="flex items-center gap-3">
+          <input id="newsletter" name="newsletter" type="checkbox" class="w-4 h-4 text-primary-600 bg-gray-100 rounded border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800" />
           <label for="newsletter" class="text-sm text-gray-700 dark:text-gray-200">I'd like to receive the newsletter</label>
         </div>
 
         <div class="flex items-start gap-3">
-          <input id="consent" name="consent" type="checkbox" required class="mt-1" />
+          <input id="consent" name="consent" type="checkbox" required class="w-4 h-4 mt-1 text-primary-600 bg-gray-100 rounded border-gray-300" />
           <label for="consent" class="text-sm text-gray-700 dark:text-gray-200">I agree to the <a href="/terms" class="text-primary-600 hover:underline">Terms</a> and <a href="/privacy" class="text-primary-600 hover:underline">Privacy Policy</a></label>
         </div>
 
-        <div class="flex items-center gap-3">
-          <button id="submitBtn" type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md">Continue</button>
-          <button id="skipBtn" type="button" class="px-4 py-2 border rounded-md">Skip for now</button>
+        <div>
+          <button id="submitBtn" type="submit" class="w-full py-3 px-4 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700">Continue</button>
         </div>
 
-        <div id="formMessage" class="text-sm hidden"></div>
+        <div id="formMessage" class="mt-2 text-center text-sm hidden"></div>
       </form>
     </div>
   </div>
@@ -47,7 +46,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
   const newsletter = document.getElementById('newsletter') as HTMLInputElement | null;
   const consent = document.getElementById('consent') as HTMLInputElement | null;
   const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
-  const skipBtn = document.getElementById('skipBtn') as HTMLButtonElement | null;
+  // skip button removed from UI
   const formMessage = document.getElementById('formMessage') as HTMLElement | null;
 
   const showMessage = (msg: string, isError = false) => {
@@ -93,17 +92,27 @@ import MainLayout from '../../layouts/MainLayout.astro';
         // Get current user email
         const user: any = await getCurrentUser();
         const email = user?.email as string | undefined;
-        try {
-          const result: any = await callMailerLite('subscribe', undefined, email, nameVal);
-          const raw = result?.raw || {};
-          const sid = raw?.subscriberId || raw?.subscriber || raw?.data?.id || raw?.id || null;
-          if (sid) {
-            try { await updateAccountPreference('ml_subscriber_id', sid); } catch (e) { console.error('Failed to persist ml id', e); }
+
+        if (!email) {
+          showMessage('Saved, but we could not subscribe you because your email was not available client-side. You can subscribe later in your profile.', true);
+        } else {
+          try {
+            const result: any = await callMailerLite('subscribe', undefined, email, nameVal);
+            if (!result || !result.ok) {
+              console.error('MailerLite subscribe failed', result);
+              showMessage('Saved, but newsletter subscription failed. You can update this later in your profile.', true);
+            } else {
+              const raw = result.raw || {};
+              const sid = raw?.subscriberId || raw?.subscriber || raw?.data?.id || raw?.id || null;
+              if (sid) {
+                try { await updateAccountPreference('ml_subscriber_id', sid); } catch (e) { console.error('Failed to persist ml id', e); }
+              }
+              showMessage('Subscribed to the newsletter. Redirecting...', false);
+            }
+          } catch (e: any) {
+            console.error('MailerLite subscribe failed', e);
+            showMessage('Saved, but newsletter subscription failed. You can update this later in your profile.', true);
           }
-        } catch (e) {
-          // Non-blocking: show a warning but let onboarding continue
-          console.warn('MailerLite subscribe failed', e);
-          showMessage('Saved, but newsletter subscription failed. You can update this later in profile.', true);
         }
       }
 
@@ -166,10 +175,5 @@ import MainLayout from '../../layouts/MainLayout.astro';
     });
   }
 
-  if (skipBtn) {
-    skipBtn.addEventListener('click', async () => {
-      // allow skipping onboarding; just redirect
-      window.location.href = '/auth/dashboard';
-    });
-  }
+  // skip button removed
 </script>
