@@ -39,6 +39,15 @@ import MainLayout from '../../layouts/MainLayout.astro';
             // Update the Magic URL session
             await accAny.updateMagicURLSession(userId, secret);
             updateStatus('Login successful! Redirecting...');
+
+            // Diagnostics: fetch the account/user object and log it so we can
+            // inspect which user was actually authenticated after the magic link.
+            try {
+                const freshUser = await account.get();
+                console.debug('Post-verify current user:', freshUser);
+            } catch (e) {
+                console.debug('Failed to fetch current user after verify', e);
+            }
             // After verifying, send user to onboarding. The onboarding page will
             // decide whether the user still needs to complete profile/preferences
             // or can be forwarded to the dashboard.

@@ -35,7 +35,22 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { createMagicURLSession } from '../../lib/appwrite';
+    import { createMagicURLSession, getCurrentUser } from '../../lib/appwrite';
+
+    // If a user is already signed-in, send them to the dashboard instead of
+    // allowing them to request a new magic link.
+    (async () => {
+        try {
+            const user = await getCurrentUser();
+            if (user) {
+                window.location.href = '/auth/dashboard';
+                return;
+            }
+        } catch (e) {
+            // ignore and let the page load
+            console.debug('Login page auth check failed', e);
+        }
+    })();
 
     // Magic URL Form Handler
     const form = document.getElementById('magicURLForm') as HTMLFormElement;

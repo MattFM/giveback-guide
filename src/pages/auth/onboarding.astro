@@ -123,8 +123,11 @@ import MainLayout from '../../layouts/MainLayout.astro';
       return;
     }
 
-    // Prefill if name already present
-    if (user.name && firstName) (firstName as HTMLInputElement).value = user.name;
+  // Diagnostics: log the user object we received client-side
+  console.debug('Onboarding loaded user:', user);
+
+  // Prefill if name already present
+  if (user.name && firstName) (firstName as HTMLInputElement).value = user.name;
 
     // If user already has preferences set and name present, skip onboarding
     const prefs = (user as any).prefs || (user as any).preferences || {};
