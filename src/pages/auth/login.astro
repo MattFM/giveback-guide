@@ -24,6 +24,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
             </div>
             <div id="success-message" class="text-sm text-green-600 dark:text-green-500 text-center hidden"></div>
             <div id="error-message" class="text-sm text-red-600 dark:text-red-500 text-center hidden"></div>
+            <div id="debug-output" class="mt-4 text-xs text-gray-500 hidden whitespace-pre-wrap"></div>
         </form>
 
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
@@ -35,7 +36,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { createMagicURLSession, getCurrentUser } from '../../lib/appwrite';
+    import { createMagicURLSession, getCurrentUser } from '../../lib/auth';
 
     // If a user is already signed-in, send them to the dashboard instead of
     // allowing them to request a new magic link.
@@ -67,13 +68,27 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 const formData = new FormData(form);
                 const email = formData.get('email') as string;
 
-                await createMagicURLSession(email);
-                successMessage.textContent = 'Magic link sent! Please check your email.';
-                successMessage.classList.remove('hidden');
-                form.reset();
+                // Optionally surface debug info (enable by setting localStorage.debugAuth = '1')
+                const debugOn = typeof localStorage !== 'undefined' && localStorage.getItem('debugAuth') === '1';
+                try {
+                    const redirectTo = `${window.location.origin}/auth/verify`;
+                    console.debug('Requesting magic link with redirectTo=', redirectTo);
+                    const res: any = await createMagicURLSession(email, redirectTo);
+                    successMessage.textContent = 'Magic link sent! Please check your email.';
+                    successMessage.classList.remove('hidden');
+                    form.reset();
+                    if (debugOn) {
+                        const dbg = document.getElementById('debug-output');
+                        if (dbg) { dbg.textContent = JSON.stringify(res, null, 2); dbg.classList.remove('hidden'); }
+                    }
+                } catch (err: any) {
+                    throw err;
+                }
             } catch (error) {
                 errorMessage.textContent = error instanceof Error ? error.message : 'Failed to send magic link';
                 errorMessage.classList.remove('hidden');
+                const dbg = document.getElementById('debug-output');
+                if (dbg) { dbg.textContent = (error && (error.message || error.error)) ? String(error.message || error.error) : String(error); dbg.classList.remove('hidden'); }
             }
         });
     }

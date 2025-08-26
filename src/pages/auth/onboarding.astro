@@ -37,7 +37,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-  import { account, getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/appwrite';
+  import { account, getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/auth';
 
   const WORKER_URL = 'https://spring-block-2fcc.matt-c4f.workers.dev';
 
@@ -116,8 +116,33 @@ import MainLayout from '../../layouts/MainLayout.astro';
         }
       }
 
-      showMessage('Profile saved. Redirecting...', false);
-      setTimeout(() => window.location.href = '/auth/dashboard', 900);
+  // no-op: profiles upsert removed per configuration
+
+      showMessage('Profile saved. Verifying and redirecting...', false);
+
+      // Wait for the auth provider to reflect updated metadata (avoid race)
+      const start = Date.now();
+      const timeoutMs = 5000;
+      let verified = false;
+      while (Date.now() - start < timeoutMs) {
+        try {
+          const latest = await getCurrentUser();
+          if (latest && latest.name && String(latest.name).trim() === String(nameVal).trim()) {
+            verified = true;
+            break;
+          }
+        } catch (e) {
+          // ignore transient errors
+        }
+        // small delay
+        await new Promise((r) => setTimeout(r, 250));
+      }
+
+      if (!verified) {
+        console.warn('Profile update not yet reflected in auth session after save; proceeding to dashboard anyway');
+      }
+
+      setTimeout(() => window.location.href = '/auth/dashboard', 400);
     } catch (err: any) {
       console.error('Onboarding save failed', err);
       showMessage((err && err.message) ? err.message : 'Failed to save profile', true);

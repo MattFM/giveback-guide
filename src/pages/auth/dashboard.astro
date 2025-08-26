@@ -82,15 +82,17 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { getCurrentUser, logout, updateAccountName, deleteAccount } from '../../lib/appwrite';
+    import { getCurrentUser, logout } from '../../lib/auth';
 
     // Check if user is logged in
     const checkAuth = async () => {
         const user = await getCurrentUser();
-        if (!user) {
-            window.location.href = '/auth/login';
-            return;
-        }
+            console.debug('Dashboard auth check user:', user);
+            if (!user) {
+                console.debug('No user found - redirecting to login');
+                window.location.href = '/auth/login';
+                return;
+            }
 
         const userInfo = document.getElementById('userInfo');
         if (userInfo) {
