@@ -21,7 +21,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
         }
     };
 
-    // Get URL parameters (Appwrite uses userId & secret; Supabase uses tokens in the URL/hash)
+    // Get URL parameters used by some auth providers (userId & secret) or
+    // leave empty for providers that complete sessions from the URL hash.
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('userId');
     const secret = urlParams.get('secret');
@@ -37,9 +38,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
     try {
         // Call the provider-agnostic helper exposed by src/lib/auth.
-        // For Appwrite this will use the (userId, secret) params. For Supabase
-        // the implementation will parse the current URL (getSessionFromUrl)
-        // and complete the session without extra args.
+    // The provider-specific implementation will either accept (userId, secret)
+    // or inspect the current URL to complete the session (e.g. Supabase).
         if (typeof updateMagicURLSession !== 'function') throw new Error('No updateMagicURLSession available on auth provider');
 
         if (userId && secret) {

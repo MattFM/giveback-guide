@@ -108,9 +108,10 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const WORKER_URL = 'https://spring-block-2fcc.matt-c4f.workers.dev';
 
     async function callMailerLite(action: 'subscribe' | 'unsubscribe', subscriberId = undefined, email = undefined, name = undefined) {
-        const jwtResp = await account.createJWT();
+        const acc = await account();
+        const jwtResp = await acc.createJWT();
         const jwt = jwtResp?.jwt;
-        if (!jwt) throw new Error('Failed to create Appwrite JWT');
+        if (!jwt) throw new Error('Failed to create auth JWT');
 
         const bodyObj: any = { action };
         if (email) bodyObj.email = String(email).toLowerCase().trim();

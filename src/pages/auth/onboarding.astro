@@ -59,9 +59,10 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
   // Call MailerLite worker (same pattern as profile page)
   async function callMailerLite(action: 'subscribe' | 'unsubscribe', subscriberId: string | undefined = undefined, email: string | undefined = undefined, name: string | undefined = undefined) {
-    const jwtResp: any = await account.createJWT();
-    const jwt = jwtResp?.jwt;
-    if (!jwt) throw new Error('Failed to create Appwrite JWT');
+  const acc = await account();
+  const jwtResp: any = await acc.createJWT();
+  const jwt = jwtResp?.jwt;
+  if (!jwt) throw new Error('Failed to create auth JWT');
 
     const bodyObj: any = { action };
     if (email) bodyObj.email = String(email).toLowerCase().trim();
@@ -83,7 +84,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
   const saveProfileAndMaybeSubscribe = async (nameVal: string, subscribe: boolean) => {
     try {
-      // Update name in Appwrite
+  // Update name in auth provider
       await updateAccountName(nameVal);
       // Persist newsletter preference
       await updateAccountPreference('newsletter', !!subscribe);

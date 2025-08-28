@@ -1,17 +1,16 @@
 // Simple runtime switch between Appwrite and Supabase wrappers.
-// Set PUBLIC_AUTH_PROVIDER to 'supabase' to use Supabase, otherwise defaults to 'appwrite'.
+// Default to 'supabase' for new development. You can override by setting
+// PUBLIC_AUTH_PROVIDER in your environment (e.g. to 'appwrite').
 
-const provider = (typeof import.meta !== 'undefined' ? (import.meta.env?.PUBLIC_AUTH_PROVIDER as string) : process.env.PUBLIC_AUTH_PROVIDER) || 'appwrite';
+const provider = (typeof import.meta !== 'undefined' ? (import.meta.env?.PUBLIC_AUTH_PROVIDER as string) : process.env.PUBLIC_AUTH_PROVIDER) || 'supabase';
 
 let _impl: any = null;
 
 async function loadImpl() {
   if (_impl) return _impl;
-  if (provider === 'supabase') {
-    _impl = await import('./supabase');
-  } else {
-    _impl = await import('./appwrite');
-  }
+  // Currently we only ship the Supabase implementation. Keep the
+  // provider string for future extensibility.
+  _impl = await import('./supabase');
   return _impl;
 }
 
