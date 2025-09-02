@@ -7,6 +7,7 @@ import { getCollection } from "astro:content";
 import SupportBox from "../components/Projects/SupportBox.astro";
 import SubscribeDrawer from "../components/Popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ResponsiveImage.astro";
+import SaveToList from "../components/Save/SaveToList.astro";
 
 type Props = CollectionEntry<"stays">["data"];
 
@@ -382,6 +383,11 @@ if (images.length === 0) {
           </div>
         </section>
 
+  <!-- Save Section (mobile only: appears above mobile booking card) -->
+  <section class="px-4 lg:hidden">
+          {(() => { const id = String(properties.sID ?? properties.sSlug ?? '').trim(); return id ? <SaveToList itemType="stay" itemId={id} /> : null; })()}
+        </section>
+
         <!-- Booking Card (mobile only) -->
         <section class="py-6 px-4 lg:hidden">
           <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
@@ -423,6 +429,7 @@ if (images.length === 0) {
                   </a>
                 )
               }
+              <!-- save UI moved to its own section above -->
               
               {
                 properties.sBookingURL && (
@@ -802,6 +809,7 @@ if (images.length === 0) {
                 Report a problem
               </button>
             </a>
+            <!-- Save button intentionally shown in the booking card(s) to match style -->
           </div>
         </section>
       </main>
@@ -809,6 +817,8 @@ if (images.length === 0) {
       <!-- Aside column (desktop only) -->
       <aside class="hidden lg:block pt-16">
         <div class="sticky top-24 space-y-6">
+          <!-- Save Section (desktop only: appears above booking card in sidebar) -->
+          {(() => { const id = String(properties.sID ?? properties.sSlug ?? '').trim(); return id ? <SaveToList itemType="stay" itemId={id} /> : null; })()}
           <!-- Booking Card -->
           <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
             <div class="mb-4">
@@ -849,6 +859,7 @@ if (images.length === 0) {
                   </a>
                 )
               }
+              <!-- save UI moved to its own section above -->
               
               {
                 properties.sBookingURL && (

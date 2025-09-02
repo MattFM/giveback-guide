@@ -1,0 +1,67 @@
+---
+// Test UI to save/remove/check list items in the browser (client:load)
+---
+<div>
+  <h1>Test Lists (save/remove/check)</h1>
+  <p>Sign in in this browser tab, then use the controls below.</p>
+
+  <label>
+    Item type:
+    <select id="itemType">
+      <option value="project">project</option>
+      <option value="stay">stay</option>
+    </select>
+  </label>
+  <br/><br/>
+  <label>
+    Item id:
+    <input id="itemId" type="text" placeholder="e.g. test-project-123" value="test-project-123" />
+  </label>
+  <br/><br/>
+  <button id="save">Save to "Saved"</button>
+  <button id="remove">Remove from "Saved"</button>
+  <button id="check">Which lists contain item?</button>
+
+  <pre id="out" style="margin-top:12px; background:#f7f7f8; padding:12px; border-radius:6px;"></pre>
+
+  <script type="module" client:load>
+    import * as lists from '/src/lib/lists';
+
+    const out = document.getElementById('out');
+    const itemTypeEl = document.getElementById('itemType');
+    const itemIdEl = document.getElementById('itemId');
+
+    function show(v){ out.textContent = JSON.stringify(v, null, 2); }
+
+    document.getElementById('save').addEventListener('click', async () => {
+      try {
+        out.textContent = 'Saving...';
+        // Get user's lists (we expect default "Saved" list exists)
+        const userLists = await lists.getLists();
+        if (!userLists || userLists.length === 0) throw new Error('No lists found for user');
+        const defaultList = userLists.find(l => l.is_default) || userLists[0];
+        const res = await lists.saveItemToList(defaultList.id, itemTypeEl.value, itemIdEl.value);
+        show({ ok: true, savedItem: res });
+      } catch (err) { show({ ok: false, error: err && err.message ? err.message : String(err) }); console.error(err); }
+    });
+
+    document.getElementById('remove').addEventListener('click', async () => {
+      try {
+        out.textContent = 'Removing...';
+        const userLists = await lists.getLists();
+        if (!userLists || userLists.length === 0) throw new Error('No lists found for user');
+        const defaultList = userLists.find(l => l.is_default) || userLists[0];
+        await lists.removeItemFromList(defaultList.id, itemTypeEl.value, itemIdEl.value);
+        show({ ok: true, removed: true });
+      } catch (err) { show({ ok: false, error: err && err.message ? err.message : String(err) }); console.error(err); }
+    });
+
+    document.getElementById('check').addEventListener('click', async () => {
+      try {
+        out.textContent = 'Checking...';
+        const which = await lists.getListsContainingItem(itemTypeEl.value, itemIdEl.value);
+        show({ ok: true, lists: which });
+      } catch (err) { show({ ok: false, error: err && err.message ? err.message : String(err) }); console.error(err); }
+    });
+  </script>
+</div>

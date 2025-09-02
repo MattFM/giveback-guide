@@ -1,23 +1,8 @@
 ---
 import ResponsiveImage from './ResponsiveImage.astro';
 
-interface Props {
-  stay: {
-    data: {
-      properties: {
-        sSlug: string;
-        sImageURL1: string;
-        sVerify: string;
-        sCountry: string | string[];
-        sLocale: string | string[];
-        sTitle: string;
-        sName: string;
-      };
-    };
-  };
-}
-
-const { stay } = Astro.props;
+interface Props { stay: any }
+const { stay } = Astro.props as Props;
 ---
 
 <article class="rounded-lg">
@@ -53,7 +38,10 @@ const { stay } = Astro.props;
             </div>
           )}
         </a>
-      </div>
+        </div>
+        <div class="absolute top-2 right-2">
+          <!-- Save control removed from card; Save UI is available on stay pages only -->
+        </div>
   <p>
     {Array.isArray(stay.data.properties.sCountry)
       ? stay.data.properties.sCountry.map((country: string) => (
@@ -77,7 +65,7 @@ const { stay } = Astro.props;
   <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
            <span class="text-gray-800">{stay.data.properties.sName}</span> is a <span class="text-gray-900">{stay.data.properties.sType}</span> in <span class="text-gray-900">{
             Array.isArray(stay.data.properties.sLocale)
-              ? stay.data.properties.sLocale.map((locale, index) => (
+              ? stay.data.properties.sLocale.map((locale: any, index: any) => (
                   <>
                       {locale}
                     {index < stay.data.properties.sLocale.length - 1 ? ", " : ""}

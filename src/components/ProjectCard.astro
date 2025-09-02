@@ -2,27 +2,15 @@
 import ResponsiveImage from './ResponsiveImage.astro';
 
 interface Props {
-  project: {
-    data: {
-      properties: {
-        pSlug: string;
-        pImageURL: string;
-        pVerify: string;
-        pCountry: string | string[];
-        pLocale: string | string[];
-        pTitle: string;
-        pOrganiser: string;
-      };
-    };
-  };
+  project: any;
 }
 
-const { project } = Astro.props;
+const { project } = Astro.props as Props;
 ---
 
 <article class="rounded-lg">
-    <div class="relative">
-        <a href={`/projects/${project.data.properties.pSlug}/`}>
+  <div class="relative">
+    <a href={`/projects/${project.data.properties.pSlug}/`}>
           <ResponsiveImage
             class="w-full rounded-lg h-64 object-cover"
             src={project.data.properties.pImageURL}
@@ -53,6 +41,7 @@ const { project } = Astro.props;
             </div>
           )}
         </a>
+  <!-- Save badge removed from card; Save control appears only on individual pages -->
       </div>
   <p>
     {Array.isArray(project.data.properties.pCountry)
@@ -77,7 +66,7 @@ const { project } = Astro.props;
   <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
            By <span class="text-gray-800">{project.data.properties.pOrganiser}</span> in <span class="text-gray-900">{
             Array.isArray(project.data.properties.pLocale)
-              ? project.data.properties.pLocale.map((locale, index) => (
+              ? project.data.properties.pLocale.map((locale: any, index: any) => (
                   <>
                       {locale}
                     {index < project.data.properties.pLocale.length - 1 ? ", " : ""}

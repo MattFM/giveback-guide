@@ -52,8 +52,41 @@ const posts = defineCollection({
 	}),
 	schema: notionPageSchema({
 		properties: z.object({
-		  pTitle: transformedPropertySchema.title,
-		  pCountry: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
+			  pTitle: transformedPropertySchema.title,
+							// Prefer a custom Notion unique id property (pID) but keep it optional.
+							// Normalize objects like { prefix: 'PRO', number: 777 } -> 'PRO-777'
+							pID: propertySchema.unique_id.transform((prop: any) => {
+								const raw = prop && (prop.unique_id ?? prop.unique_id?.id ?? prop.unique_id?.value ?? prop);
+								function normalize(v: any): string | null {
+									if (v === null || v === undefined) return null;
+									if (typeof v === 'string') {
+										const s = v.trim();
+										return s === '' ? null : s;
+									}
+									if (typeof v === 'number' || typeof v === 'bigint') return String(v);
+									if (typeof v === 'object') {
+										// Known Notion custom id shape: { prefix: 'PRO', number: 777 }
+										if ('prefix' in v && 'number' in v) {
+											const pref = String(v.prefix || '').trim();
+											const num = String(v.number ?? '').trim();
+											if (pref && num) return `${pref}-${num}`;
+										}
+										// Common fallback fields
+										if (v.id || v.name || v.value) {
+											return String(v.id ?? v.name ?? v.value).trim();
+										}
+										try {
+											const json = JSON.stringify(v);
+											return json === '{}' ? null : json;
+										} catch (e) {
+											return null;
+										}
+									}
+									return null;
+								}
+								return normalize(raw);
+							}),
+				  pCountry: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  pLocale: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  pCategory: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  pOrganiser: transformedPropertySchema.rich_text,
@@ -86,7 +119,40 @@ const posts = defineCollection({
 	}),
 	schema: notionPageSchema({
 		properties: z.object({
-		  sTitle: transformedPropertySchema.title,
+			  sTitle: transformedPropertySchema.title,
+							// Prefer a custom Notion unique id property (sID) but keep it optional.
+							// Normalize objects like { prefix: 'STY', number: 123 } -> 'STY-123'
+							sID: propertySchema.unique_id.transform((prop: any) => {
+								const raw = prop && (prop.unique_id ?? prop.unique_id?.id ?? prop.unique_id?.value ?? prop);
+								function normalize(v: any): string | null {
+									if (v === null || v === undefined) return null;
+									if (typeof v === 'string') {
+										const s = v.trim();
+										return s === '' ? null : s;
+									}
+									if (typeof v === 'number' || typeof v === 'bigint') return String(v);
+									if (typeof v === 'object') {
+										// Known Notion custom id shape: { prefix: 'STY', number: 123 }
+										if ('prefix' in v && 'number' in v) {
+											const pref = String(v.prefix || '').trim();
+											const num = String(v.number ?? '').trim();
+											if (pref && num) return `${pref}-${num}`;
+										}
+										// Common fallback fields
+										if (v.id || v.name || v.value) {
+											return String(v.id ?? v.name ?? v.value).trim();
+										}
+										try {
+											const json = JSON.stringify(v);
+											return json === '{}' ? null : json;
+										} catch (e) {
+											return null;
+										}
+									}
+									return null;
+								}
+								return normalize(raw);
+							}),
 		  sCountry: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  sLocale: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  sCategory: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),

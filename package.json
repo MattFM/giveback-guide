@@ -20,6 +20,7 @@
     "axios": "^1.10.0",
     "flowbite": "^3.1.2",
     "fs-extra": "^11.3.0",
+    "supabase": "^2.39.2",
     "tailwind-scrollbar-hide": "^2.0.0",
     "tailwindcss": "^4.1.3"
   },

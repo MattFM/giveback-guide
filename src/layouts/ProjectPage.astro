@@ -7,6 +7,7 @@ import { getCollection } from "astro:content";
 import SupportBox from "../components/Projects/SupportBox.astro";
 import SubscribeDrawer from "../components/Popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ResponsiveImage.astro";
+import SaveToList from "../components/Save/SaveToList.astro";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -343,6 +344,11 @@ const relatedProjects = allProjects
           </div>
         </section>
 
+        <!-- Save Section (mobile only: appears above the mobile Get Involved card) -->
+  <section class="px-4 lg:hidden">
+          {(() => { const id = String(properties.pID ?? properties.pSlug ?? '').trim(); return id ? <SaveToList itemType="project" itemId={id} /> : null; })()}
+        </section>
+
         <!-- Get Involved Card (mobile only) -->
         <section class="py-6 px-4 lg:hidden">
           <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
@@ -588,7 +594,7 @@ const relatedProjects = allProjects
         <SupportBox />
 
         <!-- Verify/Report Buttons -->
-        <section class="pt-6 pb-8">
+  <section class="pt-6 pb-8">
           <div
             class="mx-auto w-full max-w-2xl flex justify-center items-center"
           >
@@ -636,13 +642,16 @@ const relatedProjects = allProjects
                 Report a problem
               </button>
             </a>
+            <!-- Save moved to its own section above the Get Involved card -->
           </div>
         </section>
       </main>
 
-      <!-- Aside column (desktop only) -->
+    <!-- Aside column (desktop only) -->
       <aside class="hidden lg:block pt-16">
         <div class="sticky top-24 space-y-6">
+          <!-- Save Section (desktop) -->
+          {(() => { const id = String(properties.pID ?? properties.pSlug ?? '').trim(); return id ? <SaveToList itemType="project" itemId={id} /> : null; })()}
           <!-- Get Involved Card (desktop only) -->
           <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
             <div class="mb-4">
