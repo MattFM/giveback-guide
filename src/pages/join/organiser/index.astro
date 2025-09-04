@@ -1,0 +1,197 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../../../consts";
+---
+
+<MainLayout title={` Join the ${SITE_TITLE} community`}>
+  <main>
+    <section class="max-w-screen-xl mx-auto py-16 px-4 lg:py-24 lg:px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-16 mx-3">
+        <div
+          class="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400"
+        >
+          <img
+            class="mb-4 h-auto max-w-full rounded-lg"
+            src="https://res.cloudinary.com/dnxl7wsnx/image/upload/v1747306362/group-people_gsydcz.jpg"
+            alt="A group people having fun and smiling"
+          />
+          <h2
+            class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white"
+          >
+            Stay in touch
+          </h2>
+          <p class="mb-4 text-gray-500 sm:text-xl dark:text-gray-400">
+            Show your support for our platform by subscribing to our newsletter.
+          </p>
+          <p class="mb-4 font-light">
+            When you subscribe, you'll get the latest updates about our
+            platform, information on other projects just like yours, and
+            exclusive updates just for project organisers.
+          </p>
+        </div>
+        <div>
+          <ol class="relative border-s border-gray-200 dark:border-gray-700">
+            <li class="mb-10 ms-6">
+              <span
+                class="absolute flex items-center justify-center w-6 h-6 bg-gbgpink rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-black dark:text-blue-300"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-width="2"
+                    d="m3.5 5.5 7.893 6.036a1 1 0 0 0 1.214 0L20.5 5.5M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
+                  ></path>
+                </svg>
+              </span>
+              <h3
+                class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white"
+              >
+                Subscribe to our newsletter <span
+                  class="bg-gbgpink text-black text-sm font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 ms-3"
+                  >Amazing!</span
+                >
+              </h3>
+              <p
+                class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
+              >
+                Subscribe to our newsletter to receive updates on the latest
+                projects and announcements about our platform.
+              </p>
+              <form
+                action="https://org-subscribe-api.matt-c4f.workers.dev/"
+                method="POST"
+                class="w-100%"
+              >
+                <div
+                  class="items-center mx-auto mb-3 space-y-4 max-w-screen-sm sm:flex sm:space-y-0"
+                >
+                  <div class="relative w-full">
+                    <label
+                      for="email"
+                      class="hidden mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >Email address</label
+                    >
+                    <div
+                      class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                        ></path>
+                        <path
+                          d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <input
+                      class="block p-3 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:rounded-none sm:rounded-l-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      placeholder="Enter your email"
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                    />
+                    <input
+                      type="checkbox"
+                      name="consent"
+                      style="display:none"
+                      tabindex="-1"
+                      autocomplete="off"
+                    />
+                    <!-- Removed FormSpark fields (_redirect, _append) -->
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      class="py-3 px-5 w-full text-sm font-medium text-center text-white rounded-lg border cursor-pointer bg-black border-black sm:rounded-none sm:rounded-r-lg hover:bg-gray-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    >
+                      Subscribe
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="mx-auto max-w-screen-sm text-sm text-left text-gray-500 newsletter-form-footer dark:text-gray-300"
+                >
+                  We care about the protection of your data. <a
+                    href="/privacy"
+                    class="font-medium text-black hover:underline"
+                    >Read our Privacy Policy</a
+                  >.
+                </div>
+              </form>
+            </li>
+            <li class="mb-10 ms-6">
+              <span
+                class="absolute flex items-center justify-center w-6 h-6 bg-gbgpink rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-black"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 15h12M6 6h12m-6 12h.01M7 21h10a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1Z"
+                  ></path>
+                </svg>
+              </span>
+              <h3
+                class="mb-1 text-lg font-semibold text-gray-900 dark:text-white"
+              >
+                Follow us on Instagram
+              </h3>
+              <p
+                class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"
+              >
+                Stay up to date with our latest projects and initiatives by
+                following us on Instagram. We share inspiring stories, tips, and
+                resources to help you make a difference in your community.
+              </p>
+              <a
+                href="https://www.instagram.com/giveback.guide/"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                ><svg
+                  class="w-4 h-4 me-2.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                    d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                Follow us on Instagram</a
+              >
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+</MainLayout>
