@@ -15,7 +15,7 @@ const today = new Date();
         id="newsletter-heading"
         class="mb-4 text-3xl tracking-tight font-extrabold text-gray-900 sm:text-4xl dark:text-white"
       >
-        Show your support for Giveback Guide
+        Subscribe to our newsletter
       </h2>
       <p
         class="mx-auto mb-8 max-w-2xl font-light text-gray-500 md:mb-12 sm:text-xl dark:text-gray-400"
@@ -24,7 +24,7 @@ const today = new Date();
         announcements and news from the world of regenerative travel
       </p>
       <form
-        action="https://submit-form.com/IlQ2jAQOf"
+        action="https://subscribe-api.matt-c4f.workers.dev/"
         method="POST"
         class="w-100%"
       >
@@ -69,27 +69,20 @@ const today = new Date();
               tabindex="-1"
               autocomplete="off"
             />
-            <input
-              type="hidden"
-              name="_redirect"
-              value="https://giveback-guide.pages.dev/join/confirm"
-            />
-            <input type="hidden" name="_append" value="false" />
           </div>
           <div>
             <button
               type="submit"
-              aria-label="Subscribe to newsletter"
-              class="py-3 px-5 w-full text-sm font-medium text-center text-white rounded-lg border cursor-pointer bg-black border-black sm:rounded-none sm:rounded-r-lg hover:bg-gray-700 hover:border-gray-700 focus:ring-4 focus:ring-primary-300 dark:bg-black dark:hover:bg-black dark:focus:ring-primary-800"
+              class="py-3 px-5 w-full text-sm font-medium text-center text-white rounded-lg border cursor-pointer bg-black border-black sm:rounded-none sm:rounded-r-lg hover:bg-gray-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
               Subscribe
             </button>
           </div>
         </div>
         <div
-          class="mx-auto max-w-screen-sm text-sm text-center text-gray-500 newsletter-form-footer dark:text-gray-300"
+          class="mx-auto max-w-screen-sm text-sm text-left text-gray-500 newsletter-form-footer dark:text-gray-300"
         >
-          We won't share your details. Unsubscribe anytime. <a
+          We care about the protection of your data. <a
             href="/privacy"
             class="font-medium text-black hover:underline"
             >Read our Privacy Policy</a
