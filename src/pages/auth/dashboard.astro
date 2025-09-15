@@ -83,7 +83,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
 <script>
     import { getCurrentUser, logout } from '../../lib/auth';
-    import { getListsWithItems, getSavedCounts, createList } from '../../lib/lists';
+    import { getListsWithItems, getSavedCounts, createList, removeItemFromList, deleteList } from '../../lib/lists';
 
     // Check if user is logged in
     const checkAuth = async () => {
@@ -176,9 +176,9 @@ import MainLayout from '../../layouts/MainLayout.astro';
         if (savedCount) savedCount.textContent = String(totalItems);
 
         const frag = document.createDocumentFragment();
-        lists.forEach(l => {
+                lists.forEach(l => {
             const wrap = document.createElement('div');
-            wrap.className = 'p-4 bg-white rounded-lg';
+                        wrap.className = 'p-4 bg-white rounded-lg';
             const count = l.items?.length || 0;
             wrap.innerHTML = `
                 <div class="flex items-center justify-between">
@@ -186,11 +186,14 @@ import MainLayout from '../../layouts/MainLayout.astro';
                         <div class="font-medium">${l.title}${l.is_default ? ' <span class="text-xs text-gray-500">(default)</span>' : ''}</div>
                         <div class="text-sm text-gray-500">${count} item${count===1?'':'s'}</div>
                     </div>
+                                        <div class="flex items-center gap-2">
+                                                <button data-delete-list="${l.id}" class="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 cursor-pointer">Delete list</button>
+                                        </div>
                 </div>
                 <div class="mt-3 space-y-2" data-items></div>
             `;
             const itemsHost = wrap.querySelector('[data-items]');
-            (l.items || []).forEach((item: any) => {
+                        (l.items || []).forEach((item: any) => {
                 const meta = indexByKey[`${item.item_type}:${item.item_id}`] || null;
                 const title = meta?.title || `${item.item_type} ${item.item_id}`;
                 const url = meta?.url || (item.item_type === 'project' ? `/projects/${item.item_id}` : `/stays/${item.item_id}`);
@@ -202,13 +205,50 @@ import MainLayout from '../../layouts/MainLayout.astro';
                         `<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${item.item_type}</div>`}
                         <a class="font-medium hover:underline" href="${url}">${title}</a>
                     </div>
-                    <span class="text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
+                                            <button data-remove-item data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer">Remove</button>
+                                        </div>
                 `;
                 itemsHost?.appendChild(row);
             });
+                        // bind delete list
+                        const delBtn = wrap.querySelector('button[data-delete-list]');
+                        if (delBtn) {
+                            delBtn.addEventListener('click', async () => {
+                                const id = (delBtn as HTMLButtonElement).getAttribute('data-delete-list');
+                                if (!id) return;
+                                const ok = window.confirm('Delete this list? All items in it will also be removed. This cannot be undone.');
+                                if (!ok) return;
+                                try {
+                                    await deleteList(id);
+                                    await loadAndRender();
+                                } catch (e) {
+                                    console.error('Delete list failed', e);
+                                }
+                            });
+                        }
             frag.appendChild(wrap);
         });
         listsContainer.appendChild(frag);
+
+                // delegate remove buttons
+                listsContainer.querySelectorAll('button[data-remove-item]').forEach((btn) => {
+                    btn.addEventListener('click', async () => {
+                        const listId = (btn as HTMLButtonElement).getAttribute('data-list');
+                        const type = (btn as HTMLButtonElement).getAttribute('data-type') as 'project' | 'stay' | null;
+                        const id = (btn as HTMLButtonElement).getAttribute('data-id');
+                        if (!listId || !type || !id) return;
+                        const ok = window.confirm('Remove this item from the list?');
+                        if (!ok) return;
+                        try {
+                            await removeItemFromList(listId, type, id);
+                            await loadAndRender();
+                        } catch (e) {
+                            console.error('Remove item failed', e);
+                        }
+                    });
+                });
     }
 
     async function fetchIndex(){

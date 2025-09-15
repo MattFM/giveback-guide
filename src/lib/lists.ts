@@ -126,6 +126,13 @@ export async function removeItemFromList(listId: string, itemType: ItemType, ite
   return true;
 }
 
+export async function deleteList(listId: string): Promise<boolean> {
+  // Deleting the list will cascade delete its items due to FK ON DELETE CASCADE.
+  const { error } = await supabase.from('lists').delete().eq('id', listId);
+  if (error) throw error;
+  return true;
+}
+
 export async function getListsContainingItem(itemType: ItemType, itemId: string): Promise<List[]> {
   // Attempt to use a relationship select; if no foreign key relationship exists,
   // this will still return rows from list_items with nested 'lists' where available.
@@ -149,5 +156,6 @@ export default {
   createList,
   saveItemToList,
   removeItemFromList,
+  deleteList,
   getListsContainingItem,
 };
