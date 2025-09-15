@@ -180,17 +180,28 @@ import MainLayout from '../../layouts/MainLayout.astro';
             const wrap = document.createElement('div');
                         wrap.className = 'p-4 bg-white rounded-lg';
             const count = l.items?.length || 0;
-            wrap.innerHTML = `
+        const lsKey = `dashListCollapsed:${l.id}`;
+        const initialCollapsed = typeof localStorage !== 'undefined' && localStorage.getItem(lsKey) === '1';
+                        wrap.innerHTML = `
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="font-medium">${l.title}${l.is_default ? ' <span class="text-xs text-gray-500">(default)</span>' : ''}</div>
+                                                <div class="font-medium cursor-pointer" data-list-title>${l.title}${l.is_default ? ' <span class="text-xs text-gray-500">(default)</span>' : ''}</div>
                         <div class="text-sm text-gray-500">${count} item${count===1?'':'s'}</div>
                     </div>
-                                        <div class="flex items-center gap-2">
-                                                <button data-delete-list="${l.id}" class="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 cursor-pointer">Delete list</button>
-                                        </div>
+                    <div class="flex items-center gap-2">
+                                                                        <button data-toggle-list="${l.id}" aria-expanded="${initialCollapsed ? 'false' : 'true'}" aria-label="${initialCollapsed ? 'Expand list' : 'Collapse list'}" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
+                                                    <svg class="w-4 h-4 transition-transform ${initialCollapsed ? 'rotate-180' : ''}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                                                                                <button data-delete-list="${l.id}" aria-label="Delete list" title="Delete list" class="p-1 text-red-600 hover:text-red-800 rounded hover:bg-red-50 cursor-pointer">
+                                                                                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                                                                                                    </svg>
+                                                                        </button>
+                    </div>
                 </div>
-                <div class="mt-3 space-y-2" data-items></div>
+        <div class="mt-3 space-y-2 ${initialCollapsed ? 'hidden' : ''}" data-items></div>
             `;
             const itemsHost = wrap.querySelector('[data-items]');
                         (l.items || []).forEach((item: any) => {
@@ -227,6 +238,33 @@ import MainLayout from '../../layouts/MainLayout.astro';
                                     console.error('Delete list failed', e);
                                 }
                             });
+                        }
+
+                        // bind collapse/expand toggle
+                        const toggleBtn = wrap.querySelector('button[data-toggle-list]');
+                        const titleEl = wrap.querySelector('[data-list-title]');
+                        const doToggle = () => {
+                            const isHidden = itemsHost?.classList.contains('hidden');
+                            const icon = toggleBtn?.querySelector('svg');
+                            if (isHidden) {
+                                itemsHost?.classList.remove('hidden');
+                                (toggleBtn as HTMLButtonElement)?.setAttribute('aria-expanded', 'true');
+                                (toggleBtn as HTMLButtonElement)?.setAttribute('aria-label', 'Collapse list');
+                                icon?.classList.remove('rotate-180');
+                                try { localStorage.setItem(lsKey, '0'); } catch(_) {}
+                            } else {
+                                itemsHost?.classList.add('hidden');
+                                (toggleBtn as HTMLButtonElement)?.setAttribute('aria-expanded', 'false');
+                                (toggleBtn as HTMLButtonElement)?.setAttribute('aria-label', 'Expand list');
+                                icon?.classList.add('rotate-180');
+                                try { localStorage.setItem(lsKey, '1'); } catch(_) {}
+                            }
+                        };
+                        if (toggleBtn) {
+                            toggleBtn.addEventListener('click', doToggle);
+                        }
+                        if (titleEl) {
+                            titleEl.addEventListener('click', doToggle);
                         }
             frag.appendChild(wrap);
         });
