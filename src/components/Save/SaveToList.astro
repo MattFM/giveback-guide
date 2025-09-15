@@ -12,35 +12,38 @@ const { itemType = 'project', itemId = '' } = Astro.props;
 <div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} style="display:none" aria-hidden="true" class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
   <div class="mb-4">
     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Save</h3>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Save this {itemType} to your personal lists to revisit later.</p>
   </div>
-  <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Save this {itemType} to your personal lists to revisit later.</p>
-  <!-- Primary save button styled to match booking cards (full-width, modern) -->
+  <!-- Primary save button (cohesive with dashboard buttons) -->
   <button
     id={"save-btn-" + itemId}
-  class="w-full inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-4 py-3 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-  aria-expanded="false"
-  aria-controls={"save-panel-" + itemId}
-  type="button"
-  title="Save to a list"
+    class="w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md px-4 py-2 dark:focus:ring-primary-800"
+    aria-expanded="false"
+    aria-controls={"save-panel-" + itemId}
+    type="button"
+    title="Save to a list"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-pink-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 21s-7.5-4.35-10-7.25C-1 9.75 3 4 7 5.5 9 6.4 12 9 12 9s3-2.6 5-3.5c4-1.5 8 4.25 5 8.25-2.5 2.9-10 7.25-10 7.25z" />
     </svg>
     <span>Save</span>
   </button>
 
-  <!-- Inline panel (simplified; no overlay or modal) -->
-  <div id={"save-panel-" + itemId} class="hidden mt-3">
-    <h3 id={"save-modal-title-" + itemId}>Save this {itemType}</h3>
+  <!-- Inline panel -->
+  <div id={"save-panel-" + itemId} class="hidden mt-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div class="flex items-center justify-between mb-3">
+      <h3 id={"save-modal-title-" + itemId} class="text-base font-semibold text-gray-900 dark:text-white">Your Lists</h3>
+      <span class="text-xs text-gray-500">Select lists to save</span>
+    </div>
 
-    <div id={"lists-area-" + itemId} class="lists-area">Loading lists…</div>
+    <div id={"lists-area-" + itemId} class="lists-area text-sm text-gray-600 dark:text-gray-300">Loading lists…</div>
 
-    <form id={"create-form-" + itemId} class="create-form" style="margin-top: 12px; display: flex; gap: 8px;">
-      <input id={"new-title-" + itemId} placeholder="New list title" />
-      <button type="submit">Create</button>
+    <form id={"create-form-" + itemId} class="mt-4 flex items-center gap-2">
+      <input id={"new-title-" + itemId} placeholder="New list title" class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100" />
+      <button type="submit" class="px-3 py-2 bg-primary-600 text-white rounded-md text-sm hover:bg-primary-700">Create</button>
     </form>
 
-    <div id={"msg-" + itemId} class="msg" aria-live="polite" style="margin-top: 8px;"></div>
+    <div id={"msg-" + itemId} class="msg mt-2 text-sm" aria-live="polite"></div>
   </div>
 </div>
 
@@ -118,8 +121,14 @@ const { itemType = 'project', itemId = '' } = Astro.props;
 
     function showMessage(txt, isError = false) {
       if (!msgEl) return;
-      msgEl.textContent = txt || '';
-      msgEl.style.color = isError ? '#c00' : '#080';
+      // Only show errors; suppress green success confirmations to avoid duplication with per-row status.
+      msgEl.classList.remove('text-red-600');
+      if (isError && txt) {
+        msgEl.textContent = txt;
+        msgEl.classList.add('text-red-600');
+      } else {
+        msgEl.textContent = '';
+      }
     }
 
     async function refreshLists() {
@@ -140,41 +149,75 @@ const { itemType = 'project', itemId = '' } = Astro.props;
     function renderListCheckboxes() {
       if (!listsArea) return;
       if (!lists || lists.length === 0) {
-        listsArea.innerHTML = '<div>No lists</div>';
+        listsArea.innerHTML = '<div class="text-gray-500 dark:text-gray-400">You have no lists yet.</div>';
         return;
       }
       listsArea.innerHTML = '';
+      const group = document.createElement('div');
+      group.className = 'divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden';
       lists.forEach(l => {
         const row = document.createElement('div');
-        row.className = 'list-row';
+        row.className = 'flex items-center justify-between gap-3 p-3 bg-white dark:bg-gray-800';
+        row.dataset.listId = l.id;
+
+        const left = document.createElement('div');
+        left.className = 'flex items-center gap-3';
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.id = 'cb-' + l.id + '-' + itemIdStr;
         cb.checked = savedSet.has(l.id);
         cb.disabled = !!loadingMap[l.id];
+        cb.className = 'h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500';
         cb.addEventListener('change', () => toggleSave(l.id, cb.checked, cb));
+
         const label = document.createElement('label');
         label.htmlFor = cb.id;
-        label.textContent = l.title + (l.is_default ? ' (default)' : '');
-        row.appendChild(cb);
-        row.appendChild(label);
-        listsArea.appendChild(row);
+        label.className = 'text-sm text-gray-900 dark:text-gray-100';
+        label.innerHTML = `${l.title}${l.is_default ? ' <span class="ml-2 text-xs text-gray-500">(default)</span>' : ''}`;
+
+        left.appendChild(cb);
+        left.appendChild(label);
+
+  const status = document.createElement('span');
+        status.className = 'text-xs text-gray-400';
+        status.textContent = savedSet.has(l.id) ? 'Saved' : '';
+
+        row.appendChild(left);
+        row.appendChild(status);
+        group.appendChild(row);
       });
+      listsArea.appendChild(group);
     }
 
     async function toggleSave(listId, shouldSave, cbEl) {
       loadingMap[listId] = true;
       cbEl.disabled = true;
       showMessage('');
+      // Update inline status if present
+      try {
+        const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+        const status = row?.querySelector('span');
+        if (status) status.textContent = shouldSave ? 'Saving…' : 'Removing…';
+      } catch(_) {}
       try {
         if (shouldSave) {
           await listsAPI.saveItemToList(listId, itemTypeStr, itemIdStr);
           savedSet.add(listId);
-          showMessage('Saved');
+          // Success confirmation is shown inline on the row; no extra message below.
+          try {
+            const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+            const status = row?.querySelector('span');
+            if (status) status.textContent = 'Saved';
+          } catch(_) {}
         } else {
           await listsAPI.removeItemFromList(listId, itemTypeStr, itemIdStr);
           savedSet.delete(listId);
-          showMessage('Removed');
+          // Removal confirmation is shown inline on the row; no extra message below.
+          try {
+            const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+            const status = row?.querySelector('span');
+            if (status) status.textContent = '';
+          } catch(_) {}
         }
       } catch (err) {
         cbEl.checked = !shouldSave;
@@ -191,7 +234,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
         e.preventDefault();
         const title = (newTitle?.value || '').trim();
         if (!title) return showMessage('Enter a list title', true);
-        showMessage('Creating list…');
+  // Keep status quiet here; per-row/status and immediate checkbox will reflect changes.
         try {
           const created = await listsAPI.createList(title, null, false);
           lists.push(created);
@@ -199,7 +242,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
           savedSet.add(created.id);
           if (newTitle) newTitle.value = '';
           renderListCheckboxes();
-          showMessage('Created and saved');
+          // Success confirmation shown via new row state; no extra green message.
         } catch (err) {
           showMessage(err && err.message ? err.message : String(err), true);
           console.error(err);
