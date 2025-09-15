@@ -83,6 +83,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
 <script>
     import { getCurrentUser, logout } from '../../lib/auth';
+    import { getListsWithItems, getSavedCounts, createList } from '../../lib/lists';
 
     // Check if user is logged in
     const checkAuth = async () => {
@@ -144,7 +145,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
     // Check auth on page load
     checkAuth();
 
-    // --- Client-side lists UI (placeholders) ---
+    // --- Client-side lists UI (real data) ---
     const createListBtn = document.getElementById('createListBtn');
     const newListForm = document.getElementById('newListForm');
     const cancelListBtn = document.getElementById('cancelListBtn');
@@ -154,9 +155,94 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const listsCount = document.getElementById('listsCount');
     const savedCount = document.getElementById('savedCount');
 
-    // Initial placeholder counts
-    if (listsCount) listsCount.textContent = '0';
-    if (savedCount) savedCount.textContent = '0';
+    // State
+    let lists = [] as any[];
+    let indexByKey: Record<string, any> = {};
+
+    function idKeysFor(type: 'project' | 'stay', id: string){ return [`${type}:${id}`]; }
+
+    function renderLists(){
+        if (!listsContainer) return;
+        if (!lists || lists.length === 0){
+            listsContainer.innerHTML = '<div class="p-4 bg-white rounded-lg border border-dashed border-gray-200 text-sm text-gray-500">You don\'t have any lists yet. Create one to get started.</div>';
+            if (listsCount) listsCount.textContent = '0';
+            if (savedCount) savedCount.textContent = '0';
+            return;
+        }
+        listsContainer.innerHTML = '';
+        let totalItems = 0;
+        lists.forEach(l => { totalItems += (l.items?.length || 0); });
+        if (listsCount) listsCount.textContent = String(lists.length);
+        if (savedCount) savedCount.textContent = String(totalItems);
+
+        const frag = document.createDocumentFragment();
+        lists.forEach(l => {
+            const wrap = document.createElement('div');
+            wrap.className = 'p-4 bg-white rounded-lg';
+            const count = l.items?.length || 0;
+            wrap.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium">${l.title}${l.is_default ? ' <span class="text-xs text-gray-500">(default)</span>' : ''}</div>
+                        <div class="text-sm text-gray-500">${count} item${count===1?'':'s'}</div>
+                    </div>
+                </div>
+                <div class="mt-3 space-y-2" data-items></div>
+            `;
+            const itemsHost = wrap.querySelector('[data-items]');
+            (l.items || []).forEach((item: any) => {
+                const meta = indexByKey[`${item.item_type}:${item.item_id}`] || null;
+                const title = meta?.title || `${item.item_type} ${item.item_id}`;
+                const url = meta?.url || (item.item_type === 'project' ? `/projects/${item.item_id}` : `/stays/${item.item_id}`);
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between border rounded-md px-3 py-2';
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${meta?.image ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>` :
+                        `<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${item.item_type}</div>`}
+                        <a class="font-medium hover:underline" href="${url}">${title}</a>
+                    </div>
+                    <span class="text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
+                `;
+                itemsHost?.appendChild(row);
+            });
+            frag.appendChild(wrap);
+        });
+        listsContainer.appendChild(frag);
+    }
+
+    async function fetchIndex(){
+        try {
+            const res = await fetch('/api/items.json');
+            if (!res.ok) throw new Error('Failed to load item index');
+            const data = await res.json();
+            const idx: Record<string, any> = {};
+            (data.items || []).forEach((it: any) => {
+                idx[`${it.type}:${it.id}`] = it;
+                (it.altIds || []).forEach((aid: string) => { idx[`${it.type}:${aid}`] = it; });
+            });
+            indexByKey = idx;
+        } catch (e) {
+            console.warn('Item index load failed', e);
+            indexByKey = {};
+        }
+    }
+
+    async function loadAndRender(){
+        try {
+            // Ensure auth first
+            const user = await getCurrentUser();
+            if (!user) return; // redirect already handled earlier
+            const counts = await getSavedCounts();
+            if (listsCount) listsCount.textContent = String(counts.lists);
+            if (savedCount) savedCount.textContent = String(counts.items);
+            await fetchIndex();
+            lists = await getListsWithItems();
+            renderLists();
+        } catch (e) {
+            console.error('Failed loading lists', e);
+        }
+    }
 
     if (createListBtn) {
         createListBtn.addEventListener('click', () => {
@@ -173,40 +259,21 @@ import MainLayout from '../../layouts/MainLayout.astro';
     }
 
     if (addListBtn) {
-        addListBtn.addEventListener('click', (e) => {
+        addListBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             const name = (newListName as HTMLInputElement).value.trim();
             if (!name) return;
-
-            // Add placeholder list item
-            const el = document.createElement('div');
-            el.className = 'p-4 bg-white rounded-lg flex items-center justify-between';
-            el.innerHTML = `
-                <div>
-                    <div class="font-medium">${name}</div>
-                    <div class="text-sm text-gray-500">0 items</div>
-                </div>
-                <div>
-                    <a href="#" class="text-primary-600 hover:underline cursor-pointer">View</a>
-                </div>
-            `;
-
-            // If first placeholder message exists, remove it
-            if (listsContainer) {
-                const firstChild = listsContainer.querySelector('div');
-                if (firstChild && firstChild.classList.contains('border-dashed')) {
-                    listsContainer.innerHTML = '';
-                }
-                listsContainer.appendChild(el);
-
-                // Update counts (placeholders)
-                const current = parseInt(listsCount?.textContent || '0', 10) || 0;
-                if (listsCount) listsCount.textContent = String(current + 1);
+            try {
+                await createList(name, null, false);
+                (newListName as HTMLInputElement).value = '';
+                newListForm?.classList.add('hidden');
+                await loadAndRender();
+            } catch (err) {
+                console.error('Create list failed', err);
             }
-
-            // reset form
-            (newListName as HTMLInputElement).value = '';
-            newListForm?.classList.add('hidden');
         });
     }
+
+    // Initial load
+    loadAndRender();
 </script>

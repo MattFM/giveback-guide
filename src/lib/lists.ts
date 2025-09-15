@@ -19,6 +19,8 @@ export type ListItem = {
   added_at: string;
 };
 
+export type ListWithItems = List & { items: ListItem[] };
+
 async function getUserId(): Promise<string | null> {
   try {
     // Support both v2 and v1 SDK shapes
@@ -45,6 +47,50 @@ export async function getLists(): Promise<List[]> {
   } catch (err) {
     throw err;
   }
+}
+
+// Fetch lists with their items for the current user.
+export async function getListsWithItems(): Promise<ListWithItems[]> {
+  // First get lists (RLS ensures only current user's lists)
+  const { data: lists, error: listsErr } = await supabase
+    .from('lists')
+    .select('*')
+    .order('created_at', { ascending: true });
+  if (listsErr) throw listsErr;
+  const listIds = (lists || []).map((l: any) => l.id);
+  if (listIds.length === 0) return [] as any;
+
+  const { data: items, error: itemsErr } = await supabase
+    .from('list_items')
+    .select('*')
+    .in('list_id', listIds)
+    .order('added_at', { ascending: false });
+  if (itemsErr) throw itemsErr;
+
+  const grouped: Record<string, ListItem[]> = {};
+  (items || []).forEach((it: any) => {
+    grouped[it.list_id] = grouped[it.list_id] || [];
+    grouped[it.list_id].push(it as ListItem);
+  });
+
+  return (lists || []).map((l: any) => ({ ...(l as List), items: grouped[l.id] || [] }));
+}
+
+// Count helper for dashboard statistics
+export async function getSavedCounts(): Promise<{ lists: number; items: number }>{
+  const { data: lists, error: listsErr } = await supabase
+    .from('lists')
+    .select('id');
+  if (listsErr) throw listsErr;
+  const listIds = (lists || []).map((l: any) => l.id);
+  if (listIds.length === 0) return { lists: 0, items: 0 };
+
+  const { count, error: itemsErr } = await supabase
+    .from('list_items')
+    .select('id', { count: 'exact', head: true })
+    .in('list_id', listIds);
+  if (itemsErr) throw itemsErr;
+  return { lists: listIds.length, items: count || 0 };
 }
 
 export async function createList(title: string, description?: string | null, makeDefault = false): Promise<List> {
@@ -98,6 +144,8 @@ export async function getListsContainingItem(itemType: ItemType, itemId: string)
 
 export default {
   getLists,
+  getListsWithItems,
+  getSavedCounts,
   createList,
   saveItemToList,
   removeItemFromList,
