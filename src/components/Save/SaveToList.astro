@@ -7,30 +7,41 @@
   Usage:
     <SaveToList itemType="project" itemId="test-project-123" />
 */
-const { itemType = 'project', itemId = '' } = Astro.props;
+const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = false, mobileFullWidth = false } = Astro.props;
 ---
-<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} style="display:none" aria-hidden="true" class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-  <div class="mb-4">
-    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Save</h3>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Save this {itemType} to your personal lists to revisit later.</p>
-  </div>
-  <!-- Primary save button (cohesive with dashboard buttons) -->
+<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} style="display:none" aria-hidden="true" class={variant === 'minimal' ? '' : 'bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
+  {variant !== 'minimal' && (
+    <div class="mb-4">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Save</h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Save this {itemType} to your personal lists to revisit later.</p>
+    </div>
+  )}
+  <!-- Save trigger -->
   <button
     id={"save-btn-" + itemId}
-    class="w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md px-4 py-2 dark:focus:ring-primary-800"
+    class={
+      variant === 'minimal'
+        ? `${mobileFullWidth ? 'w-full sm:w-auto ' : ''}inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
+        : 'w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md px-4 py-2 dark:focus:ring-primary-800'
+    }
     aria-expanded="false"
     aria-controls={"save-panel-" + itemId}
     type="button"
     title="Save to a list"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 21s-7.5-4.35-10-7.25C-1 9.75 3 4 7 5.5 9 6.4 12 9 12 9s3-2.6 5-3.5c4-1.5 8 4.25 5 8.25-2.5 2.9-10 7.25-10 7.25z" />
+    <!-- Save icon (unsaved) -->
+    <svg id={"save-ic-off-" + itemId} class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
     </svg>
-    <span>Save</span>
+    <!-- Save icon (saved) -->
+    <svg id={"save-ic-on-" + itemId} class="w-6 h-6 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+      <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
+    </svg>
+  <span id={"save-label-" + itemId} class={variant === 'minimal' ? (mobileShowLabel ? '' : 'hidden sm:inline') : ''}>Save</span>
   </button>
 
   <!-- Inline panel -->
-  <div id={"save-panel-" + itemId} class="hidden mt-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+  <div id={"save-panel-" + itemId} class={variant === 'minimal' ? 'hidden mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700' : 'hidden mt-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700'}>
     <div class="flex items-center justify-between mb-3">
       <h3 id={"save-modal-title-" + itemId} class="text-base font-semibold text-gray-900 dark:text-white">Your Lists</h3>
       <span class="text-xs text-gray-500">Select lists to save</span>
@@ -101,10 +112,56 @@ const { itemType = 'project', itemId = '' } = Astro.props;
   const newTitle = root.querySelector(`[id="new-title-${itemIdStr}"]`);
 
   try { console.debug('SaveToList init', { itemId: itemIdStr, type: itemTypeStr, foundBtn: !!btn, foundPanel: !!panel, root }); } catch(_) {}
+    function updateSaveButtonIcon() {
+      try {
+        const off = document.getElementById('save-ic-off-' + itemIdStr);
+        const on = document.getElementById('save-ic-on-' + itemIdStr);
+        const label = document.getElementById('save-label-' + itemIdStr);
+        const isSaved = savedSet && savedSet.size > 0;
+        if (off && on) {
+          if (isSaved) {
+            off.classList.add('hidden');
+            on.classList.remove('hidden');
+            if (btn) btn.title = 'Saved to your lists';
+          } else {
+            on.classList.add('hidden');
+            off.classList.remove('hidden');
+            if (btn) btn.title = 'Save to a list';
+          }
+        }
+        if (label) {
+          label.textContent = isSaved ? 'Saved' : 'Save';
+        }
+        // Toggle visual prominence classes on the button itself
+        if (btn) {
+          const inactive = ['bg-white','hover:bg-gray-50','text-gray-700','border-gray-300','focus:ring-blue-500'];
+          const active = ['bg-primary-600','hover:bg-primary-700','text-white','border-primary-600','focus:ring-primary-300','shadow'];
+          if (isSaved) {
+            inactive.forEach(c => btn.classList.remove(c));
+            active.forEach(c => btn.classList.add(c));
+          } else {
+            active.forEach(c => btn.classList.remove(c));
+            inactive.forEach(c => btn.classList.add(c));
+          }
+        }
+      } catch {}
+    }
+
 
     let lists = [];
     let savedSet = new Set();
     let loadingMap = {};
+
+    // Preload saved state so the Save button is accurate on initial render
+    (async () => {
+      try {
+        const containing = await listsAPI.getListsContainingItem(itemTypeStr, itemIdStr);
+        savedSet = new Set((containing || []).map(l => l.id));
+        updateSaveButtonIcon();
+      } catch (_) {
+        // ignore
+      }
+    })();
 
     function togglePanel(show) {
       if (!panel) return;
@@ -131,7 +188,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
       }
     }
 
-    async function refreshLists() {
+  async function refreshLists() {
       if (!listsArea) return;
       listsArea.textContent = 'Loading lists…';
       try {
@@ -139,6 +196,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
         const containing = await listsAPI.getListsContainingItem(itemTypeStr, itemIdStr);
         savedSet = new Set((containing || []).map(l => l.id));
         renderListCheckboxes();
+    updateSaveButtonIcon();
       } catch (err) {
         const errMsg = (err && (err.message || err.error || JSON.stringify(err))) || String(err);
         listsArea.textContent = 'Unable to load lists: ' + errMsg;
@@ -200,7 +258,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
         if (status) status.textContent = shouldSave ? 'Saving…' : 'Removing…';
       } catch(_) {}
       try {
-        if (shouldSave) {
+  if (shouldSave) {
           await listsAPI.saveItemToList(listId, itemTypeStr, itemIdStr);
           savedSet.add(listId);
           // Success confirmation is shown inline on the row; no extra message below.
@@ -226,6 +284,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
       } finally {
         loadingMap[listId] = false;
         cbEl.disabled = false;
+  updateSaveButtonIcon();
       }
     }
 
@@ -242,6 +301,7 @@ const { itemType = 'project', itemId = '' } = Astro.props;
           savedSet.add(created.id);
           if (newTitle) newTitle.value = '';
           renderListCheckboxes();
+          updateSaveButtonIcon();
           // Success confirmation shown via new row state; no extra green message.
         } catch (err) {
           showMessage(err && err.message ? err.message : String(err), true);

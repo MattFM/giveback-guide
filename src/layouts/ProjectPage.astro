@@ -7,7 +7,7 @@ import { getCollection } from "astro:content";
 import SupportBox from "../components/Projects/SupportBox.astro";
 import SubscribeDrawer from "../components/Popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ResponsiveImage.astro";
-import SaveToList from "../components/Save/SaveToList.astro";
+import ActionRow from "../components/Actions/ActionRow.astro";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -25,6 +25,7 @@ const localeString = Array.isArray(properties.pLocale)
 const description = `Give back to the local community in ${localeString} by engaging with ${properties.pOrganiser} on your next trip.`;
 
 const allProjects = await getCollection("projects");
+const actionId = String((properties as any).pID ?? (properties as any).pSlug ?? '').trim();
 
 // Filter related projects
 const relatedProjects = allProjects
@@ -370,10 +371,12 @@ const relatedProjects = allProjects
           </div>
         </section>
 
-        <!-- Save Section (mobile only: appears above the mobile Get Involved card) -->
-  <section class="px-4 lg:hidden">
-          {(() => { const id = String(properties.pID ?? properties.pSlug ?? '').trim(); return id ? <SaveToList itemType="project" itemId={id} /> : null; })()}
-        </section>
+        <!-- Actions Row (Save, Done, Copy) -->
+        {actionId && (
+          <section class="py-2 px-4">
+            <ActionRow itemType="project" itemId={actionId} />
+          </section>
+        )}
 
         <!-- Get Involved Card (mobile only) -->
         <section class="py-6 px-4 lg:hidden">
@@ -676,8 +679,6 @@ const relatedProjects = allProjects
     <!-- Aside column (desktop only) -->
       <aside class="hidden lg:block pt-16">
         <div class="sticky top-24 space-y-6">
-          <!-- Save Section (desktop) -->
-          {(() => { const id = String(properties.pID ?? properties.pSlug ?? '').trim(); return id ? <SaveToList itemType="project" itemId={id} /> : null; })()}
           <!-- Get Involved Card (desktop only) -->
           <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
             <div class="mb-4">
