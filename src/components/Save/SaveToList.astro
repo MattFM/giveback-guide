@@ -7,7 +7,6 @@
   Usage:
     <SaveToList itemType="project" itemId="test-project-123" />
 */
-import saveClientUrl from './saveToList.client.ts?url';
 const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = false, mobileFullWidth = false } = Astro.props;
 ---
 <div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} class={variant === 'minimal' ? '' : 'bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
@@ -79,8 +78,411 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       <button type="submit" class="px-3 py-2 bg-primary-600 text-white rounded-md text-sm hover:bg-primary-700">Create</button>
     </form>
 
-    <div id={"msg-" + itemId} class="msg mt-2 text-sm" aria-live="polite"></div>
   </div>
 </div>
 
-<script type="module" src={saveClientUrl}></script>
+<script is:inline>
+// Inline SaveToList client logic to avoid MIME type issues in production
+(async function() {
+  
+  // Helper functions for API calls (replaces module imports)
+  async function getCurrentUser() {
+    try {
+      // Direct fetch to check auth status
+      const response = await fetch('/api/auth/user', { method: 'GET' });
+      if (response.ok) {
+        const data = await response.json();
+        return data.user || null;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function getLists() {
+    const response = await fetch('/api/lists');
+    if (!response.ok) throw new Error('Failed to fetch lists');
+    return response.json();
+  }
+
+  async function getListsContainingItem(itemType, itemId) {
+    const response = await fetch(`/api/lists/containing/${itemType}/${itemId}`);
+    if (!response.ok) throw new Error('Failed to fetch containing lists');
+    return response.json();
+  }
+
+  async function saveItemToList(listId, itemType, itemId) {
+    const response = await fetch('/api/lists/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ listId, itemType, itemId })
+    });
+    if (!response.ok) throw new Error('Failed to save item');
+    return response.json();
+  }
+
+  async function removeItemFromList(listId, itemType, itemId) {
+    const response = await fetch('/api/lists/remove', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ listId, itemType, itemId })
+    });
+    if (!response.ok) throw new Error('Failed to remove item');
+    return response.json();
+  }
+
+  async function createList(title) {
+    const response = await fetch('/api/lists/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+    if (!response.ok) throw new Error('Failed to create list');
+    return response.json();
+  }
+
+  async function getCompletedStatus(itemType, itemId) {
+    const response = await fetch(`/api/completed/${itemType}/${itemId}`);
+    if (!response.ok) throw new Error('Failed to get status');
+    return response.json();
+  }
+
+  async function setCompleted(itemType, itemId, isCompleted) {
+    const response = await fetch('/api/completed/set', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemType, itemId, isCompleted })
+    });
+    if (!response.ok) throw new Error('Failed to set completed');
+    return response.json();
+  }
+
+  async function initSave(root) {
+    // prevent duplicate init in HMR
+    if (root?.dataset?.saveBound === '1') return;
+    root.dataset.saveBound = '1';
+
+    // Check authentication first
+    const user = await getCurrentUser();
+    if (!user) {
+      // Hide the component for non-authenticated users
+      root.style.display = 'none';
+      return;
+    }
+
+    const itemIdStr = root?.dataset?.itemId || '';
+    const itemTypeStr = root?.dataset?.itemType || 'project';
+
+    const $ = (sel) => root.querySelector(sel);
+    const byId = (id) => document.getElementById(id);
+
+    if (!itemIdStr) {
+      const btn = $('[id^="save-btn-"]');
+      const doneBtn = $('[id^="done-btn-"]');
+      const listsArea = $('[id^="lists-area-"]');
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        btn.style.opacity = '0.6';
+        btn.style.pointerEvents = 'none';
+      }
+      if (doneBtn) {
+        doneBtn.setAttribute('disabled', 'true');
+        doneBtn.style.opacity = '0.6';
+        doneBtn.style.pointerEvents = 'none';
+      }
+      if (listsArea) listsArea.textContent = 'Save unavailable: missing item id.';
+      return;
+    }
+
+    // scoped references
+    const btn = $(`#save-btn-${itemIdStr}`);
+    const panel = $(`#save-panel-${itemIdStr}`);
+    const listsArea = $(`#lists-area-${itemIdStr}`);
+    const msgEl = $(`#msg-${itemIdStr}`);
+    const doneBtn = $(`#done-btn-${itemIdStr}`);
+    const actionsMsg = $(`#actions-msg-${itemIdStr}`);
+    const createForm = $(`#create-form-${itemIdStr}`);
+    const newTitle = $(`#new-title-${itemIdStr}`);
+
+    let lists = [];
+    let savedSet = new Set();
+    const loadingMap = {};
+
+    function updateSaveButtonIcon() {
+      try {
+        const off = byId('save-ic-off-' + itemIdStr);
+        const on = byId('save-ic-on-' + itemIdStr);
+        const label = byId('save-label-' + itemIdStr);
+        const isSaved = savedSet && savedSet.size > 0;
+        if (off && on) {
+          if (isSaved) {
+            off.classList.add('hidden');
+            on.classList.remove('hidden');
+            if (btn) btn.title = 'Saved to your lists';
+          } else {
+            on.classList.add('hidden');
+            off.classList.remove('hidden');
+            if (btn) btn.title = 'Save to a list';
+          }
+        }
+        if (label) label.textContent = isSaved ? 'Saved' : 'Save';
+        if (btn) {
+          const inactive = ['bg-white','hover:bg-gray-50','text-gray-700','border-gray-300','focus:ring-blue-500'];
+          const active = ['bg-primary-600','hover:bg-primary-700','text-white','border-primary-600','focus:ring-primary-300','shadow'];
+          if (isSaved) {
+            inactive.forEach(c => btn.classList.remove(c));
+            active.forEach(c => btn.classList.add(c));
+          } else {
+            active.forEach(c => btn.classList.remove(c));
+            inactive.forEach(c => btn.classList.add(c));
+          }
+        }
+      } catch {}
+    }
+
+    // preload saved + done state
+    try {
+      const containing = await getListsContainingItem(itemTypeStr, itemIdStr);
+      savedSet = new Set((containing || []).map(l => l.id));
+      updateSaveButtonIcon();
+    } catch {}
+    try {
+      const status = await getCompletedStatus(itemTypeStr, itemIdStr);
+      setDoneButtonVisual(!!(status && status.is_completed));
+    } catch {}
+
+    function togglePanel(show) {
+      if (!panel) return;
+      const shouldShow = typeof show === 'boolean' ? show : panel.classList.contains('hidden');
+      if (shouldShow) {
+        panel.classList.remove('hidden');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      } else {
+        panel.classList.add('hidden');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+        showMessage('');
+      }
+    }
+
+    function setDoneButtonVisual(isDone) {
+      if (!doneBtn) return;
+      doneBtn.setAttribute('aria-pressed', String(isDone));
+      const off = byId('done-ic-off-' + itemIdStr);
+      const on = byId('done-ic-on-' + itemIdStr);
+      const label = byId('done-label-' + itemIdStr);
+      const inactive = ['bg-white','hover:bg-gray-50','text-gray-700','border-gray-300','focus:ring-blue-500'];
+      const active = ['bg-primary-600','hover:bg-primary-700','text-white','border-primary-600','focus:ring-primary-300','shadow'];
+      if (isDone) {
+        inactive.forEach(c => doneBtn.classList.remove(c));
+        active.forEach(c => doneBtn.classList.add(c));
+      } else {
+        active.forEach(c => doneBtn.classList.remove(c));
+        inactive.forEach(c => doneBtn.classList.add(c));
+      }
+      if (off && on) {
+        if (isDone) { off.classList.add('hidden'); on.classList.remove('hidden'); }
+        else { on.classList.add('hidden'); off.classList.remove('hidden'); }
+      }
+      if (label) label.textContent = isDone ? 'Done' : 'Mark as done';
+      doneBtn.title = isDone ? 'Marked as done' : 'Mark as done';
+    }
+
+    function showMessage(txt, isError = false) {
+      if (!msgEl) return;
+      msgEl.classList.remove('text-red-600');
+      if (isError && txt) {
+        msgEl.textContent = txt;
+        msgEl.classList.add('text-red-600');
+      } else {
+        msgEl.textContent = '';
+      }
+    }
+
+    async function refreshLists() {
+      if (!listsArea) return;
+      listsArea.textContent = 'Loading lists…';
+      try {
+        lists = await getLists();
+        const containing = await getListsContainingItem(itemTypeStr, itemIdStr);
+        savedSet = new Set((containing || []).map(l => l.id));
+        renderListCheckboxes();
+        updateSaveButtonIcon();
+      } catch (err) {
+        const errMsg = (err && (err.message || err.error || JSON.stringify(err))) || String(err);
+        listsArea.textContent = 'Unable to load lists: ' + errMsg;
+        console.error('refreshLists error:', err);
+      }
+    }
+
+    function renderListCheckboxes() {
+      if (!listsArea) return;
+      if (!lists || lists.length === 0) {
+        listsArea.innerHTML = '<div class="text-gray-500 dark:text-gray-400">You have no lists yet.</div>';
+        return;
+      }
+      listsArea.innerHTML = '';
+      const group = document.createElement('div');
+      group.className = 'divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden';
+      lists.forEach((l) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 p-3 bg-white dark:bg-gray-800';
+        row.dataset.listId = l.id;
+
+        const left = document.createElement('div');
+        left.className = 'flex items-center gap-3';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = 'cb-' + l.id + '-' + itemIdStr;
+        cb.checked = savedSet.has(l.id);
+        cb.disabled = !!loadingMap[l.id];
+        cb.className = 'h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500';
+        cb.addEventListener('change', () => toggleSave(l.id, cb.checked, cb));
+
+        const label = document.createElement('label');
+        label.htmlFor = cb.id;
+        label.className = 'text-sm text-gray-900 dark:text-gray-100';
+        label.innerHTML = `${l.title}${l.is_default ? ' <span class="ml-2 text-xs text-gray-500">(default)</span>' : ''}`;
+
+        left.appendChild(cb);
+        left.appendChild(label);
+
+        const status = document.createElement('span');
+        status.className = 'text-xs text-gray-400';
+        status.textContent = savedSet.has(l.id) ? 'Saved' : '';
+
+        row.appendChild(left);
+        row.appendChild(status);
+        group.appendChild(row);
+      });
+      listsArea.appendChild(group);
+    }
+
+    async function toggleSave(listId, shouldSave, cbEl) {
+      loadingMap[listId] = true;
+      cbEl.disabled = true;
+      showMessage('');
+      try {
+        const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+        const status = row?.querySelector('span');
+        if (status) status.textContent = shouldSave ? 'Saving…' : 'Removing…';
+      } catch {}
+      try {
+        if (shouldSave) {
+          await saveItemToList(listId, itemTypeStr, itemIdStr);
+          savedSet.add(listId);
+          const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+          const status = row?.querySelector('span');
+          if (status) status.textContent = 'Saved';
+        } else {
+          await removeItemFromList(listId, itemTypeStr, itemIdStr);
+          savedSet.delete(listId);
+          const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+          const status = row?.querySelector('span');
+          if (status) status.textContent = '';
+        }
+      } catch (err) {
+        cbEl.checked = !shouldSave;
+        showMessage(err && err.message ? err.message : String(err), true);
+        console.error(err);
+      } finally {
+        loadingMap[listId] = false;
+        cbEl.disabled = false;
+        updateSaveButtonIcon();
+      }
+    }
+
+    if (createForm) {
+      createForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = (newTitle?.value || '').trim();
+        if (!title) return showMessage('Enter a list title', true);
+        try {
+          const created = await createList(title);
+          lists.push(created);
+          await saveItemToList(created.id, itemTypeStr, itemIdStr);
+          savedSet.add(created.id);
+          if (newTitle) newTitle.value = '';
+          renderListCheckboxes();
+          updateSaveButtonIcon();
+        } catch (err) {
+          showMessage(err && err.message ? err.message : String(err), true);
+          console.error(err);
+        }
+      });
+    }
+
+    if (btn) {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!panel) return;
+        const isHidden = panel.classList.contains('hidden');
+        if (isHidden) {
+          togglePanel(true);
+          await refreshLists();
+          if (newTitle) newTitle.focus();
+        } else {
+          togglePanel(false);
+        }
+      });
+    }
+
+    if (btn) {
+      btn.addEventListener('keydown', async (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        if (!panel) return;
+        const isHidden = panel.classList.contains('hidden');
+        if (isHidden) {
+          togglePanel(true);
+          await refreshLists();
+          if (newTitle) newTitle.focus();
+        } else {
+          togglePanel(false);
+        }
+      });
+    }
+
+    if (doneBtn) {
+      doneBtn.addEventListener('click', async () => {
+        if (actionsMsg) actionsMsg.textContent = '';
+        const pressed = (doneBtn.getAttribute('aria-pressed') === 'true');
+        const next = !pressed;
+        setDoneButtonVisual(next);
+        try {
+          const res = await setCompleted(itemTypeStr, itemIdStr, next);
+          if (!res) {
+            setDoneButtonVisual(pressed);
+            if (actionsMsg) actionsMsg.textContent = 'Please log in to mark as done.';
+            return;
+          }
+          const status = await getCompletedStatus(itemTypeStr, itemIdStr);
+          setDoneButtonVisual(!!(status && status.is_completed));
+        } catch {
+          setDoneButtonVisual(pressed);
+          if (actionsMsg) actionsMsg.textContent = 'Unable to update status.';
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel && !panel.classList.contains('hidden')) {
+        togglePanel(false);
+      }
+    });
+  }
+
+  function initAll() {
+    const roots = document.querySelectorAll('[id^="save-root-"][data-item-id]');
+    if (roots && roots.length) roots.forEach((r) => initSave(r));
+    else {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[id^="save-root-"][data-item-id]').forEach((r) => initSave(r));
+      });
+    }
+  }
+
+  initAll();
+})();
+</script>
