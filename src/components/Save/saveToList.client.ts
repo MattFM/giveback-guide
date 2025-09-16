@@ -1,10 +1,19 @@
 import * as listsAPI from '../../lib/lists';
 import * as completed from '../../lib/completed';
+import { getCurrentUser } from '../../lib/supabase';
 
 async function initSave(root: Element) {
   // prevent duplicate init in HMR
   if ((root as HTMLElement)?.dataset?.saveBound === '1') return;
   (root as HTMLElement).dataset.saveBound = '1';
+
+  // Check authentication first
+  const user = await getCurrentUser();
+  if (!user) {
+    // Hide the component for non-authenticated users
+    (root as HTMLElement).style.display = 'none';
+    return;
+  }
 
   const itemIdStr = (root as HTMLElement)?.dataset?.itemId || '';
   const itemTypeStr = (root as HTMLElement)?.dataset?.itemType || 'project';
