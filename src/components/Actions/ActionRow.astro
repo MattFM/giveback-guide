@@ -43,8 +43,8 @@ import SaveToList from "../Save/SaveToList.astro";
 </div>
 
 <script type="module">
-  import { getCurrentUser } from '/src/lib/auth';
-  import * as completed from '/src/lib/completed';
+  import { getCurrentUser } from '../../lib/auth';
+  import * as completed from '../../lib/completed';
 
   async function initActionRow(root) {
     if (!root || root.dataset.bound === '1') return;
