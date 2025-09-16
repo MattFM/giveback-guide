@@ -7,7 +7,7 @@ import { getCollection } from "astro:content";
 import SupportBox from "../components/Projects/SupportBox.astro";
 import SubscribeDrawer from "../components/Popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ResponsiveImage.astro";
-import ActionRow from "../components/Actions/ActionRow.astro";
+import SaveToList from "../components/Save/SaveToList.astro";
 
 type Props = CollectionEntry<"stays">["data"];
 
@@ -177,10 +177,10 @@ if (images.length === 0) {
           />
         </section>
 
-        <!-- Actions Row (Save, Done, Copy) -->
+        <!-- Actions (Save, Done) -->
         {actionId && (
           <section class="py-2 px-4">
-            <ActionRow itemType="stay" itemId={actionId} />
+            <SaveToList itemType="stay" itemId={actionId} variant="minimal" mobileShowLabel={true} mobileFullWidth={true} />
           </section>
         )}
 
@@ -391,7 +391,7 @@ if (images.length === 0) {
           </div>
         </section>
 
-  <!-- Save Section moved into ActionRow above -->
+  
 
         <!-- Booking Card (mobile only) -->
         <section class="py-6 px-4 lg:hidden">

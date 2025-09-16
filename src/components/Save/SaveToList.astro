@@ -7,38 +7,63 @@
   Usage:
     <SaveToList itemType="project" itemId="test-project-123" />
 */
+import saveClientUrl from './saveToList.client.ts?url';
 const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = false, mobileFullWidth = false } = Astro.props;
 ---
-<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} style="display:none" aria-hidden="true" class={variant === 'minimal' ? '' : 'bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
+<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} class={variant === 'minimal' ? '' : 'bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
   {variant !== 'minimal' && (
     <div class="mb-4">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Save</h3>
       <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Save this {itemType} to your personal lists to revisit later.</p>
     </div>
   )}
-  <!-- Save trigger -->
-  <button
-    id={"save-btn-" + itemId}
-    class={
-      variant === 'minimal'
-        ? `${mobileFullWidth ? 'w-full sm:w-auto ' : ''}inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
-        : 'w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md px-4 py-2 dark:focus:ring-primary-800'
-    }
-    aria-expanded="false"
-    aria-controls={"save-panel-" + itemId}
-    type="button"
-    title="Save to a list"
-  >
-    <!-- Save icon (unsaved) -->
-    <svg id={"save-ic-off-" + itemId} class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
-    </svg>
-    <!-- Save icon (saved) -->
-    <svg id={"save-ic-on-" + itemId} class="w-6 h-6 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-      <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
-    </svg>
-  <span id={"save-label-" + itemId} class={variant === 'minimal' ? (mobileShowLabel ? '' : 'hidden sm:inline') : ''}>Save</span>
-  </button>
+  <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:flex-wrap sm:items-center">
+    <!-- Save trigger -->
+    <button
+      id={"save-btn-" + itemId}
+      class={
+        variant === 'minimal'
+          ? `${mobileFullWidth ? 'w-full sm:w-auto ' : ''}inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
+          : 'w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md px-4 py-2 dark:focus:ring-primary-800'
+      }
+      aria-expanded="false"
+      aria-controls={"save-panel-" + itemId}
+      type="button"
+      title="Save to a list"
+    >
+      <!-- Save icon (unsaved) -->
+      <svg id={"save-ic-off-" + itemId} class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
+      </svg>
+      <!-- Save icon (saved) -->
+      <svg id={"save-ic-on-" + itemId} class="w-6 h-6 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
+      </svg>
+      <span id={"save-label-" + itemId} class={variant === 'minimal' ? (mobileShowLabel ? '' : 'hidden sm:inline') : ''}>Save</span>
+    </button>
+
+    <!-- Done toggle -->
+    <button
+      id={"done-btn-" + itemId}
+      type="button"
+      class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      aria-pressed="false"
+      aria-label="Mark as done"
+      title="Mark as done"
+    >
+      <!-- Done icon (not completed) -->
+      <svg id={"done-ic-off-" + itemId} class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+      </svg>
+      <!-- Done icon (completed) -->
+      <svg id={"done-ic-on-" + itemId} class="w-6 h-6 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
+      </svg>
+      <span id={"done-label-" + itemId}>Mark as done</span>
+    </button>
+  </div>
+
+  <div id={"actions-msg-" + itemId} class="mt-2 text-sm" aria-live="polite"></div>
 
   <!-- Inline panel -->
   <div id={"save-panel-" + itemId} class={variant === 'minimal' ? 'hidden mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700' : 'hidden mt-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700'}>
@@ -58,310 +83,4 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
   </div>
 </div>
 
-<script type="module">
-  import * as listsAPI from '../../lib/lists';
-  import { getCurrentUser } from '../../lib/auth';
-
-  async function initSave(root) {
-  if (root?.dataset?.saveBound === '1') return; // prevent duplicate init in HMR
-  root.dataset.saveBound = '1';
-    // Auth gate: hide by default; only show for logged-in users
-    try {
-      const user = await getCurrentUser();
-      if (!user) {
-        // remain hidden for anonymous users (and wrapper stays hidden)
-        return;
-      }
-      // Show entire Save box if wrapped, else just the component root
-      const wrapper = root.closest('[data-save-wrapper]');
-      if (wrapper) {
-        wrapper.style.display = '';
-        wrapper.removeAttribute('aria-hidden');
-      }
-      root.style.display = '';
-      root.removeAttribute('aria-hidden');
-    } catch (e) {
-      // On error determining auth, keep hidden
-      return;
-    }
-    const itemIdStr = root?.dataset?.itemId || '';
-    const itemTypeStr = root?.dataset?.itemType || 'project';
-
-    if (!itemIdStr) {
-      const btn = root.querySelector('[id^="save-btn-"]');
-      const listsArea = root.querySelector('[id^="lists-area-"]');
-      const msgEl = root.querySelector('[id^="msg-"]');
-      if (btn) {
-        btn.setAttribute('disabled', 'true');
-        btn.setAttribute('aria-disabled', 'true');
-        btn.title = 'Save unavailable (missing item id)';
-        btn.style.opacity = '0.6';
-        btn.style.pointerEvents = 'none';
-      }
-      if (listsArea) listsArea.textContent = 'Save unavailable: missing item id.';
-      if (msgEl) msgEl.textContent = '';
-      return;
-    }
-
-  // Scope all lookups to this root to avoid duplicate-id collisions
-  const btn = root.querySelector(`[id="save-btn-${itemIdStr}"]`);
-  const panel = root.querySelector(`[id="save-panel-${itemIdStr}"]`);
-  const listsArea = root.querySelector(`[id="lists-area-${itemIdStr}"]`);
-  const msgEl = root.querySelector(`[id="msg-${itemIdStr}"]`);
-  const createForm = root.querySelector(`[id="create-form-${itemIdStr}"]`);
-  const newTitle = root.querySelector(`[id="new-title-${itemIdStr}"]`);
-
-  try { console.debug('SaveToList init', { itemId: itemIdStr, type: itemTypeStr, foundBtn: !!btn, foundPanel: !!panel, root }); } catch(_) {}
-    function updateSaveButtonIcon() {
-      try {
-        const off = document.getElementById('save-ic-off-' + itemIdStr);
-        const on = document.getElementById('save-ic-on-' + itemIdStr);
-        const label = document.getElementById('save-label-' + itemIdStr);
-        const isSaved = savedSet && savedSet.size > 0;
-        if (off && on) {
-          if (isSaved) {
-            off.classList.add('hidden');
-            on.classList.remove('hidden');
-            if (btn) btn.title = 'Saved to your lists';
-          } else {
-            on.classList.add('hidden');
-            off.classList.remove('hidden');
-            if (btn) btn.title = 'Save to a list';
-          }
-        }
-        if (label) {
-          label.textContent = isSaved ? 'Saved' : 'Save';
-        }
-        // Toggle visual prominence classes on the button itself
-        if (btn) {
-          const inactive = ['bg-white','hover:bg-gray-50','text-gray-700','border-gray-300','focus:ring-blue-500'];
-          const active = ['bg-primary-600','hover:bg-primary-700','text-white','border-primary-600','focus:ring-primary-300','shadow'];
-          if (isSaved) {
-            inactive.forEach(c => btn.classList.remove(c));
-            active.forEach(c => btn.classList.add(c));
-          } else {
-            active.forEach(c => btn.classList.remove(c));
-            inactive.forEach(c => btn.classList.add(c));
-          }
-        }
-      } catch {}
-    }
-
-
-    let lists = [];
-    let savedSet = new Set();
-    let loadingMap = {};
-
-    // Preload saved state so the Save button is accurate on initial render
-    (async () => {
-      try {
-        const containing = await listsAPI.getListsContainingItem(itemTypeStr, itemIdStr);
-        savedSet = new Set((containing || []).map(l => l.id));
-        updateSaveButtonIcon();
-      } catch (_) {
-        // ignore
-      }
-    })();
-
-    function togglePanel(show) {
-      if (!panel) return;
-      const shouldShow = show ?? panel.classList.contains('hidden');
-      if (shouldShow) {
-        panel.classList.remove('hidden');
-        if (btn) btn.setAttribute('aria-expanded', 'true');
-      } else {
-        panel.classList.add('hidden');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-        showMessage('');
-      }
-    }
-
-    function showMessage(txt, isError = false) {
-      if (!msgEl) return;
-      // Only show errors; suppress green success confirmations to avoid duplication with per-row status.
-      msgEl.classList.remove('text-red-600');
-      if (isError && txt) {
-        msgEl.textContent = txt;
-        msgEl.classList.add('text-red-600');
-      } else {
-        msgEl.textContent = '';
-      }
-    }
-
-  async function refreshLists() {
-      if (!listsArea) return;
-      listsArea.textContent = 'Loading lists…';
-      try {
-        lists = await listsAPI.getLists();
-        const containing = await listsAPI.getListsContainingItem(itemTypeStr, itemIdStr);
-        savedSet = new Set((containing || []).map(l => l.id));
-        renderListCheckboxes();
-    updateSaveButtonIcon();
-      } catch (err) {
-        const errMsg = (err && (err.message || err.error || JSON.stringify(err))) || String(err);
-        listsArea.textContent = 'Unable to load lists: ' + errMsg;
-        console.error('refreshLists error:', err);
-      }
-    }
-
-    function renderListCheckboxes() {
-      if (!listsArea) return;
-      if (!lists || lists.length === 0) {
-        listsArea.innerHTML = '<div class="text-gray-500 dark:text-gray-400">You have no lists yet.</div>';
-        return;
-      }
-      listsArea.innerHTML = '';
-      const group = document.createElement('div');
-      group.className = 'divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden';
-      lists.forEach(l => {
-        const row = document.createElement('div');
-        row.className = 'flex items-center justify-between gap-3 p-3 bg-white dark:bg-gray-800';
-        row.dataset.listId = l.id;
-
-        const left = document.createElement('div');
-        left.className = 'flex items-center gap-3';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.id = 'cb-' + l.id + '-' + itemIdStr;
-        cb.checked = savedSet.has(l.id);
-        cb.disabled = !!loadingMap[l.id];
-        cb.className = 'h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500';
-        cb.addEventListener('change', () => toggleSave(l.id, cb.checked, cb));
-
-        const label = document.createElement('label');
-        label.htmlFor = cb.id;
-        label.className = 'text-sm text-gray-900 dark:text-gray-100';
-        label.innerHTML = `${l.title}${l.is_default ? ' <span class="ml-2 text-xs text-gray-500">(default)</span>' : ''}`;
-
-        left.appendChild(cb);
-        left.appendChild(label);
-
-  const status = document.createElement('span');
-        status.className = 'text-xs text-gray-400';
-        status.textContent = savedSet.has(l.id) ? 'Saved' : '';
-
-        row.appendChild(left);
-        row.appendChild(status);
-        group.appendChild(row);
-      });
-      listsArea.appendChild(group);
-    }
-
-    async function toggleSave(listId, shouldSave, cbEl) {
-      loadingMap[listId] = true;
-      cbEl.disabled = true;
-      showMessage('');
-      // Update inline status if present
-      try {
-        const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
-        const status = row?.querySelector('span');
-        if (status) status.textContent = shouldSave ? 'Saving…' : 'Removing…';
-      } catch(_) {}
-      try {
-  if (shouldSave) {
-          await listsAPI.saveItemToList(listId, itemTypeStr, itemIdStr);
-          savedSet.add(listId);
-          // Success confirmation is shown inline on the row; no extra message below.
-          try {
-            const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
-            const status = row?.querySelector('span');
-            if (status) status.textContent = 'Saved';
-          } catch(_) {}
-        } else {
-          await listsAPI.removeItemFromList(listId, itemTypeStr, itemIdStr);
-          savedSet.delete(listId);
-          // Removal confirmation is shown inline on the row; no extra message below.
-          try {
-            const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
-            const status = row?.querySelector('span');
-            if (status) status.textContent = '';
-          } catch(_) {}
-        }
-      } catch (err) {
-        cbEl.checked = !shouldSave;
-        showMessage(err && err.message ? err.message : String(err), true);
-        console.error(err);
-      } finally {
-        loadingMap[listId] = false;
-        cbEl.disabled = false;
-  updateSaveButtonIcon();
-      }
-    }
-
-    if (createForm) {
-      createForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = (newTitle?.value || '').trim();
-        if (!title) return showMessage('Enter a list title', true);
-  // Keep status quiet here; per-row/status and immediate checkbox will reflect changes.
-        try {
-          const created = await listsAPI.createList(title, null, false);
-          lists.push(created);
-          await listsAPI.saveItemToList(created.id, itemTypeStr, itemIdStr);
-          savedSet.add(created.id);
-          if (newTitle) newTitle.value = '';
-          renderListCheckboxes();
-          updateSaveButtonIcon();
-          // Success confirmation shown via new row state; no extra green message.
-        } catch (err) {
-          showMessage(err && err.message ? err.message : String(err), true);
-          console.error(err);
-        }
-      });
-    }
-
-    // Robust event binding: delegate on root in capture phase to survive bubbling blockers
-    root.addEventListener('click', async (e) => {
-      const target = e.target;
-      const clickedBtn = (target === btn) || (!!btn && target instanceof Element && target.closest(`#${btn.id}`));
-      if (!clickedBtn) return;
-      try { console.debug('SaveToList click (delegated)', { itemId: itemIdStr }); } catch(_) {}
-      e.preventDefault();
-      e.stopPropagation();
-      if (!panel) return;
-      const isHidden = panel.classList.contains('hidden');
-      if (isHidden) {
-        togglePanel(true);
-        await refreshLists();
-        if (newTitle) newTitle.focus();
-      } else {
-        togglePanel(false);
-      }
-    }, true);
-
-    // Keyboard support on button
-    if (btn) {
-      btn.addEventListener('keydown', async (e) => {
-        if (e.key !== 'Enter' && e.key !== ' ') return;
-        e.preventDefault();
-        if (!panel) return;
-        const isHidden = panel.classList.contains('hidden');
-        if (isHidden) {
-          togglePanel(true);
-          await refreshLists();
-          if (newTitle) newTitle.focus();
-        } else {
-          togglePanel(false);
-        }
-      });
-    }
-
-    // ESC to close when panel is open
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && panel && !panel.classList.contains('hidden')) {
-        togglePanel(false);
-      }
-    });
-  }
-
-  // Initialize all instances on the page
-  const roots = document.querySelectorAll('[id^="save-root-"][data-item-id]');
-  if (roots && roots.length) {
-    roots.forEach((r) => { initSave(r); });
-  } else {
-    // Fallback if script executes very early
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('[id^="save-root-"][data-item-id]').forEach((r) => { initSave(r); });
-    });
-  }
-</script>
+<script type="module" src={saveClientUrl}></script>

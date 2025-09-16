@@ -7,7 +7,7 @@ import { getCollection } from "astro:content";
 import SupportBox from "../components/Projects/SupportBox.astro";
 import SubscribeDrawer from "../components/Popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ResponsiveImage.astro";
-import ActionRow from "../components/Actions/ActionRow.astro";
+import SaveToList from "../components/Save/SaveToList.astro";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -371,10 +371,10 @@ const relatedProjects = allProjects
           </div>
         </section>
 
-        <!-- Actions Row (Save, Done, Copy) -->
+        <!-- Actions (Save, Done) -->
         {actionId && (
           <section class="py-2 px-4">
-            <ActionRow itemType="project" itemId={actionId} />
+            <SaveToList itemType="project" itemId={actionId} variant="minimal" mobileShowLabel={true} mobileFullWidth={true} />
           </section>
         )}
 
