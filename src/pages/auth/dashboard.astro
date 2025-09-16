@@ -29,8 +29,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
             </div>
         </noscript>
 
-        <div id="dashGuard" aria-busy="true" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="p-6"> <!-- flattened container: removed border/background/shadow -->
+    <div id="dashGuard" aria-busy="true" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="px-2 sm:px-6 py-4 sm:py-6"> <!-- flattened container: removed border/background/shadow and reduced mobile padding -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div class="flex items-center gap-4">
                     <div class="rounded-full overflow-hidden w-12 h-12 bg-gray-100 flex items-center justify-center">
@@ -51,7 +51,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 </div>
             </div>
             <div class="mb-6">
-                <div class="p-3 sm:p-4 bg-gray-50 rounded-lg">
+                <div class="p-2 sm:p-4 bg-gray-50 rounded-lg">
                     <!-- Stats row -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                         <div class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between">
@@ -82,7 +82,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 </div>
 
                 <!-- My Lists section (separate box) -->
-                <div class="p-3 sm:p-4 bg-gray-50 rounded-lg mt-6">
+                <div class="p-2 sm:p-4 bg-gray-50 rounded-lg mt-6">
                         <div class="flex items-center justify-between mb-3 gap-3">
                             <div>
                                 <h3 class="text-lg font-semibold">My Lists</h3>
@@ -129,7 +129,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 </div>
 
             <!-- Recently completed (separate shaded box) -->
-            <div class="p-3 sm:p-4 bg-gray-50 rounded-lg mt-6 mb-6" id="recentCompletedBox" hidden>
+            <div class="p-2 sm:p-4 bg-gray-50 rounded-lg mt-6 mb-6" id="recentCompletedBox" hidden>
                 <div class="flex items-center justify-between mb-3">
                     <h3 id="recentCompletedTitle" class="text-lg font-semibold cursor-pointer">Recently completed</h3>
                     <button id="recentCompletedToggle" aria-expanded="false" aria-label="Expand section" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
@@ -343,15 +343,15 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 row.className = `flex items-center justify-between border rounded-md px-3 py-2 ${isDone ? 'bg-gray-50' : ''}`;
                 const key = `${item.item_type}:${item.item_id}`;
                 row.innerHTML = `
-                    <div class="flex items-center gap-3 min-w-0">
+                    <div class="flex items-center gap-3 flex-1">
                         <input type="checkbox" data-toggle-done data-type="${item.item_type}" data-id="${item.item_id}" ${isDone ? 'checked' : ''}
                                aria-label="Mark as done: ${title}"
                                class="w-4 h-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
                         ${meta?.image ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>` :
                         `<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${item.item_type}</div>`}
-                        <a class="font-medium hover:underline truncate ${isDone ? 'line-through text-gray-500' : ''}" href="${url}">${title}</a>
+                        <a class="font-medium hover:underline break-words ${isDone ? 'line-through text-gray-500' : ''}" href="${url}">${title}</a>
                     </div>
-                    <div class="flex items-center gap-2 sm:gap-3 relative">
+                    <div class="flex items-center gap-2 sm:gap-3 relative shrink-0 ml-3">
                         <span class="hidden sm:inline text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
                         <div class="relative">
                             <button data-item-menu-toggle="${key}" aria-haspopup="menu" aria-expanded="false" aria-label="Item options" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
