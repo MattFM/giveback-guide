@@ -27,7 +27,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
             <div class="mb-6">
                 <div class="p-4 bg-gray-50 rounded-lg">
                     <!-- Stats row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="p-4 bg-white rounded-lg flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-gray-500">Saved items</p>
@@ -43,16 +43,30 @@ import MainLayout from '../../layouts/MainLayout.astro';
                             </div>
                             <div class="text-sm text-gray-400">Custom collections</div>
                         </div>
+
+                        <div class="p-4 bg-white rounded-lg flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Completed</p>
+                                <div class="mt-2 text-2xl font-bold" id="completedCount">—</div>
+                            </div>
+                            <div class="text-sm text-gray-400">Done items</div>
+                        </div>
                     </div>
 
-                    <!-- My Lists section -->
-                    <div class="mt-6">
+                </div>
+
+                <!-- My Lists section (separate box) -->
+                <div class="p-4 bg-gray-50 rounded-lg mt-6">
                         <div class="flex items-center justify-between mb-3">
                             <div>
                                 <h3 class="text-lg font-semibold">My Lists</h3>
                                 <p class="text-sm text-gray-500">Create lists to save projects and stays for later.</p>
                             </div>
                             <div class="flex items-center gap-2">
+                                <label class="flex items-center gap-2 text-sm text-gray-600 select-none">
+                                    <input id="hideCompletedToggle" type="checkbox" class="rounded border-gray-300" />
+                                    Hide completed
+                                </label>
                                 <button id="createListBtn" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Create new list</button>
                             </div>
                         </div>
@@ -70,7 +84,20 @@ import MainLayout from '../../layouts/MainLayout.astro';
                         <div id="listsContainer" class="space-y-3">
                             <div class="p-4 bg-white rounded-lg border border-dashed border-gray-200 text-sm text-gray-500">You don't have any lists yet. Create one to get started.</div>
                         </div>
-                    </div>
+                </div>
+
+            <!-- Recently completed (separate shaded box) -->
+            <div class="p-4 bg-gray-50 rounded-lg mt-6 mb-6" id="recentCompletedBox" hidden>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 id="recentCompletedTitle" class="text-lg font-semibold cursor-pointer">Recently completed</h3>
+                    <button id="recentCompletedToggle" aria-expanded="false" aria-label="Expand section" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
+                        <svg class="w-4 h-4 transition-transform rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="recentCompletedContent" class="hidden">
+                    <div id="recentCompleted" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                 </div>
             </div>
 
@@ -84,6 +111,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 <script>
     import { getCurrentUser, logout } from '../../lib/auth';
     import { getListsWithItems, getSavedCounts, createList, removeItemFromList, deleteList } from '../../lib/lists';
+    import { getCompletedCount, getRecentCompleted, getStatusesForItems, setCompleted } from '../../lib/completed';
 
     // Check if user is logged in
     const checkAuth = async () => {
@@ -154,10 +182,22 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const listsContainer = document.getElementById('listsContainer');
     const listsCount = document.getElementById('listsCount');
     const savedCount = document.getElementById('savedCount');
+    const completedCountEl = document.getElementById('completedCount');
+    const recentCompletedBox = document.getElementById('recentCompletedBox');
+    const recentCompletedContent = document.getElementById('recentCompletedContent');
+    const recentCompletedEl = document.getElementById('recentCompleted');
+    const recentCompletedToggle = document.getElementById('recentCompletedToggle');
+    const recentCompletedTitle = document.getElementById('recentCompletedTitle');
+    const hideCompletedToggle = document.getElementById('hideCompletedToggle');
 
     // State
     let lists = [] as any[];
     let indexByKey: Record<string, any> = {};
+    let statusByKey: Record<string, any> = {};
+    const HIDE_COMPLETED_LS = 'dashHideCompleted';
+    let hideCompleted = false;
+    try { hideCompleted = localStorage.getItem(HIDE_COMPLETED_LS) === '1'; } catch(_) {}
+    if (hideCompletedToggle) (hideCompletedToggle as HTMLInputElement).checked = hideCompleted;
 
     function idKeysFor(type: 'project' | 'stay', id: string){ return [`${type}:${id}`]; }
 
@@ -201,28 +241,61 @@ import MainLayout from '../../layouts/MainLayout.astro';
                                                                         </button>
                     </div>
                 </div>
-        <div class="mt-3 space-y-2 ${initialCollapsed ? 'hidden' : ''}" data-items></div>
+        <div class="mt-3 space-y-4 ${initialCollapsed ? 'hidden' : ''}" data-items></div>
             `;
             const itemsHost = wrap.querySelector('[data-items]');
-                        (l.items || []).forEach((item: any) => {
+            const todo: any[] = [];
+            const done: any[] = [];
+            (l.items || []).forEach((item: any) => {
+                const key = `${item.item_type}:${item.item_id}`;
+                const st = statusByKey[key];
+                (st && st.is_completed) ? done.push(item) : todo.push(item);
+            });
+
+            const renderRow = (item: any, isDone: boolean) => {
                 const meta = indexByKey[`${item.item_type}:${item.item_id}`] || null;
                 const title = meta?.title || `${item.item_type} ${item.item_id}`;
                 const url = meta?.url || (item.item_type === 'project' ? `/projects/${item.item_id}` : `/stays/${item.item_id}`);
                 const row = document.createElement('div');
                 row.className = 'flex items-center justify-between border rounded-md px-3 py-2';
                 row.innerHTML = `
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
                         ${meta?.image ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>` :
                         `<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${item.item_type}</div>`}
-                        <a class="font-medium hover:underline" href="${url}">${title}</a>
+                        <a class="font-medium hover:underline truncate" href="${url}">${title}</a>
                     </div>
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
-                                            <button data-remove-item data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer">Remove</button>
-                                        </div>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <span class="hidden sm:inline text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
+                        ${isDone
+                            ? `<button data-toggle-done data-next="false" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs text-green-700 bg-green-50 rounded hover:bg-green-100 cursor-pointer" title="Mark as not done">Done</button>`
+                            : `<button data-toggle-done data-next="true" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer">Mark as done</button>`}
+                        <button data-remove-item data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer">Remove</button>
+                    </div>
                 `;
-                itemsHost?.appendChild(row);
-            });
+                return row;
+            };
+
+            // To do section
+            if (todo.length) {
+                const sec = document.createElement('div');
+                sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">To do <span class="text-gray-400">(${todo.length})</span></div>`;
+                const list = document.createElement('div');
+                list.className = 'mt-2 space-y-2';
+                todo.forEach((it: any) => list.appendChild(renderRow(it, false)));
+                sec.appendChild(list);
+                itemsHost?.appendChild(sec);
+            }
+
+            // Completed section (optional)
+            if (!hideCompleted && done.length) {
+                const sec = document.createElement('div');
+                sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">Completed <span class="text-gray-400">(${done.length})</span></div>`;
+                const list = document.createElement('div');
+                list.className = 'mt-2 space-y-2';
+                done.forEach((it: any) => list.appendChild(renderRow(it, true)));
+                sec.appendChild(list);
+                itemsHost?.appendChild(sec);
+            }
                         // bind delete list
                         const delBtn = wrap.querySelector('button[data-delete-list]');
                         if (delBtn) {
@@ -287,6 +360,23 @@ import MainLayout from '../../layouts/MainLayout.astro';
                         }
                     });
                 });
+
+                // delegate toggle done buttons
+                listsContainer.querySelectorAll('button[data-toggle-done]').forEach((btn) => {
+                    btn.addEventListener('click', async () => {
+                        const type = (btn as HTMLButtonElement).getAttribute('data-type') as 'project' | 'stay' | null;
+                        const id = (btn as HTMLButtonElement).getAttribute('data-id');
+                        const nextStr = (btn as HTMLButtonElement).getAttribute('data-next');
+                        const next = nextStr === 'true';
+                        if (!type || !id) return;
+                        try {
+                            await setCompleted(type, id, next, 'dashboard');
+                        } catch (e) {
+                            console.error('Toggle done failed', e);
+                        }
+                        await loadAndRender();
+                    });
+                });
     }
 
     async function fetchIndex(){
@@ -311,11 +401,94 @@ import MainLayout from '../../layouts/MainLayout.astro';
             // Ensure auth first
             const user = await getCurrentUser();
             if (!user) return; // redirect already handled earlier
+            await fetchIndex();
             const counts = await getSavedCounts();
             if (listsCount) listsCount.textContent = String(counts.lists);
             if (savedCount) savedCount.textContent = String(counts.items);
-            await fetchIndex();
+            // Completed count
+            try {
+                const c = await getCompletedCount();
+                if (completedCountEl) completedCountEl.textContent = String(c);
+            } catch {}
+            // Recent completed
+            try {
+                const rec = await getRecentCompleted(6);
+                if (rec && rec.length && recentCompletedBox && recentCompletedEl) {
+                    recentCompletedBox.hidden = false;
+                    recentCompletedEl.innerHTML = '';
+                    const rf = document.createDocumentFragment();
+                    rec.forEach((r: any) => {
+                        const mk = `${r.item_type}:${r.item_id}`;
+                        const meta = indexByKey[mk] || {};
+                        const url = meta?.url || (r.item_type === 'project' ? `/projects/${r.item_id}` : `/stays/${r.item_id}`);
+                        const card = document.createElement('a');
+                        card.href = url;
+                        card.className = 'flex items-center gap-3 p-3 bg-white rounded-lg border hover:border-gray-300';
+                        card.innerHTML = `
+                            ${meta?.image ? `<img src="${meta.image}" alt="" class="w-12 h-12 rounded object-cover"/>` :
+                            `<div class="w-12 h-12 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${r.item_type}</div>`}
+                            <div class="min-w-0">
+                                <div class="font-medium truncate">${meta?.title || `${r.item_type} ${r.item_id}`}</div>
+                                <div class="text-xs text-gray-500">Completed ${new Date(r.completed_at).toLocaleDateString?.() || ''}</div>
+                            </div>
+                        `;
+                        rf.appendChild(card);
+                    });
+                    recentCompletedEl.appendChild(rf);
+                    // Collapse state (hidden by default)
+                    const lsKey = 'dashRecentCollapsed';
+                    let collapsed = true;
+                    try {
+                        const v = localStorage.getItem(lsKey);
+                        collapsed = v === null ? true : v === '1';
+                    } catch {}
+                    const apply = (isCollapsed: boolean) => {
+                        const icon = recentCompletedToggle?.querySelector('svg');
+                        if (isCollapsed) {
+                            recentCompletedContent?.classList.add('hidden');
+                            (recentCompletedToggle as HTMLButtonElement)?.setAttribute('aria-expanded', 'false');
+                            (recentCompletedToggle as HTMLButtonElement)?.setAttribute('aria-label', 'Expand section');
+                            icon?.classList.add('rotate-180');
+                        } else {
+                            recentCompletedContent?.classList.remove('hidden');
+                            (recentCompletedToggle as HTMLButtonElement)?.setAttribute('aria-expanded', 'true');
+                            (recentCompletedToggle as HTMLButtonElement)?.setAttribute('aria-label', 'Collapse section');
+                            icon?.classList.remove('rotate-180');
+                        }
+                    };
+                    apply(collapsed);
+                    if (recentCompletedToggle) {
+                        (recentCompletedToggle as HTMLButtonElement).onclick = () => {
+                            collapsed = !collapsed;
+                            try { localStorage.setItem(lsKey, collapsed ? '1' : '0'); } catch {}
+                            apply(collapsed);
+                        };
+                    }
+                    if (recentCompletedTitle) {
+                        recentCompletedTitle.setAttribute('tabindex', '0');
+                        recentCompletedTitle.addEventListener('click', () => {
+                            collapsed = !collapsed;
+                            try { localStorage.setItem(lsKey, collapsed ? '1' : '0'); } catch {}
+                            apply(collapsed);
+                        });
+                        recentCompletedTitle.addEventListener('keydown', (e: KeyboardEvent) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                collapsed = !collapsed;
+                                try { localStorage.setItem(lsKey, collapsed ? '1' : '0'); } catch {}
+                                apply(collapsed);
+                            }
+                        });
+                    }
+                } else if (recentCompletedBox) {
+                    recentCompletedBox.hidden = true;
+                }
+            } catch {}
+            // Lists and completed statuses
             lists = await getListsWithItems();
+            const pairs: any[] = [];
+            lists.forEach((l: any) => (l.items || []).forEach((it: any) => { pairs.push({ item_type: it.item_type, item_id: String(it.item_id) }); }));
+            try { statusByKey = await getStatusesForItems(pairs); } catch { statusByKey = {}; }
             renderLists();
         } catch (e) {
             console.error('Failed loading lists', e);
@@ -349,6 +522,14 @@ import MainLayout from '../../layouts/MainLayout.astro';
             } catch (err) {
                 console.error('Create list failed', err);
             }
+        });
+    }
+
+    if (hideCompletedToggle) {
+        hideCompletedToggle.addEventListener('change', () => {
+            hideCompleted = (hideCompletedToggle as HTMLInputElement).checked;
+            try { localStorage.setItem(HIDE_COMPLETED_LS, hideCompleted ? '1' : '0'); } catch(_) {}
+            renderLists();
         });
     }
 
