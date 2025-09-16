@@ -24,7 +24,8 @@ export type ListWithItems = List & { items: ListItem[] };
 async function getUserId(): Promise<string | null> {
   try {
     // Support both v2 and v1 SDK shapes
-    const maybe: any = supabase.auth.getUser ? await supabase.auth.getUser() : await (supabase.auth as any).user();
+    const auth: any = (supabase as any).auth;
+    const maybe: any = auth.getUser ? await auth.getUser() : await auth.user();
     const user = maybe?.data?.user || maybe?.user || null;
     return user?.id || null;
   } catch (e) {

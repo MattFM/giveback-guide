@@ -36,12 +36,22 @@ jobs:
           echo "BLOG_NOTION_DATABASE_ID exists: ${{ secrets.BLOG_NOTION_DATABASE_ID != '' }}"
           echo "STAYS_NOTION_DATABASE_ID exists: ${{ secrets.STAYS_NOTION_DATABASE_ID != '' }}"
 
+      - name: Verify PUBLIC env (fail fast)
+        env:
+          PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON: ${{ vars.PUBLIC_SUPABASE_ANON }}
+        run: |
+          test -n "$PUBLIC_SUPABASE_URL" || (echo "Missing PUBLIC_SUPABASE_URL" && exit 1)
+          test -n "$PUBLIC_SUPABASE_ANON" || (echo "Missing PUBLIC_SUPABASE_ANON" && exit 1)
+
       - name: Build
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           PROJECTS_NOTION_DATABASE_ID: ${{ secrets.PROJECTS_NOTION_DATABASE_ID }}
           BLOG_NOTION_DATABASE_ID: ${{ secrets.BLOG_NOTION_DATABASE_ID }}
           STAYS_NOTION_DATABASE_ID: ${{ secrets.STAYS_NOTION_DATABASE_ID }}
+          PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON: ${{ vars.PUBLIC_SUPABASE_ANON }}
         run: npm run build
         
       - name: Deploy to Cloudflare Workers

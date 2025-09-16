@@ -11,7 +11,8 @@ export type ItemStatus = {
 
 async function getUserId(): Promise<string | null> {
   try {
-    const maybe: any = supabase.auth.getUser ? await supabase.auth.getUser() : await (supabase.auth as any).user();
+  const auth: any = (supabase as any).auth;
+  const maybe: any = auth.getUser ? await auth.getUser() : await auth.user();
     const user = maybe?.data?.user || maybe?.user || null;
     return user?.id || null;
   } catch {

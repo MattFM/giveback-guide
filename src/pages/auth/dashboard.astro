@@ -3,7 +3,33 @@ import MainLayout from '../../layouts/MainLayout.astro';
 ---
 
 <MainLayout title="Dashboard">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Early client-side heuristic: if no Supabase token, redirect fast to login (keeps site static) -->
+        <script is:inline>
+            try {
+                const hasToken = (() => {
+                    if (typeof window === 'undefined' || !('localStorage' in window)) return false;
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k && /^sb-.*-auth-token$/.test(k)) {
+                            const v = localStorage.getItem(k);
+                            if (v && v !== 'null' && v !== 'undefined') return true;
+                        }
+                    }
+                    return false;
+                })();
+                if (!hasToken) {
+                    window.location.replace('/auth/login');
+                }
+            } catch {}
+        </script>
+
+        <noscript>
+            <div class="max-w-3xl mx-auto my-6 p-4 bg-yellow-50 text-yellow-800 rounded-md">
+                JavaScript is required to view the dashboard. Please enable JavaScript and refresh.
+            </div>
+        </noscript>
+
+        <div id="dashGuard" aria-busy="true" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="p-6"> <!-- flattened container: removed border/background/shadow -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div class="flex items-center gap-4">
@@ -131,7 +157,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
     // Check if user is logged in
     const checkAuth = async () => {
-        const user = await getCurrentUser();
+        const user = await getCurrentUser().catch(() => null);
             console.debug('Dashboard auth check user:', user);
             if (!user) {
                 console.debug('No user found - redirecting to login');
@@ -139,7 +165,10 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 return;
             }
 
-        const userInfo = document.getElementById('userInfo');
+    const userInfo = document.getElementById('userInfo');
+    const guard = document.getElementById('dashGuard');
+    // Reveal guarded content now that we have a user
+    if (guard) { guard.classList.remove('hidden'); guard.removeAttribute('aria-busy'); }
         if (userInfo) {
             // populate profile summary and header greeting
             const dashSubtitle = document.getElementById('dashSubtitle');
