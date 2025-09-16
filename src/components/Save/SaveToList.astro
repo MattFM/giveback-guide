@@ -59,8 +59,8 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
 </div>
 
 <script type="module">
-  import * as listsAPI from '/src/lib/lists';
-  import { getCurrentUser } from '/src/lib/auth';
+  import * as listsAPI from '../../lib/lists';
+  import { getCurrentUser } from '../../lib/auth';
 
   async function initSave(root) {
   if (root?.dataset?.saveBound === '1') return; // prevent duplicate init in HMR
