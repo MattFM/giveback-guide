@@ -3,7 +3,33 @@ import MainLayout from '../../layouts/MainLayout.astro';
 ---
 
 <MainLayout title="Profile">
-    <div class="max-w-3xl mx-auto px-4 py-8">
+        <!-- Early client-side heuristic redirect if no Supabase auth token found -->
+        <script is:inline>
+            try {
+                const hasToken = (() => {
+                    if (typeof window === 'undefined' || !('localStorage' in window)) return false;
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k && /^sb-.*-auth-token$/.test(k)) {
+                            const v = localStorage.getItem(k);
+                            if (v && v !== 'null' && v !== 'undefined') return true;
+                        }
+                    }
+                    return false;
+                })();
+                if (!hasToken) {
+                    window.location.replace('/auth/login');
+                }
+            } catch {}
+        </script>
+
+        <noscript>
+            <div class="max-w-3xl mx-auto my-6 p-4 bg-yellow-50 text-yellow-800 rounded-md">
+                JavaScript is required to view your profile. Please enable JavaScript and refresh.
+            </div>
+        </noscript>
+
+        <div id="profileGuard" aria-busy="true" class="hidden max-w-3xl mx-auto px-4 py-8">
         <div class="p-6"> <!-- flattened container: no border/box -->
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -62,6 +88,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </MainLayout>
 
@@ -362,11 +389,13 @@ import MainLayout from '../../layouts/MainLayout.astro';
     };
 
     (async () => {
-        const user = await getCurrentUser();
+        const user = await getCurrentUser().catch(() => null);
         if (!user) {
             window.location.href = '/auth/login';
             return;
         }
+        const guard = document.getElementById('profileGuard');
+        if (guard) { guard.classList.remove('hidden'); guard.removeAttribute('aria-busy'); }
         renderProfile(user);
     })();
 </script>

@@ -3,7 +3,33 @@ import MainLayout from '../../layouts/MainLayout.astro';
 ---
 
 <MainLayout title="Welcome">
-  <div class="max-w-screen-md mx-auto px-4 py-16 lg:py-24">
+  <!-- Early client-side heuristic redirect if no Supabase auth token found -->
+  <script is:inline>
+    try {
+      const hasToken = (() => {
+        if (typeof window === 'undefined' || !('localStorage' in window)) return false;
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && /^sb-.*-auth-token$/.test(k)) {
+            const v = localStorage.getItem(k);
+            if (v && v !== 'null' && v !== 'undefined') return true;
+          }
+        }
+        return false;
+      })();
+      if (!hasToken) {
+        window.location.replace('/auth/login');
+      }
+    } catch {}
+  </script>
+
+  <noscript>
+    <div class="max-w-screen-md mx-auto my-6 p-4 bg-yellow-50 text-yellow-800 rounded-md">
+      JavaScript is required to complete onboarding. Please enable JavaScript and refresh.
+    </div>
+  </noscript>
+
+  <div id="onboardGuard" aria-busy="true" class="hidden max-w-screen-md mx-auto px-4 py-16 lg:py-24">
     <div class="max-w-xl mx-auto">
       <div class="mb-6 text-center">
         <h1 class="mb-2 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white">Welcome to Giveback Guide</h1>
@@ -32,6 +58,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
         <div id="formMessage" class="mt-2 text-center text-sm hidden"></div>
       </form>
+    </div>
     </div>
   </div>
 </MainLayout>
@@ -152,7 +179,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
   // Ensure user is authenticated; if not, send back to login
   (async () => {
-    const user: any = await getCurrentUser();
+    const user: any = await getCurrentUser().catch(() => null);
     if (!user) {
       window.location.href = '/auth/login';
       return;
@@ -171,6 +198,10 @@ import MainLayout from '../../layouts/MainLayout.astro';
       window.location.href = '/auth/dashboard';
       return;
     }
+
+    // Reveal the guarded content once we know the user isn't being redirected
+    const guard = document.getElementById('onboardGuard');
+    if (guard) { guard.classList.remove('hidden'); guard.removeAttribute('aria-busy'); }
   })();
 
   if (form) {
