@@ -43,10 +43,34 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
     </span>
   </button>
 
-  <!-- Join Community Link (styled as button) -->
+  <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
   <a
+    id="header-dashboard-link"
+    href="/auth/dashboard"
+    class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    style="display:none;"
+    aria-hidden="true"
+  >
+    <svg
+      class="w-6 h-6 me-2"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 13.5h5.5V21H3v-7.5Zm6.5 0H21V21H9.5v-7.5ZM3 3h9.5v8.5H3V3ZM14.5 3H21v5.5h-6.5V3Z"/>
+    </svg>
+    <span class="block lg:hidden">Dash</span>
+    <span class="hidden lg:block">Dashboard</span>
+  </a>
+  <a
+    id="header-join-link"
     href="/join"
     class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    style="display:none;"
+    aria-hidden="true"
   >
     <svg
       class="w-6 h-6 me-2"
@@ -64,9 +88,85 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
         d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
       ></path>
     </svg>
-    <span class="block lg:hidden">Join Us</span>
+    <span class="block lg:hidden">Join</span>
     <span class="hidden lg:block">Join our community</span>
   </a>
+
+  <!-- Tiny inline auth detector: no imports. Chooses which CTA to show. -->
+  <script>
+    // @ts-nocheck
+    (function () {
+      try {
+        var dash = document.getElementById('header-dashboard-link');
+        var join = document.getElementById('header-join-link');
+        if (!dash || !join) return;
+
+        function setVisible(el, visible) {
+          el.style.display = visible ? 'inline-flex' : 'none';
+          el.setAttribute('aria-hidden', visible ? 'false' : 'true');
+        }
+
+        function parseSupabaseSession() {
+          try {
+            for (var i = 0; i < localStorage.length; i++) {
+              var key = localStorage.key(i) || '';
+              if ((/^sb-.*-auth-token$/.test(key)) || key.indexOf('supabase.auth.token') !== -1) {
+                var raw = localStorage.getItem(key);
+                if (!raw) continue;
+                var data;
+                try { data = JSON.parse(raw); } catch (_) { continue; }
+                var arr = Array.isArray(data) ? data : [data];
+                for (var j = 0; j < arr.length; j++) {
+                  var item = arr[j] || {};
+                  var sess = item.currentSession || item.session || null;
+                  if (!sess && (item.access_token || item.accessToken)) {
+                    sess = { access_token: item.access_token || item.accessToken, expires_at: item.expires_at || item.expiresAt || null, user: item.user || null };
+                  }
+                  if (sess) return sess;
+                }
+              }
+            }
+          } catch (_) {}
+          return null;
+        }
+
+        function isSessionValid(sess) {
+          if (!sess) return false;
+          var hasToken = !!(sess.access_token || sess.accessToken);
+          var exp = sess.expires_at || sess.expiresAt || null;
+          if (typeof exp === 'string') {
+            var t = Date.parse(exp);
+            if (!isNaN(t)) exp = Math.floor(t / 1000);
+          }
+          if (typeof exp === 'number') {
+            var nowSec = Math.floor(Date.now() / 1000);
+            if (exp < nowSec) return false;
+          }
+          return hasToken || !!sess.user;
+        }
+
+        function decideAndToggle() {
+          var sess = parseSupabaseSession();
+          var loggedIn = isSessionValid(sess);
+          setVisible(dash, loggedIn);
+          setVisible(join, !loggedIn);
+        }
+
+        // Run immediately (script is placed right after the buttons)
+        decideAndToggle();
+        // Re-run on DOM and load in case storage becomes available slightly later
+        document.addEventListener('DOMContentLoaded', decideAndToggle, { once: true });
+        window.addEventListener('load', decideAndToggle);
+        // React to auth changes from other tabs/windows
+        window.addEventListener('storage', function (e) {
+          var k = (e && e.key) || '';
+          if ((/^sb-.*-auth-token$/.test(k)) || k.indexOf('supabase.auth.token') !== -1) {
+            decideAndToggle();
+          }
+        });
+      } catch (_) {}
+    })();
+  </script>
 
   <!-- Mobile Menu Toggle -->
   <button
