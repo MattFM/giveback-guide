@@ -3,208 +3,247 @@ import { Image } from "astro:assets";
 import Avatar from "../assets/giveback-guide-avatar.svg";
 ---
 
-<a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-white text-black p-2 z-50 rounded">
+<a
+  href="#main-content"
+  class="sr-only focus:not-sr-only absolute left-2 top-2 bg-white text-black p-2 z-50 rounded"
+>
   Skip to main content
 </a>
 <header role="banner" class="sticky top-0 z-40 lg:relative lg:z-auto">
-  <nav role="navigation" aria-label="Main navigation" class="bg-white border-gray-200 w-full px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+  <nav
+    role="navigation"
+    aria-label="Main navigation"
+    class="bg-white border-gray-200 w-full px-4 lg:px-6 py-2.5 dark:bg-gray-800"
+  >
     <div
       class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl"
     >
-      <a href="/" class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer">
-  <Image src={Avatar} class="w-12 h-12 fill-gbgblue" alt="Giveback Guide" />
-</a>
+      <a
+        href="/"
+        class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+      >
+        <Image
+          src={Avatar}
+          class="w-12 h-12 fill-gbgblue"
+          alt="Giveback Guide"
+        />
+      </a>
       <div class="flex items-center lg:order-2">
-  <!-- Search Modal Trigger -->
-  <button
-    id="search-button"
-    type="button"
-    class="cursor-pointer text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-  >
-    <svg
-      class="w-6 h-6 me-2"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-width="2"
-        d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path>
-    </svg>
-    <span class="block lg:hidden">Search</span>
-    <span class="hidden lg:flex lg:items-center lg:space-x-2">
-      <span>Search</span>
-      <div class="flex items-center ml-2 text-xs text-gray-400">
-        <kbd id="search-kbd" class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-xs font-mono">⌘K</kbd>
-      </div>
-    </span>
-  </button>
+        <!-- Search Modal Trigger -->
+        <button
+          id="search-button"
+          type="button"
+          class="cursor-pointer text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          <svg
+            class="w-6 h-6 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+              d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path>
+          </svg>
+          <span class="block lg:hidden">Search</span>
+          <span class="hidden lg:flex lg:items-center lg:space-x-2">
+            <span>Search</span>
+            <div class="flex items-center ml-2 text-xs text-gray-400">
+              <kbd
+                id="search-kbd"
+                class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-xs font-mono"
+                >⌘K</kbd
+              >
+            </div>
+          </span>
+        </button>
 
-  <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
-  <a
-    id="header-dashboard-link"
-    href="/auth/dashboard"
-    class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    style="display:none;"
-    aria-hidden="true"
-  >
-    <svg
-      class="w-6 h-6 me-2"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M3 13.5h5.5V21H3v-7.5Zm6.5 0H21V21H9.5v-7.5ZM3 3h9.5v8.5H3V3ZM14.5 3H21v5.5h-6.5V3Z"/>
-    </svg>
-    <span class="block lg:hidden">Dash</span>
-    <span class="hidden lg:block">Dashboard</span>
-  </a>
-  <a
-    id="header-join-link"
-    href="/join"
-    class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    style="display:none;"
-    aria-hidden="true"
-  >
-    <svg
-      class="w-6 h-6 me-2"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-width="2"
-        d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
-      ></path>
-    </svg>
-    <span class="block lg:hidden">Join</span>
-    <span class="hidden lg:block">Join our community</span>
-  </a>
+        <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
+        <a
+          id="header-dashboard-link"
+          href="/auth/dashboard"
+          class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          style="display:none;"
+          aria-hidden="true"
+        >
+          <svg
+            class="w-6 h-6 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            ></path>
+          </svg>
+          <span class="block lg:hidden">Dash</span>
+          <span class="hidden lg:block">Dashboard</span>
+        </a>
+        <a
+          id="header-join-link"
+          href="/join"
+          class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          style="display:none;"
+          aria-hidden="true"
+        >
+          <svg
+            class="w-6 h-6 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+              d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
+            ></path>
+          </svg>
+          <span class="block lg:hidden">Join</span>
+          <span class="hidden lg:block">Join our community</span>
+        </a>
 
-  <!-- Tiny inline auth detector: no imports. Chooses which CTA to show. -->
-  <script>
-    // @ts-nocheck
-    (function () {
-      try {
-        var dash = document.getElementById('header-dashboard-link');
-        var join = document.getElementById('header-join-link');
-        if (!dash || !join) return;
+        <!-- Tiny inline auth detector: no imports. Chooses which CTA to show. -->
+        <script>
+          // @ts-nocheck
+          (function () {
+            try {
+              var dash = document.getElementById("header-dashboard-link");
+              var join = document.getElementById("header-join-link");
+              if (!dash || !join) return;
 
-        function setVisible(el, visible) {
-          el.style.display = visible ? 'inline-flex' : 'none';
-          el.setAttribute('aria-hidden', visible ? 'false' : 'true');
-        }
-
-        function parseSupabaseSession() {
-          try {
-            for (var i = 0; i < localStorage.length; i++) {
-              var key = localStorage.key(i) || '';
-              if ((/^sb-.*-auth-token$/.test(key)) || key.indexOf('supabase.auth.token') !== -1) {
-                var raw = localStorage.getItem(key);
-                if (!raw) continue;
-                var data;
-                try { data = JSON.parse(raw); } catch (_) { continue; }
-                var arr = Array.isArray(data) ? data : [data];
-                for (var j = 0; j < arr.length; j++) {
-                  var item = arr[j] || {};
-                  var sess = item.currentSession || item.session || null;
-                  if (!sess && (item.access_token || item.accessToken)) {
-                    sess = { access_token: item.access_token || item.accessToken, expires_at: item.expires_at || item.expiresAt || null, user: item.user || null };
-                  }
-                  if (sess) return sess;
-                }
+              function setVisible(el, visible) {
+                el.style.display = visible ? "inline-flex" : "none";
+                el.setAttribute("aria-hidden", visible ? "false" : "true");
               }
-            }
-          } catch (_) {}
-          return null;
-        }
 
-        function isSessionValid(sess) {
-          if (!sess) return false;
-          var hasToken = !!(sess.access_token || sess.accessToken);
-          var exp = sess.expires_at || sess.expiresAt || null;
-          if (typeof exp === 'string') {
-            var t = Date.parse(exp);
-            if (!isNaN(t)) exp = Math.floor(t / 1000);
-          }
-          if (typeof exp === 'number') {
-            var nowSec = Math.floor(Date.now() / 1000);
-            if (exp < nowSec) return false;
-          }
-          return hasToken || !!sess.user;
-        }
+              function parseSupabaseSession() {
+                try {
+                  for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i) || "";
+                    if (
+                      /^sb-.*-auth-token$/.test(key) ||
+                      key.indexOf("supabase.auth.token") !== -1
+                    ) {
+                      var raw = localStorage.getItem(key);
+                      if (!raw) continue;
+                      var data;
+                      try {
+                        data = JSON.parse(raw);
+                      } catch (_) {
+                        continue;
+                      }
+                      var arr = Array.isArray(data) ? data : [data];
+                      for (var j = 0; j < arr.length; j++) {
+                        var item = arr[j] || {};
+                        var sess = item.currentSession || item.session || null;
+                        if (!sess && (item.access_token || item.accessToken)) {
+                          sess = {
+                            access_token: item.access_token || item.accessToken,
+                            expires_at:
+                              item.expires_at || item.expiresAt || null,
+                            user: item.user || null,
+                          };
+                        }
+                        if (sess) return sess;
+                      }
+                    }
+                  }
+                } catch (_) {}
+                return null;
+              }
 
-        function decideAndToggle() {
-          var sess = parseSupabaseSession();
-          var loggedIn = isSessionValid(sess);
-          setVisible(dash, loggedIn);
-          setVisible(join, !loggedIn);
-        }
+              function isSessionValid(sess) {
+                if (!sess) return false;
+                var hasToken = !!(sess.access_token || sess.accessToken);
+                var exp = sess.expires_at || sess.expiresAt || null;
+                if (typeof exp === "string") {
+                  var t = Date.parse(exp);
+                  if (!isNaN(t)) exp = Math.floor(t / 1000);
+                }
+                if (typeof exp === "number") {
+                  var nowSec = Math.floor(Date.now() / 1000);
+                  if (exp < nowSec) return false;
+                }
+                return hasToken || !!sess.user;
+              }
 
-        // Run immediately (script is placed right after the buttons)
-        decideAndToggle();
-        // Re-run on DOM and load in case storage becomes available slightly later
-        document.addEventListener('DOMContentLoaded', decideAndToggle, { once: true });
-        window.addEventListener('load', decideAndToggle);
-        // React to auth changes from other tabs/windows
-        window.addEventListener('storage', function (e) {
-          var k = (e && e.key) || '';
-          if ((/^sb-.*-auth-token$/.test(k)) || k.indexOf('supabase.auth.token') !== -1) {
-            decideAndToggle();
-          }
-        });
-      } catch (_) {}
-    })();
-  </script>
+              function decideAndToggle() {
+                var sess = parseSupabaseSession();
+                var loggedIn = isSessionValid(sess);
+                setVisible(dash, loggedIn);
+                setVisible(join, !loggedIn);
+              }
 
-  <!-- Mobile Menu Toggle -->
-  <button
-    data-collapse-toggle="mobile-menu-2"
-    type="button"
-    class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-    aria-controls="mobile-menu-2"
-    aria-expanded="false"
-  >
-    <span class="sr-only">Open main menu</span>
-    <!-- Hamburger icon SVG -->
-    <svg
-      class="w-6 h-6"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-        clip-rule="evenodd"
-      ></path>
-    </svg>
-    <!-- Close icon SVG (hidden by default) -->
-    <svg
-      class="hidden w-6 h-6"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-        clip-rule="evenodd"
-      ></path>
-    </svg>
-  </button>
-</div>
+              // Run immediately (script is placed right after the buttons)
+              decideAndToggle();
+              // Re-run on DOM and load in case storage becomes available slightly later
+              document.addEventListener("DOMContentLoaded", decideAndToggle, {
+                once: true,
+              });
+              window.addEventListener("load", decideAndToggle);
+              // React to auth changes from other tabs/windows
+              window.addEventListener("storage", function (e) {
+                var k = (e && e.key) || "";
+                if (
+                  /^sb-.*-auth-token$/.test(k) ||
+                  k.indexOf("supabase.auth.token") !== -1
+                ) {
+                  decideAndToggle();
+                }
+              });
+            } catch (_) {}
+          })();
+        </script>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          data-collapse-toggle="mobile-menu-2"
+          type="button"
+          class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          aria-controls="mobile-menu-2"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open main menu</span>
+          <!-- Hamburger icon SVG -->
+          <svg
+            class="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <!-- Close icon SVG (hidden by default) -->
+          <svg
+            class="hidden w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
       <div
         class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
         id="mobile-menu-2"
@@ -212,20 +251,20 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
         <ul
           class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0"
         >
-        <li>
-          <a
-            href="/projects"
-            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
-            >Projects</a
-          >
-        </li>
-        <li>
-          <a
-            href="/stays"
-            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
-            >Stays</a
-          >
-        </li>
+          <li>
+            <a
+              href="/projects"
+              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              >Projects</a
+            >
+          </li>
+          <li>
+            <a
+              href="/stays"
+              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              >Stays</a
+            >
+          </li>
           <li>
             <a
               href="/blog"
@@ -265,16 +304,29 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
   class="hidden fixed inset-0 z-50 overflow-y-auto overflow-x-hidden backdrop-blur-sm bg-gray-900/50 dark:bg-gray-900/80"
 >
   <!-- Modal backdrop -->
-  <div class="flex items-start justify-center min-h-full p-4 sm:p-6 lg:p-8 pt-4 sm:pt-[15vh]">
+  <div
+    class="flex items-start justify-center min-h-full p-4 sm:p-6 lg:p-8 pt-4 sm:pt-[15vh]"
+  >
     <!-- Modal content -->
-    <div class="relative w-full max-w-4xl mx-auto bg-white rounded-xl shadow-2xl dark:bg-gray-800 transform transition-all">
-      
+    <div
+      class="relative w-full max-w-4xl mx-auto bg-white rounded-xl shadow-2xl dark:bg-gray-800 transform transition-all"
+    >
       <!-- Search Form -->
       <form id="modal-search-form" action="/search" method="get" class="p-6">
         <div class="flex items-center space-x-3">
           <div class="flex-shrink-0">
-            <svg class="w-6 h-6 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+            <svg
+              class="w-6 h-6 text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="2"
+                d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path>
             </svg>
           </div>
           <div class="flex-1">
@@ -295,8 +347,17 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
               class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               aria-label="Close search"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
           </div>
@@ -306,29 +367,61 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
         <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-3">Suggested searches</h4>
+              <h4
+                class="text-sm font-medium text-gray-900 dark:text-white mb-3"
+              >
+                Suggested searches
+              </h4>
               <div class="space-y-2">
-                <button type="button" class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer" data-query="beach cleans">
+                <button
+                  type="button"
+                  class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                  data-query="beach cleans"
+                >
                   Beach cleans
                 </button>
-                <button type="button" class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer" data-query="community cafes">
+                <button
+                  type="button"
+                  class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                  data-query="community cafes"
+                >
                   Community cafes
                 </button>
-                <button type="button" class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer" data-query="animal sanctuaries">
+                <button
+                  type="button"
+                  class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                  data-query="animal sanctuaries"
+                >
                   Animal sanctuaries
                 </button>
               </div>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-3">Search by location</h4>
+              <h4
+                class="text-sm font-medium text-gray-900 dark:text-white mb-3"
+              >
+                Search by location
+              </h4>
               <div class="space-y-2">
-                <button type="button" class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer" data-query="USA">
+                <button
+                  type="button"
+                  class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                  data-query="USA"
+                >
                   USA
                 </button>
-                <button type="button" class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer" data-query="UK">
+                <button
+                  type="button"
+                  class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                  data-query="UK"
+                >
                   UK
                 </button>
-                <button type="button" class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer" data-query="Thailand">
+                <button
+                  type="button"
+                  class="search-suggestion block w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                  data-query="Thailand"
+                >
                   Thailand
                 </button>
               </div>
@@ -338,21 +431,43 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
       </form>
 
       <!-- Footer -->
-      <div class="hidden sm:flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl border-t border-gray-200 dark:border-gray-700">
-        <div class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+      <div
+        class="hidden sm:flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl border-t border-gray-200 dark:border-gray-700"
+      >
+        <div
+          class="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400"
+        >
           <div class="flex items-center space-x-1">
-            <kbd class="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-xs">↵</kbd>
+            <kbd
+              class="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-xs"
+              >↵</kbd
+            >
             <span>to search</span>
           </div>
           <div class="flex items-center space-x-1">
-            <kbd class="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-xs">esc</kbd>
+            <kbd
+              class="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-xs"
+              >esc</kbd
+            >
             <span>to close</span>
           </div>
         </div>
         <div class="flex space-x-2">
-          <a href="/submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors cursor-pointer">
-            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          <a
+            href="/submit"
+            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors cursor-pointer"
+          >
+            <svg
+              class="w-3 h-3 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
             Submit Project
           </a>
@@ -365,25 +480,29 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const searchModal = document.getElementById("search-modal");
-    const modalSearchInput = document.getElementById("modal-search-input") as HTMLInputElement;
-    const modalSearchForm = document.getElementById("modal-search-form") as HTMLFormElement;
+    const modalSearchInput = document.getElementById(
+      "modal-search-input"
+    ) as HTMLInputElement;
+    const modalSearchForm = document.getElementById(
+      "modal-search-form"
+    ) as HTMLFormElement;
     const searchSuggestions = document.querySelectorAll(".search-suggestion");
     const searchButton = document.getElementById("search-button");
 
     // Detect OS and update keyboard shortcut display
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    const searchKbd = document.getElementById('search-kbd');
-    
+    const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    const searchKbd = document.getElementById("search-kbd");
+
     if (searchKbd && !isMac) {
       // Replace ⌘K with Ctrl+K for Windows/Linux
-      searchKbd.textContent = 'Ctrl+K';
+      searchKbd.textContent = "Ctrl+K";
     }
 
     // Custom modal show/hide functions to ensure proper focus handling
     function showModal() {
       if (searchModal) {
-        searchModal.classList.remove('hidden');
-        searchModal.setAttribute('aria-hidden', 'false');
+        searchModal.classList.remove("hidden");
+        searchModal.setAttribute("aria-hidden", "false");
         // Focus input immediately in the same event cycle
         if (modalSearchInput) {
           modalSearchInput.focus();
@@ -395,8 +514,8 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
 
     function hideModal() {
       if (searchModal) {
-        searchModal.classList.add('hidden');
-        searchModal.setAttribute('aria-hidden', 'true');
+        searchModal.classList.add("hidden");
+        searchModal.setAttribute("aria-hidden", "true");
       }
     }
 
@@ -430,14 +549,21 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
     // Handle global keyboard shortcut and escape key
     document.addEventListener("keydown", (e) => {
       // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
-      if ((isMac && e.metaKey && e.key === 'k') || (!isMac && e.ctrlKey && e.key === 'k')) {
+      if (
+        (isMac && e.metaKey && e.key === "k") ||
+        (!isMac && e.ctrlKey && e.key === "k")
+      ) {
         e.preventDefault();
         showModal();
         return;
       }
 
       // Handle escape key to close modal
-      if (e.key === "Escape" && searchModal && !searchModal.classList.contains("hidden")) {
+      if (
+        e.key === "Escape" &&
+        searchModal &&
+        !searchModal.classList.contains("hidden")
+      ) {
         hideModal();
       }
     });
@@ -455,7 +581,7 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
     }
 
     // Handle search suggestions
-    searchSuggestions.forEach(button => {
+    searchSuggestions.forEach((button) => {
       button.addEventListener("click", () => {
         const query = button.getAttribute("data-query");
         if (query && modalSearchInput) {
