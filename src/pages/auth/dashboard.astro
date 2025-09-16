@@ -25,58 +25,74 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 </div>
             </div>
             <div class="mb-6">
-                <div class="p-4 bg-gray-50 rounded-lg">
+                <div class="p-3 sm:p-4 bg-gray-50 rounded-lg">
                     <!-- Stats row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="p-4 bg-white rounded-lg flex items-center justify-between">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                        <div class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-500">Saved items</p>
-                                <div class="mt-2 text-2xl font-bold" id="savedCount">—</div>
+                                <p class="text-xs sm:text-sm text-gray-500">Saved items</p>
+                                <div class="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold" id="savedCount">—</div>
                             </div>
-                            <div class="text-sm text-gray-400">Projects & Stays</div>
+                            <div class="hidden sm:block text-sm text-gray-400">Projects & Stays</div>
                         </div>
 
-                        <div class="p-4 bg-white rounded-lg flex items-center justify-between">
+                        <div class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-500">Lists</p>
-                                <div class="mt-2 text-2xl font-bold" id="listsCount">—</div>
+                                <p class="text-xs sm:text-sm text-gray-500">Lists</p>
+                                <div class="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold" id="listsCount">—</div>
                             </div>
-                            <div class="text-sm text-gray-400">Custom collections</div>
+                            <div class="hidden sm:block text-sm text-gray-400">Custom collections</div>
                         </div>
 
-                        <div class="p-4 bg-white rounded-lg flex items-center justify-between">
+                        <div class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-500">Completed</p>
-                                <div class="mt-2 text-2xl font-bold" id="completedCount">—</div>
+                                <p class="text-xs sm:text-sm text-gray-500">Completed</p>
+                                <div class="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold" id="completedCount">—</div>
                             </div>
-                            <div class="text-sm text-gray-400">Done items</div>
+                            <div class="hidden sm:block text-sm text-gray-400">Done items</div>
                         </div>
                     </div>
 
                 </div>
 
                 <!-- My Lists section (separate box) -->
-                <div class="p-4 bg-gray-50 rounded-lg mt-6">
-                        <div class="flex items-center justify-between mb-3">
+                <div class="p-3 sm:p-4 bg-gray-50 rounded-lg mt-6">
+                        <div class="flex items-center justify-between mb-3 gap-3">
                             <div>
                                 <h3 class="text-lg font-semibold">My Lists</h3>
                                 <p class="text-sm text-gray-500">Create lists to save projects and stays for later.</p>
+                                <div class="mt-2 sm:hidden">
+                                    <button id="hideDoneChipMobile" aria-pressed="false" class="inline-flex items-center px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm cursor-pointer">Hide done</button>
+                                </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <label class="flex items-center gap-2 text-sm text-gray-600 select-none">
-                                    <input id="hideCompletedToggle" type="checkbox" class="rounded border-gray-300" />
-                                    Hide completed
-                                </label>
-                                <button id="createListBtn" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Create new list</button>
+                                <button id="hideDoneChip" aria-pressed="false" class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm cursor-pointer">Hide done</button>
+                                <button id="createListBtn" aria-label="Create new list" title="Create new list" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer inline-flex items-center gap-2">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                    <span>New</span>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Create form (hidden by default) -->
-                        <div id="newListForm" class="hidden mb-4">
-                            <div class="flex gap-2">
-                                <input id="newListName" type="text" placeholder="List name" class="flex-1 px-3 py-2 border rounded-md" />
-                                <button id="addListBtn" class="px-3 py-2 bg-green-600 text-white rounded-md cursor-pointer">Add</button>
-                                <button id="cancelListBtn" class="px-3 py-2 bg-gray-200 rounded-md cursor-pointer">Cancel</button>
+                        <!-- New List Modal / Bottom Sheet -->
+                        <div id="newListModal" class="fixed inset-0 z-50 hidden">
+                            <div id="newListOverlay" class="absolute inset-0 bg-black/40"></div>
+                            <div class="absolute inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+                                <div class="bg-white rounded-t-xl sm:rounded-xl shadow-lg w-full sm:max-w-md p-4 sm:p-6">
+                                    <div class="mb-3">
+                                        <h3 class="text-base font-semibold">Create new list</h3>
+                                        <p class="text-sm text-gray-500">Add a name to get started.</p>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <input id="newListNameInput" type="text" placeholder="E.g., Weekend ideas" class="w-full px-3 py-2 border rounded-md" />
+                                        <div class="flex justify-end gap-2">
+                                            <button id="newListCancelBtn" class="px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Cancel</button>
+                                            <button id="newListCreateBtn" class="px-3 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700">Create</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -87,7 +103,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 </div>
 
             <!-- Recently completed (separate shaded box) -->
-            <div class="p-4 bg-gray-50 rounded-lg mt-6 mb-6" id="recentCompletedBox" hidden>
+            <div class="p-3 sm:p-4 bg-gray-50 rounded-lg mt-6 mb-6" id="recentCompletedBox" hidden>
                 <div class="flex items-center justify-between mb-3">
                     <h3 id="recentCompletedTitle" class="text-lg font-semibold cursor-pointer">Recently completed</h3>
                     <button id="recentCompletedToggle" aria-expanded="false" aria-label="Expand section" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
@@ -110,7 +126,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
 <script>
     import { getCurrentUser, logout } from '../../lib/auth';
-    import { getListsWithItems, getSavedCounts, createList, removeItemFromList, deleteList } from '../../lib/lists';
+    import { getListsWithItems, getSavedCounts, createList, removeItemFromList, deleteList, renameList, setDefaultList, saveItemToList } from '../../lib/lists';
     import { getCompletedCount, getRecentCompleted, getStatusesForItems, setCompleted } from '../../lib/completed';
 
     // Check if user is logged in
@@ -175,10 +191,13 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
     // --- Client-side lists UI (real data) ---
     const createListBtn = document.getElementById('createListBtn');
-    const newListForm = document.getElementById('newListForm');
-    const cancelListBtn = document.getElementById('cancelListBtn');
-    const addListBtn = document.getElementById('addListBtn');
-    const newListName = document.getElementById('newListName');
+    let modalKeydownHandler: ((e: KeyboardEvent) => void) | null = null;
+    let lastFocusedBeforeModal: HTMLElement | null = null;
+    const newListModal = document.getElementById('newListModal');
+    const newListOverlay = document.getElementById('newListOverlay');
+    const newListNameInput = document.getElementById('newListNameInput') as HTMLInputElement | null;
+    const newListCreateBtn = document.getElementById('newListCreateBtn');
+    const newListCancelBtn = document.getElementById('newListCancelBtn');
     const listsContainer = document.getElementById('listsContainer');
     const listsCount = document.getElementById('listsCount');
     const savedCount = document.getElementById('savedCount');
@@ -188,7 +207,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const recentCompletedEl = document.getElementById('recentCompleted');
     const recentCompletedToggle = document.getElementById('recentCompletedToggle');
     const recentCompletedTitle = document.getElementById('recentCompletedTitle');
-    const hideCompletedToggle = document.getElementById('hideCompletedToggle');
+    const hideDoneChip = document.getElementById('hideDoneChip');
+    const hideDoneChipMobile = document.getElementById('hideDoneChipMobile');
 
     // State
     let lists = [] as any[];
@@ -197,7 +217,22 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const HIDE_COMPLETED_LS = 'dashHideCompleted';
     let hideCompleted = false;
     try { hideCompleted = localStorage.getItem(HIDE_COMPLETED_LS) === '1'; } catch(_) {}
-    if (hideCompletedToggle) (hideCompletedToggle as HTMLInputElement).checked = hideCompleted;
+
+    function applyHideDoneVisual(){
+        const on = 'bg-primary-600 text-white border border-primary-600 hover:bg-primary-700';
+        const off = 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50';
+        // Desktop chip: only visible at sm+; never include plain inline-flex so it stays hidden on mobile
+        if (hideDoneChip) {
+            hideDoneChip.setAttribute('aria-pressed', hideCompleted ? 'true' : 'false');
+            hideDoneChip.className = `hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer ${hideCompleted ? on : off}`;
+        }
+        // Mobile chip: only visible below sm
+        if (hideDoneChipMobile) {
+            hideDoneChipMobile.setAttribute('aria-pressed', hideCompleted ? 'true' : 'false');
+            hideDoneChipMobile.className = `inline-flex sm:hidden items-center px-3 py-1.5 rounded-full text-sm cursor-pointer ${hideCompleted ? on : off}`;
+        }
+    }
+    applyHideDoneVisual();
 
     function idKeysFor(type: 'project' | 'stay', id: string){ return [`${type}:${id}`]; }
 
@@ -219,26 +254,45 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 lists.forEach(l => {
             const wrap = document.createElement('div');
                         wrap.className = 'p-4 bg-white rounded-lg';
+            wrap.setAttribute('data-list-id', l.id);
             const count = l.items?.length || 0;
         const lsKey = `dashListCollapsed:${l.id}`;
-        const initialCollapsed = typeof localStorage !== 'undefined' && localStorage.getItem(lsKey) === '1';
+        let initialCollapsed = false;
+        if (typeof localStorage !== 'undefined') {
+            const saved = localStorage.getItem(lsKey);
+            if (saved !== null) {
+                initialCollapsed = saved === '1';
+            } else {
+                // Default collapsed on small screens on first visit
+                try {
+                    initialCollapsed = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+                } catch {}
+            }
+        }
                         wrap.innerHTML = `
                 <div class="flex items-center justify-between">
                     <div>
                                                 <div class="font-medium cursor-pointer" data-list-title>${l.title}${l.is_default ? ' <span class="text-xs text-gray-500">(default)</span>' : ''}</div>
                         <div class="text-sm text-gray-500">${count} item${count===1?'':'s'}</div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1 sm:gap-2 relative">
+                        <div class="relative">
+                            <button data-menu-toggle="${l.id}" aria-haspopup="menu" aria-expanded="false" aria-label="List options" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
+                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                                </svg>
+                            </button>
+                            <div data-menu="${l.id}" role="menu" class="hidden absolute right-0 mt-2 w-40 bg-white border rounded-md overflow-hidden shadow-lg z-10">
+                                <button role="menuitem" data-action-rename="${l.id}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">Rename</button>
+                                ${l.is_default ? '' : `<button role="menuitem" data-action-default="${l.id}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">Set as default</button>`}
+                                <button role="menuitem" data-action-delete="${l.id}" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Delete</button>
+                            </div>
+                        </div>
                                                                         <button data-toggle-list="${l.id}" aria-expanded="${initialCollapsed ? 'false' : 'true'}" aria-label="${initialCollapsed ? 'Expand list' : 'Collapse list'}" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
                                                     <svg class="w-4 h-4 transition-transform ${initialCollapsed ? 'rotate-180' : ''}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
                                                     </svg>
                                                 </button>
-                                                                                                <button data-delete-list="${l.id}" aria-label="Delete list" title="Delete list" class="p-1 text-red-600 hover:text-red-800 rounded hover:bg-red-50 cursor-pointer">
-                                                                                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-                                                                                                    </svg>
-                                                                        </button>
                     </div>
                 </div>
         <div class="mt-3 space-y-4 ${initialCollapsed ? 'hidden' : ''}" data-items></div>
@@ -257,21 +311,109 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 const title = meta?.title || `${item.item_type} ${item.item_id}`;
                 const url = meta?.url || (item.item_type === 'project' ? `/projects/${item.item_id}` : `/stays/${item.item_id}`);
                 const row = document.createElement('div');
-                row.className = 'flex items-center justify-between border rounded-md px-3 py-2';
+                row.className = `flex items-center justify-between border rounded-md px-3 py-2 ${isDone ? 'bg-gray-50' : ''}`;
+                const key = `${item.item_type}:${item.item_id}`;
                 row.innerHTML = `
                     <div class="flex items-center gap-3 min-w-0">
+                        <input type="checkbox" data-toggle-done data-type="${item.item_type}" data-id="${item.item_id}" ${isDone ? 'checked' : ''}
+                               aria-label="Mark as done: ${title}"
+                               class="w-4 h-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
                         ${meta?.image ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>` :
                         `<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${item.item_type}</div>`}
-                        <a class="font-medium hover:underline truncate" href="${url}">${title}</a>
+                        <a class="font-medium hover:underline truncate ${isDone ? 'line-through text-gray-500' : ''}" href="${url}">${title}</a>
                     </div>
-                    <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="flex items-center gap-2 sm:gap-3 relative">
                         <span class="hidden sm:inline text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ''}</span>
-                        ${isDone
-                            ? `<button data-toggle-done data-next="false" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs text-green-700 bg-green-50 rounded hover:bg-green-100 cursor-pointer" title="Mark as not done">Done</button>`
-                            : `<button data-toggle-done data-next="true" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer">Mark as done</button>`}
-                        <button data-remove-item data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer">Remove</button>
+                        <div class="relative">
+                            <button data-item-menu-toggle="${key}" aria-haspopup="menu" aria-expanded="false" aria-label="Item options" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
+                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                                </svg>
+                            </button>
+                            <div data-item-menu="${key}" role="menu" class="hidden absolute right-0 mt-2 w-44 bg-white border rounded-md overflow-hidden shadow-lg z-10">
+                                <button role="menuitem" data-item-action-visit="${key}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">View details</button>
+                                <button role="menuitem" data-item-action-move-toggle="${key}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">Move to…</button>
+                                <div data-item-move-menu="${key}" class="hidden border-t py-1"></div>
+                                <button role="menuitem" data-item-action-remove data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Remove</button>
+                            </div>
+                        </div>
                     </div>
                 `;
+
+                // Bind item menu handlers
+                const menuToggle = row.querySelector(`button[data-item-menu-toggle="${key}"]`);
+                const menu = row.querySelector(`div[data-item-menu="${key}"]`);
+                if (menuToggle && menu) {
+                    const closeMenu = () => { (menu as HTMLElement).classList.add('hidden'); (menuToggle as HTMLButtonElement).setAttribute('aria-expanded','false'); };
+                    const openMenu = () => { (menu as HTMLElement).classList.remove('hidden'); (menuToggle as HTMLButtonElement).setAttribute('aria-expanded','true'); };
+                    menuToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isOpen = !(menu as HTMLElement).classList.contains('hidden');
+                        isOpen ? closeMenu() : openMenu();
+                    });
+                    const onDocClick = (evt: MouseEvent) => {
+                        if ((menu as HTMLElement).classList.contains('hidden')) return;
+                        if (!row.contains(evt.target as Node)) closeMenu();
+                    };
+                    document.addEventListener('click', onDocClick);
+                    row.addEventListener('keydown', (ke: KeyboardEvent) => { if (ke.key === 'Escape') closeMenu(); });
+
+                    // View details
+                    const visitBtn = row.querySelector(`button[data-item-action-visit="${key}"]`);
+                    if (visitBtn) visitBtn.addEventListener('click', () => { closeMenu(); window.location.href = url; });
+
+                    // Move to… submenu
+                    const moveToggle = row.querySelector(`button[data-item-action-move-toggle="${key}"]`);
+                    const moveMenu = row.querySelector(`div[data-item-move-menu="${key}"]`);
+                    if (moveToggle && moveMenu) {
+                        const others = (lists || []).filter((ol: any) => ol.id !== l.id);
+                        if (!others.length) {
+                            (moveToggle as HTMLButtonElement).disabled = true;
+                            (moveToggle as HTMLButtonElement).classList.add('text-gray-300','cursor-not-allowed');
+                        } else {
+                            // build buttons
+                            (moveMenu as HTMLElement).innerHTML = '';
+                            others.forEach((ol: any) => {
+                                const b = document.createElement('button');
+                                b.setAttribute('role','menuitem');
+                                b.className = 'w-full text-left px-3 py-2 text-sm hover:bg-gray-50';
+                                b.textContent = ol.title || 'Untitled';
+                                b.addEventListener('click', async () => {
+                                    closeMenu();
+                                    try {
+                                        await saveItemToList(ol.id, item.item_type, item.item_id);
+                                        await removeItemFromList(l.id, item.item_type, item.item_id);
+                                        await loadAndRender();
+                                    } catch (e) { console.error('Move failed', e); }
+                                });
+                                (moveMenu as HTMLElement).appendChild(b);
+                            });
+                            // toggle visibility
+                            (moveToggle as HTMLButtonElement).addEventListener('click', (evt) => {
+                                evt.stopPropagation();
+                                (moveMenu as HTMLElement).classList.toggle('hidden');
+                            });
+                        }
+                    }
+
+                    // Remove
+                    const removeBtn = row.querySelector('button[data-item-action-remove]');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', async () => {
+                            closeMenu();
+                            const listId = (removeBtn as HTMLButtonElement).getAttribute('data-list');
+                            const type = (removeBtn as HTMLButtonElement).getAttribute('data-type') as 'project' | 'stay' | null;
+                            const id = (removeBtn as HTMLButtonElement).getAttribute('data-id');
+                            if (!listId || !type || !id) return;
+                            const ok = window.confirm('Remove this item from the list?');
+                            if (!ok) return;
+                            try {
+                                await removeItemFromList(listId, type, id);
+                                await loadAndRender();
+                            } catch (e) { console.error('Remove item failed', e); }
+                        });
+                    }
+                }
                 return row;
             };
 
@@ -296,20 +438,64 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 sec.appendChild(list);
                 itemsHost?.appendChild(sec);
             }
-                        // bind delete list
-                        const delBtn = wrap.querySelector('button[data-delete-list]');
+                        // menu toggle
+                        const menuToggle = wrap.querySelector(`button[data-menu-toggle="${l.id}"]`);
+                        const menu = wrap.querySelector(`div[data-menu="${l.id}"]`);
+                        const closeMenu = () => { menu?.classList.add('hidden'); (menuToggle as HTMLButtonElement)?.setAttribute('aria-expanded','false'); };
+                        const openMenu = () => { menu?.classList.remove('hidden'); (menuToggle as HTMLButtonElement)?.setAttribute('aria-expanded','true'); };
+                        if (menuToggle && menu) {
+                            menuToggle.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const isOpen = !(menu as HTMLElement).classList.contains('hidden');
+                                isOpen ? closeMenu() : openMenu();
+                            });
+                            // click outside to close
+                            document.addEventListener('click', (evt) => {
+                                if (!menu || (menu as HTMLElement).classList.contains('hidden')) return;
+                                if (!(wrap as HTMLElement).contains(evt.target as Node)) closeMenu();
+                            });
+                            // escape to close
+                            wrap.addEventListener('keydown', (ke: KeyboardEvent) => {
+                                if (ke.key === 'Escape') { closeMenu(); }
+                            });
+                        }
+
+                        // menu actions
+                        const renameBtn = wrap.querySelector(`button[data-action-rename="${l.id}"]`);
+                        if (renameBtn) {
+                            renameBtn.addEventListener('click', async () => {
+                                closeMenu();
+                                const current = l.title || '';
+                                const next = window.prompt('Rename list', current);
+                                if (next === null) return;
+                                const title = next.trim();
+                                if (!title || title === current) return;
+                                try {
+                                    await renameList(l.id, title);
+                                    await loadAndRender();
+                                } catch (e) { console.error('Rename failed', e); }
+                            });
+                        }
+                        const defaultBtn = wrap.querySelector(`button[data-action-default="${l.id}"]`);
+                        if (defaultBtn) {
+                            defaultBtn.addEventListener('click', async () => {
+                                closeMenu();
+                                try {
+                                    await setDefaultList(l.id);
+                                    await loadAndRender();
+                                } catch (e) { console.error('Set default failed', e); }
+                            });
+                        }
+                        const delBtn = wrap.querySelector(`button[data-action-delete="${l.id}"]`);
                         if (delBtn) {
                             delBtn.addEventListener('click', async () => {
-                                const id = (delBtn as HTMLButtonElement).getAttribute('data-delete-list');
-                                if (!id) return;
+                                closeMenu();
                                 const ok = window.confirm('Delete this list? All items in it will also be removed. This cannot be undone.');
                                 if (!ok) return;
                                 try {
-                                    await deleteList(id);
+                                    await deleteList(l.id);
                                     await loadAndRender();
-                                } catch (e) {
-                                    console.error('Delete list failed', e);
-                                }
+                                } catch (e) { console.error('Delete list failed', e); }
                             });
                         }
 
@@ -343,31 +529,14 @@ import MainLayout from '../../layouts/MainLayout.astro';
         });
         listsContainer.appendChild(frag);
 
-                // delegate remove buttons
-                listsContainer.querySelectorAll('button[data-remove-item]').forEach((btn) => {
-                    btn.addEventListener('click', async () => {
-                        const listId = (btn as HTMLButtonElement).getAttribute('data-list');
-                        const type = (btn as HTMLButtonElement).getAttribute('data-type') as 'project' | 'stay' | null;
-                        const id = (btn as HTMLButtonElement).getAttribute('data-id');
-                        if (!listId || !type || !id) return;
-                        const ok = window.confirm('Remove this item from the list?');
-                        if (!ok) return;
-                        try {
-                            await removeItemFromList(listId, type, id);
-                            await loadAndRender();
-                        } catch (e) {
-                            console.error('Remove item failed', e);
-                        }
-                    });
-                });
+                // (remove handled via per-item menu above)
 
-                // delegate toggle done buttons
-                listsContainer.querySelectorAll('button[data-toggle-done]').forEach((btn) => {
-                    btn.addEventListener('click', async () => {
-                        const type = (btn as HTMLButtonElement).getAttribute('data-type') as 'project' | 'stay' | null;
-                        const id = (btn as HTMLButtonElement).getAttribute('data-id');
-                        const nextStr = (btn as HTMLButtonElement).getAttribute('data-next');
-                        const next = nextStr === 'true';
+                // delegate toggle done via checkbox
+                listsContainer.querySelectorAll('input[type="checkbox"][data-toggle-done]').forEach((cb) => {
+                    cb.addEventListener('change', async () => {
+                        const type = (cb as HTMLInputElement).getAttribute('data-type') as 'project' | 'stay' | null;
+                        const id = (cb as HTMLInputElement).getAttribute('data-id');
+                        const next = (cb as HTMLInputElement).checked;
                         if (!type || !id) return;
                         try {
                             await setCompleted(type, id, next, 'dashboard');
@@ -495,43 +664,81 @@ import MainLayout from '../../layouts/MainLayout.astro';
         }
     }
 
-    if (createListBtn) {
-        createListBtn.addEventListener('click', () => {
-            newListForm?.classList.remove('hidden');
-            (newListName as HTMLInputElement)?.focus();
-        });
-    }
-
-    if (cancelListBtn) {
-        cancelListBtn.addEventListener('click', () => {
-            newListForm?.classList.add('hidden');
-            (newListName as HTMLInputElement).value = '';
-        });
-    }
-
-    if (addListBtn) {
-        addListBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const name = (newListName as HTMLInputElement).value.trim();
-            if (!name) return;
-            try {
-                await createList(name, null, false);
-                (newListName as HTMLInputElement).value = '';
-                newListForm?.classList.add('hidden');
-                await loadAndRender();
-            } catch (err) {
-                console.error('Create list failed', err);
+    function openNewListModal(){
+        if (!newListModal) return;
+        lastFocusedBeforeModal = (document.activeElement as HTMLElement) || null;
+        newListModal.classList.remove('hidden');
+        // autofocus after paint
+        setTimeout(() => { newListNameInput?.focus(); }, 0);
+        modalKeydownHandler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeNewListModal();
             }
-        });
+        };
+        window.addEventListener('keydown', modalKeydownHandler);
     }
 
-    if (hideCompletedToggle) {
-        hideCompletedToggle.addEventListener('change', () => {
-            hideCompleted = (hideCompletedToggle as HTMLInputElement).checked;
-            try { localStorage.setItem(HIDE_COMPLETED_LS, hideCompleted ? '1' : '0'); } catch(_) {}
-            renderLists();
-        });
+    function closeNewListModal(){
+        if (!newListModal) return;
+        newListModal.classList.add('hidden');
+        if (newListNameInput) newListNameInput.value = '';
+        if (modalKeydownHandler) {
+            window.removeEventListener('keydown', modalKeydownHandler);
+            modalKeydownHandler = null;
+        }
+        if (lastFocusedBeforeModal) {
+            try { lastFocusedBeforeModal.focus(); } catch {}
+            lastFocusedBeforeModal = null;
+        }
     }
+
+    async function handleCreateNewList(){
+        try {
+            let name = (newListNameInput?.value || '').trim();
+            if (!name) name = 'New list'; // quick-add default
+            const created = await createList(name, null, false);
+            closeNewListModal();
+            await loadAndRender();
+            // Expand and scroll to the new list
+            try {
+                try { localStorage.setItem(`dashListCollapsed:${created.id}`, '0'); } catch {}
+                const listEl = document.querySelector(`[data-list-id="${created.id}"]`);
+                if (listEl) {
+                    const container = listEl.querySelector('[data-items]');
+                    if (container && container.classList.contains('hidden')) {
+                        container.classList.remove('hidden');
+                    }
+                    listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } catch {}
+        } catch (err) {
+            console.error('Create list failed', err);
+        }
+    }
+
+    if (createListBtn) createListBtn.addEventListener('click', openNewListModal);
+    if (newListOverlay) newListOverlay.addEventListener('click', closeNewListModal);
+    if (newListCancelBtn) newListCancelBtn.addEventListener('click', (e) => { e.preventDefault(); closeNewListModal(); });
+    if (newListCreateBtn) newListCreateBtn.addEventListener('click', (e) => { e.preventDefault(); handleCreateNewList(); });
+    if (newListNameInput) newListNameInput.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleCreateNewList();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            closeNewListModal();
+        }
+    });
+
+    const onToggleHideDone = () => {
+        hideCompleted = !hideCompleted;
+        try { localStorage.setItem(HIDE_COMPLETED_LS, hideCompleted ? '1' : '0'); } catch(_) {}
+        applyHideDoneVisual();
+        renderLists();
+    };
+    if (hideDoneChip) hideDoneChip.addEventListener('click', onToggleHideDone);
+    if (hideDoneChipMobile) hideDoneChipMobile.addEventListener('click', onToggleHideDone);
 
     // Initial load
     loadAndRender();

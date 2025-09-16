@@ -133,6 +133,30 @@ export async function deleteList(listId: string): Promise<boolean> {
   return true;
 }
 
+export async function renameList(listId: string, title: string): Promise<List> {
+  const { data, error } = await supabase
+    .from('lists')
+    .update({ title })
+    .eq('id', listId)
+    .select('*')
+    .single();
+  if (error) throw error;
+  return data as List;
+}
+
+export async function setDefaultList(listId: string): Promise<boolean> {
+  const user_id = await getUserId();
+  if (!user_id) throw new Error('Not authenticated');
+
+  // Set this list as default
+  const { error: setErr } = await supabase.from('lists').update({ is_default: true }).eq('id', listId).eq('user_id', user_id);
+  if (setErr) throw setErr;
+  // Unset other lists for this user
+  const { error: unsetErr } = await supabase.from('lists').update({ is_default: false }).neq('id', listId).eq('user_id', user_id);
+  if (unsetErr) throw unsetErr;
+  return true;
+}
+
 export async function getListsContainingItem(itemType: ItemType, itemId: string): Promise<List[]> {
   // Attempt to use a relationship select; if no foreign key relationship exists,
   // this will still return rows from list_items with nested 'lists' where available.
@@ -157,5 +181,7 @@ export default {
   saveItemToList,
   removeItemFromList,
   deleteList,
+  renameList,
+  setDefaultList,
   getListsContainingItem,
 };
