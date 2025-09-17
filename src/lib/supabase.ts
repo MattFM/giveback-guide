@@ -32,6 +32,9 @@ const supabase: any = new Proxy({}, {
   }
 });
 
+// Export the supabase client as a named export for use in other modules
+export { supabase };
+
 // Provide an `account`-like object with minimal helpers used by the app
 export const account = {
   // createJWT used by Workers endpoint in onboarding/profile
@@ -147,9 +150,83 @@ export const updateMagicURLSession = async (userId?: string, secret?: string) =>
 
 export const getCurrentUser = async () => {
   try {
+    // For static sites, check localStorage tokens and parse real user data
+    if (typeof window !== "undefined") {
+      let authToken = null;
+      let tokenKey = null;
+      
+      console.log('=== Debugging localStorage tokens ===');
+      console.log('localStorage length:', localStorage.length);
+      
+      // Log all localStorage keys for debugging
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        console.log(`localStorage key ${i}:`, k);
+        if (k && k.includes('auth')) {
+          console.log(`  Value preview:`, localStorage.getItem(k)?.substring(0, 100) + '...');
+        }
+      }
+      
+      // Find the Supabase auth token
+      if ("localStorage" in window) {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && /^sb-.*-auth-token$/.test(k)) {
+            const v = localStorage.getItem(k);
+            if (v && v !== "null" && v !== "undefined") {
+              authToken = v;
+              tokenKey = k;
+              console.log('Found matching auth token key:', k);
+              break;
+            }
+          }
+        }
+      }
+      
+      if (authToken) {
+        try {
+          console.log('Attempting to parse auth token...');
+          // Parse the actual Supabase session data
+          const sessionData = JSON.parse(authToken);
+          console.log('Parsed session data structure:', Object.keys(sessionData));
+          console.log('Full session data:', sessionData);
+          
+          // Extract user from session data (Supabase format)
+          const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
+          if (user) {
+            console.log('Found real user:', { id: user.id, email: user.email });
+            
+            // Extract name and preferences from user_metadata and add as direct properties
+            const userName = user.user_metadata?.name || null;
+            const userPrefs = user.user_metadata?.prefs || null;
+            console.log('User metadata name:', userName);
+            console.log('User metadata prefs:', userPrefs);
+            
+            return {
+              ...user,
+              name: userName, // Add name property for easier access
+              prefs: userPrefs // Add prefs property for easier access
+            };
+          } else {
+            console.log('No user found in session data. Available keys:', Object.keys(sessionData));
+          }
+        } catch (parseError) {
+          console.error('Failed to parse auth token:', parseError);
+          console.log('Raw token (first 200 chars):', authToken.substring(0, 200));
+        }
+      } else {
+        console.log('No matching auth token found');
+      }
+      
+      console.log('=== End localStorage debug ===');
+      return null;
+    }
+    
+    // Fallback to real Supabase auth if in a server environment
     const u = await account.get();
     return u;
   } catch (e) {
+    console.error('getCurrentUser error:', e);
     return null;
   }
 };
@@ -197,4 +274,5 @@ export const deleteAccount = async () => {
   throw new Error('deleteAccount must be implemented server-side for Supabase');
 };
 
-export default supabase as SupabaseClient;
+// Remove default export that conflicts with named exports
+// export default supabase as SupabaseClient;

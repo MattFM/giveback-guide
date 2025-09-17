@@ -37,6 +37,10 @@ const { title, description, image = '/giveback-guide-placeholder.jpg' } = Astro.
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 
+<!-- Supabase Config -->
+<meta name="supabase-url" content={import.meta.env.PUBLIC_SUPABASE_URL || ''} />
+<meta name="supabase-anon" content={import.meta.env.PUBLIC_SUPABASE_ANON || ''} />
+
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={Astro.url} />

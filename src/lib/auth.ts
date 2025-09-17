@@ -57,4 +57,5 @@ export const account = async () => {
   return m.account;
 };
 
-export default { getImpl };
+// Remove the problematic default export that conflicts with named exports
+// export default { getImpl };

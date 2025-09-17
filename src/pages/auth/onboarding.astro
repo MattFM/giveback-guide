@@ -191,15 +191,25 @@ import MainLayout from '../../layouts/MainLayout.astro';
   // Prefill if name already present
   if (user.name && firstName) (firstName as HTMLInputElement).value = user.name;
 
-    // If user already has preferences set and name present, skip onboarding
-    const prefs = (user as any).prefs || (user as any).preferences || {};
-    if ((user.name && String(user.name).trim()) && (prefs && typeof prefs.newsletter !== 'undefined')) {
-      // Already onboarded
-      window.location.href = '/auth/dashboard';
-      return;
-    }
-
-    // Reveal the guarded content once we know the user isn't being redirected
+  // If user already has preferences set and name present, skip onboarding
+  const prefs = (user as any).prefs || (user as any).preferences || {};
+  console.log('Onboarding check - user name:', user.name);
+  console.log('Onboarding check - user prefs:', prefs);
+  
+  // Check if user has completed onboarding:
+  // 1. Has a name (basic profile info)
+  // 2. Has any preferences set (indicates they've been through onboarding flow)
+  const hasName = user.name && String(user.name).trim();
+  const hasPreferences = prefs && Object.keys(prefs).length > 0;
+  
+  if (hasName && hasPreferences) {
+    console.log('User has completed onboarding, redirecting to dashboard');
+    // Already onboarded
+    window.location.href = '/auth/dashboard';
+    return;
+  }
+  
+  console.log('User needs onboarding - showing form');    // Reveal the guarded content once we know the user isn't being redirected
     const guard = document.getElementById('onboardGuard');
     if (guard) { guard.classList.remove('hidden'); guard.removeAttribute('aria-busy'); }
   })();
