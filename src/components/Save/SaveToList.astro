@@ -10,7 +10,7 @@
 const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = false, mobileFullWidth = false } = Astro.props;
 ---
 
-<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} class={variant === 'minimal' ? '' : 'bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
+<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} class={variant === 'minimal' ? 'hidden' : 'hidden bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
   {variant !== 'minimal' && (
     <div class="mb-4">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Save</h3>
@@ -114,12 +114,17 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
 
     console.log('Initializing SaveToList for:', root);
 
-    // For now, always show the component - handle auth in button clicks
-    // const user = await getCurrentUser();
-    // if (!user) {
-    //   root.style.display = 'none';
-    //   return;
-    // }
+    // Check authentication - only show component to authenticated users
+    const user = await getCurrentUser();
+    if (!user) {
+      console.log('SaveToList: No authenticated user, hiding component');
+      root.style.display = 'none';
+      return;
+    }
+    
+    // User is authenticated, show the component
+    console.log('SaveToList: User authenticated, showing component');
+    root.classList.remove('hidden');
 
     const itemIdStr = root?.dataset?.itemId || '';
     const itemTypeStr = root?.dataset?.itemType || 'project';
