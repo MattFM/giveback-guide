@@ -116,13 +116,12 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
           <span class="hidden lg:block">Join our community</span>
         </a>
 
-        <!-- Tiny inline auth detector: no imports. Chooses which CTA to show. -->
-        <script>
-          // @ts-nocheck
-          (function () {
+        <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
+        <script is:inline>
+          (async function () {
             try {
-              var dash = document.getElementById("header-dashboard-link");
-              var join = document.getElementById("header-join-link");
+              const dash = document.getElementById("header-dashboard-link");
+              const join = document.getElementById("header-join-link");
               if (!dash || !join) return;
 
               function setVisible(el, visible) {
@@ -130,74 +129,70 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
                 el.setAttribute("aria-hidden", visible ? "false" : "true");
               }
 
-              function parseSupabaseSession() {
+              // Use the same reliable auth detection logic as getCurrentUser()
+              async function getCurrentUserReliable() {
                 try {
-                  for (var i = 0; i < localStorage.length; i++) {
-                    var key = localStorage.key(i) || "";
-                    if (
-                      /^sb-.*-auth-token$/.test(key) ||
-                      key.indexOf("supabase.auth.token") !== -1
-                    ) {
-                      var raw = localStorage.getItem(key);
-                      if (!raw) continue;
-                      var data;
-                      try {
-                        data = JSON.parse(raw);
-                      } catch (_) {
-                        continue;
-                      }
-                      var arr = Array.isArray(data) ? data : [data];
-                      for (var j = 0; j < arr.length; j++) {
-                        var item = arr[j] || {};
-                        var sess = item.currentSession || item.session || null;
-                        if (!sess && (item.access_token || item.accessToken)) {
-                          sess = {
-                            access_token: item.access_token || item.accessToken,
-                            expires_at:
-                              item.expires_at || item.expiresAt || null,
-                            user: item.user || null,
-                          };
+                  let authToken = null;
+                  
+                  // Find the Supabase auth token using the same logic as getCurrentUser()
+                  if (typeof window !== "undefined" && "localStorage" in window) {
+                    for (let i = 0; i < localStorage.length; i++) {
+                      const k = localStorage.key(i);
+                      if (k && /^sb-.*-auth-token$/.test(k)) {
+                        const v = localStorage.getItem(k);
+                        if (v && v !== "null" && v !== "undefined") {
+                          authToken = v;
+                          break;
                         }
-                        if (sess) return sess;
                       }
                     }
                   }
-                } catch (_) {}
-                return null;
-              }
-
-              function isSessionValid(sess) {
-                if (!sess) return false;
-                var hasToken = !!(sess.access_token || sess.accessToken);
-                var exp = sess.expires_at || sess.expiresAt || null;
-                if (typeof exp === "string") {
-                  var t = Date.parse(exp);
-                  if (!isNaN(t)) exp = Math.floor(t / 1000);
+                  
+                  if (authToken) {
+                    try {
+                      // Parse the actual Supabase session data
+                      const sessionData = JSON.parse(authToken);
+                      // Extract user from session data (Supabase format)
+                      const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
+                      return user || null;
+                    } catch (parseError) {
+                      console.error('Header: Failed to parse auth token:', parseError);
+                    }
+                  }
+                  
+                  return null;
+                } catch {
+                  return null;
                 }
-                if (typeof exp === "number") {
-                  var nowSec = Math.floor(Date.now() / 1000);
-                  if (exp < nowSec) return false;
+              }
+
+              async function decideAndToggle() {
+                try {
+                  const user = await getCurrentUserReliable();
+                  const loggedIn = !!user;
+                  console.log('Header auth check:', { hasUser: loggedIn, userId: user?.id });
+                  setVisible(dash, loggedIn);
+                  setVisible(join, !loggedIn);
+                } catch (error) {
+                  console.error('Header auth check failed:', error);
+                  // On error, show join button (safer default)
+                  setVisible(dash, false);
+                  setVisible(join, true);
                 }
-                return hasToken || !!sess.user;
               }
 
-              function decideAndToggle() {
-                var sess = parseSupabaseSession();
-                var loggedIn = isSessionValid(sess);
-                setVisible(dash, loggedIn);
-                setVisible(join, !loggedIn);
-              }
-
-              // Run immediately (script is placed right after the buttons)
-              decideAndToggle();
-              // Re-run on DOM and load in case storage becomes available slightly later
+              // Run immediately 
+              await decideAndToggle();
+              
+              // Re-run on DOM and load in case of timing issues
               document.addEventListener("DOMContentLoaded", decideAndToggle, {
                 once: true,
               });
               window.addEventListener("load", decideAndToggle);
+              
               // React to auth changes from other tabs/windows
               window.addEventListener("storage", function (e) {
-                var k = (e && e.key) || "";
+                const k = (e && e.key) || "";
                 if (
                   /^sb-.*-auth-token$/.test(k) ||
                   k.indexOf("supabase.auth.token") !== -1
@@ -205,7 +200,9 @@ import Avatar from "../assets/giveback-guide-avatar.svg";
                   decideAndToggle();
                 }
               });
-            } catch (_) {}
+            } catch (error) {
+              console.error('Header initialization failed:', error);
+            }
           })();
         </script>
 
