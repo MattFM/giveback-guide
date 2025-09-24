@@ -9,6 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://giveback.guide',
+  trailingSlash: 'always',
   integrations: [mdx(), sitemap(), pagefind()],
 
   vite: {
