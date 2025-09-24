@@ -97,17 +97,83 @@ const { project } = Astro.props as Props;
   </h2>
   <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
     By <span class="text-gray-800">{project.data.properties.pOrganiser}</span> in
-    <span class="text-gray-900"
-      >{
-        Array.isArray(project.data.properties.pLocale)
-          ? project.data.properties.pLocale.map((locale: any, index: any) => (
+    <span class="text-gray-900">
+      {
+        (() => {
+          const locales = project.data.properties.pLocale;
+          const country = Array.isArray(project.data.properties.pCountry) 
+            ? project.data.properties.pCountry[0] 
+            : project.data.properties.pCountry;
+          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+          
+          if (!Array.isArray(locales)) {
+            const localeSlug = locales.toLowerCase().replace(/\s+/g, "-");
+            return (
+              <a 
+                href={`/projects/${countrySlug}/${localeSlug}`}
+                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+              >
+                {locales}
+              </a>
+            );
+          }
+          
+          if (locales.length === 0) return "";
+          if (locales.length === 1) {
+            const localeSlug = locales[0].toLowerCase().replace(/\s+/g, "-");
+            return (
+              <a 
+                href={`/projects/${countrySlug}/${localeSlug}`}
+                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+              >
+                {locales[0]}
+              </a>
+            );
+          }
+          if (locales.length === 2) {
+            return (
               <>
-                {locale}
-                {index < project.data.properties.pLocale.length - 1 ? ", " : ""}
+                <a 
+                  href={`/projects/${countrySlug}/${locales[0].toLowerCase().replace(/\s+/g, "-")}`}
+                  class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+                >
+                  {locales[0]}
+                </a>
+                {" & "}
+                <a 
+                  href={`/projects/${countrySlug}/${locales[1].toLowerCase().replace(/\s+/g, "-")}`}
+                  class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+                >
+                  {locales[1]}
+                </a>
               </>
-            ))
-          : project.data.properties.pLocale
-      }</span
-    >
+            );
+          }
+          
+          return (
+            <>
+              {locales.slice(0, -1).map((locale, index) => (
+                <>
+                  <a 
+                    href={`/projects/${countrySlug}/${locale.toLowerCase().replace(/\s+/g, "-")}`}
+                    class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+                  >
+                    {locale}
+                  </a>
+                  {index < locales.length - 2 ? ", " : ""}
+                </>
+              ))}
+              {" & "}
+              <a 
+                href={`/projects/${countrySlug}/${locales[locales.length - 1].toLowerCase().replace(/\s+/g, "-")}`}
+                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+              >
+                {locales[locales.length - 1]}
+              </a>
+            </>
+          );
+        })()
+      }
+    </span>
   </p>
 </article>

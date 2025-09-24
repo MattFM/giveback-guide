@@ -265,13 +265,33 @@ const relatedProjects = allProjects
                 >
                   {
                     Array.isArray(properties.pLocale)
-                      ? properties.pLocale.map((locale, index) => (
-                          <>
-                            {locale}
-                            {index < properties.pLocale.length - 1 && ", "}
-                          </>
-                        ))
-                      : properties.pLocale
+                      ? properties.pLocale.map((locale, index) => {
+                          const country = Array.isArray(properties.pCountry)
+                            ? properties.pCountry[0]
+                            : properties.pCountry;
+                          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+                          const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
+                          return (
+                            <>
+                              <a href={`/projects/${countrySlug}/${localeSlug}`}>
+                                {locale}
+                              </a>
+                              {index < properties.pLocale.length - 1 && ", "}
+                            </>
+                          );
+                        })
+                      : (() => {
+                          const country = Array.isArray(properties.pCountry)
+                            ? properties.pCountry[0]
+                            : properties.pCountry;
+                          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+                          const localeSlug = properties.pLocale.toLowerCase().replace(/\s+/g, "-");
+                          return (
+                            <a href={`/projects/${countrySlug}/${localeSlug}`}>
+                              {properties.pLocale}
+                            </a>
+                          );
+                        })()
                   }
                 </span>
               </span>
