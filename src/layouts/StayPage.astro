@@ -262,32 +262,45 @@ if (images.length === 0) {
                   d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm0 0v6M9.5 9A2.5 2.5 0 0 1 12 6.5"
                 ></path>
               </svg>
-              <div class="flex items-center flex-wrap gap-2">
-                <span>Locale(s):</span>
-                <span 
-                  class="hidden"
+              <span>
+                Locale(s): <span
+                  class="font-medium text-gray-900 dark:text-white"
                   data-pagefind-meta="locale"
                 >
                   {
                     Array.isArray(properties.sLocale)
-                      ? properties.sLocale.join(", ")
-                      : properties.sLocale
+                      ? properties.sLocale.map((locale, index) => {
+                          const country = Array.isArray(properties.sCountry)
+                            ? properties.sCountry[0]
+                            : properties.sCountry;
+                          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+                          const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
+                          return (
+                            <>
+                              <a href={`/stays/${countrySlug}/${localeSlug}`}>
+                                {locale}
+                              </a>
+                              {index < properties.sLocale.length - 1 && ", "}
+                            </>
+                          );
+                        })
+                      : properties.sLocale && (
+                          (() => {
+                            const country = Array.isArray(properties.sCountry)
+                              ? properties.sCountry[0]
+                              : properties.sCountry;
+                            const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+                            const localeSlug = (properties.sLocale as string).toLowerCase().replace(/\s+/g, "-");
+                            return (
+                              <a href={`/stays/${countrySlug}/${localeSlug}`}>
+                                {properties.sLocale}
+                              </a>
+                            );
+                          })()
+                        )
                   }
                 </span>
-                {
-                  Array.isArray(properties.sLocale)
-                    ? properties.sLocale.map((locale) => (
-                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                          {locale}
-                        </span>
-                      ))
-                    : properties.sLocale && (
-                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                          {properties.sLocale}
-                        </span>
-                      )
-                }
-              </div>
+              </span>
             </li>
             <!-- Nation(s) -->
             <li class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -314,38 +327,33 @@ if (images.length === 0) {
                   d="M17.8 13.938h-.011a7 7 0 1 0-11.464.144h-.016l.14.171c.1.127.2.251.3.371L12 21l5.13-6.248c.194-.209.374-.429.54-.659l.13-.155Z"
                 ></path>
               </svg>
-              <div class="flex items-center flex-wrap gap-2">
-                <span>Nation(s):</span>
-                <span 
-                  class="hidden"
+              <span>
+                Nation(s): <span
+                  class="font-medium text-gray-900 dark:text-white"
                   data-pagefind-meta="countries"
                 >
                   {
                     Array.isArray(properties.sCountry)
-                      ? properties.sCountry.join(", ")
-                      : properties.sCountry
+                      ? properties.sCountry.map((country, index) => (
+                          <>
+                            <a
+                              href={`/stays/${country.toLowerCase().replace(/\s+/g, "-")}`}
+                            >
+                              {country}
+                            </a>
+                            {index < properties.sCountry.length - 1 && ","}{" "}
+                          </>
+                        ))
+                      : properties.sCountry && (
+                          <a
+                            href={`/stays/${(properties.sCountry as string).toLowerCase().replace(/\s+/g, "-")}`}
+                          >
+                            {properties.sCountry}
+                          </a>
+                        )
                   }
                 </span>
-                {
-                  Array.isArray(properties.sCountry)
-                    ? properties.sCountry.map((country) => (
-                        <a
-                          href={`/stays/${country.toLowerCase().replace(/\s+/g, "-")}`}
-                          class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full transition-colors dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                        >
-                          {country}
-                        </a>
-                      ))
-                    : properties.sCountry && (
-                        <a
-                          href={`/stays/${(properties.sCountry as string).toLowerCase().replace(/\s+/g, "-")}`}
-                          class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full transition-colors dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                        >
-                          {properties.sCountry}
-                        </a>
-                      )
-                }
-              </div>
+              </span>
             </li>
             <!-- Categories -->
             <li class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -364,22 +372,24 @@ if (images.length === 0) {
                   d="M15.583 8.445h.01M10.86 19.71l-6.573-6.63a.993.993 0 0 1 0-1.4l7.329-7.394A.98.98 0 0 1 12.31 4l5.734.007A1.968 1.968 0 0 1 20 5.983v5.5a.992.992 0 0 1-.316.727l-7.44 7.5a.974.974 0 0 1-1.384.001Z"
                 ></path>
               </svg>
-              <div class="flex items-center flex-wrap gap-2">
-                <span>Categories:</span>
-                {
-                  Array.isArray(properties.sCategory)
-                    ? properties.sCategory.map((category) => (
-                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                          {category}
-                        </span>
-                      ))
-                    : properties.sCategory && (
-                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                          {properties.sCategory}
-                        </span>
-                      )
-                }
-              </div>
+              <span>
+                Categories: <span
+                  class="font-medium text-gray-900 dark:text-white"
+                >
+                  {
+                    Array.isArray(properties.sCategory)
+                      ? properties.sCategory.map((category, index) => (
+                          <>
+                            {category}
+                            {index < properties.sCategory.length - 1
+                              ? ", "
+                              : ""}
+                          </>
+                        ))
+                      : properties.sCategory
+                  }
+                </span>
+              </span>
             </li>
           </ul>
         </section>

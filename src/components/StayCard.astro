@@ -63,15 +63,83 @@ const { stay } = Astro.props as Props;
     </a>
   </h2>
   <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
-           <span class="text-gray-800">{stay.data.properties.sName}</span> is a <span class="text-gray-900">{stay.data.properties.sType}</span> in <span class="text-gray-900">{
-            Array.isArray(stay.data.properties.sLocale)
-              ? stay.data.properties.sLocale.map((locale: any, index: any) => (
-                  <>
-                      {locale}
-                    {index < stay.data.properties.sLocale.length - 1 ? ", " : ""}
-                  </>
-                ))
-              : stay.data.properties.sLocale
-          }</span>
+           <span class="text-gray-800">{stay.data.properties.sName}</span> is a <span class="text-gray-900">{stay.data.properties.sType}</span> in <span class="text-gray-900">
+      {
+        (() => {
+          const locales = stay.data.properties.sLocale;
+          const country = Array.isArray(stay.data.properties.sCountry) 
+            ? stay.data.properties.sCountry[0] 
+            : stay.data.properties.sCountry;
+          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+          
+          if (!Array.isArray(locales)) {
+            const localeSlug = locales.toLowerCase().replace(/\s+/g, "-");
+            return (
+              <a 
+                href={`/stays/${countrySlug}/${localeSlug}`}
+                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+              >
+                {locales}
+              </a>
+            );
+          }
+          
+          if (locales.length === 0) return "";
+          if (locales.length === 1) {
+            const localeSlug = locales[0].toLowerCase().replace(/\s+/g, "-");
+            return (
+              <a 
+                href={`/stays/${countrySlug}/${localeSlug}`}
+                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+              >
+                {locales[0]}
+              </a>
+            );
+          }
+          if (locales.length === 2) {
+            return (
+              <>
+                <a 
+                  href={`/stays/${countrySlug}/${locales[0].toLowerCase().replace(/\s+/g, "-")}`}
+                  class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+                >
+                  {locales[0]}
+                </a>
+                {" & "}
+                <a 
+                  href={`/stays/${countrySlug}/${locales[1].toLowerCase().replace(/\s+/g, "-")}`}
+                  class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+                >
+                  {locales[1]}
+                </a>
+              </>
+            );
+          }
+          
+          return (
+            <>
+              {locales.slice(0, -1).map((locale, index) => (
+                <>
+                  <a 
+                    href={`/stays/${countrySlug}/${locale.toLowerCase().replace(/\s+/g, "-")}`}
+                    class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+                  >
+                    {locale}
+                  </a>
+                  {index < locales.length - 2 ? ", " : ""}
+                </>
+              ))}
+              {" & "}
+              <a 
+                href={`/stays/${countrySlug}/${locales[locales.length - 1].toLowerCase().replace(/\s+/g, "-")}`}
+                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
+              >
+                {locales[locales.length - 1]}
+              </a>
+            </>
+          );
+        })()
+      }
+    </span>
   </p>
 </article>
