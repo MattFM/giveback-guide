@@ -4,144 +4,224 @@ import { impactAreaData } from "../../utils/impactAreas";
 
 const title = "Impact Areas - Giveback Guide";
 const description = "Learn about the different ways projects and stays on Giveback Guide contribute to positive change for people, places, and the planet.";
+
+// Organize impact areas by category
+const environmentalAreas = [
+  "Animal Welfare", "Wildlife Rehabilitation", "Sustainable Food Systems", 
+  "Waste and Litter Reduction", "Marine Protection", "River Health", 
+  "Reforestation", "Habitat Restoration"
+];
+
+const socialAreas = [
+  "Women's Empowerment", "LGBTQ+ Inclusion", "Disability Inclusion and Empowerment",
+  "Refugee and Migrant Inclusion", "Minority Heritage and Empowerment"
+];
+
+const communityAreas = [
+  "Youth Development", "Education and Skills Training", "Community Development",
+  "Poverty Alleviation", "Homelessness Support", "Cultural Heritage Preservation"
+];
 ---
 
 <MainLayout title={title} description={description}>
-  <div class="bg-white dark:bg-gray-900">
-    <div class="mx-auto max-w-screen-xl px-4 py-16">
-      <!-- Header -->
-      <div class="text-center mb-12">
-        <h1 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-          Impact Areas
+  <!-- Hero Section -->
+  <section class="bg-black text-white relative">
+    <div class="py-20 lg:py-32 px-8">
+      <div class="max-w-6xl mx-auto text-center">
+        <h1 class="text-5xl lg:text-7xl font-black mb-8 leading-tight">
+          Every Choice Creates <span class="bg-white text-black px-2 py-1 whitespace-nowrap">Real Impact</span>
         </h1>
-        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-          Every project and stay on Giveback Guide contributes to positive change. Our impact areas help you understand exactly how your travel choices make a difference for people, places, and the planet.
+        <p class="text-xl lg:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-12">
+          19 impact areas covering everything from animal welfare to cultural preservation — discover exactly how your travel choices make a difference for people, places, and the planet
         </p>
       </div>
+    </div>
+  </section>
 
-      <!-- Impact Areas Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Object.entries(impactAreaData).map(([name, data]) => (
-          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
-            <div class="flex items-start gap-4">
-              <div class="text-3xl">{data.icon}</div>
-              <div class="flex-1">
-                <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2">
-                  {name}
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  {data.description}
-                </p>
+  <!-- Environmental & Conservation Section -->
+  <section class="bg-green-50 dark:bg-green-900/10">
+    <div class="py-20 lg:py-24 px-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="text-5xl mb-4">🌍</div>
+          <h2 class="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-6">
+            Environmental & Conservation
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Protecting our planet's ecosystems, wildlife, and natural resources for future generations
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {environmentalAreas.map((areaName) => {
+            const data = impactAreaData[areaName];
+            return (
+              <div class="bg-white border border-green-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-green-400 dark:bg-gray-800 dark:border-green-700">
+                <div class="text-center">
+                  <div class="text-3xl font-black text-green-700 dark:text-green-400 mb-3">{data?.code}</div>
+                  <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-3">
+                    {areaName}
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    {data?.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <!-- Categories Section -->
-      <div class="mt-16">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-          Our Impact Categories
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- Environmental & Conservation -->
-          <div class="bg-green-50 rounded-lg p-6 dark:bg-green-900/20">
-            <div class="text-center mb-4">
-              <div class="text-4xl mb-2">🌍</div>
-              <h3 class="text-xl font-bold text-green-800 dark:text-green-300">
-                Environmental & Conservation
-              </h3>
-            </div>
-            <ul class="text-sm text-green-700 dark:text-green-400 space-y-1">
-              <li>• Animal Welfare</li>
-              <li>• Wildlife Rehabilitation</li>
-              <li>• Sustainable Food Systems</li>
-              <li>• Waste and Litter Reduction</li>
-              <li>• Marine Protection</li>
-              <li>• River Health</li>
-              <li>• Reforestation</li>
-              <li>• Habitat Restoration</li>
-            </ul>
-          </div>
-
-          <!-- Social Justice & Inclusion -->
-          <div class="bg-purple-50 rounded-lg p-6 dark:bg-purple-900/20">
-            <div class="text-center mb-4">
-              <div class="text-4xl mb-2">🤝</div>
-              <h3 class="text-xl font-bold text-purple-800 dark:text-purple-300">
-                Social Justice & Inclusion
-              </h3>
-            </div>
-            <ul class="text-sm text-purple-700 dark:text-purple-400 space-y-1">
-              <li>• Women's Empowerment</li>
-              <li>• LGBTQ+ Inclusion</li>
-              <li>• Disability Inclusion and Empowerment</li>
-              <li>• Refugee and Migrant Inclusion</li>
-              <li>• Minority Heritage and Empowerment</li>
-            </ul>
-          </div>
-
-          <!-- Community & Development -->
-          <div class="bg-blue-50 rounded-lg p-6 dark:bg-blue-900/20">
-            <div class="text-center mb-4">
-              <div class="text-4xl mb-2">🏘️</div>
-              <h3 class="text-xl font-bold text-blue-800 dark:text-blue-300">
-                Community & Development
-              </h3>
-            </div>
-            <ul class="text-sm text-blue-700 dark:text-blue-400 space-y-1">
-              <li>• Youth Development</li>
-              <li>• Education and Skills Training</li>
-              <li>• Community Development</li>
-              <li>• Poverty Alleviation</li>
-              <li>• Homelessness Support</li>
-              <li>• Cultural Heritage Preservation</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- How We Determine Impact Areas -->
-      <div class="mt-16 bg-gray-50 rounded-lg p-8 dark:bg-gray-800">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          How We Determine Impact Areas
-        </h2>
-        <div class="prose prose-gray dark:prose-invert max-w-none">
-          <p class="text-gray-600 dark:text-gray-400 mb-4">
-            Each project and stay on Giveback Guide is carefully reviewed to identify its specific contributions to positive change. Impact areas are assigned based on:
-          </p>
-          <ul class="text-gray-600 dark:text-gray-400 space-y-2">
-            <li>• <strong>Direct involvement:</strong> Activities that directly contribute to the cause</li>
-            <li>• <strong>Financial support:</strong> A portion of proceeds goes toward the impact area</li>
-            <li>• <strong>Educational component:</strong> Learning opportunities about the issue</li>
-            <li>• <strong>Community partnership:</strong> Working with local organizations in that field</li>
-          </ul>
-          <p class="text-gray-600 dark:text-gray-400 mt-4">
-            Many projects and stays contribute to multiple impact areas, giving you diverse ways to make a positive difference through your travels.
-          </p>
-        </div>
-      </div>
-
-      <!-- Call to Action -->
-      <div class="text-center mt-12">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Ready to Make an Impact?
-        </h3>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a 
-            href="/projects" 
-            class="bg-black hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-          >
-            Browse Projects
-          </a>
-          <a 
-            href="/stays" 
-            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-          >
-            Find Stays
-          </a>
+            );
+          })}
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Social Justice & Inclusion Section -->
+  <section class="bg-purple-50 dark:bg-purple-900/10">
+    <div class="py-20 lg:py-24 px-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="text-5xl mb-4">🤝</div>
+          <h2 class="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-6">
+            Social Justice & Inclusion
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Creating equitable opportunities and safe spaces for marginalized communities
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {socialAreas.map((areaName) => {
+            const data = impactAreaData[areaName];
+            return (
+              <div class="bg-white border border-purple-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-purple-400 dark:bg-gray-800 dark:border-purple-700">
+                <div class="text-center">
+                  <div class="text-3xl font-black text-purple-700 dark:text-purple-400 mb-3">{data?.code}</div>
+                  <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-3">
+                    {areaName}
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    {data?.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community & Development Section -->
+  <section class="bg-blue-50 dark:bg-blue-900/10">
+    <div class="py-20 lg:py-24 px-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="text-5xl mb-4">🏘️</div>
+          <h2 class="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-6">
+            Community & Development
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Strengthening local communities through education, economic empowerment, and cultural preservation
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {communityAreas.map((areaName) => {
+            const data = impactAreaData[areaName];
+            return (
+              <div class="bg-white border border-blue-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-blue-400 dark:bg-gray-800 dark:border-blue-700">
+                <div class="text-center">
+                  <div class="text-3xl font-black text-blue-700 dark:text-blue-400 mb-3">{data?.code}</div>
+                  <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-3">
+                    {areaName}
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    {data?.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How We Determine Impact Areas -->
+  <section class="bg-white dark:bg-gray-900">
+    <div class="py-20 lg:py-32 px-8">
+      <div class="max-w-6xl mx-auto text-center mb-20">
+        <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight text-gray-900 dark:text-white">
+          How We Determine <span class="bg-black text-white px-2 py-1 dark:bg-white dark:text-black">Impact Areas</span>
+        </h2>
+        <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+          Simple process, thorough review — every project is carefully evaluated
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-6xl mx-auto">
+        <div class="text-center">
+          <div class="text-6xl font-black text-gray-900 dark:text-white mb-6 opacity-20">01</div>
+          <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Direct Involvement</h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Activities that directly contribute to the cause or issue</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-6xl font-black text-gray-900 dark:text-white mb-6 opacity-20">02</div>
+          <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Financial Support</h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">A portion of proceeds goes toward the impact area</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-6xl font-black text-gray-900 dark:text-white mb-6 opacity-20">03</div>
+          <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Educational Component</h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Learning opportunities about the issue and its importance</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-6xl font-black text-gray-900 dark:text-white mb-6 opacity-20">04</div>
+          <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Community Partnership</h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Working with local organizations in that field</p>
+        </div>
+      </div>
+      
+      <div class="text-center mt-16 max-w-3xl mx-auto">
+        <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+          Many projects and stays contribute to <strong>multiple impact areas</strong>, giving you diverse ways to make a positive difference through your travels.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="bg-black text-white">
+    <div class="py-20 lg:py-32 px-8">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">
+          Ready to Make an <span class="bg-white text-black px-2 py-1">Impact?</span>
+        </h2>
+        <p class="text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed">
+          Start exploring projects and stays that align with the causes you care about most
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <a 
+            href="/projects" 
+            class="px-8 py-4 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-300 whitespace-nowrap"
+          >
+            Browse All Projects
+          </a>
+          <a 
+            href="/stays" 
+            class="px-8 py-4 text-lg font-semibold text-white border-2 border-white rounded-full hover:bg-white hover:text-black transition-all duration-300 whitespace-nowrap"
+          >
+            Find Impact Stays
+          </a>
+        </div>
+        
+        <div class="mt-8 text-gray-400">
+          <p>Or <a href="/projects" class="underline hover:text-white">search by specific impact area</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
 </MainLayout>
