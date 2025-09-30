@@ -1,0 +1,147 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { impactAreaData } from "../../utils/impactAreas";
+
+const title = "Impact Areas - Giveback Guide";
+const description = "Learn about the different ways projects and stays on Giveback Guide contribute to positive change for people, places, and the planet.";
+---
+
+<MainLayout title={title} description={description}>
+  <div class="bg-white dark:bg-gray-900">
+    <div class="mx-auto max-w-screen-xl px-4 py-16">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          Impact Areas
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          Every project and stay on Giveback Guide contributes to positive change. Our impact areas help you understand exactly how your travel choices make a difference for people, places, and the planet.
+        </p>
+      </div>
+
+      <!-- Impact Areas Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Object.entries(impactAreaData).map(([name, data]) => (
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
+            <div class="flex items-start gap-4">
+              <div class="text-3xl">{data.icon}</div>
+              <div class="flex-1">
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2">
+                  {name}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                  {data.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Categories Section -->
+      <div class="mt-16">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+          Our Impact Categories
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Environmental & Conservation -->
+          <div class="bg-green-50 rounded-lg p-6 dark:bg-green-900/20">
+            <div class="text-center mb-4">
+              <div class="text-4xl mb-2">🌍</div>
+              <h3 class="text-xl font-bold text-green-800 dark:text-green-300">
+                Environmental & Conservation
+              </h3>
+            </div>
+            <ul class="text-sm text-green-700 dark:text-green-400 space-y-1">
+              <li>• Animal Welfare</li>
+              <li>• Wildlife Rehabilitation</li>
+              <li>• Sustainable Food Systems</li>
+              <li>• Waste and Litter Reduction</li>
+              <li>• Marine Protection</li>
+              <li>• River Health</li>
+              <li>• Reforestation</li>
+              <li>• Habitat Restoration</li>
+            </ul>
+          </div>
+
+          <!-- Social Justice & Inclusion -->
+          <div class="bg-purple-50 rounded-lg p-6 dark:bg-purple-900/20">
+            <div class="text-center mb-4">
+              <div class="text-4xl mb-2">🤝</div>
+              <h3 class="text-xl font-bold text-purple-800 dark:text-purple-300">
+                Social Justice & Inclusion
+              </h3>
+            </div>
+            <ul class="text-sm text-purple-700 dark:text-purple-400 space-y-1">
+              <li>• Women's Empowerment</li>
+              <li>• LGBTQ+ Inclusion</li>
+              <li>• Disability Inclusion and Empowerment</li>
+              <li>• Refugee and Migrant Inclusion</li>
+              <li>• Minority Heritage and Empowerment</li>
+            </ul>
+          </div>
+
+          <!-- Community & Development -->
+          <div class="bg-blue-50 rounded-lg p-6 dark:bg-blue-900/20">
+            <div class="text-center mb-4">
+              <div class="text-4xl mb-2">🏘️</div>
+              <h3 class="text-xl font-bold text-blue-800 dark:text-blue-300">
+                Community & Development
+              </h3>
+            </div>
+            <ul class="text-sm text-blue-700 dark:text-blue-400 space-y-1">
+              <li>• Youth Development</li>
+              <li>• Education and Skills Training</li>
+              <li>• Community Development</li>
+              <li>• Poverty Alleviation</li>
+              <li>• Homelessness Support</li>
+              <li>• Cultural Heritage Preservation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- How We Determine Impact Areas -->
+      <div class="mt-16 bg-gray-50 rounded-lg p-8 dark:bg-gray-800">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          How We Determine Impact Areas
+        </h2>
+        <div class="prose prose-gray dark:prose-invert max-w-none">
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Each project and stay on Giveback Guide is carefully reviewed to identify its specific contributions to positive change. Impact areas are assigned based on:
+          </p>
+          <ul class="text-gray-600 dark:text-gray-400 space-y-2">
+            <li>• <strong>Direct involvement:</strong> Activities that directly contribute to the cause</li>
+            <li>• <strong>Financial support:</strong> A portion of proceeds goes toward the impact area</li>
+            <li>• <strong>Educational component:</strong> Learning opportunities about the issue</li>
+            <li>• <strong>Community partnership:</strong> Working with local organizations in that field</li>
+          </ul>
+          <p class="text-gray-600 dark:text-gray-400 mt-4">
+            Many projects and stays contribute to multiple impact areas, giving you diverse ways to make a positive difference through your travels.
+          </p>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center mt-12">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          Ready to Make an Impact?
+        </h3>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/projects" 
+            class="bg-black hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+          >
+            Browse Projects
+          </a>
+          <a 
+            href="/stays" 
+            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
+          >
+            Find Stays
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>

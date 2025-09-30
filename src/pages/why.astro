@@ -1,0 +1,467 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../consts";
+---
+
+<MainLayout 
+  title={`Why Choose Better - ${SITE_TITLE}`}
+  description="Discover cafes, tours, stays, and experiences where your money directly supports local communities - the same things you'd do anyway, just better choices."
+>
+  <main>
+    <!-- Hero Section - Full Bleed -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+      <!-- Placeholder for hero image -->
+      <div class="absolute inset-0 bg-cover bg-center bg-gray-800">
+        <!-- Placeholder: Full-bleed image of diverse people engaged in community project -->
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-white text-sm">
+          [Hero Image: People from different backgrounds working together on a community project - authentic, candid moment]
+        </div>
+      </div>
+      
+      <div class="relative z-10 text-center text-white max-w-4xl px-6">
+        <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight mb-8">
+          Your Travel Choices Can <span class="bg-white text-black px-2 py-1">Change Everything</span>
+        </h1>
+        <p class="text-xl md:text-2xl font-light mb-12 leading-relaxed">
+          Discover cafes, tours, stays, and experiences where your money directly supports local communities — the same things you'd do anyway, just better choices
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
+          <div class="relative flex-1 w-full">
+            <input
+              type="text"
+              placeholder="Where are you traveling to?"
+              class="w-full py-4 px-6 text-lg text-gray-900 border-0 rounded-full bg-white focus:ring-4 focus:ring-white/30 outline-none"
+            />
+            <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+          </div>
+          <a
+            href="/projects"
+            class="px-8 py-4 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-300 whitespace-nowrap"
+          >
+            Browse All Projects
+          </a>
+        </div>
+      </div>
+      
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Same Things, Better Choices Section -->
+    <section class="relative">
+      <!-- Split layout with image -->
+      <div class="grid lg:grid-cols-2 min-h-screen">
+        <!-- Content -->
+        <div class="flex items-center justify-center p-8 lg:p-16 bg-white">
+          <div class="max-w-lg">
+            <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-8 leading-tight">
+              Same Things,<br><span class="bg-black text-white px-2 py-1">Better Choices</span>
+            </h2>
+            <p class="text-xl text-gray-600 mb-12 leading-relaxed">
+              You're already going to eat, sleep, shop, and explore. Why not make choices that support local communities?
+            </p>
+            
+            <div class="space-y-8">
+              <div class="flex items-start space-x-4">
+                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of any cafe</h3>
+                  <p class="text-gray-600">Visit <strong>ZiZo in Utrecht</strong> where people with disabilities develop their talents through cooking and hospitality</p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of any hotel</h3>
+                  <p class="text-gray-600">Stay at <strong>Kindred Spirit Elephant Sanctuary in Thailand</strong> and see rescued elephants living freely</p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of generic souvenirs</h3>
+                  <p class="text-gray-600">Buy from <strong>Her Works in Laos</strong> — unique handcrafts made by ethnic minority women</p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of chain restaurants</h3>
+                  <p class="text-gray-600">Eat at <strong>Furahaa in Paris</strong> — plant-based fast food that employs deaf people</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="relative bg-gray-200 min-h-96 lg:min-h-screen">
+          <div class="absolute inset-0 flex items-center justify-center text-gray-500 p-8 text-center">
+            [Image: Split composition showing 'before and after' - generic tourist experience vs. community-supporting alternative]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- What Makes These Special Section -->
+    <!-- Impact Areas Section - Full Width -->
+    <section class="bg-black text-white">
+      <div class="px-8 py-20 lg:py-32">
+        <div class="max-w-6xl mx-auto text-center mb-16">
+          <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">
+            Every Choice Creates <span class="bg-white text-black px-2 py-1">Real Impact</span>
+          </h2>
+          <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Our projects support 15 key impact areas — from animal welfare to women's empowerment to cultural preservation
+          </p>
+        </div>
+
+        <!-- Impact Areas Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+              </svg>
+              <h3 class="text-lg font-bold">Animal Welfare</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Improves the wellbeing, care, or adoption of animals</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <h3 class="text-lg font-bold">Wildlife Rehabilitation</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Rescues, treats, and releases wild animals where possible</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              <h3 class="text-lg font-bold">Sustainable Food Systems</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Champions fully vegan offerings and plant‑based choices</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <h3 class="text-lg font-bold">Women's Economic Empowerment</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Increases income and opportunities for women</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+              <h3 class="text-lg font-bold">Disability Inclusion</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Accessible spaces, jobs, or programmes</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"/>
+              </svg>
+              <h3 class="text-lg font-bold">Cultural Heritage Preservation</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Protects languages, crafts, and traditions</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <h3 class="text-lg font-bold">Education & Skills Training</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Learning that unlocks livelihoods</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              <h3 class="text-lg font-bold">LGBTQ+ Inclusion</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Creates safe, welcoming spaces and opportunities</p>
+          </div>
+          
+          <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+            <div class="flex items-center mb-3">
+              <svg class="w-6 h-6 text-white mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+              <h3 class="text-lg font-bold">Community Development</h3>
+            </div>
+            <p class="text-gray-400 text-sm">Strengthens local services and participation</p>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <p class="text-gray-400 mb-6">Plus 6 more impact areas covering marine protection, waste reduction, and poverty alleviation</p>
+          <a href="/projects" class="inline-flex items-center text-white hover:text-gray-300 font-semibold text-lg">
+            Explore all impact areas
+            <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>    <!-- Categories with Images Section -->
+    <section class="bg-white">
+      <div class="py-20 lg:py-32">
+        <div class="max-w-4xl mx-auto text-center mb-16 px-8">
+          <h2 class="text-4xl lg:text-6xl font-black text-gray-900 mb-8 leading-tight">
+            Discover What's <span class="bg-black text-white px-2 py-1">Possible</span>
+          </h2>
+          <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed">
+            318+ projects across 60+ countries — from quick visits to immersive experiences
+          </p>
+        </div>
+        
+        <!-- Grid with alternating layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          <!-- Cafes & Restaurants -->
+          <div class="relative bg-gray-100 min-h-96 lg:min-h-[50vh]">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-500 p-8 text-center">
+              [Image: People enjoying coffee in a welcoming, community-focused cafe setting]
+            </div>
+          </div>
+          <div class="bg-white p-8 lg:p-16 flex items-center">
+            <div>
+              <h3 class="text-3xl lg:text-4xl font-black text-gray-900 mb-6">Cafes & Restaurants</h3>
+              <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                Community-focused dining where your meal makes a difference
+              </p>
+              <ul class="space-y-3 text-gray-600">
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Disability employment and training programs</span>
+                </li>
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Migrant and refugee-run establishments</span>
+                </li>
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Social enterprises with transparent impact</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Accommodation (reversed order for desktop) -->
+          <div class="bg-white p-8 lg:p-16 flex items-center lg:order-2">
+            <div>
+              <h3 class="text-3xl lg:text-4xl font-black text-gray-900 mb-6">Conscious Accommodation</h3>
+              <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                Places to stay that support conservation and communities
+              </p>
+              <ul class="space-y-3 text-gray-600">
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Elephant and animal sanctuaries</span>
+                </li>
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Cultural homestays with local families</span>
+                </li>
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Eco-lodges supporting conservation</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="relative bg-gray-100 min-h-96 lg:min-h-[50vh] lg:order-1">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-500 p-8 text-center">
+              [Image: Sustainable accommodation in nature - eco-lodge, sanctuary, or traditional homestay]
+            </div>
+          </div>
+
+          <!-- Cultural Experiences -->
+          <div class="relative bg-gray-100 min-h-96 lg:min-h-[50vh]">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-500 p-8 text-center">
+              [Image: Authentic cultural exchange - artisan teaching traditional craft or local guide sharing stories]
+            </div>
+          </div>
+          <div class="bg-white p-8 lg:p-16 flex items-center">
+            <div>
+              <h3 class="text-3xl lg:text-4xl font-black text-gray-900 mb-6">Cultural Experiences</h3>
+              <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                Authentic encounters led by local communities
+              </p>
+              <ul class="space-y-3 text-gray-600">
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Women-led cultural tours and workshops</span>
+                </li>
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Traditional craft experiences with artisans</span>
+                </li>
+                <li class="flex items-start">
+                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <span>Community-led storytelling and exchanges</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works - Bold Visual -->
+    <section class="bg-black text-white">
+      <div class="py-20 lg:py-32 px-8">
+        <div class="max-w-6xl mx-auto text-center mb-20">
+          <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">
+            It's Actually <span class="bg-white text-black px-2 py-1">Really Simple</span>
+          </h2>
+          <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            No complex bookings, no extra costs — just conscious choosing
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-6xl mx-auto">
+          <div class="text-center">
+            <div class="text-6xl font-black text-white mb-6 opacity-20">01</div>
+            <h3 class="text-xl font-bold mb-4">Going Somewhere?</h3>
+            <p class="text-gray-400 leading-relaxed">Search your destination to see what conscious choices are available</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-6xl font-black text-white mb-6 opacity-20">02</div>
+            <h3 class="text-xl font-bold mb-4">Pick What Appeals</h3>
+            <p class="text-gray-400 leading-relaxed">Browse cafes, stays, tours, shops — whatever matches your travel style</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-6xl font-black text-white mb-6 opacity-20">03</div>
+            <h3 class="text-xl font-bold mb-4">Visit Like Normal</h3>
+            <p class="text-gray-400 leading-relaxed">No special booking required — just show up and enjoy the experience</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-6xl font-black text-white mb-6 opacity-20">04</div>
+            <h3 class="text-xl font-bold mb-4">Know Your Impact</h3>
+            <p class="text-gray-400 leading-relaxed">Your choices directly support real community projects and social causes</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Founder Story with Full Bleed Image -->
+    <section class="relative">
+      <div class="grid lg:grid-cols-2 min-h-screen">
+        <!-- Image -->
+        <div class="relative bg-gray-200 min-h-96 lg:min-h-screen order-2 lg:order-1">
+          <div class="absolute inset-0 flex items-center justify-center text-gray-500 p-8 text-center">
+            [Image: Founder portrait or authentic moment from travel/community work - warm, personal, inspiring]
+          </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="flex items-center justify-center p-8 lg:p-16 bg-white order-1 lg:order-2">
+          <div class="max-w-lg">
+            <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-8 leading-tight">
+              How This <span class="bg-black text-white px-2 py-1">Started</span>
+            </h2>
+            <div class="bg-gray-50 border-l-4 border-black p-6">
+              <p class="text-lg text-gray-600 italic leading-relaxed">
+                [Founder story placeholder - space for your personal journey and the "aha moment" that led to creating Giveback Guide. This will be your authentic voice about discovering that travel could be more meaningful.]
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA - Bold and Direct -->
+    <section class="bg-black text-white relative overflow-hidden">
+      <div class="py-20 lg:py-32 px-8 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="text-5xl lg:text-7xl font-black mb-8 leading-tight">
+            Ready to Travel <span class="bg-white text-black px-2 py-1">Differently?</span>
+          </h2>
+          <p class="text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed">
+            Start making choices that matter — same activities, bigger impact
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto mb-8">
+            <div class="relative flex-1 w-full">
+              <input
+                type="text"
+                placeholder="Search by destination..."
+                class="w-full py-4 px-6 text-lg text-gray-900 border-0 rounded-full bg-white focus:ring-4 focus:ring-white/30 outline-none"
+              />
+              <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </button>
+            </div>
+            <a
+              href="/projects"
+              class="px-8 py-4 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-300 whitespace-nowrap"
+            >
+              Browse All Categories
+            </a>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-400">
+            <a
+              href="/stays"
+              class="inline-flex items-center hover:text-white font-medium transition-colors"
+            >
+              Explore conscious accommodation
+              <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </a>
+            <span class="text-gray-600">or</span>
+            <a
+              href="/about"
+              class="inline-flex items-center hover:text-white font-medium transition-colors"
+            >
+              Learn more about us
+              <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Subtle background pattern -->
+      <div class="absolute inset-0 opacity-5">
+        <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+      </div>
+    </section>
+  </main>
+</MainLayout>

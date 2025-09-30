@@ -88,7 +88,76 @@ const posts = defineCollection({
 							}),
 				  pCountry: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  pLocale: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
-		  pCategory: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
+		  // Relation properties (actual relations to other databases)
+		  pTypes: propertySchema.relation.optional(),
+		  pImpacts: propertySchema.relation.optional(),
+		  // Rollup properties for names (what we use in UI)
+		  pTypesNames: propertySchema.rollup.optional().transform((value: any) => {
+			// This should contain the names from the rollup property
+			if (!value) return [];
+			
+			// Extract the rollup value based on type
+			const rollupValue = value.rollup;
+			if (!rollupValue) return [];
+			
+			// Handle array type rollups (multiple values)
+			if (rollupValue.type === 'array' && Array.isArray(rollupValue.array)) {
+			  return rollupValue.array.map((item: any) => {
+				// Handle title type (most common for Name fields)
+				if (item.type === 'title' && Array.isArray(item.title) && item.title[0]?.plain_text) {
+				  return item.title[0].plain_text;
+				}
+				// Handle rich text type
+				if (item.type === 'rich_text' && Array.isArray(item.rich_text) && item.rich_text[0]?.plain_text) {
+				  return item.rich_text[0].plain_text;
+				}
+				// Fallback for direct string values
+				if (typeof item === 'string') return item;
+				if (item?.plain_text) return item.plain_text;
+				return null;
+			  }).filter(Boolean);
+			}
+			
+			// Handle single string value
+			if (rollupValue.type === 'string') {
+			  return [rollupValue.string];
+			}
+			
+			return [];
+		  }),
+		  pImpactsNames: propertySchema.rollup.optional().transform((value: any) => {
+			// This should contain the names from the rollup property
+			if (!value) return [];
+			
+			// Extract the rollup value based on type
+			const rollupValue = value.rollup;
+			if (!rollupValue) return [];
+			
+			// Handle array type rollups (multiple values)
+			if (rollupValue.type === 'array' && Array.isArray(rollupValue.array)) {
+			  return rollupValue.array.map((item: any) => {
+				// Handle title type (most common for Name fields)
+				if (item.type === 'title' && Array.isArray(item.title) && item.title[0]?.plain_text) {
+				  return item.title[0].plain_text;
+				}
+				// Handle rich text type
+				if (item.type === 'rich_text' && Array.isArray(item.rich_text) && item.rich_text[0]?.plain_text) {
+				  return item.rich_text[0].plain_text;
+				}
+				// Fallback for direct string values
+				if (typeof item === 'string') return item;
+				if (item?.plain_text) return item.plain_text;
+				return null;
+			  }).filter(Boolean);
+			}
+			
+			// Handle single string value
+			if (rollupValue.type === 'string') {
+			  return [rollupValue.string];
+			}
+			
+			return [];
+		  }),
 		  pOrganiser: transformedPropertySchema.rich_text,
 		  pSlug: transformedPropertySchema.rich_text,
 		  pCost: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
@@ -157,6 +226,28 @@ const posts = defineCollection({
 		  sCountry: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  sLocale: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  sCategory: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
+		  sTypes: propertySchema.relation.optional().transform((value: any) => {
+			// Extract names from the relation array inside the relation property
+			if (!value?.relation || !Array.isArray(value.relation)) return [];
+			return value.relation.map((item: any) => {
+				// Try different patterns for extracting the relation item name
+				return item?.Name || item?.name || item?.title || 
+					   item?.properties?.Name?.title?.[0]?.plain_text || 
+					   item?.properties?.title?.title?.[0]?.plain_text ||
+					   (typeof item === 'string' ? item : '');
+			}).filter(Boolean);
+		  }),
+		  sImpacts: propertySchema.relation.optional().transform((value: any) => {
+			// Extract names from the relation array inside the relation property
+			if (!value?.relation || !Array.isArray(value.relation)) return [];
+			return value.relation.map((item: any) => {
+				// Try different patterns for extracting the relation item name
+				return item?.Name || item?.name || item?.title || 
+					   item?.properties?.Name?.title?.[0]?.plain_text || 
+					   item?.properties?.title?.title?.[0]?.plain_text ||
+					   (typeof item === 'string' ? item : '');
+			}).filter(Boolean);
+		  }),
 		  sFacilities: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  sName: transformedPropertySchema.rich_text,
 		  sType: transformedPropertySchema.multi_select,
