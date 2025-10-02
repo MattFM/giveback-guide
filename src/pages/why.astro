@@ -28,27 +28,38 @@ const featuredImpactAreas = [
           Your Travel Choices Can <span class="bg-white text-black px-2 py-1">Change Everything</span>
         </h1>
         <p class="text-xl md:text-2xl font-light mb-12 leading-relaxed">
-          Discover cafes, tours, stays, and experiences where your money directly supports local communities — the same things you'd do anyway, just better choices
+          Discover cafes, tours, stays, and experiences where your time and money directly supports local communities. The same things you'd do anyway, just better choices
         </p>
         
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
+        <form action="/search" method="get" class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto mb-8">
           <div class="relative flex-1 w-full">
             <input
               type="text"
+              name="q"
               placeholder="Where are you traveling to?"
               class="w-full py-4 px-6 text-lg text-gray-900 border-0 rounded-full bg-white focus:ring-4 focus:ring-white/30 outline-none"
+              required
             />
-            <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
+            <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </button>
           </div>
+        </form>
+        
+        <div class="flex flex-wrap gap-4 justify-center items-center">
           <a
             href="/projects"
-            class="px-8 py-4 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-300 whitespace-nowrap"
+            class="px-8 py-4 text-lg font-semibold text-white bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 whitespace-nowrap border border-white/40"
           >
-            Browse All Projects
+            Browse Projects
+          </a>
+          <a
+            href="/stays"
+            class="px-8 py-4 text-lg font-semibold text-white bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 whitespace-nowrap border border-white/40"
+          >
+            Browse Stays
           </a>
         </div>
       </div>
@@ -72,7 +83,7 @@ const featuredImpactAreas = [
               Same Things,<br><span class="bg-black text-white px-2 py-1">Better Choices</span>
             </h2>
             <p class="text-xl text-gray-600 mb-12 leading-relaxed">
-              You're already going to eat, sleep, shop, and explore. Why not make choices that support local communities?
+              We all eat, sleep, shop, and explore when we travel. We just help you to make better choices that create real impact.
             </p>
             
             <div class="space-y-8">
@@ -80,7 +91,7 @@ const featuredImpactAreas = [
                 <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of any cafe</h3>
-                  <p class="text-gray-600">Visit <strong>ZiZo in Utrecht</strong> where people with disabilities develop their talents through cooking and hospitality</p>
+                  <p class="text-gray-600">Visit <strong>ZiZo in the Netherlands</strong> where people with disabilities develop their talents through cooking and hospitality</p>
                 </div>
               </div>
 
@@ -96,15 +107,15 @@ const featuredImpactAreas = [
                 <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of generic souvenirs</h3>
-                  <p class="text-gray-600">Buy from <strong>Her Works in Laos</strong> — unique handcrafts made by ethnic minority women</p>
+                  <p class="text-gray-600">Buy from <strong>Trama Textiles in Xela</strong> and directly support Mayan women in Guatemala</p>
                 </div>
               </div>
 
               <div class="flex items-start space-x-4">
                 <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of chain restaurants</h3>
-                  <p class="text-gray-600">Eat at <strong>Furahaa in Paris</strong> — plant-based fast food that employs deaf people</p>
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of a regular city tour</h3>
+                  <p class="text-gray-600">Take a bike tour with <strong>Pikala Bikes in Marrakesh</strong> and help to empower young Moroccans</p>
                 </div>
               </div>
             </div>
@@ -125,7 +136,7 @@ const featuredImpactAreas = [
             Every Choice Creates <span class="bg-white text-black px-2 py-1">Real Impact</span>
           </h2>
           <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Our projects support 15 key impact areas — from animal welfare to women's empowerment to cultural preservation
+            Our projects and stays support 19 key impact areas, to help you find what matters most to you
           </p>
         </div>
 
@@ -165,7 +176,7 @@ const featuredImpactAreas = [
             Discover What's <span class="bg-black text-white px-2 py-1">Possible</span>
           </h2>
           <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed">
-            318+ projects across 60+ countries — from quick visits to immersive experiences
+            300+ projects across 60+ countries. Everything from quick visits to immersive experiences
           </p>
         </div>
         
@@ -260,7 +271,7 @@ const featuredImpactAreas = [
             It's Actually <span class="bg-white text-black px-2 py-1">Really Simple</span>
           </h2>
           <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Simple process, clear instructions — just conscious choosing
+            Just browse the database, choose what appeals to you and get involved
           </p>
         </div>
         
@@ -268,25 +279,25 @@ const featuredImpactAreas = [
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">01</div>
             <h3 class="text-xl font-bold mb-4">Going Somewhere?</h3>
-            <p class="text-gray-400 leading-relaxed">Search your destination to see what conscious choices are available</p>
+            <p class="text-gray-400 leading-relaxed">Search by your destination to see what conscious choices are available</p>
           </div>
           
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">02</div>
             <h3 class="text-xl font-bold mb-4">Pick What Appeals</h3>
-            <p class="text-gray-400 leading-relaxed">Browse cafes, stays, tours, shops — whatever matches your travel style</p>
+            <p class="text-gray-400 leading-relaxed">Browse cafes, stays, tours, shops in our database</p>
           </div>
           
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">03</div>
             <h3 class="text-xl font-bold mb-4">Engage With The Project</h3>
-            <p class="text-gray-400 leading-relaxed">Book if required, or simply visit — each project has clear instructions on how to get involved</p>
+            <p class="text-gray-400 leading-relaxed">Book if required, or simply visit. Each project has clear instructions on how to get involved</p>
           </div>
           
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">04</div>
             <h3 class="text-xl font-bold mb-4">Know Your Impact</h3>
-            <p class="text-gray-400 leading-relaxed">Your choices directly support real community projects and social causes</p>
+            <p class="text-gray-400 leading-relaxed">Your choices directly support real community projects, social causes and ecosystems</p>
           </div>
         </div>
       </div>
@@ -307,8 +318,8 @@ const featuredImpactAreas = [
             </h2>
             <div class="bg-gray-50 border-l-4 border-black p-6">
               <p class="text-lg text-gray-600 italic leading-relaxed">
-                [Founder story placeholder - space for your personal journey and the "aha moment" that led to creating Giveback Guide. This will be your authentic voice about discovering that travel could be more meaningful.]
-              </p>
+                We created Giveback Guide when we began to realise that we wanted more from our travels. We sought out experiences that aligned with our values, but found it hard to discover them. When we started engaging in positive impact projects, we saw the potential for travel to be a force for good. So, we decided to create a platform that would make it easier for others to find and engage with these kinds of experiences.</p>
+              <p class="text-lg text-gray-600 italic leading-relaxed">We hope that Giveback Guide helps you to find and engage with meaningful travel experiences that align with your values, which in turn will enhance your travels.</p>
             </div>
           </div>
         </div>
@@ -326,28 +337,34 @@ const featuredImpactAreas = [
             Start making choices that matter — same activities, bigger impact
           </p>
           
-          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto mb-8">
-            <div class="relative flex-1 w-full">
+          <form action="/search" method="get" class="max-w-2xl mx-auto mb-8">
+            <div class="relative w-full">
               <input
                 type="text"
+                name="q"
                 placeholder="Search by destination..."
                 class="w-full py-4 px-6 text-lg text-gray-900 border-0 rounded-full bg-white focus:ring-4 focus:ring-white/30 outline-none"
+                required
               />
-              <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
+              <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
               </button>
             </div>
+          </form>
+          
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-400 mb-8">
             <a
               href="/projects"
-              class="px-8 py-4 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-300 whitespace-nowrap"
+              class="inline-flex items-center hover:text-white font-medium transition-colors"
             >
-              Browse All Categories
+              Browse all projects
+              <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
             </a>
-          </div>
-          
-          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-400">
+            <span class="text-gray-600">•</span>
             <a
               href="/stays"
               class="inline-flex items-center hover:text-white font-medium transition-colors"
@@ -357,7 +374,7 @@ const featuredImpactAreas = [
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
               </svg>
             </a>
-            <span class="text-gray-600">or</span>
+            <span class="text-gray-600">•</span>
             <a
               href="/about"
               class="inline-flex items-center hover:text-white font-medium transition-colors"
