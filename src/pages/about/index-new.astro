@@ -1,0 +1,389 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../../consts";
+---
+
+<MainLayout title={`About ${SITE_TITLE}`}>
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-black text-white">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-lg">
+        <h1 class="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight text-balance">
+          Who We Are & Why We Built This
+        </h1>
+        <p class="text-xl lg:text-2xl text-neutral-300 leading-relaxed">
+          We're Matt and Jade, two travellers who realized that finding meaningful ways to contribute to the places we visit shouldn't be this hard.
+        </p>
+      </div>
+    </section>
+
+    <!-- Origin Story -->
+    <section class="bg-white">
+      <div class="grid lg:grid-cols-2 min-h-screen">
+        <!-- Content -->
+        <div class="flex items-center justify-center p-8 lg:p-16">
+          <div class="max-w-lg">
+            <h2 class="text-3xl lg:text-4xl font-bold text-neutral-950 mb-8 leading-tight">
+              How This Started
+            </h2>
+            <div class="space-y-6 text-neutral-600 leading-relaxed">
+              <p class="text-lg">
+                <strong class="text-neutral-900">[Your authentic story here]</strong>
+              </p>
+              <p>
+                This is where you share the "aha moment" — maybe it was struggling to find ethical elephant sanctuaries in Thailand, or discovering an amazing community cafe by chance in Amsterdam, or feeling frustrated that sustainable choices weren't visible or accessible.
+              </p>
+              <p>
+                Talk about the emotional journey: the confusion, the research rabbit holes, the disappointment of greenwashing, and finally the realization that other travelers must be facing the same challenges.
+              </p>
+              <p class="font-semibold text-neutral-900">
+                So we decided to build what we needed ourselves.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="p-4 lg:p-8 order-first lg:order-last flex items-center">
+          <div class="relative bg-cover bg-center min-h-96 w-full rounded-2xl overflow-hidden" style="background-image: url('https://res.cloudinary.com/dnxl7wsnx/image/upload/v1744197180/matt-jade-singapore-cloud-forest_wc25cv.jpg'); min-height: 500px;">
+            <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent lg:from-transparent lg:to-white/20"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Values -->
+    <section class="bg-neutral-50">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-xl">
+        <div class="max-w-3xl mb-16">
+          <h2 class="text-3xl lg:text-5xl font-bold text-neutral-950 mb-6 leading-tight">
+            What We Stand For
+          </h2>
+          <p class="text-xl text-neutral-600 leading-relaxed">
+            These aren't just words on a page. These are the principles that guide every decision we make.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+          <!-- Value 1 -->
+          <div class="bg-white p-8 rounded-2xl border border-neutral-200 hover:shadow-lg transition-shadow duration-200">
+            <h3 class="text-2xl font-bold text-neutral-950 mb-4">Always Free for Projects</h3>
+            <p class="text-neutral-600 leading-relaxed mb-4">
+              We will never charge community projects, social enterprises, or non-profits to be listed on our platform. If you're doing good work, you belong here — full stop.
+            </p>
+            <p class="text-sm text-neutral-500 italic">
+              Why? Because putting up financial barriers contradicts everything we're trying to achieve.
+            </p>
+          </div>
+
+          <!-- Value 2 -->
+          <div class="bg-white p-8 rounded-2xl border border-neutral-200 hover:shadow-lg transition-shadow duration-200">
+            <h3 class="text-2xl font-bold text-neutral-950 mb-4">No Commission, Ever</h3>
+            <p class="text-neutral-600 leading-relaxed mb-4">
+              When you book or purchase through a project on our site, 100% of your money goes directly to them. We don't take a cut. We don't insert ourselves into the transaction.
+            </p>
+            <p class="text-sm text-neutral-500 italic">
+              Why? Because these projects need every dollar more than we do.
+            </p>
+          </div>
+
+          <!-- Value 3 -->
+          <div class="bg-white p-8 rounded-2xl border border-neutral-200 hover:shadow-lg transition-shadow duration-200">
+            <h3 class="text-2xl font-bold text-neutral-950 mb-4">Radical Transparency</h3>
+            <p class="text-neutral-600 leading-relaxed mb-4">
+              We're open about our verification process, our revenue model, and our limitations. If we don't know something, we say so. If we make a mistake, we own it publicly.
+            </p>
+            <p class="text-sm text-neutral-500 italic">
+              Why? Because you deserve to know how this platform actually works.
+            </p>
+          </div>
+
+          <!-- Value 4 -->
+          <div class="bg-white p-8 rounded-2xl border border-neutral-200 hover:shadow-lg transition-shadow duration-200">
+            <h3 class="text-2xl font-bold text-neutral-950 mb-4">Human-First Content</h3>
+            <p class="text-neutral-600 leading-relaxed mb-4">
+              Every project description, blog post, and piece of content is written by real humans (us) who have researched, visited, or verified the information. <a href="/about/ai-statement" class="text-purple-600 hover:text-purple-700 underline">No AI-generated content</a>.
+            </p>
+            <p class="text-sm text-neutral-500 italic">
+              Why? Because authentic storytelling matters, and you can tell the difference.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How We Verify Projects -->
+    <section class="bg-white">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-xl">
+        <div class="max-w-3xl mb-16">
+          <h2 class="text-3xl lg:text-5xl font-bold text-neutral-950 mb-6 leading-tight">
+            How We Verify Projects
+          </h2>
+          <p class="text-xl text-neutral-600 leading-relaxed">
+            We're not perfect, but we're honest about our process and our limitations.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+          <!-- Step 1 -->
+          <div>
+            <div class="text-6xl font-black text-neutral-200 mb-4">01</div>
+            <h3 class="text-xl font-bold text-neutral-950 mb-3">Initial Research</h3>
+            <p class="text-neutral-600 leading-relaxed">
+              We check websites, social media presence, reviews, and online footprint. We look for red flags: vague impact claims, exploitative pricing, or questionable practices.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div>
+            <div class="text-6xl font-black text-neutral-200 mb-4">02</div>
+            <h3 class="text-xl font-bold text-neutral-950 mb-3">Direct Contact</h3>
+            <p class="text-neutral-600 leading-relaxed">
+              We reach out directly to verify details: Who runs it? What's the impact model? How transparent are they about funding and operations? We ask hard questions.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div>
+            <div class="text-6xl font-black text-neutral-200 mb-4">03</div>
+            <h3 class="text-xl font-bold text-neutral-950 mb-3">Ongoing Monitoring</h3>
+            <p class="text-neutral-600 leading-relaxed">
+              We encourage user feedback and regularly revisit listings. If something changes or concerns are raised, we investigate. Projects can be removed if they no longer meet our standards.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-12 p-6 bg-neutral-50 border-l-4 border-purple-600 rounded-lg">
+          <h4 class="font-bold text-neutral-950 mb-2">Our Honest Limitation:</h4>
+          <p class="text-neutral-600 leading-relaxed">
+            We're a small team. We can't personally visit every project (though we try!). We rely on a combination of research, direct communication, and community feedback. If you have concerns about a listed project, <a href="/report" class="text-purple-600 hover:text-purple-700 underline">please tell us</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Meet the Team -->
+    <section class="bg-neutral-50">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-xl">
+        <div class="max-w-3xl mb-16">
+          <h2 class="text-3xl lg:text-5xl font-bold text-neutral-950 mb-6 leading-tight">
+            Meet the Team
+          </h2>
+          <p class="text-xl text-neutral-600 leading-relaxed">
+            Just the two of us (for now). We're building this nights and weekends while working other jobs to keep the lights on.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 max-w-4xl">
+          <!-- Matt -->
+          <div class="bg-white p-8 rounded-2xl">
+            <img
+              class="w-48 h-48 rounded-full mx-auto mb-6 object-cover"
+              src="https://res.cloudinary.com/dnxl7wsnx/image/upload/v1747295511/matt-avatar_lvrazy.jpg"
+              alt="Matt, Co-founder of Giveback Guide"
+            />
+            <h3 class="text-2xl font-bold text-neutral-950 text-center mb-2">Matt</h3>
+            <p class="text-neutral-500 text-center mb-6">Co-founder & Developer</p>
+            <p class="text-neutral-600 leading-relaxed">
+              [Your personal bio here — why YOU care about this, what you bring to the table, maybe a travel story that shaped your perspective, your quirks, your values]
+            </p>
+          </div>
+
+          <!-- Jade -->
+          <div class="bg-white p-8 rounded-2xl">
+            <img
+              class="w-48 h-48 rounded-full mx-auto mb-6 object-cover"
+              src="https://res.cloudinary.com/dnxl7wsnx/image/upload/v1747295512/jade-avatar_nmyarf.jpg"
+              alt="Jade, Co-founder of Giveback Guide"
+            />
+            <h3 class="text-2xl font-bold text-neutral-950 text-center mb-2">Jade</h3>
+            <p class="text-neutral-500 text-center mb-6">Co-founder & Content Lead</p>
+            <p class="text-neutral-600 leading-relaxed">
+              [Your personal bio here — same as above. Make it real, make it human, make it memorable]
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How We Make Money -->
+    <section class="bg-white">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-xl">
+        <div class="max-w-3xl mb-12">
+          <h2 class="text-3xl lg:text-5xl font-bold text-neutral-950 mb-6 leading-tight">
+            How We Actually Make Money
+          </h2>
+          <p class="text-xl text-neutral-600 leading-relaxed mb-8">
+            Because "non-profit" doesn't mean "works for free." Here's the honest breakdown.
+          </p>
+        </div>
+
+        <div class="max-w-3xl space-y-8">
+          <div class="flex items-start space-x-4">
+            <div class="w-2 h-2 bg-purple-600 rounded-full mt-3 flex-shrink-0"></div>
+            <div>
+              <h3 class="text-xl font-bold text-neutral-950 mb-2">Small Advertising (Selective)</h3>
+              <p class="text-neutral-600 leading-relaxed">
+                We accept a limited number of display ads from brands that align with our values — think sustainable travel companies, ethical tour operators, conservation organizations. We're picky about who we partner with.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <div class="w-2 h-2 bg-purple-600 rounded-full mt-3 flex-shrink-0"></div>
+            <div>
+              <h3 class="text-xl font-bold text-neutral-950 mb-2">Affiliate Links (Transparent)</h3>
+              <p class="text-neutral-600 leading-relaxed">
+                When you book accommodation or tours through certain partners, we may earn a small commission at no extra cost to you. This NEVER influences which projects we list or how we describe them.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4">
+            <div class="w-2 h-2 bg-purple-600 rounded-full mt-3 flex-shrink-0"></div>
+            <div>
+              <h3 class="text-xl font-bold text-neutral-950 mb-2">Community Tips (Optional)</h3>
+              <p class="text-neutral-600 leading-relaxed">
+                If you find value in what we're building, you can <a href="/support" class="text-purple-600 hover:text-purple-700 underline">support us with a tip</a>. It helps cover hosting costs and keeps us caffeinated.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 p-6 bg-purple-50 border-l-4 border-purple-600 rounded-lg max-w-3xl">
+          <h4 class="font-bold text-neutral-950 mb-2">Our Promise:</h4>
+          <p class="text-neutral-600 leading-relaxed">
+            Editorial independence is non-negotiable. Projects are never featured or prioritized because they paid us. If we think something is worth your attention, it's because we genuinely believe in it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Gallery -->
+    <section class="bg-neutral-50 py-12">
+      <div class="max-w-screen-xl mx-auto px-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <img 
+              class="h-auto w-full rounded-2xl object-cover" 
+              src="https://res.cloudinary.com/dnxl7wsnx/image/upload/v1744197198/oslo-fjord-clean-up_yydfap.jpg" 
+              alt="Community members participating in Oslo Fjord cleanup"
+            />
+          </div>
+          <div>
+            <img 
+              class="h-auto w-full rounded-2xl object-cover" 
+              src="https://res.cloudinary.com/dnxl7wsnx/image/upload/v1744197237/santorini-animal-welfare_zduqln.jpg" 
+              alt="Volunteers caring for animals at Santorini animal welfare center"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="bg-white">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-xl">
+        <h2 class="text-3xl lg:text-5xl font-bold text-neutral-950 mb-16 leading-tight">
+          Questions We Get Asked
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-x-16 gap-y-12 max-w-5xl">
+          <!-- FAQ Item -->
+          <div>
+            <h3 class="flex items-start text-lg font-bold text-neutral-950 mb-3">
+              <svg class="flex-shrink-0 mr-3 w-5 h-5 text-purple-600 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>
+              Can anyone submit a project?
+            </h3>
+            <p class="text-neutral-600 leading-relaxed">
+              Yes! Project founders, volunteers, and travelers can all <a href="/submit" class="text-purple-600 hover:text-purple-700 underline">submit projects</a>. We review every submission to ensure it meets our criteria for positive impact.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="flex items-start text-lg font-bold text-neutral-950 mb-3">
+              <svg class="flex-shrink-0 mr-3 w-5 h-5 text-purple-600 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>
+              What if I find something wrong with a listing?
+            </h3>
+            <p class="text-neutral-600 leading-relaxed">
+              Please <a href="/report" class="text-purple-600 hover:text-purple-700 underline">report it immediately</a>. We take inaccuracies and concerns seriously and will investigate promptly. Your feedback helps keep the platform trustworthy.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="flex items-start text-lg font-bold text-neutral-950 mb-3">
+              <svg class="flex-shrink-0 mr-3 w-5 h-5 text-purple-600 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>
+              Do you use AI for content?
+            </h3>
+            <p class="text-neutral-600 leading-relaxed">
+              No. Read our full <a href="/about/ai-statement" class="text-purple-600 hover:text-purple-700 underline">AI statement here</a>, but the short version: all content is written by humans who have researched or visited the projects.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="flex items-start text-lg font-bold text-neutral-950 mb-3">
+              <svg class="flex-shrink-0 mr-3 w-5 h-5 text-purple-600 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>
+              Can I collaborate with you?
+            </h3>
+            <p class="text-neutral-600 leading-relaxed">
+              We're open to partnerships with organizations that share our values. <a href="/contact" class="text-purple-600 hover:text-purple-700 underline">Get in touch</a> and tell us what you have in mind.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="flex items-start text-lg font-bold text-neutral-950 mb-3">
+              <svg class="flex-shrink-0 mr-3 w-5 h-5 text-purple-600 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>
+              How can I support Giveback Guide?
+            </h3>
+            <p class="text-neutral-600 leading-relaxed">
+              Share it with fellow travelers, follow us on <a href="https://www.instagram.com/giveback.guide" class="text-purple-600 hover:text-purple-700 underline">Instagram</a>, or <a href="/support" class="text-purple-600 hover:text-purple-700 underline">leave a tip</a> if you find value in what we're building.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="flex items-start text-lg font-bold text-neutral-950 mb-3">
+              <svg class="flex-shrink-0 mr-3 w-5 h-5 text-purple-600 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>
+              Are you hiring?
+            </h3>
+            <p class="text-neutral-600 leading-relaxed">
+              Not yet, but we hope to be one day. If you're passionate about this mission, <a href="/contact" class="text-purple-600 hover:text-purple-700 underline">introduce yourself</a> — we'd love to hear from you.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="bg-black text-white">
+      <div class="py-20 lg:py-32 px-4 mx-auto max-w-screen-lg text-center">
+        <h2 class="text-3xl lg:text-5xl font-bold mb-6 leading-tight">
+          Still Have Questions?
+        </h2>
+        <p class="text-xl text-neutral-300 mb-12 leading-relaxed max-w-2xl mx-auto">
+          We're always happy to chat. Seriously — we read and respond to every message.
+        </p>
+        <a 
+          href="/contact" 
+          class="inline-flex items-center px-8 py-4 text-lg font-semibold text-neutral-950 bg-white rounded-xl hover:bg-neutral-100 transition-all duration-200"
+        >
+          Get in Touch
+          <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+</MainLayout>
