@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import MainLayout from "../layouts/MainLayout.astro";
-import ProjectCard from "../components/ProjectCard.astro";
+import ProjectCard from "../components/content/ProjectCard.astro";
 
 const query = Astro.url.searchParams.get("q") || ""; // Get the search query from the URL
 ---

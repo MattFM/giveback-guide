@@ -2,8 +2,8 @@
 // filepath: /Users/matthewmorelli/Documents/Dev/giveback-guide/src/components/Homepage/LatestStays.astro
 
 import { getCollection } from "astro:content";
-import StayCard from "../StayCard.astro";
-import SCountryDropdown from "../SCountryDropdown.astro";
+import StayCard from "../content/StayCard.astro";
+import StayCountryDropdown from "../ui/Dropdown/StayCountryDropdown.astro";
 
 // Props: limit specifies the number of stays to display
 interface Props {
@@ -68,7 +68,7 @@ const limitedEntries = sortedEntries.slice(0, limit);
         </div>
         <div class="flex w-full md:w-auto flex-row nowrap gap-4">
           <div class="grow md:grow-0">
-            <SCountryDropdown />
+            <StayCountryDropdown />
           </div>
         <div class="grow md:grow-0">
           <a

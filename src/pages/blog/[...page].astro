@@ -2,8 +2,8 @@
 import { getCollection } from "astro:content";
 import MainLayout from "../../layouts/MainLayout.astro";
 import type { GetStaticPathsOptions } from "astro";
-import PostCard from "../../components/PostCard.astro";
-import BTagsDropdown from "../../components/BTagsDropdown.astro";
+import PostCard from "../../components/content/PostCard.astro";
+import BlogTagsDropdown from "../../components/ui/Dropdown/BlogTagsDropdown.astro";
 
 // Helper function to parse dates in dd/mm/yyyy format
 function parseDate(dateStr: string): Date {
@@ -60,7 +60,7 @@ const { page } = Astro.props;
             >{page.total}</span
           > posts</span
         ></div>
-        <div id="3" class="w-1/2 md:w-1/4 p-2 order-2 md:order-3"><BTagsDropdown /></div>
+        <div id="3" class="w-1/2 md:w-1/4 p-2 order-2 md:order-3"><BlogTagsDropdown /></div>
     </div>
       <div
         class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0"

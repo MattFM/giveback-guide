@@ -2,8 +2,8 @@
 // filepath: /Users/matthewmorelli/Documents/Dev/giveback-guide/src/components/LatestProjects.astro
 
 import { getCollection } from "astro:content";
-import ProjectCard from "../ProjectCard.astro";
-import PCountryDropdown from "../PCountryDropdown.astro";
+import PostCard from "../content/PostCard.astro";
+import BlogTagsDropdown from "../ui/Dropdown/BlogTagsDropdown.astro";
 
 // Props: limit specifies the number of projects to display
 interface Props {
@@ -14,64 +14,61 @@ const { limit } = Astro.props;
 
 // Helper function to parse dates in dd/mm/yyyy format
 function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split("/");
+  const [day, month, year] = dateStr.split('/');
   return new Date(`${year}-${month}-${day}`);
 }
 
 // Fetch projects from the content collection
-const entries = await getCollection("projects");
+const entries = await getCollection("posts");
 
 // Sort projects by pPublished date (descending order)
-const sortedEntries = entries
-  .map((entry) => ({
-    ...entry,
-    data: {
-      ...entry.data,
-      properties: {
-        ...entry.data.properties,
-        pImageURL: entry.data.properties.pImageURL || "", // Ensure pImageURL is a string
-        pVerify: entry.data.properties.pVerify || "", // Ensure pVerify is a string
-      },
+const sortedEntries = entries.map((entry) => ({
+  ...entry,
+  data: {
+    ...entry.data,
+    properties: {
+      ...entry.data.properties,
+      bCoverImage: entry.data.properties.bCoverImage || "", // Ensure pImageURL is a string
     },
-  }))
-  .sort((a, b) => {
-    const dateA = a.data.properties.pPublished
-      ? a.data.properties.pPublished.start
-      : new Date(0); // Fallback to epoch if date is missing
-    const dateB = b.data.properties.pPublished
-      ? b.data.properties.pPublished.start
-      : new Date(0); // Fallback to epoch if date is missing
-    return dateB.getTime() - dateA.getTime(); // Most recent first
-  });
+  },
+})).sort((a, b) => {
+  const dateA = a.data.properties.bPublished
+    ? a.data.properties.bPublished.start
+    : new Date(0); // Fallback to epoch if date is missing
+  const dateB = b.data.properties.bPublished
+    ? b.data.properties.bPublished.start
+    : new Date(0); // Fallback to epoch if date is missing
+  return dateB.getTime() - dateA.getTime(); // Most recent first
+});
 
 // Limit the number of projects based on the limit prop
 const limitedEntries = sortedEntries.slice(0, limit);
 ---
 
 <section class="bg-white dark:bg-gray-900">
-  <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-    <div class="mb-8">
-      <h2
-        class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-      >
-        Explore Projects
-      </h2>
-      <div
+    <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+      <div class="mb-8">
+        <h2
+          class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+        >
+          Latest Blog Posts
+        </h2>
+        <div
         class="flex flex-row flex-wrap"
       >
       <div class="w-full md:w-auto md:grow">
-        <p class="text-gray-500 sm:text-xl dark:text-gray-400 mb-4">Browse the latest additions, choose a country or see all projects.</p>
+        <p class="text-gray-500 sm:text-xl dark:text-gray-400 mb-4">Read the latest travel guides and advice from our blog.</p>
         </div>
         <div class="flex w-full md:w-auto flex-row nowrap gap-4">
           <div class="grow md:grow-0">
-            <PCountryDropdown />
+            <BlogTagsDropdown />
           </div>
         <div class="grow md:grow-0">
           <a
-            href="/projects"
+            href="/blog"
             class="inline-flex items-center w-full justify-center px-4 py-2.5 border border-gray-300 text-gray-900 text-sm rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
           >
-            All Projects
+            All Posts
             <svg
               class="w-5 h-5 ml-2.5"
               aria-hidden="true"
@@ -92,17 +89,16 @@ const limitedEntries = sortedEntries.slice(0, limit);
         </div>
         </div>
       </div>
-    </div>
-    <div
-      class="flex flex-row overflow-x-auto hide-scrollbar space-x-4 md:space-x-0 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12"
-    >
-      {
-        limitedEntries.map((project) => (
+
+      </div>
+      <div
+        class="flex flex-row overflow-x-auto hide-scrollbar space-x-4 md:space-x-0 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12"
+      >
+        {limitedEntries.map((post) => (
           <div class="w-[70%] sm:w-[50%] md:w-auto flex-shrink-0 md:flex-shrink">
-            <ProjectCard project={project} />
+            <PostCard post={post} />
           </div>
-        ))
-      }
+        ))}
+      </div>
     </div>
-  </div>
-</section>
+  </section>

@@ -1,13 +1,13 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import MainLayout from "./MainLayout.astro";
-import AdBox from "../components/Ads/AdBox.astro";
-import StayCard from "../components/StayCard.astro";
+import AdBox from "../components/features/ads/AdBox.astro";
+import StayCard from "../components/content/StayCard.astro";
 import { getCollection } from "astro:content";
-import SupportBox from "../components/Projects/SupportBox.astro";
-import SubscribeDrawer from "../components/Popups/SubscribeDrawer.astro";
-import ResponsiveImage from "../components/ResponsiveImage.astro";
-import SaveToList from "../components/Save/SaveToList.astro";
+import SupportBox from "../components/sections/SupportBox.astro";
+import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
+import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
+import SaveToList from "../components/features/save/SaveToList.astro";
 
 type Props = CollectionEntry<"stays">["data"];
 

@@ -1,16 +1,16 @@
 ---
-import PLocaleDropdown from './PLocaleDropdown.astro';
-import PCountryDropdown from './PCountryDropdown.astro';
+import ProjectLocaleDropdown from '../ui/Dropdown/ProjectLocaleDropdown.astro';
+import ProjectCountryDropdown from '../ui/Dropdown/ProjectCountryDropdown.astro';
 
 const { page } = Astro.props;
 ---
 <div class="flex flex-wrap gap-4">
   <!-- Div 2 and Div 3 (Dropdowns) -->
   <div id="2" class="w-full md:w-1/4 p-2">
-    <PLocaleDropdown />
+    <ProjectLocaleDropdown />
   </div>
   <div id="3" class="w-full md:w-1/4 p-2">
-    <PCountryDropdown />
+    <ProjectCountryDropdown />
   </div>
 
   <!-- Div 1 (Showing projects) -->

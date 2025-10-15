@@ -1,7 +1,7 @@
 // Client-side SaveToList functionality for static builds
-import { getCurrentUser } from '../../lib/auth.js';
-import { getLists, getListsContainingItem, saveItemToList, removeItemFromList, createList } from '../../lib/lists.js';
-import { getStatusesForItems, setCompleted } from '../../lib/completed.js';
+import { getCurrentUser } from '../../../lib/auth.js';
+import { getLists, getListsContainingItem, saveItemToList, removeItemFromList, createList } from '../../../lib/lists.js';
+import { getStatusesForItems, setCompleted } from '../../../lib/completed.js';
 
 (async function() {
   // Get authentication state with comprehensive debugging

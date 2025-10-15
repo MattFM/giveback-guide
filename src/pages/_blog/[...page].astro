@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import MainLayout from "../../layouts/MainLayout.astro";
 import type { GetStaticPathsOptions } from "astro";
-import BCategoryDropdown from "../../components/BCategoryDropdown.astro";
+// import BCategoryDropdown from "../../components/BCategoryDropdown.astro"; // Component not found
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const entries = await getCollection("blog") as Array<{ data: { date: string | Date } }>;
@@ -40,15 +40,11 @@ const { page } = Astro.props;
           All of our travel guides and articles.
         </p>
       </div>
-      <div class="flex flex-col items-start justify-between p-2 space-y-3 flex-row space-y-0 mb-4">
-        <div ><span class="text-sm font-normal text-gray-500 dark:text-gray-400"
-          >Showing <span class="font-semibold text-gray-900 dark:text-white"
-            >{page.start + 1}-{page.end + 1}</span
-          > of <span class="font-semibold text-gray-900 dark:text-white"
-            >{page.total}</span
-          > posts</span
-        ></div>
-        <div ><BCategoryDropdown /></div>
+          <div class="flex flex-row justify-between items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold mb-2">Give Back Blog</h1>
+      </div>
+        <!-- <div ><BCategoryDropdown /></div> --> <!-- Component not found -->
     </div>
       <div
         class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0"

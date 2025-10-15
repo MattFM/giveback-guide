@@ -2,9 +2,9 @@
 import { getCollection } from "astro:content";
 import MainLayout from "../../../layouts/MainLayout.astro";
 import type { GetStaticPathsOptions } from "astro";
-import StayCard from "../../../components/StayCard.astro";
-import SCountryDropdown from "../../../components/SCountryDropdown.astro";
-import SLocaleDropdown from "../../../components/SLocaleDropdown.astro";
+import StayCard from "../../../components/content/StayCard.astro";
+import StayCountryDropdown from "../../../components/ui/Dropdown/StayCountryDropdown.astro";
+import StayLocaleDropdown from "../../../components/ui/Dropdown/StayLocaleDropdown.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all stays
@@ -81,12 +81,12 @@ const readableCountry = country
       
         <!-- Div 2 (Locale Dropdown) -->
         <div id="2" class="w-full md:w-1/4 p-2 order-1 md:order-2">
-            <SCountryDropdown />
+            <StayCountryDropdown />
           </div>
         
           <!-- Div 3 (Country Dropdown) -->
           <div id="3" class="w-full md:w-1/4 p-2 order-2 md:order-3">
-            <SLocaleDropdown />
+            <StayLocaleDropdown />
           </div>
       </div>
 
