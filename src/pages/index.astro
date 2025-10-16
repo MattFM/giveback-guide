@@ -1,6 +1,7 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import HomeHero from "../components/sections/HomeHero.astro";
+import InfiniteScroll from "../components/ui/InfiniteScroll.astro";
 import LatestProjects from "../components/sections/LatestProjects.astro";
 import LatestStays from "../components/sections/LatestStays.astro";
 import LatestPosts from "../components/sections/LatestPosts.astro";
@@ -10,8 +11,11 @@ import { SITE_TITLE } from "../consts";
 <MainLayout
   title={`${SITE_TITLE} - Discover amazing ways to give back to the places you visit`}
   description="Giveback is a growing collection of animal sanctuaries, beach cleans, cultural exchanges, social impact projects, tours, tree planting, wellbeing experiences and more."
+  headerVariant="transparent"
+  headerTheme="dark"
 >
   <HomeHero />
+  <InfiniteScroll speed="normal" direction="left" />
   <main>
     <LatestProjects limit={6} />
     <LatestStays limit={6} />

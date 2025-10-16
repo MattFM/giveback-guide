@@ -1,0 +1,135 @@
+---
+interface Props {
+  items?: string[];
+  speed?: 'slow' | 'normal' | 'fast';
+  direction?: 'left' | 'right';
+  className?: string;
+}
+
+const defaultItems = [
+  "Animal Sanctuaries",
+  "Cafes & Restaurants",
+  "City Tours",
+  "Classes & Workshops",
+  "Museums & Galleries",
+  "Community Cleanups",
+  "Tree Planting",
+  "Wellbeing Experiences",
+];
+
+const { 
+  items = defaultItems, 
+  speed = 'normal',
+  direction = 'left',
+  className = ''
+} = Astro.props;
+
+const speedValues = {
+  slow: '60s',
+  normal: '40s',
+  fast: '20s'
+};
+
+const animationDuration = speedValues[speed];
+const animationDirection = direction === 'left' ? 'scroll-left' : 'scroll-right';
+---
+
+<div class={`infinite-scroll-wrapper ${className}`}>
+  <div class="infinite-scroll-container">
+    <div class="infinite-scroll-content" data-direction={animationDirection}>
+      {items.map((item) => (
+        <span class="scroll-item">{item}</span>
+      ))}
+    </div>
+    <!-- Duplicate for seamless loop -->
+    <div class="infinite-scroll-content" data-direction={animationDirection} aria-hidden="true">
+      {items.map((item) => (
+        <span class="scroll-item">{item}</span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style define:vars={{ animationDuration }}>
+  .infinite-scroll-wrapper {
+    width: 100%;
+    overflow: hidden;
+    background: linear-gradient(90deg, #f9fafb 0%, #ffffff 50%, #f9fafb 100%);
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  :global(.dark) .infinite-scroll-wrapper {
+    background: linear-gradient(90deg, #111827 0%, #1f2937 50%, #111827 100%);
+    border-top: 1px solid #374151;
+    border-bottom: 1px solid #374151;
+  }
+
+  .infinite-scroll-container {
+    display: flex;
+    width: fit-content;
+    padding: 1.5rem 0;
+  }
+
+  .infinite-scroll-content {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    white-space: nowrap;
+    padding-right: 2rem;
+  }
+
+  .infinite-scroll-content[data-direction="scroll-left"] {
+    animation: scroll-left var(--animationDuration) linear infinite;
+  }
+
+  .infinite-scroll-content[data-direction="scroll-right"] {
+    animation: scroll-right var(--animationDuration) linear infinite;
+  }
+
+  .scroll-item {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  :global(.dark) .scroll-item {
+    color: #9ca3af;
+  }
+
+  .infinite-scroll-container:hover .infinite-scroll-content {
+    animation-play-state: paused;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes scroll-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .scroll-item {
+      font-size: 0.875rem;
+    }
+    
+    .infinite-scroll-content {
+      gap: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+</style>
