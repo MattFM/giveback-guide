@@ -374,68 +374,98 @@ Different content types require different maximum widths for optimal readability
 
 ### Buttons
 
-#### **Base Button Styles**
-All buttons share these properties:
-```css
-.btn {
-  padding: var(--spacing-md) var(--spacing-xl);
-  border-radius: var(--border-radius-md);  /* 0.75rem */
-  font-weight: 600;
-  font-size: var(--font-size-base);
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+We use a reusable `Button.astro` component located at `src/components/ui/Button.astro`.
+
+#### **Button Component Props**
+
+```typescript
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  fullWidth?: boolean;
+  href?: string;  // Renders as <a> tag if provided
+  class?: string; // Additional Tailwind classes
 }
 ```
 
 #### **Button Variants**
 
-**Primary Button** - Main actions
-```css
-.btn-primary {
-  background: var(--color-brand-600);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--color-brand-700);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.25);
-}
+**Primary Button** - Main actions (black background)
+```astro
+<Button variant="primary">Primary Action</Button>
 ```
+- Background: Black (`bg-black`)
+- Text: White
+- Use for: Primary CTAs, main actions, "Book Now", "Get Started"
 
 **Secondary Button** - Alternative actions
-```css
-.btn-secondary {
-  background: var(--color-sage-600);
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: var(--color-sage-700);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(93, 117, 93, 0.25);
-}
+```astro
+<Button variant="secondary">Secondary Action</Button>
 ```
+- Background: Gray 600
+- Text: White
+- Use for: Alternative CTAs, supporting actions
 
 **Outline Button** - Tertiary actions
-```css
-.btn-outline {
-  background: transparent;
-  color: var(--color-neutral-800);
-  border: 2px solid var(--color-neutral-300);
-}
+```astro
+<Button variant="outline">Tertiary Action</Button>
+```
+- Background: Transparent
+- Border: Black 1px
+- Text: Black
+- Use for: Low-emphasis actions, "Learn More", cancel buttons
 
-.btn-outline:hover {
-  border-color: var(--color-neutral-500);
-  background: var(--color-neutral-50);
-  transform: translateY(-1px);
-}
+**Ghost Button** - Minimal UI
+```astro
+<Button variant="ghost">Ghost Action</Button>
+```
+- Background: Transparent (gray on hover)
+- Text: Gray 700
+- Use for: Navigation items, subtle actions, icon buttons
+
+**Danger Button** - Destructive actions
+```astro
+<Button variant="danger">Delete</Button>
+```
+- Background: Red 600
+- Text: White
+- Use for: Delete, remove, destructive operations only
+
+#### **Button Sizes**
+
+```astro
+<Button size="sm">Small Button</Button>
+<Button size="md">Medium (Default)</Button>
+<Button size="lg">Large Button</Button>
+```
+
+- **Small:** `px-3 py-1.5 text-sm` - Compact UI, inline actions
+- **Medium (default):** `px-4 py-2 text-base` - Standard buttons
+- **Large:** `px-6 py-3 text-lg` - Hero CTAs, emphasis
+
+#### **Additional Options**
+
+**Full Width**
+```astro
+<Button fullWidth>Full Width Button</Button>
+```
+
+**As Link**
+```astro
+<Button href="/donate" variant="primary">Donate Now</Button>
+```
+Automatically renders as `<a>` tag when `href` is provided.
+
+**Disabled State**
+```astro
+<Button disabled>Disabled Button</Button>
+```
+
+**Custom Classes**
+```astro
+<Button class="shadow-lg mt-4">Custom Styled</Button>
 ```
 
 #### **Button Hierarchy Rules**
@@ -446,10 +476,8 @@ Only one primary button should be visible in any given screen area to avoid deci
 **Rule 2: Button Order**
 In multi-button layouts: `[Primary] [Secondary] [Outline]` - Order by importance left to right.
 
-**Rule 3: Button Sizing**
-- Standard: `padding: var(--spacing-md) var(--spacing-xl)`
-- Small: `padding: var(--spacing-sm) var(--spacing-lg); font-size: var(--font-size-sm)`
-- Large: `padding: var(--spacing-lg) var(--spacing-2xl); font-size: var(--font-size-lg)`
+**Rule 3: Consistent Sizing**
+Use the same size for buttons in the same context. Don't mix small and large buttons in a button group.
 
 ### Cards
 

@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import Button from "../components/ui/Button.astro";
 ---
 
 <MainLayout 
@@ -421,16 +422,62 @@ import MainLayout from "../layouts/MainLayout.astro";
           Buttons
         </h2>
         
-        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
-          <button class="btn btn-primary">Primary Button</button>
-          <button class="btn btn-secondary">Secondary Button</button>
-          <button class="btn btn-outline">Outline Button</button>
-          <button class="btn btn-danger">Delete Action</button>
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-2xl);">
+          <!-- Button Variants -->
+          <div>
+            <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-md);">Variants</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+              <Button variant="primary">Primary Button</Button>
+              <Button variant="secondary">Secondary Button</Button>
+              <Button variant="outline">Outline Button</Button>
+              <Button variant="ghost">Ghost Button</Button>
+              <Button variant="danger">Delete Action</Button>
+            </div>
+            <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); max-width: 700px;">
+              <strong>Usage:</strong> Primary for main actions (black), Secondary for alternative actions, Outline for low-emphasis actions, Ghost for minimal UI, Danger for destructive operations.
+            </p>
+          </div>
+
+          <!-- Button Sizes -->
+          <div>
+            <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-md);">Sizes</h3>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+              <Button variant="primary" size="sm">Small</Button>
+              <Button variant="primary" size="md">Medium (Default)</Button>
+              <Button variant="primary" size="lg">Large</Button>
+            </div>
+          </div>
+
+          <!-- Button States -->
+          <div>
+            <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-md);">States</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+              <Button variant="primary">Normal</Button>
+              <Button variant="primary" disabled>Disabled</Button>
+              <Button variant="outline" fullWidth>Full Width</Button>
+            </div>
+          </div>
+
+          <!-- Button as Link -->
+          <div>
+            <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-md);">As Link</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+              <Button href="#" variant="primary">Link Button</Button>
+              <Button href="#" variant="outline">Learn More</Button>
+            </div>
+          </div>
+
+          <!-- Code Example -->
+          <div style="background: white; padding: var(--spacing-lg); border-radius: var(--border-radius-md); border: 1px solid var(--color-neutral-200);">
+            <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-md);">Usage</h3>
+            <pre style="font-size: var(--font-size-sm); color: var(--color-neutral-700); overflow-x: auto;"><code>import Button from '../components/ui/Button.astro';
+
+&lt;Button variant="primary"&gt;Click Me&lt;/Button&gt;
+&lt;Button variant="outline" size="lg"&gt;Learn More&lt;/Button&gt;
+&lt;Button href="/donate" variant="primary"&gt;Donate Now&lt;/Button&gt;
+&lt;Button variant="danger" disabled&gt;Delete&lt;/Button&gt;</code></pre>
+          </div>
         </div>
-        
-        <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); max-width: 600px;">
-          <strong>Usage:</strong> Primary for main actions, Secondary for nature/success, Outline for low-emphasis actions, Danger for destructive operations.
-        </p>
       </div>
     </section>
 
