@@ -1,0 +1,121 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  background?: 'color' | 'image' | 'gradient';
+  backgroundValue?: string; // CSS color, image URL, or gradient
+  theme?: 'light' | 'dark';
+  size?: 'small' | 'medium' | 'large';
+  align?: 'left' | 'center';
+}
+
+const { 
+  title, 
+  description, 
+  background = 'color',
+  backgroundValue = 'var(--color-neutral-950)',
+  theme = 'dark',
+  size = 'medium',
+  align = 'left'
+} = Astro.props;
+
+// Generate appropriate background style
+const bgStyle = background === 'image' 
+  ? `background-image: url(${backgroundValue}); background-size: cover; background-position: center;`
+  : `background: ${backgroundValue};`;
+
+// Size mappings
+const sizeClasses = {
+  small: 'min-h-[40vh] py-16 lg:py-20',
+  medium: 'min-h-[60vh] py-20 lg:py-28',
+  large: 'min-h-[80vh] py-28 lg:py-36'
+};
+
+// Alignment classes
+const alignClasses = {
+  left: 'text-left',
+  center: 'text-center mx-auto'
+};
+---
+
+<section 
+  class={`hero hero-${theme} hero-${size} ${sizeClasses[size]}`}
+  style={bgStyle}
+>
+  <div class="hero-content-wrapper max-w-screen-xl mx-auto px-4 lg:px-6">
+    <div class={`hero-content ${alignClasses[align]} ${align === 'center' ? 'max-w-3xl' : 'max-w-4xl'}`}>
+      <h1 class="hero-title">{title}</h1>
+      {description && <p class="hero-description">{description}</p>}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* No extra padding-top needed - header overlays the hero */
+  }
+
+  /* Image background overlay for better text readability */
+  .hero[style*="background-image"]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+    z-index: 0;
+  }
+
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+
+  /* Theme styles */
+  .hero-dark {
+    color: white;
+  }
+
+  .hero-light {
+    color: var(--color-neutral-950);
+  }
+
+  /* Typography */
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-description {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .hero {
+      /* Mobile: header is sticky, so we need padding */
+      padding-top: calc(4.5rem + 2rem);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      /* Desktop: header is relative, so less top padding needed */
+      padding-top: calc(var(--hero-padding-y, 5rem));
+    }
+  }
+</style>

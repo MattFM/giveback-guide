@@ -8,9 +8,17 @@ interface Props {
   title?: string; // Accept the title prop
   description?: string; // Accept the description prop
   image?: string; // Accept the image prop
+  headerVariant?: 'default' | 'transparent'; // Header display mode
+  headerTheme?: 'light' | 'dark'; // Header text/icon color theme
 }
 
-const { title, description, image } = Astro.props;
+const { 
+  title, 
+  description, 
+  image, 
+  headerVariant = 'default',
+  headerTheme = 'light' 
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -19,7 +27,7 @@ const { title, description, image } = Astro.props;
     <BaseHead title={title} description={description} image={image} />
   </head>
   <body>
-    <Header />
+    <Header variant={headerVariant} theme={headerTheme} />
     <slot />
     <Footer />
     <script

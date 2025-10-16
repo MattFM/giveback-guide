@@ -1,0 +1,282 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import Hero from "../components/sections/Hero.astro";
+import Button from "../components/ui/Button.astro";
+---
+
+<MainLayout 
+  title="Hero Examples - Giveback Guide"
+  description="Examples of different hero header configurations"
+  headerVariant="transparent"
+  headerTheme="dark"
+>
+  <style>
+    .section {
+      padding: 4rem 1.5rem;
+    }
+    
+    .section-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .example-grid {
+      display: grid;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .example-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 2rem;
+    }
+    
+    .example-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .example-card p {
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    
+    .code-block {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+  </style>
+
+  <main>
+    <!-- Hero with gradient background -->
+    <Hero 
+      title="Integrated Header Examples"
+      description="Explore different configurations of the transparent header system"
+      background="gradient"
+      backgroundValue="linear-gradient(135deg, #9333ea, #4a5e4a)"
+      theme="dark"
+      size="medium"
+      align="left"
+    >
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="#examples" style="display: inline-block; padding: 0.75rem 1.5rem; background: white; color: #9333ea; border-radius: 0.5rem; font-weight: 600; text-decoration: none;">
+          View Examples
+        </a>
+        <a href="/design-system" style="display: inline-block; padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem; font-weight: 600; text-decoration: none;">
+          Design System
+        </a>
+      </div>
+    </Hero>
+
+    <!-- Examples Section -->
+    <section id="examples" class="section" style="background: #fafafa;">
+      <div class="section-content">
+        <h2 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Hero Variations</h2>
+        <p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 3rem; max-width: 800px;">
+          The integrated header system supports multiple background types and themes. Scroll this page to see how the header transitions from transparent to solid.
+        </p>
+
+        <div class="example-grid">
+          <!-- Example 1: Solid Color -->
+          <div class="example-card">
+            <h3>1. Solid Color Background</h3>
+            <p>Simple and effective. Great for brand colors or neutral backgrounds.</p>
+            <div class="code-block">
+&lt;MainLayout 
+  headerVariant="transparent"
+  headerTheme="dark"
+&gt;
+  &lt;Hero 
+    title="Explore Thailand"
+    description="Discover sustainable projects"
+    background="color"
+    backgroundValue="var(--color-brand-600)"
+    theme="dark"
+  /&gt;
+&lt;/MainLayout&gt;
+            </div>
+          </div>
+
+          <!-- Example 2: Image Background -->
+          <div class="example-card">
+            <h3>2. Image Background</h3>
+            <p>Full-width hero with image. Automatically adds overlay for text readability.</p>
+            <div class="code-block">
+&lt;MainLayout 
+  headerVariant="transparent"
+  headerTheme="dark"
+&gt;
+  &lt;Hero 
+    title="Make a Difference"
+    description="Join our community"
+    background="image"
+    backgroundValue="/images/hero.jpg"
+    theme="dark"
+    size="large"
+  /&gt;
+&lt;/MainLayout&gt;
+            </div>
+          </div>
+
+          <!-- Example 3: Gradient -->
+          <div class="example-card">
+            <h3>3. Gradient Background</h3>
+            <p>Modern and eye-catching. Combine multiple colors for visual interest.</p>
+            <div class="code-block">
+&lt;MainLayout 
+  headerVariant="transparent"
+  headerTheme="dark"
+&gt;
+  &lt;Hero 
+    title="Get Started"
+    description="Your journey begins here"
+    background="gradient"
+    backgroundValue="linear-gradient(135deg, 
+      var(--color-brand-600), 
+      var(--color-sage-600))"
+    theme="dark"
+  /&gt;
+&lt;/MainLayout&gt;
+            </div>
+          </div>
+
+          <!-- Example 4: Light Theme -->
+          <div class="example-card">
+            <h3>4. Light Theme</h3>
+            <p>Dark text on light background. Header uses dark colors for contrast.</p>
+            <div class="code-block">
+&lt;MainLayout 
+  headerVariant="transparent"
+  headerTheme="light"
+&gt;
+  &lt;Hero 
+    title="About Us"
+    description="Learn our story"
+    background="color"
+    backgroundValue="var(--color-neutral-50)"
+    theme="light"
+  /&gt;
+&lt;/MainLayout&gt;
+            </div>
+          </div>
+
+          <!-- Example 5: Centered -->
+          <div class="example-card">
+            <h3>5. Center Aligned</h3>
+            <p>Perfect for landing pages or announcement sections.</p>
+            <div class="code-block">
+&lt;Hero 
+  title="Join Our Community"
+  description="Connect with travelers worldwide"
+  background="color"
+  backgroundValue="var(--color-sage-700)"
+  theme="dark"
+  align="center"
+&gt;
+  &lt;div style="margin-top: 2rem;"&gt;
+    &lt;a href="/join" class="btn btn-primary"&gt;
+      Get Started
+    &lt;/a&gt;
+  &lt;/div&gt;
+&lt;/Hero&gt;
+            </div>
+          </div>
+
+          <!-- Example 6: Different Sizes -->
+          <div class="example-card">
+            <h3>6. Size Variations</h3>
+            <p>Choose from small, medium, or large heights based on your content.</p>
+            <div class="code-block">
+&lt;!-- Small: 40vh minimum --&gt;
+&lt;Hero size="small" ... /&gt;
+
+&lt;!-- Medium: 60vh minimum (default) --&gt;
+&lt;Hero size="medium" ... /&gt;
+
+&lt;!-- Large: 80vh minimum --&gt;
+&lt;Hero size="large" ... /&gt;
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" style="background: white;">
+      <div class="section-content">
+        <h2 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Key Features</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+          <div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎨</div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Flexible Backgrounds</h3>
+            <p style="color: #6b7280;">Colors, images, or gradients - your choice.</p>
+          </div>
+          <div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌓</div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Theme Support</h3>
+            <p style="color: #6b7280;">Light or dark themes with proper contrast.</p>
+          </div>
+          <div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Responsive</h3>
+            <p style="color: #6b7280;">Looks great on all screen sizes.</p>
+          </div>
+          <div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Performance</h3>
+            <p style="color: #6b7280;">Minimal CSS, smooth 60fps transitions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Tips -->
+    <section class="section" style="background: #fafafa;">
+      <div class="section-content">
+        <h2 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Best Practices</h2>
+        <div style="max-width: 800px;">
+          <div style="background: white; border-left: 4px solid #22c55e; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">✓ Good For</h3>
+            <ul style="color: #6b7280; margin-left: 1.5rem;">
+              <li>Homepage and landing pages</li>
+              <li>Category overview pages</li>
+              <li>About and mission pages</li>
+              <li>Pages with strong visual content</li>
+            </ul>
+          </div>
+          <div style="background: white; border-left: 4px solid #ef4444; padding: 1.5rem; border-radius: 0.5rem;">
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #ef4444; margin-bottom: 0.5rem;">✗ Avoid For</h3>
+            <ul style="color: #6b7280; margin-left: 1.5rem;">
+              <li>Dense content or blog posts</li>
+              <li>Forms and data entry pages</li>
+              <li>Dashboard or admin pages</li>
+              <li>Pages with tables or complex layouts</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Documentation Link -->
+    <section class="section" style="background: var(--color-neutral-950); color: white; text-align: center;">
+      <div class="section-content">
+        <h2 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Need More Help?</h2>
+        <p style="font-size: 1.125rem; opacity: 0.9; margin-bottom: 2rem;">
+          Check out the complete documentation for detailed API reference and examples.
+        </p>
+        <a href="/INTEGRATED-HEADER-GUIDE.md" style="display: inline-block; padding: 0.75rem 2rem; background: white; color: #0a0a0a; border-radius: 0.5rem; font-weight: 600; text-decoration: none;">
+          View Documentation
+        </a>
+      </div>
+    </section>
+  </main>
+</MainLayout>

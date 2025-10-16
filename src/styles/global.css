@@ -38,3 +38,15 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari, and Edge */
   }
+
+/* Fixed header spacing for pages without transparent header */
+body:has(.site-header.header-default) main {
+    padding-top: 0;
+}
+
+/* Fixed header spacing for pages with transparent header on large screens */
+@media (min-width: 1024px) {
+    body:has(.site-header.header-transparent) main {
+        padding-top: 0;
+    }
+}

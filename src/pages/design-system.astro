@@ -1,11 +1,14 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import Button from "../components/ui/Button.astro";
+import Hero from "../components/sections/Hero.astro";
 ---
 
 <MainLayout 
   title="Design System - Giveback Guide"
   description="Standard UI components and design guidelines"
+  headerVariant="transparent"
+  headerTheme="dark"
 >
   <style>
     /* Design System Tokens */
@@ -175,20 +178,22 @@ import Button from "../components/ui/Button.astro";
   </style>
 
   <main>
-    <!-- Header -->
-    <section style="background-color: var(--color-neutral-950); color: white;" class="section-padding">
-      <div class="container">
-        <h1 style="font-size: var(--font-size-4xl); font-weight: 800; margin-bottom: var(--spacing-lg);">
-          Design System
-        </h1>
-        <p style="font-size: var(--font-size-lg); color: var(--color-neutral-300); max-width: 600px; margin-bottom: var(--spacing-xl);">
-          Standard UI components and design guidelines for Giveback Guide.
-        </p>
+    <!-- Hero Header with Integrated Navigation -->
+    <Hero 
+      title="Design System"
+      description="Standard UI components and design guidelines for Giveback Guide."
+      background="color"
+      backgroundValue="var(--color-neutral-950)"
+      theme="dark"
+      size="medium"
+      align="left"
+    >
+      <div style="margin-top: var(--spacing-lg);">
         <a href="/DESIGN-GUIDELINES.md" class="btn btn-primary">
           View Complete Guidelines →
         </a>
       </div>
-    </section>
+    </Hero>
 
     <!-- Design Guidelines Overview -->
     <section class="section-padding" style="background: white;">

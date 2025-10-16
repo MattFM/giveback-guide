@@ -1,6 +1,37 @@
 ---
-import { Image } from "astro:assets";
-import Avatar from "../../assets/giveback-guide-avatar.svg";
+interface Props {
+  variant?: 'default' | 'transparent';
+  theme?: 'light' | 'dark';
+}
+
+const { variant = 'default', theme = 'light' } = Astro.props;
+
+// Tailwind classes for header positioning and background
+const positionClasses = variant === 'transparent' 
+  ? 'absolute top-0 left-0 right-0 z-50' 
+  : 'relative';
+
+const bgClasses = variant === 'transparent'
+  ? 'bg-transparent'
+  : 'bg-white border-b border-gray-200';
+
+// Logo color - white for dark theme, black for light
+const logoFillClass = theme === 'dark' ? 'fill-white' : 'fill-black';
+
+// Link colors
+const linkClasses = theme === 'dark'
+  ? 'text-white hover:text-white/80'
+  : 'text-gray-700 hover:text-purple-600';
+
+// Search button colors
+const searchButtonClasses = theme === 'dark'
+  ? 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-100';
+
+// Mobile menu button colors  
+const mobileButtonClasses = theme === 'dark'
+  ? 'text-white hover:bg-white/10'
+  : 'text-gray-500 hover:bg-gray-100';
 ---
 
 <a
@@ -9,11 +40,11 @@ import Avatar from "../../assets/giveback-guide-avatar.svg";
 >
   Skip to main content
 </a>
-<header role="banner" class="sticky top-0 z-40 lg:relative lg:z-auto">
+<header role="banner" class={`w-full ${positionClasses} ${bgClasses}`}>
   <nav
     role="navigation"
     aria-label="Main navigation"
-    class="bg-white border-gray-200 w-full px-4 lg:px-6 py-2.5 dark:bg-gray-800"
+    class="w-full px-4 lg:px-6 py-2.5"
   >
     <div
       class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl"
@@ -22,18 +53,82 @@ import Avatar from "../../assets/giveback-guide-avatar.svg";
         href="/"
         class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
       >
-        <Image
-          src={Avatar}
-          class="w-12 h-12 fill-gbgblue"
-          alt="Giveback Guide"
-        />
+        <svg class={`w-12 h-12 ${logoFillClass}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 749.999995" aria-label="Giveback Guide">
+          <g>
+            <g>
+              <g transform="translate(0.00000265, 258.603195)">
+                <path d="M 125.515625 -120.84375 C 123.265625 -124.476562 120.066406 -127.285156 115.921875 -129.265625 C 111.773438 -131.253906 106.757812 -132.25 100.875 -132.25 C 89.8125 -132.25 81.253906 -128.660156 75.203125 -121.484375 C 69.148438 -114.316406 66.125 -104.507812 66.125 -92.0625 C 66.125 -77.707031 69.492188 -66.984375 76.234375 -59.890625 C 82.984375 -52.804688 93.359375 -49.265625 107.359375 -49.265625 C 120.671875 -49.265625 131.390625 -54.625 139.515625 -65.34375 L 93.625 -65.34375 L 93.625 -106.0625 L 187.234375 -106.0625 L 187.234375 -48.5 C 179.285156 -34.832031 168.304688 -23.113281 154.296875 -13.34375 C 140.296875 -3.582031 122.578125 1.296875 101.140625 1.296875 C 82.117188 1.296875 65.5625 -2.632812 51.46875 -10.5 C 37.382812 -18.363281 26.582031 -29.382812 19.0625 -43.5625 C 11.539062 -57.738281 7.78125 -73.90625 7.78125 -92.0625 C 7.78125 -110.21875 11.539062 -126.382812 19.0625 -140.5625 C 26.582031 -154.738281 37.34375 -165.757812 51.34375 -173.625 C 65.351562 -181.488281 81.78125 -185.421875 100.625 -185.421875 C 124.65625 -185.421875 144.234375 -179.628906 159.359375 -168.046875 C 174.484375 -156.460938 183.429688 -140.726562 186.203125 -120.84375 Z M 125.515625 -120.84375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(184.640574, 258.603195)">
+                <path d="M 70.53125 -183.609375 L 70.53125 0 L 12.96875 0 L 12.96875 -183.609375 Z M 70.53125 -183.609375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(257.77056, 258.603195)">
+                <path d="M 197.875 -183.609375 L 136.140625 0 L 61.71875 0 L 0 -183.609375 L 61.203125 -183.609375 L 99.0625 -57.3125 L 136.671875 -183.609375 Z M 197.875 -183.609375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(445.263778, 258.603195)">
+                <path d="M 70.53125 -137.703125 L 70.53125 -115.140625 L 127.59375 -115.140625 L 127.59375 -71.828125 L 70.53125 -71.828125 L 70.53125 -45.90625 L 135.375 -45.90625 L 135.375 0 L 12.96875 0 L 12.96875 -183.609375 L 135.375 -183.609375 L 135.375 -137.703125 Z M 70.53125 -137.703125 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(0.00000265, 465.603185)">
+                <path d="M 135.890625 -94.140625 C 146.953125 -91.546875 155.550781 -86.226562 161.6875 -78.1875 C 167.820312 -70.144531 170.890625 -60.851562 170.890625 -50.3125 C 170.890625 -34.226562 165.570312 -21.820312 154.9375 -13.09375 C 144.3125 -4.363281 129.054688 0 109.171875 0 L 12.96875 0 L 12.96875 -183.609375 L 106.578125 -183.609375 C 125.253906 -183.609375 139.953125 -179.546875 150.671875 -171.421875 C 161.390625 -163.296875 166.75 -151.453125 166.75 -135.890625 C 166.75 -125.171875 163.9375 -116.132812 158.3125 -108.78125 C 152.695312 -101.4375 145.222656 -96.554688 135.890625 -94.140625 Z M 70.53125 -112.03125 L 92.84375 -112.03125 C 98.03125 -112.03125 101.875 -113.066406 104.375 -115.140625 C 106.882812 -117.210938 108.140625 -120.410156 108.140625 -124.734375 C 108.140625 -129.234375 106.882812 -132.5625 104.375 -134.71875 C 101.875 -136.882812 98.03125 -137.96875 92.84375 -137.96875 L 70.53125 -137.96875 Z M 96.734375 -46.15625 C 101.921875 -46.15625 105.765625 -47.148438 108.265625 -49.140625 C 110.773438 -51.128906 112.03125 -54.375 112.03125 -58.875 C 112.03125 -67.6875 106.929688 -72.09375 96.734375 -72.09375 L 70.53125 -72.09375 L 70.53125 -46.15625 Z M 96.734375 -46.15625 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(167.006365, 465.603185)">
+                <path d="M 130.703125 -27.75 L 69.5 -27.75 L 60.421875 0 L 0 0 L 67.171875 -183.609375 L 133.546875 -183.609375 L 200.453125 0 L 139.78125 0 Z M 116.703125 -71.0625 L 100.09375 -122.140625 L 83.5 -71.0625 Z M 116.703125 -71.0625 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(357.092775, 465.603185)">
+                <path d="M 7.78125 -92.0625 C 7.78125 -110.21875 11.453125 -126.382812 18.796875 -140.5625 C 26.148438 -154.738281 36.65625 -165.757812 50.3125 -173.625 C 63.96875 -181.488281 80.046875 -185.421875 98.546875 -185.421875 C 114.453125 -185.421875 128.671875 -182.4375 141.203125 -176.46875 C 153.734375 -170.507812 163.929688 -162.082031 171.796875 -151.1875 C 179.671875 -140.289062 184.90625 -127.582031 187.5 -113.0625 L 126.8125 -113.0625 C 124.039062 -119.113281 120.101562 -123.820312 115 -127.1875 C 109.90625 -130.5625 104.070312 -132.25 97.5 -132.25 C 87.820312 -132.25 80.171875 -128.617188 74.546875 -121.359375 C 68.929688 -114.097656 66.125 -104.332031 66.125 -92.0625 C 66.125 -79.789062 68.929688 -70.019531 74.546875 -62.75 C 80.171875 -55.488281 87.820312 -51.859375 97.5 -51.859375 C 104.070312 -51.859375 109.90625 -53.546875 115 -56.921875 C 120.101562 -60.296875 124.039062 -65.007812 126.8125 -71.0625 L 187.5 -71.0625 C 184.90625 -56.53125 179.671875 -43.816406 171.796875 -32.921875 C 163.929688 -22.035156 153.734375 -13.609375 141.203125 -7.640625 C 128.671875 -1.679688 114.453125 1.296875 98.546875 1.296875 C 80.046875 1.296875 63.96875 -2.632812 50.3125 -10.5 C 36.65625 -18.363281 26.148438 -29.382812 18.796875 -43.5625 C 11.453125 -57.738281 7.78125 -73.90625 7.78125 -92.0625 Z M 7.78125 -92.0625 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(541.992764, 465.603185)">
+                <path d="M 123.953125 0 L 70.53125 -79.609375 L 70.53125 0 L 12.96875 0 L 12.96875 -183.609375 L 70.53125 -183.609375 L 70.53125 -106.328125 L 123.1875 -183.609375 L 188.265625 -183.609375 L 125 -95.6875 L 192.421875 0 Z M 123.953125 0 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(0.00000265, 672.603174)">
+                <path d="M 125.515625 -120.84375 C 123.265625 -124.476562 120.066406 -127.285156 115.921875 -129.265625 C 111.773438 -131.253906 106.757812 -132.25 100.875 -132.25 C 89.8125 -132.25 81.253906 -128.660156 75.203125 -121.484375 C 69.148438 -114.316406 66.125 -104.507812 66.125 -92.0625 C 66.125 -77.707031 69.492188 -66.984375 76.234375 -59.890625 C 82.984375 -52.804688 93.359375 -49.265625 107.359375 -49.265625 C 120.671875 -49.265625 131.390625 -54.625 139.515625 -65.34375 L 93.625 -65.34375 L 93.625 -106.0625 L 187.234375 -106.0625 L 187.234375 -48.5 C 179.285156 -34.832031 168.304688 -23.113281 154.296875 -13.34375 C 140.296875 -3.582031 122.578125 1.296875 101.140625 1.296875 C 82.117188 1.296875 65.5625 -2.632812 51.46875 -10.5 C 37.382812 -18.363281 26.582031 -29.382812 19.0625 -43.5625 C 11.539062 -57.738281 7.78125 -73.90625 7.78125 -92.0625 C 7.78125 -110.21875 11.539062 -126.382812 19.0625 -140.5625 C 26.582031 -154.738281 37.34375 -165.757812 51.34375 -173.625 C 65.351562 -181.488281 81.78125 -185.421875 100.625 -185.421875 C 124.65625 -185.421875 144.234375 -179.628906 159.359375 -168.046875 C 174.484375 -156.460938 183.429688 -140.726562 186.203125 -120.84375 Z M 125.515625 -120.84375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(184.640574, 672.603174)">
+                <path d="M 69.234375 -183.609375 L 69.234375 -80.125 C 69.234375 -71.65625 71.09375 -64.957031 74.8125 -60.03125 C 78.53125 -55.101562 84.539062 -52.640625 92.84375 -52.640625 C 101.132812 -52.640625 107.269531 -55.101562 111.25 -60.03125 C 115.226562 -64.957031 117.21875 -71.65625 117.21875 -80.125 L 117.21875 -183.609375 L 174.53125 -183.609375 L 174.53125 -80.125 C 174.53125 -62.664062 170.898438 -47.753906 163.640625 -35.390625 C 156.378906 -23.035156 146.4375 -13.742188 133.8125 -7.515625 C 121.1875 -1.296875 107.097656 1.8125 91.546875 1.8125 C 75.984375 1.8125 62.191406 -1.296875 50.171875 -7.515625 C 38.160156 -13.742188 28.78125 -22.992188 22.03125 -35.265625 C 15.289062 -47.546875 11.921875 -62.5 11.921875 -80.125 L 11.921875 -183.609375 Z M 69.234375 -183.609375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(360.723345, 672.603174)">
+                <path d="M 70.53125 -183.609375 L 70.53125 0 L 12.96875 0 L 12.96875 -183.609375 Z M 70.53125 -183.609375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(433.853377, 672.603174)">
+                <path d="M 89.46875 -183.609375 C 108.65625 -183.609375 125.46875 -179.71875 139.90625 -171.9375 C 154.34375 -164.15625 165.453125 -153.347656 173.234375 -139.515625 C 181.015625 -125.679688 184.90625 -109.953125 184.90625 -92.328125 C 184.90625 -74.859375 181.015625 -59.125 173.234375 -45.125 C 165.453125 -31.125 154.34375 -20.101562 139.90625 -12.0625 C 125.46875 -4.019531 108.65625 0 89.46875 0 L 12.96875 0 L 12.96875 -183.609375 Z M 84.28125 -51.34375 C 97.25 -51.34375 107.535156 -54.882812 115.140625 -61.96875 C 122.742188 -69.0625 126.546875 -79.179688 126.546875 -92.328125 C 126.546875 -105.460938 122.742188 -115.570312 115.140625 -122.65625 C 107.535156 -129.75 97.25 -133.296875 84.28125 -133.296875 L 70.53125 -133.296875 L 70.53125 -51.34375 Z M 84.28125 -51.34375 "/>
+              </g>
+            </g>
+            <g>
+              <g transform="translate(616.160038, 672.603174)">
+                <path d="M 70.53125 -137.703125 L 70.53125 -115.140625 L 127.59375 -115.140625 L 127.59375 -71.828125 L 70.53125 -71.828125 L 70.53125 -45.90625 L 135.375 -45.90625 L 135.375 0 L 12.96875 0 L 12.96875 -183.609375 L 135.375 -183.609375 L 135.375 -137.703125 Z M 70.53125 -137.703125 "/>
+              </g>
+            </g>
+          </g>
+        </svg>
       </a>
       <div class="flex items-center lg:order-2">
         <!-- Search Modal Trigger -->
         <button
           id="search-button"
           type="button"
-          class="cursor-pointer text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class={`cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 border ${searchButtonClasses}`}
         >
           <svg
             class="w-6 h-6 me-2"
@@ -210,7 +305,7 @@ import Avatar from "../../assets/giveback-guide-avatar.svg";
         <button
           data-collapse-toggle="mobile-menu-2"
           type="button"
-          class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          class={`inline-flex items-center p-2 ml-1 text-sm rounded-lg lg:hidden focus:outline-none focus:ring-2 focus:ring-gray-200 ${mobileButtonClasses}`}
           aria-controls="mobile-menu-2"
           aria-expanded="false"
         >
@@ -251,35 +346,35 @@ import Avatar from "../../assets/giveback-guide-avatar.svg";
           <li>
             <a
               href="/projects"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
               >Projects</a
             >
           </li>
           <li>
             <a
               href="/stays"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
               >Stays</a
             >
           </li>
           <li>
             <a
               href="/blog"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
               >Blog</a
             >
           </li>
           <li>
             <a
               href="/concierge"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
               >Concierge</a
             >
           </li>
           <li>
             <a
               href="/submit"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-500 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
+              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
               >Submit</a
             >
           </li>
@@ -587,5 +682,3 @@ import Avatar from "../../assets/giveback-guide-avatar.svg";
         }
       });
     });
-  });
-</script>
