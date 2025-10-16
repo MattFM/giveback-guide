@@ -1,4 +1,6 @@
 ---
+import NavigationDrawer from './NavigationDrawer.astro';
+
 interface Props {
   variant?: 'default' | 'transparent';
   theme?: 'light' | 'dark';
@@ -303,11 +305,12 @@ const mobileButtonClasses = theme === 'dark'
 
         <!-- Mobile Menu Toggle -->
         <button
-          data-collapse-toggle="mobile-menu-2"
+          id="mobile-menu-button"
           type="button"
           class={`inline-flex items-center p-2 ml-1 text-sm rounded-lg lg:hidden focus:outline-none focus:ring-2 focus:ring-gray-200 ${mobileButtonClasses}`}
-          aria-controls="mobile-menu-2"
+          aria-label="Open menu"
           aria-expanded="false"
+          aria-controls="mobile-menu"
         >
           <span class="sr-only">Open main menu</span>
           <!-- Hamburger icon SVG -->
@@ -336,53 +339,33 @@ const mobileButtonClasses = theme === 'dark'
           </svg>
         </button>
       </div>
-      <div
-        class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
-        id="mobile-menu-2"
-      >
-        <ul
-          class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0"
-        >
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden lg:flex lg:items-center lg:order-1">
+        <ul class="flex flex-row space-x-8">
           <li>
-            <a
-              href="/projects"
-              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
-              >Projects</a
-            >
+            <a href="/projects" class={`cursor-pointer ${linkClasses}`}>Projects</a>
           </li>
           <li>
-            <a
-              href="/stays"
-              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
-              >Stays</a
-            >
+            <a href="/stays" class={`cursor-pointer ${linkClasses}`}>Stays</a>
           </li>
           <li>
-            <a
-              href="/blog"
-              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
-              >Blog</a
-            >
+            <a href="/blog" class={`cursor-pointer ${linkClasses}`}>Blog</a>
           </li>
           <li>
-            <a
-              href="/concierge"
-              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
-              >Concierge</a
-            >
+            <a href="/concierge" class={`cursor-pointer ${linkClasses}`}>Concierge</a>
           </li>
           <li>
-            <a
-              href="/submit"
-              class={`block py-2 pr-4 pl-3 lg:p-0 cursor-pointer ${linkClasses}`}
-              >Submit</a
-            >
+            <a href="/submit" class={`cursor-pointer ${linkClasses}`}>Submit</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 </header>
+
+<!-- Navigation Drawer Component -->
+<NavigationDrawer theme={theme} />
 
 <!-- Simple Search Modal -->
 <div
@@ -682,3 +665,5 @@ const mobileButtonClasses = theme === 'dark'
         }
       });
     });
+  });
+</script>

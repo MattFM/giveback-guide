@@ -1,0 +1,137 @@
+---
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'light' } = Astro.props;
+---
+
+<!-- Navigation Drawer - Can be used on mobile or extended to desktop -->
+<div
+  id="mobile-menu"
+  class="fixed inset-y-0 right-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Mobile navigation menu"
+>
+  <div class="flex flex-col h-full">
+    <!-- Header with close button -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+      <span class="text-xl font-semibold text-gray-900 dark:text-white">Menu</span>
+      <button
+        type="button"
+        id="mobile-menu-close"
+        class="text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 inline-flex items-center transition-colors"
+        aria-label="Close menu"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Navigation links -->
+    <nav class="flex-1 overflow-y-auto p-6">
+      <ul class="space-y-1">
+        <li>
+          <a
+            href="/projects"
+            class="block px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >Projects</a>
+        </li>
+        <li>
+          <a
+            href="/stays"
+            class="block px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >Stays</a>
+        </li>
+        <li>
+          <a
+            href="/blog"
+            class="block px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            href="/concierge"
+            class="block px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >Concierge</a>
+        </li>
+        <li>
+          <a
+            href="/submit"
+            class="block px-4 py-3 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >Submit</a>
+        </li>
+      </ul>
+
+      <!-- Future: Add more sections here -->
+      <!-- Example: User profile, settings, help links, etc. -->
+    </nav>
+  </div>
+</div>
+
+<!-- Backdrop overlay -->
+<div
+  id="mobile-menu-backdrop"
+  class="hidden fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 transition-opacity duration-300"
+  aria-hidden="true"
+></div>
+
+<script>
+  // Mobile menu drawer functionality
+  function initMobileMenu() {
+    const menuButton = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    const closeButton = document.getElementById('mobile-menu-close');
+    const backdrop = document.getElementById('mobile-menu-backdrop');
+    
+    if (!menuButton || !menu || !closeButton || !backdrop) return;
+
+    // Open menu
+    function openMenu() {
+      menu.classList.remove('translate-x-full');
+      backdrop.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent body scroll and content jump
+      menu.setAttribute('aria-hidden', 'false');
+      backdrop.setAttribute('aria-hidden', 'false');
+    }
+
+    // Close menu
+    function closeMenu() {
+      menu.classList.add('translate-x-full');
+      backdrop.classList.add('hidden');
+      document.body.style.overflow = ''; // Restore body scroll
+      menu.setAttribute('aria-hidden', 'true');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    // Event listeners
+    menuButton.addEventListener('click', openMenu);
+    closeButton.addEventListener('click', closeMenu);
+    backdrop.addEventListener('click', closeMenu);
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('translate-x-full')) {
+        closeMenu();
+      }
+    });
+
+    // Close menu when clicking a navigation link
+    const menuLinks = menu.querySelectorAll('a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+  } else {
+    initMobileMenu();
+  }
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initMobileMenu);
+</script>
