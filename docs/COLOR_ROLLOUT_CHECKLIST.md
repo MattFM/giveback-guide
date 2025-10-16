@@ -1,0 +1,472 @@
+# Color Rollout Checklist
+
+> **Goal:** Introduce new colors gradually to establish clear visual hierarchy without overwhelming users.
+
+## Progress Tracking
+
+- [ ] Phase 1: Primary Accent (Week 1)
+- [ ] Phase 2: Secondary Buttons (Week 2)
+- [ ] Phase 3: Impact Badges (Week 3)
+- [ ] Phase 4: Hover States & Polish (Week 4+)
+
+---
+
+## Phase 1: Primary Accent Color
+**Timeline:** Week 1  
+**Color:** Emerald Green `#059669`  
+**Goal:** Establish primary action color across all main CTAs
+
+### Tasks
+
+#### 1.1 Header CTA
+- [ ] Update `src/components/layout/Header.astro`
+- [ ] Change Join/Dashboard button to use accent color
+- [ ] Test on light and dark mode
+- [ ] Verify accessibility (contrast ratio)
+
+**Files to update:**
+```
+src/components/layout/Header.astro
+```
+
+#### 1.2 Homepage Primary CTA
+- [ ] Update `src/pages/index.astro`
+- [ ] Replace inline "Join our community" button
+- [ ] Use Button component with `variant="primary"`
+- [ ] Check responsive sizing
+
+**Files to update:**
+```
+src/pages/index.astro
+```
+
+#### 1.3 Project Pages
+- [ ] Update `src/pages/projects/[...slug].astro`
+- [ ] "Visit Website" button → primary variant
+- [ ] Ensure it's the most prominent action
+- [ ] Test with real project data
+
+**Files to update:**
+```
+src/pages/projects/[...slug].astro
+src/components/content/ProjectCard.astro (if buttons on cards)
+```
+
+#### 1.4 Stay Pages
+- [ ] Update `src/pages/stays/[...slug].astro`
+- [ ] "Visit Website" or "Book Now" → primary variant
+- [ ] Match project page hierarchy
+- [ ] Test with real stay data
+
+**Files to update:**
+```
+src/pages/stays/[...slug].astro
+src/components/content/StayCard.astro (if buttons on cards)
+```
+
+#### 1.5 Form Submit Buttons
+- [ ] Contact form
+- [ ] Join form
+- [ ] Any other forms
+- [ ] Ensure all use primary variant
+
+**Files to update:**
+```
+src/pages/contact.astro
+src/pages/join/*
+```
+
+### Phase 1 Review Checkpoint
+
+**Before moving to Phase 2:**
+- [ ] Live with changes for 3-5 days
+- [ ] Get feedback from 2-3 users
+- [ ] Check analytics (did CTR improve?)
+- [ ] Take screenshots for comparison
+- [ ] Verify no accessibility issues
+- [ ] Confirm color feels right (adjust shade if needed)
+
+**Questions to ask:**
+- Does the hierarchy feel clear?
+- Is it obvious what the primary action is on each page?
+- Does the color align with the brand mission?
+- Any pages feel imbalanced?
+
+---
+
+## Phase 2: Secondary Buttons
+**Timeline:** Week 2  
+**Color:** White with green border  
+**Goal:** Differentiate supporting actions from primary CTAs
+
+### Tasks
+
+#### 2.1 Save Buttons
+- [ ] Add to project pages
+- [ ] Add to stay pages
+- [ ] Use `variant="secondary"` or `variant="outline"`
+- [ ] Should be less prominent than "Visit Website"
+
+**Files to update:**
+```
+src/pages/projects/[...slug].astro
+src/pages/stays/[...slug].astro
+```
+
+#### 2.2 Card Actions
+- [ ] "Learn More" buttons on cards
+- [ ] Use secondary variant
+- [ ] Ensure they don't compete with card images
+
+**Files to update:**
+```
+src/components/content/ProjectCard.astro
+src/components/content/StayCard.astro
+src/components/content/PostCard.astro
+```
+
+#### 2.3 Supporting Actions
+- [ ] "Share" buttons
+- [ ] "Back" buttons
+- [ ] Any other non-primary actions
+
+### Phase 2 Review Checkpoint
+
+**Before moving to Phase 3:**
+- [ ] Primary vs. secondary hierarchy clear?
+- [ ] No confusion about which action is most important?
+- [ ] Live with it for a few days
+- [ ] Take screenshots
+
+---
+
+## Phase 3: Impact Category Badges
+**Timeline:** Week 3  
+**Goal:** Add visual personality to impact areas
+
+### 3.1 Environmental Badges (Same as Accent)
+- [ ] Use `#059669` (same as primary accent)
+- [ ] Add to project cards
+- [ ] Add to stay cards
+- [ ] Add to detail pages
+
+**Color:** `#059669` (Emerald Green)
+
+**Files to update:**
+```
+src/components/content/ProjectCard.astro
+src/components/content/StayCard.astro
+src/pages/projects/[...slug].astro
+src/pages/stays/[...slug].astro
+```
+
+### 3.2 Social Impact Badges (Introduce Second Color)
+- [ ] Use `#DC6B4A` (Terracotta)
+- [ ] Only where environmental doesn't apply
+- [ ] Keep badges small (text-xs)
+- [ ] Test against various backgrounds
+
+**Color:** `#DC6B4A` (Terracotta)
+
+**Review before continuing:**
+- [ ] Does adding a second color help or hurt?
+- [ ] Are badges too prominent?
+- [ ] Should they be more subtle?
+
+### 3.3 Cultural/Wellbeing Badges (Third Color - Optional)
+- [ ] Use `#7C3AED` (Purple)
+- [ ] Complete the three-category system
+- [ ] Monitor if it feels like too much
+
+**Color:** `#7C3AED` (Purple)
+
+**Decision point:**
+- [ ] Do we need all 3 colors or is 1-2 enough?
+- [ ] Could we use tints/shades of one color instead?
+
+### Phase 3 Review Checkpoint
+
+**Before moving to Phase 4:**
+- [ ] Page feels cohesive, not chaotic?
+- [ ] Badges enhance but don't distract?
+- [ ] Consider removing a color if too busy
+- [ ] Live with it for at least a week
+
+---
+
+## Phase 4: Hover States & Polish
+**Timeline:** Week 4+  
+**Goal:** Refine interactions and add polish
+
+### 4.1 Navigation Links
+- [ ] Hover states use accent color
+- [ ] Header navigation
+- [ ] Footer links
+- [ ] Breadcrumbs
+
+**Files to update:**
+```
+src/components/layout/Header.astro
+src/components/layout/Footer.astro
+src/components/layout/HeaderLink.astro
+```
+
+### 4.2 Body Content Links
+- [ ] Underline or color on hover
+- [ ] Ensure they're clearly interactive
+- [ ] Don't overpower the content
+
+**Files to update:**
+```
+src/styles/global.css
+```
+
+### 4.3 Focus States
+- [ ] Form inputs
+- [ ] Buttons (already handled by Button component)
+- [ ] Interactive elements
+- [ ] Ensure keyboard navigation is clear
+
+### 4.4 Success/Error States (If Needed)
+- [ ] Form validation
+- [ ] Success messages
+- [ ] Error messages
+- [ ] Keep separate from brand colors
+
+---
+
+## Alternative: Micro-Rollout
+
+If you want to be extra cautious, use this super-gradual approach:
+
+### Micro Phase 1a (Day 1)
+- [ ] Header button ONLY
+- [ ] Get comfortable with the color
+
+### Micro Phase 1b (Day 2-3)
+- [ ] Add homepage CTA
+- [ ] See how they work together
+
+### Micro Phase 1c (Day 4-7)
+- [ ] Add all other primary CTAs
+- [ ] Complete Phase 1
+
+---
+
+## Red Flags - Stop & Reassess If:
+
+- ❌ Page feels chaotic or overwhelming
+- ❌ Users confused about where to click
+- ❌ Multiple things competing for attention
+- ❌ Adding color "just because"
+- ❌ Can't explain what problem the color solves
+- ❌ Analytics show decreased engagement
+
+## Good Signs - Keep Going:
+
+- ✅ Clear visual hierarchy
+- ✅ Eye naturally drawn to primary actions
+- ✅ Page feels cohesive
+- ✅ Color serves a purpose
+- ✅ Users find what they need faster
+- ✅ Positive feedback
+
+---
+
+## Testing Checklist (Between Each Phase)
+
+### Visual Testing
+- [ ] Test on multiple screen sizes (mobile, tablet, desktop)
+- [ ] Check light mode
+- [ ] Check dark mode
+- [ ] Test with different browsers
+- [ ] Take before/after screenshots
+
+### Accessibility Testing
+- [ ] Run contrast checker on all color combinations
+- [ ] Test keyboard navigation
+- [ ] Test with screen reader
+- [ ] Ensure focus states are visible
+
+### User Testing
+- [ ] Get feedback from 2-3 users
+- [ ] Ask: "What action would you take on this page?"
+- [ ] Ask: "Does anything feel confusing or overwhelming?"
+- [ ] Observe where their eyes go first
+
+### Analytics
+- [ ] Compare CTR on primary buttons (before/after)
+- [ ] Check bounce rates
+- [ ] Monitor time on page
+- [ ] Track conversion metrics
+
+---
+
+## Key Questions Before Each Phase
+
+1. **What problem does this color solve?**
+   - Does it create hierarchy?
+   - Does it encourage action?
+   - Does it make the user's job easier?
+
+2. **Can I explain the purpose to someone else?**
+   - If not, don't add the color yet
+
+3. **Does this align with the brand mission?**
+   - Giveback = sustainability, growth, positive impact
+   - Does the color support that?
+
+---
+
+## Tailwind Config Updates
+
+### Phase 1 (Add accent color):
+```js
+// tailwind.config.cjs
+colors: {
+  accent: {
+    DEFAULT: '#059669',
+    hover: '#047857',
+    light: '#D1FAE5',
+  }
+}
+```
+
+### Phase 3 (Add impact colors):
+```js
+// tailwind.config.cjs
+colors: {
+  accent: {
+    DEFAULT: '#059669',
+    hover: '#047857',
+    light: '#D1FAE5',
+  },
+  impact: {
+    environmental: '#059669',
+    social: '#DC6B4A',      // Add in Phase 3.2
+    cultural: '#7C3AED',    // Add in Phase 3.3
+  }
+}
+```
+
+---
+
+## Button Component Updates
+
+### Update existing Button component:
+
+**File:** `src/components/ui/Button.astro`
+
+```diff
+const variants = {
+-  primary: 'bg-black text-white hover:bg-gray-900 focus:ring-gray-500',
++  primary: 'bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-100',
+-  outline: 'border-1 border-black text-black hover:bg-gray-100 focus:ring-gray-500',
++  outline: 'border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white focus:ring-emerald-100',
+};
+```
+
+Or use Tailwind classes directly:
+```astro
+primary: 'bg-accent text-white hover:bg-accent-hover focus:ring-accent-light',
+outline: 'border-2 border-accent text-accent hover:bg-accent hover:text-white focus:ring-accent-light',
+```
+
+---
+
+## Files Reference
+
+### Core Files to Update in Phase 1:
+```
+src/components/ui/Button.astro (update variants)
+src/components/layout/Header.astro
+src/pages/index.astro
+src/pages/projects/[...slug].astro
+src/pages/stays/[...slug].astro
+src/pages/contact.astro
+src/pages/join/*
+```
+
+### Files for Phase 2:
+```
+src/components/content/ProjectCard.astro
+src/components/content/StayCard.astro
+src/components/content/PostCard.astro
+```
+
+### Files for Phase 3:
+```
+src/utils/impactAreas.ts (may need color mapping)
+src/components/content/ProjectCard.astro (add badges)
+src/components/content/StayCard.astro (add badges)
+```
+
+---
+
+## Final Principle
+
+> **Add color when it solves a problem, not because you have colors available.**
+
+Every color should:
+1. Create clear hierarchy
+2. Encourage the right action
+3. Make the user's job easier
+
+If you can't explain why a color is needed, wait until you can.
+
+---
+
+## Notes & Learnings
+
+Use this space to track what works and what doesn't:
+
+### What Worked Well:
+```
+- 
+- 
+- 
+```
+
+### What Didn't Work:
+```
+- 
+- 
+- 
+```
+
+### Adjustments Made:
+```
+- 
+- 
+- 
+```
+
+### Color Tweaks:
+```
+Original: #059669
+Changed to: 
+Reason: 
+```
+
+---
+
+## Completion
+
+- [ ] Phase 1 Complete
+- [ ] Phase 2 Complete
+- [ ] Phase 3 Complete
+- [ ] Phase 4 Complete
+- [ ] Final review done
+- [ ] Analytics reviewed (30 days after completion)
+- [ ] User feedback positive
+- [ ] Documentation updated
+
+**Date Started:** _____________  
+**Date Completed:** _____________
+
+**Final Thoughts:**
+```
+What did we learn about color and hierarchy?
+What would we do differently next time?
+What's the biggest impact this made?
+```

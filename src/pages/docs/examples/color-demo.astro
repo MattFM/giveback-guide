@@ -1,0 +1,424 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout frontmatter={{
+  title: "Color System Demo",
+  description: "Interactive examples of our color system in action"
+}}>
+  <div class="max-w-6xl mx-auto py-12 px-4">
+    <h1 class="text-4xl font-bold mb-4">Color System Demo</h1>
+    <p class="text-xl text-gray-600 dark:text-gray-400 mb-12">
+      Interactive examples showing how our color hierarchy works in practice.
+    </p>
+
+    <!-- Color Palette Display -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Color Palette</h2>
+      
+      <h3 class="text-xl font-semibold mb-4">Neutrals (90%)</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="space-y-2">
+          <div class="h-24 bg-white border-2 border-gray-200 rounded-lg"></div>
+          <p class="text-sm font-mono">#FFFFFF</p>
+          <p class="text-xs text-gray-600">Background</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 bg-gray-50 border-2 border-gray-200 rounded-lg"></div>
+          <p class="text-sm font-mono">#F9FAFB</p>
+          <p class="text-xs text-gray-600">Surface</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 bg-gray-900 rounded-lg"></div>
+          <p class="text-sm font-mono">#111827</p>
+          <p class="text-xs text-gray-600">Text</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 bg-gray-500 rounded-lg"></div>
+          <p class="text-sm font-mono">#6B7280</p>
+          <p class="text-xs text-gray-600">Text Muted</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold mb-4">Primary Accent (10%)</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div class="space-y-2">
+          <div class="h-24 bg-emerald-600 rounded-lg"></div>
+          <p class="text-sm font-mono">#059669</p>
+          <p class="text-xs text-gray-600">Accent</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 bg-emerald-700 rounded-lg"></div>
+          <p class="text-sm font-mono">#047857</p>
+          <p class="text-xs text-gray-600">Accent Hover</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 bg-emerald-100 border-2 border-gray-200 rounded-lg"></div>
+          <p class="text-sm font-mono">#D1FAE5</p>
+          <p class="text-xs text-gray-600">Accent Light</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold mb-4">Impact Categories (2%)</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="space-y-2">
+          <div class="h-24 bg-emerald-600 rounded-lg"></div>
+          <p class="text-sm font-mono">#059669</p>
+          <p class="text-xs text-gray-600">Environmental</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 rounded-lg" style="background-color: #DC6B4A;"></div>
+          <p class="text-sm font-mono">#DC6B4A</p>
+          <p class="text-xs text-gray-600">Social</p>
+        </div>
+        <div class="space-y-2">
+          <div class="h-24 bg-purple-600 rounded-lg"></div>
+          <p class="text-sm font-mono">#7C3AED</p>
+          <p class="text-xs text-gray-600">Cultural</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Button Hierarchy -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Button Hierarchy</h2>
+      
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
+        <h3 class="text-xl font-semibold mb-4">Primary Buttons</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          Use for the most important action in each context
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#" class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+            Small Primary
+          </a>
+          <a href="#" class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+            Medium Primary
+          </a>
+          <a href="#" class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-base px-6 py-3.5 transition-colors">
+            Large Primary
+            <svg class="ml-2 -mr-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
+        <h3 class="text-xl font-semibold mb-4">Secondary Buttons</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          Use for supporting actions
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+            Small Secondary
+          </a>
+          <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+            Medium Secondary
+          </a>
+          <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-base px-6 py-3.5 transition-colors">
+            Large Secondary
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        <h3 class="text-xl font-semibold mb-4">Ghost/Tertiary Buttons</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          Use for low-priority actions
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#" class="inline-flex items-center text-gray-600 hover:text-emerald-600 hover:underline font-medium text-sm transition-colors">
+            Cancel
+          </a>
+          <a href="#" class="inline-flex items-center text-gray-600 hover:text-emerald-600 hover:underline font-medium text-base transition-colors">
+            Skip this step
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Context Examples -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Context-Based Hierarchy</h2>
+      
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4">Mock Header (Global Context)</h3>
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center gap-6">
+            <span class="font-bold text-lg">Giveback Guide</span>
+            <nav class="hidden md:flex gap-4 text-sm text-gray-600">
+              <a href="#" class="hover:text-emerald-600">Projects</a>
+              <a href="#" class="hover:text-emerald-600">Stays</a>
+              <a href="#" class="hover:text-emerald-600">Blog</a>
+            </nav>
+          </div>
+          <a href="#" class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+            Join
+          </a>
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
+          ↑ Header CTA stays <strong>small and consistent</strong> across all pages
+        </p>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        <h3 class="text-xl font-semibold mb-4">Mock Project Page (Contextual)</h3>
+        <div class="flex flex-col md:flex-row gap-8">
+          <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&h=300&fit=crop" alt="Wildlife" class="w-full md:w-1/2 rounded-lg object-cover h-64" />
+          <div class="flex-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white bg-emerald-600 mb-3">
+              Environmental
+            </span>
+            <h4 class="text-2xl font-bold mb-3">Wildlife Sanctuary Project</h4>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+              Help protect endangered species in their natural habitat. Work alongside conservationists and make a real difference.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <a href="#" class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-base px-6 py-3.5 transition-colors">
+                Visit Project Website
+                <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium rounded-lg text-base px-6 py-3.5 transition-colors">
+                Save for Later
+              </a>
+            </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          ↑ Page CTA is <strong>larger and more prominent</strong> because it's the primary goal in this context
+        </p>
+      </div>
+    </section>
+
+    <!-- Impact Badges -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Impact Category Badges</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
+        Use category colors <strong>only</strong> for small badges. Never for large surfaces or primary CTAs.
+      </p>
+      
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=400&h=250&fit=crop" alt="Nature" class="w-full h-48 object-cover" />
+          <div class="p-6">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white bg-emerald-600 mb-3">
+              Environmental
+            </span>
+            <h3 class="text-lg font-bold mb-2">Reforestation Project</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Plant native trees and restore habitats.
+            </p>
+            <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+              Learn More
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=250&fit=crop" alt="Community" class="w-full h-48 object-cover" />
+          <div class="p-6">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white" style="background-color: #DC6B4A;">
+              Social Impact
+            </span>
+            <h3 class="text-lg font-bold mb-2 mt-3">Women's Cooperative</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Support women entrepreneurs and artisans.
+            </p>
+            <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+              Learn More
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1533669955142-6a73332af4db?w=400&h=250&fit=crop" alt="Culture" class="w-full h-48 object-cover" />
+          <div class="p-6">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white bg-purple-600 mb-3">
+              Cultural
+            </span>
+            <h3 class="text-lg font-bold mb-2">Traditional Arts Center</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Preserve indigenous crafts and heritage.
+            </p>
+            <a href="#" class="inline-flex items-center bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-medium rounded-lg text-sm px-4 py-2 transition-colors">
+              Learn More
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 rounded">
+        <p class="text-sm text-yellow-800 dark:text-yellow-200">
+          <strong>Note:</strong> The badges use category colors, but all "Learn More" buttons use the same primary accent (green). Category colors are visual accents only, not for interactive elements.
+        </p>
+      </div>
+    </section>
+
+    <!-- 60-30-10 Visualization -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">60-30-10 Rule in Action</h2>
+      
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <!-- 60% - White/Light backgrounds -->
+        <div class="bg-white dark:bg-gray-800 p-8">
+          <div class="max-w-4xl">
+            <h3 class="text-2xl font-bold mb-4">Page Title (60% Neutral)</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+              Most of the page uses neutral backgrounds and text colors. This creates a calm, readable foundation that doesn't compete for attention.
+            </p>
+            
+            <!-- 30% - Gray backgrounds for sections -->
+            <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 mb-6">
+              <h4 class="text-lg font-semibold mb-3">Section Heading (30% Secondary)</h4>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
+                Subtle background colors create visual separation and hierarchy without being distracting.
+              </p>
+              
+              <!-- 10% - Accent color for CTAs -->
+              <a href="#" class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                Primary Action (10% Accent)
+              </a>
+            </div>
+
+            <div class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-white border-2 border-gray-300 rounded"></div>
+                <span>60% Neutral</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-gray-50 dark:bg-gray-900 border border-gray-300 rounded"></div>
+                <span>30% Secondary</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-emerald-600 rounded"></div>
+                <span>10% Accent</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Accessibility Notes -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Accessibility</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            Good Contrast
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Emerald-600 (#059669) on white background provides 3.66:1 contrast ratio (AA standard).
+          </p>
+          <div class="bg-white border-2 border-gray-200 rounded-lg p-4 text-center">
+            <span class="text-emerald-600 font-bold text-lg">Example Text</span>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            Focus Indicators
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            All interactive elements have visible focus rings for keyboard navigation.
+          </p>
+          <button class="inline-flex items-center text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-100 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+            Try Tab to Focus
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-6 p-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded">
+        <h4 class="font-semibold mb-2 text-blue-900 dark:text-blue-100">Don't Rely on Color Alone</h4>
+        <p class="text-sm text-blue-800 dark:text-blue-200">
+          Always combine color with other visual cues:
+        </p>
+        <ul class="mt-2 text-sm text-blue-800 dark:text-blue-200 space-y-1 ml-4">
+          <li>• <strong>Icons</strong> for action types</li>
+          <li>• <strong>Text labels</strong> that clearly indicate purpose</li>
+          <li>• <strong>Position</strong> to show hierarchy</li>
+          <li>• <strong>Size</strong> for emphasis</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Quick Reference -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold mb-6">Quick Reference</h2>
+      
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-6">
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-semibold mb-3">When to use Primary Accent</h3>
+            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Primary CTA in each context</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Global header CTA</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Important highlights</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Hover states on links</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-3">When NOT to use Accent</h3>
+            <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Large background areas</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Body text</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Multiple CTAs in the same context</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <span>Secondary actions</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</DocsLayout>
