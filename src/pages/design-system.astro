@@ -467,6 +467,43 @@ import Button from "../components/ui/Button.astro";
             </div>
           </div>
 
+          <!-- Buttons with Icons -->
+          <div>
+            <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-md);">With Icons</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+              <Button variant="primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Next Step
+              </Button>
+              <Button variant="outline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download
+              </Button>
+              <Button variant="secondary">
+                Save
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </Button>
+              <Button variant="danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                Delete
+              </Button>
+            </div>
+            <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); max-width: 700px;">
+              Icons automatically get proper spacing thanks to the <code>gap-2</code> utility in the button component.
+            </p>
+          </div>
+
           <!-- Code Example -->
           <div style="background: white; padding: var(--spacing-lg); border-radius: var(--border-radius-md); border: 1px solid var(--color-neutral-200);">
             <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-md);">Usage</h3>
@@ -475,7 +512,13 @@ import Button from "../components/ui/Button.astro";
 &lt;Button variant="primary"&gt;Click Me&lt;/Button&gt;
 &lt;Button variant="outline" size="lg"&gt;Learn More&lt;/Button&gt;
 &lt;Button href="/donate" variant="primary"&gt;Donate Now&lt;/Button&gt;
-&lt;Button variant="danger" disabled&gt;Delete&lt;/Button&gt;</code></pre>
+&lt;Button variant="danger" disabled&gt;Delete&lt;/Button&gt;
+
+&lt;!-- With Icons --&gt;
+&lt;Button variant="primary"&gt;
+  &lt;svg&gt;...&lt;/svg&gt;
+  Next Step
+&lt;/Button&gt;</code></pre>
           </div>
         </div>
       </div>
