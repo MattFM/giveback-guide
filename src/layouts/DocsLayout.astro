@@ -1,0 +1,79 @@
+---
+import MainLayout from './MainLayout.astro';
+
+interface Props {
+  frontmatter?: {
+    title?: string;
+    description?: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const title = frontmatter?.title || 'Documentation';
+const description = frontmatter?.description || 'Internal documentation';
+---
+
+<MainLayout title={`${title} - Giveback Guide`} description={description}>
+  <!-- Warning Banner -->
+  <div class="bg-yellow-50 border-b border-yellow-200 py-3">
+    <div class="max-w-screen-xl mx-auto px-4 lg:px-6">
+      <p class="text-sm text-yellow-800 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <strong class="font-semibold">Internal Documentation</strong>
+        <span class="ml-1">• <a href="/docs/" class="underline hover:text-yellow-900">Back to Index</a></span>
+      </p>
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 lg:px-6 py-12">
+    <article class="format format-lg max-w-none
+      format-headings:font-bold
+      format-h1:text-4xl format-h1:mb-8 format-h1:text-gray-900
+      format-h2:text-3xl format-h2:mt-12 format-h2:mb-4 format-h2:border-b format-h2:border-gray-200 format-h2:pb-3
+      format-h3:text-2xl format-h3:mt-8 format-h3:mb-3 format-h3:text-gray-800
+      format-h4:text-xl format-h4:mt-6 format-h4:mb-2
+      format-p:text-gray-700 format-p:leading-relaxed format-p:my-4
+      format-li:text-gray-700 format-li:my-1
+      format-code:text-purple-600 format-code:bg-purple-50 format-code:px-1.5 format-code:py-0.5 format-code:rounded format-code:text-sm format-code:font-mono
+      format-pre:bg-gray-900 format-pre:text-gray-100 format-pre:p-4 format-pre:rounded-lg format-pre:overflow-x-auto format-pre:my-6
+      format-a:text-blue-600 format-a:no-underline hover:format-a:underline
+      format-strong:text-gray-900 format-strong:font-semibold
+      format-ul:my-4 format-ul:list-disc format-ul:pl-6
+      format-ol:my-4 format-ol:list-decimal format-ol:pl-6
+      format-blockquote:border-l-4 format-blockquote:border-blue-500 format-blockquote:pl-4 format-blockquote:italic format-blockquote:text-gray-600
+      format-img:rounded-lg format-img:shadow-md
+      format-table:border format-table:border-gray-300
+      format-th:bg-gray-100 format-th:p-2 format-th:border format-th:border-gray-300
+      format-td:p-2 format-td:border format-td:border-gray-300">
+      <slot />
+    </article>
+  </main>
+</MainLayout>
+
+<style is:global>
+  /* Enhanced code block styling */
+  article pre code {
+    background: transparent !important;
+    padding: 0 !important;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+  
+  /* Inline code styling */
+  article :not(pre) > code {
+    white-space: nowrap;
+  }
+  
+  /* Headings with anchors */
+  article h2:hover,
+  article h3:hover {
+    color: #6366f1;
+  }
+
+  /* Checkmark styling for task lists */
+  article ul li input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+</style>

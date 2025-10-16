@@ -10,7 +10,13 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://giveback.guide',
   trailingSlash: 'always',
-  integrations: [mdx(), sitemap(), pagefind()],
+  integrations: [
+    mdx(), 
+    sitemap({
+      filter: (page) => !page.includes('/docs/')
+    }), 
+    pagefind()
+  ],
 
   vite: {
     plugins: [tailwindcss()],

@@ -1,0 +1,122 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout 
+  title="Internal Documentation - Giveback Guide"
+  description="Internal documentation and examples (not indexed)"
+>
+  <!-- Warning Banner -->
+  <div class="bg-yellow-50 border-b border-yellow-200 py-3">
+    <div class="max-w-screen-xl mx-auto px-4 lg:px-6">
+      <p class="text-sm text-yellow-800 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <strong class="font-semibold">Internal Documentation:</strong>
+        <span class="ml-1">This section is hidden from search engines and sitemaps.</span>
+      </p>
+    </div>
+  </div>
+
+  <main class="max-w-screen-xl mx-auto px-4 lg:px-6 py-12">
+    <h1 class="text-4xl font-bold mb-8">Internal Documentation</h1>
+    
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Examples Section -->
+      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+        <h2 class="text-2xl font-bold mb-4 text-purple-600">Examples</h2>
+        <ul class="space-y-2">
+          <li>
+            <a href="/docs/examples/design-system/" class="text-blue-600 hover:underline">
+              Design System
+            </a>
+          </li>
+          <li>
+            <a href="/docs/examples/hero-examples/" class="text-blue-600 hover:underline">
+              Hero Examples
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Component Docs -->
+      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+        <h2 class="text-2xl font-bold mb-4 text-green-600">Components</h2>
+        <ul class="space-y-2">
+          <li>
+            <a href="/docs/components/navigation-drawer/" class="text-blue-600 hover:underline">
+              Navigation Drawer
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Feature Docs -->
+      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+        <h2 class="text-2xl font-bold mb-4 text-blue-600">Features</h2>
+        <ul class="space-y-2">
+          <li>
+            <a href="/docs/features/integrated-header-guide/" class="text-blue-600 hover:underline">
+              Integrated Header Guide
+            </a>
+          </li>
+          <li>
+            <a href="/docs/features/integrated-header-implementation/" class="text-blue-600 hover:underline">
+              Integrated Header Implementation
+            </a>
+          </li>
+          <li>
+            <a href="/docs/features/integrated-header-fixes/" class="text-blue-600 hover:underline">
+              Integrated Header Fixes
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Guides -->
+      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+        <h2 class="text-2xl font-bold mb-4 text-orange-600">Guides</h2>
+        <ul class="space-y-2">
+          <li>
+            <a href="/docs/guides/design-guidelines/" class="text-blue-600 hover:underline">
+              Design Guidelines
+            </a>
+          </li>
+          <li>
+            <a href="/docs/guides/component-migration-plan/" class="text-blue-600 hover:underline">
+              Component Migration Plan
+            </a>
+          </li>
+          <li>
+            <a href="/docs/guides/import-update-reference/" class="text-blue-600 hover:underline">
+              Import Update Reference
+            </a>
+          </li>
+          <li>
+            <a href="/docs/guides/migration-complete/" class="text-blue-600 hover:underline">
+              Migration Complete
+            </a>
+          </li>
+          <li>
+            <a href="/docs/guides/responsive-images/" class="text-blue-600 hover:underline">
+              Responsive Images
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200">
+      <h3 class="text-lg font-semibold mb-2">📝 Note</h3>
+      <p class="text-gray-700">
+        This documentation section is excluded from:
+      </p>
+      <ul class="list-disc list-inside mt-2 text-gray-600">
+        <li>Search engine indexing (<code>robots.txt</code>)</li>
+        <li>XML sitemap (<code>astro.config.mjs</code>)</li>
+        <li>Public navigation (no links from main site)</li>
+      </ul>
+    </div>
+  </main>
+</MainLayout>

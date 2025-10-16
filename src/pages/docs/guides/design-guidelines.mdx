@@ -1,3 +1,9 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Design Guidelines
+description: Giveback Guide design system guidelines and standards
+---
+
 # Giveback Guide Design System Guidelines
 
 **Version:** 1.0  
@@ -299,7 +305,7 @@ section + section { margin-top: var(--spacing-5xl); }
 - **Separated** (distinct content blocks): `--spacing-xl` (24px)
 
 **Rule 4: Responsive Spacing**
-On mobile (<768px), reduce large spacing by 50%:
+On mobile (&lt;768px), reduce large spacing by 50%:
 ```css
 @media (max-width: 767px) {
   section { padding: var(--spacing-2xl) var(--spacing-lg); }
@@ -664,14 +670,16 @@ All interactive elements must have visible focus states for accessibility:
 ### Breakpoints
 
 ```css
+```css
 /* Mobile First Approach */
-/* Base styles: Mobile (<768px) */
+/* Base styles: Mobile (less than 768px) */
 
 /* Tablet */
 @media (min-width: 768px) { }
 
 /* Desktop */
 @media (min-width: 1024px) { }
+```
 
 /* Large Desktop */
 @media (min-width: 1280px) { }
