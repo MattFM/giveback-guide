@@ -47,11 +47,13 @@ const alignClasses = {
 >
   <div class="hero-content-wrapper max-w-screen-xl mx-auto px-4 lg:px-6">
     <div class={`hero-content ${alignClasses[align]} ${align === 'center' ? 'max-w-3xl' : 'max-w-4xl'}`}>
+      <slot name="before-title" />
       {hasTitleSlot ? (
         <h1 class="hero-title"><slot name="title" /></h1>
       ) : title ? (
         <h1 class="hero-title">{title}</h1>
       ) : null}
+      <slot name="after-title" />
       {description && <p class="hero-description">{description}</p>}
       <slot />
     </div>

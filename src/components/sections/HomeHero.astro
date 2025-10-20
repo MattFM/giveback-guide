@@ -1,6 +1,12 @@
 ---
 import Hero from './Hero.astro';
 import Button from '../ui/Button.astro';
+
+// Update badge configuration
+const badge = {
+  text: "New: 50+ projects added this month",
+  url: "/blog/50-new-projects"
+};
 ---
 
 <Hero 
@@ -9,6 +15,22 @@ import Button from '../ui/Button.astro';
   theme="dark"
   size="medium"
 >
+  <!-- Update Badge (before title) -->
+  <a 
+    slot="before-title"
+    href={badge.url} 
+    class="update-badge"
+    aria-label="Latest update"
+  >
+    <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"/>
+    </svg>
+    <span class="badge-text">{badge.text}</span>
+    <svg class="arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
   <span slot="title">
     Discover amazing ways to <span class="highlight-text">give back</span> to the places you visit
   </span>
@@ -16,6 +38,9 @@ import Button from '../ui/Button.astro';
   <Button
     href="/why"
     size="lg"
+    bgColor="bg-white"
+    textColor="text-black"
+    hoverBg="hover:bg-gray-100"
   >
     Learn more
     <svg
@@ -34,6 +59,78 @@ import Button from '../ui/Button.astro';
 </Hero>
 
 <style>
+  /* Update Badge Styles */
+  .update-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+    background: rgba(243, 232, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(243, 232, 255, 0.3);
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #f3e8ff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    animation: fadeInSlideUp 0.6s ease-out;
+  }
+
+  .update-badge:hover {
+    background: rgba(243, 232, 255, 0.25);
+    border-color: rgba(243, 232, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .sparkle-icon {
+    width: 16px;
+    height: 16px;
+    color: #e9d5ff;
+    flex-shrink: 0;
+    animation: sparkle 3s ease-in-out infinite;
+  }
+
+  .badge-text {
+    line-height: 1.2;
+  }
+
+  .arrow-icon {
+    width: 14px;
+    height: 14px;
+    color: #e9d5ff;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .update-badge:hover .arrow-icon {
+    transform: translateX(3px);
+  }
+
+  @keyframes sparkle {
+    0%, 100% {
+      transform: rotate(0deg) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: rotate(180deg) scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes fadeInSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Highlight Text Styles */
   .highlight-text {
     background: linear-gradient(
       135deg,
@@ -57,6 +154,25 @@ import Button from '../ui/Button.astro';
     }
     50% {
       background-position: 100% 50%;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .update-badge {
+      font-size: 0.8125rem;
+      padding: 0.4rem 0.875rem;
+      gap: 0.4rem;
+    }
+
+    .sparkle-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .arrow-icon {
+      width: 12px;
+      height: 12px;
     }
   }
 </style>

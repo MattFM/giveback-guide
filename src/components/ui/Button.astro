@@ -7,6 +7,9 @@ export interface Props {
   fullWidth?: boolean;
   href?: string;
   class?: string;
+  bgColor?: string; // Custom background color (e.g., 'bg-white', 'bg-purple-600')
+  textColor?: string; // Custom text color (e.g., 'text-black', 'text-white')
+  hoverBg?: string; // Custom hover background color (e.g., 'hover:bg-gray-100')
   [key: string]: any; // Allow any other HTML attributes
 }
 
@@ -18,6 +21,9 @@ const {
   fullWidth = false,
   href,
   class: className = '',
+  bgColor,
+  textColor,
+  hoverBg,
   ...rest
 } = Astro.props;
 
@@ -39,7 +45,12 @@ const sizes = {
 
 const widthClass = fullWidth ? 'w-full' : '';
 
-const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`.trim();
+// Use custom colors if provided, otherwise use variant styles
+const colorClasses = (bgColor || textColor || hoverBg)
+  ? `${bgColor || ''} ${textColor || ''} ${hoverBg || ''}`
+  : variants[variant];
+
+const classes = `${baseStyles} ${colorClasses} ${sizes[size]} ${widthClass} ${className}`.trim();
 
 const Tag = href ? 'a' : 'button';
 ---
