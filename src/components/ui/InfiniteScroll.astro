@@ -60,9 +60,9 @@ const animationDirection = direction === 'left' ? 'scroll-left' : 'scroll-right'
   .infinite-scroll-wrapper {
     width: 100%;
     overflow: hidden;
-    background: linear-gradient(90deg, #f9fafb 0%, #ffffff 50%, #f9fafb 100%);
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(90deg, #111827 0%, #1f2937 50%, #111827 100%);
+    border-top: 1px solid #374151;
+    border-bottom: 1px solid #374151;
   }
 
   :global(.dark) .infinite-scroll-wrapper {
@@ -115,10 +115,6 @@ const animationDirection = direction === 'left' ? 'scroll-left' : 'scroll-right'
 
   :global(.dark) .separator {
     color: #4b5563;
-  }
-
-  .infinite-scroll-container:hover .infinite-scroll-content {
-    animation-play-state: paused;
   }
 
   @keyframes scroll-left {
