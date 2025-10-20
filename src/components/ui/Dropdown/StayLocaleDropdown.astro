@@ -1,13 +1,14 @@
 ---
 import { getCollection } from "astro:content";
+import BaseSelectDropdown from "./BaseSelectDropdown.astro";
 
 // Get the current country and locale from the URL
-const currentCountry = Astro.url.pathname.split("/")[2]; // Extract the country slug from the URL
-const currentLocale = Astro.url.pathname.split("/")[3]; // Extract the locale slug from the URL
+const currentCountry = Astro.url.pathname.split("/")[2];
+const currentLocale = Astro.url.pathname.split("/")[3];
 
 const stays = await getCollection("stays");
 
-// Filter projects to include only those that are assigned to the current country
+// Filter stays to include only those that are assigned to the current country
 const filteredStays = stays.filter((stay) => {
   const countries = Array.isArray(stay.data.properties.sCountry)
     ? stay.data.properties.sCountry.map((c) =>
@@ -15,11 +16,10 @@ const filteredStays = stays.filter((stay) => {
       )
     : [String(stay.data.properties.sCountry).toLowerCase().replace(/\s+/g, "-")];
 
-  // Ensure the project includes the current country
   return countries.includes(currentCountry);
 });
 
-// Count the number of projects for each locale within the current country
+// Count the number of stays for each locale within the current country
 const localeCounts = filteredStays.reduce((acc: Record<string, number>, stay) => {
   const countries = Array.isArray(stay.data.properties.sCountry)
     ? stay.data.properties.sCountry.map((c) =>
@@ -31,7 +31,6 @@ const localeCounts = filteredStays.reduce((acc: Record<string, number>, stay) =>
     ? stay.data.properties.sLocale
     : [stay.data.properties.sLocale];
 
-  // Only count locales if the current country is explicitly assigned
   if (countries.includes(currentCountry)) {
     locales.forEach((locale) => {
       if (locale) {
@@ -45,38 +44,24 @@ const localeCounts = filteredStays.reduce((acc: Record<string, number>, stay) =>
 
 // Extract unique locales and sort alphabetically
 const uniqueLocales = Object.keys(localeCounts).sort();
+
+// Transform to items array for BaseSelectDropdown
+const items = uniqueLocales.map((locale) => {
+  const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
+  return {
+    name: locale,
+    count: localeCounts[locale],
+    slug: localeSlug,
+    url: `/stays/${currentCountry}/${localeSlug}`,
+  };
+});
 ---
-<div class="relative">
-  <form class="w-100%">
-    <select
-      id="locales"
-      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      onchange="if (this.value) window.location.href = this.value"
-    >
-      <option disabled selected={!currentLocale}>Locales</option>
-      {uniqueLocales.map((locale) => {
-        const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-        return (
-          <option
-            value={`/stays/${currentCountry}/${localeSlug}`}
-            selected={currentLocale === localeSlug}
-          >
-            {locale} ({localeCounts[locale]})
-          </option>
-        );
-      })}
-    </select>
-  </form>
-  
-  <!-- Hidden links for search engine crawlers -->
-  <div class="sr-only">
-    {uniqueLocales.map((locale) => {
-      const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-      return (
-        <a href={`/stays/${currentCountry}/${localeSlug}`}>
-          {locale} stays in {currentCountry}
-        </a>
-      );
-    })}
-  </div>
-</div>
+
+<BaseSelectDropdown
+  items={items}
+  currentItem={currentLocale}
+  placeholder="Locales"
+  id="stay-locales"
+  showCrawlerLinks={true}
+  crawlerLinkText={(name) => `${name} stays in ${currentCountry}`}
+/>

@@ -1,5 +1,6 @@
 ---
 import ResponsiveImage from "../ui/Image/ResponsiveImage.astro";
+import BaseCard from "../ui/BaseCard.astro";
 
 interface Props {
   project: any;
@@ -8,7 +9,7 @@ interface Props {
 const { project } = Astro.props as Props;
 ---
 
-<article class="rounded-lg">
+<BaseCard>
   <div class="relative">
     <a href={`/projects/${project.data.properties.pSlug}/`}>
       <ResponsiveImage
@@ -176,4 +177,4 @@ const { project } = Astro.props as Props;
       }
     </span>
   </p>
-</article>
+</BaseCard>

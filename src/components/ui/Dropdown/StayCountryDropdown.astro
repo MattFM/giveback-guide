@@ -1,12 +1,12 @@
 ---
 import { getCollection } from "astro:content";
+import BaseSelectDropdown from "./BaseSelectDropdown.astro";
 
 // Get the current country from the URL
 const currentCountryPromise = (async () => {
   const pathSegments = Astro.url.pathname.split("/");
-  const potentialCountry = pathSegments[2]; // Extract the country slug from the URL
+  const potentialCountry = pathSegments[2];
 
-  // Validate if the extracted segment matches a known country slug
   const stays = await getCollection("stays");
   const validCountries = stays.reduce((acc: Set<string>, stay) => {
     const countries = Array.isArray(stay.data.properties.sCountry)
@@ -24,7 +24,7 @@ const currentCountry = await currentCountryPromise;
 
 const stays = await getCollection("stays");
 
-// Count the number of projects for each country
+// Count the number of stays for each country
 const countryCounts = stays.reduce((acc: Record<string, number>, stay) => {
   const countries = Array.isArray(stay.data.properties.sCountry)
     ? stay.data.properties.sCountry
@@ -41,24 +41,22 @@ const countryCounts = stays.reduce((acc: Record<string, number>, stay) => {
 
 // Extract unique countries and sort alphabetically
 const uniqueCountries = Object.keys(countryCounts).sort();
+
+// Transform to items array for BaseSelectDropdown
+const items = uniqueCountries.map((country) => {
+  const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
+  return {
+    name: country,
+    count: countryCounts[country],
+    slug: countrySlug,
+    url: `/stays/${countrySlug}`,
+  };
+});
 ---
-<form class="w-100%">
-  <select
-    id="countries"
-    class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    onchange="if (this.value) window.location.href = this.value"
-  >
-    <option disabled selected={!currentCountry}>Countries</option>
-    {uniqueCountries.map((country) => {
-      const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-      return (
-        <option
-          value={`/stays/${countrySlug}`}
-          selected={currentCountry === countrySlug}
-        >
-          {country} ({countryCounts[country]})
-        </option>
-      );
-    })}
-  </select>
-</form>
+
+<BaseSelectDropdown
+  items={items}
+  currentItem={currentCountry}
+  placeholder="Countries"
+  id="stay-countries"
+/>

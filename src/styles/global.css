@@ -29,6 +29,15 @@
     --font-mono: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace';
 }
 
+/* Global background color for subtle depth */
+body {
+    background-color: #fcfcfc;
+}
+
+body.dark {
+    background-color: #0f0f0f;
+}
+
 /* Hide scrollbar for all browsers */
 .hide-scrollbar {
     scrollbar-width: none; /* Firefox */

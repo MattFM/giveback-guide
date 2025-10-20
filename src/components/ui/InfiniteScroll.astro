@@ -37,14 +37,20 @@ const animationDirection = direction === 'left' ? 'scroll-left' : 'scroll-right'
 <div class={`infinite-scroll-wrapper ${className}`}>
   <div class="infinite-scroll-container">
     <div class="infinite-scroll-content" data-direction={animationDirection}>
-      {items.map((item) => (
-        <span class="scroll-item">{item}</span>
+      {items.map((item, index) => (
+        <>
+          <span class="scroll-item">{item}</span>
+          {index < items.length - 1 && <span class="separator">|</span>}
+        </>
       ))}
     </div>
     <!-- Duplicate for seamless loop -->
     <div class="infinite-scroll-content" data-direction={animationDirection} aria-hidden="true">
-      {items.map((item) => (
-        <span class="scroll-item">{item}</span>
+      {items.map((item, index) => (
+        <>
+          <span class="scroll-item">{item}</span>
+          {index < items.length - 1 && <span class="separator">|</span>}
+        </>
       ))}
     </div>
   </div>
@@ -89,15 +95,26 @@ const animationDirection = direction === 'left' ? 'scroll-left' : 'scroll-right'
 
   .scroll-item {
     font-size: 1rem;
-    font-weight: 500;
-    color: #6b7280;
+    font-weight: 400;
+    color: #9ca3af;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
   }
 
   :global(.dark) .scroll-item {
-    color: #9ca3af;
+    color: #6b7280;
+  }
+
+  .separator {
+    font-size: 1rem;
+    font-weight: 300;
+    color: #d1d5db;
+    user-select: none;
+  }
+
+  :global(.dark) .separator {
+    color: #4b5563;
   }
 
   .infinite-scroll-container:hover .infinite-scroll-content {
@@ -124,6 +141,10 @@ const animationDirection = direction === 'left' ? 'scroll-left' : 'scroll-right'
 
   @media (max-width: 640px) {
     .scroll-item {
+      font-size: 0.875rem;
+    }
+    
+    .separator {
       font-size: 0.875rem;
     }
     

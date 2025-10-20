@@ -1,9 +1,10 @@
 ---
 import { getCollection } from "astro:content";
+import BaseSelectDropdown from "./BaseSelectDropdown.astro";
 
 // Get the current country and locale from the URL
-const currentCountry = Astro.url.pathname.split("/")[2]; // Extract the country slug from the URL
-const currentLocale = Astro.url.pathname.split("/")[3]; // Extract the locale slug from the URL
+const currentCountry = Astro.url.pathname.split("/")[2];
+const currentLocale = Astro.url.pathname.split("/")[3];
 
 const projects = await getCollection("projects");
 
@@ -15,7 +16,6 @@ const filteredProjects = projects.filter((project) => {
       )
     : [String(project.data.properties.pCountry).toLowerCase().replace(/\s+/g, "-")];
 
-  // Ensure the project includes the current country
   return countries.includes(currentCountry);
 });
 
@@ -31,7 +31,6 @@ const localeCounts = filteredProjects.reduce((acc: Record<string, number>, proje
     ? project.data.properties.pLocale
     : [project.data.properties.pLocale];
 
-  // Only count locales if the current country is explicitly assigned
   if (countries.includes(currentCountry)) {
     locales.forEach((locale) => {
       if (locale) {
@@ -45,38 +44,24 @@ const localeCounts = filteredProjects.reduce((acc: Record<string, number>, proje
 
 // Extract unique locales and sort alphabetically
 const uniqueLocales = Object.keys(localeCounts).sort();
+
+// Transform to items array for BaseSelectDropdown
+const items = uniqueLocales.map((locale) => {
+  const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
+  return {
+    name: locale,
+    count: localeCounts[locale],
+    slug: localeSlug,
+    url: `/projects/${currentCountry}/${localeSlug}`,
+  };
+});
 ---
-<div class="relative">
-  <form class="w-100%">
-    <select
-      id="locales"
-      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      onchange="if (this.value) window.location.href = this.value"
-    >
-      <option disabled selected={!currentLocale}>Locales</option>
-      {uniqueLocales.map((locale) => {
-        const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-        return (
-          <option
-            value={`/projects/${currentCountry}/${localeSlug}`}
-            selected={currentLocale === localeSlug}
-          >
-            {locale} ({localeCounts[locale]})
-          </option>
-        );
-      })}
-    </select>
-  </form>
-  
-  <!-- Hidden links for search engine crawlers -->
-  <div class="sr-only">
-    {uniqueLocales.map((locale) => {
-      const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-      return (
-        <a href={`/projects/${currentCountry}/${localeSlug}`}>
-          {locale} projects in {currentCountry}
-        </a>
-      );
-    })}
-  </div>
-</div>
+
+<BaseSelectDropdown
+  items={items}
+  currentItem={currentLocale}
+  placeholder="Locales"
+  id="project-locales"
+  showCrawlerLinks={true}
+  crawlerLinkText={(name) => `${name} projects in ${currentCountry}`}
+/>

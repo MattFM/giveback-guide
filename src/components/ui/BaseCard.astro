@@ -1,0 +1,15 @@
+---
+// BaseCard component - provides consistent styling for all content cards
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<article class:list={[
+  "rounded-lg",
+  className
+]}>
+  <slot />
+</article>

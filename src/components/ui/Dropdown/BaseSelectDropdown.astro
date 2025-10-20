@@ -1,0 +1,51 @@
+---
+// Base component for select-based dropdowns
+// Handles all the common logic for country/locale/tag filtering
+
+interface Props {
+  items: { name: string; count: number; slug: string; url: string }[];
+  currentItem?: string | null;
+  placeholder: string;
+  id?: string;
+  showCrawlerLinks?: boolean;
+  crawlerLinkText?: (name: string) => string;
+}
+
+const {
+  items,
+  currentItem,
+  placeholder,
+  id = "dropdown-select",
+  showCrawlerLinks = false,
+  crawlerLinkText,
+} = Astro.props;
+---
+
+<div class="relative">
+  <form class="w-100%">
+    <select
+      id={id}
+      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      onchange="if (this.value) window.location.href = this.value"
+    >
+      <option disabled selected={!currentItem}>{placeholder}</option>
+      {
+        items.map((item) => (
+          <option value={item.url} selected={currentItem === item.slug}>
+            {item.name} ({item.count})
+          </option>
+        ))
+      }
+    </select>
+  </form>
+
+  {
+    showCrawlerLinks && crawlerLinkText && (
+      <div class="sr-only">
+        {items.map((item) => (
+          <a href={item.url}>{crawlerLinkText(item.name)}</a>
+        ))}
+      </div>
+    )
+  }
+</div>

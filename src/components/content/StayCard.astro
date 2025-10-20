@@ -1,12 +1,13 @@
 ---
 import ResponsiveImage from '../ui/Image/ResponsiveImage.astro';
+import BaseCard from '../ui/BaseCard.astro';
 
 interface Props { stay: any }
 const { stay } = Astro.props as Props;
 ---
 
-<article class="rounded-lg">
-    <div class="relative">
+<BaseCard>
+  <div class="relative">
         <a href={`/stays/${stay.data.properties.sSlug}/`}>
           <ResponsiveImage
             class="w-full rounded-lg h-64 object-cover"
@@ -142,4 +143,4 @@ const { stay } = Astro.props as Props;
       }
     </span>
   </p>
-</article>
+</BaseCard>

@@ -1,12 +1,12 @@
 ---
 import { getCollection } from "astro:content";
+import BaseSelectDropdown from "./BaseSelectDropdown.astro";
 
-// Get the current country from the URL
+// Get the current tag from the URL
 const currentTagPromise = (async () => {
   const pathSegments = Astro.url.pathname.split("/");
-  const potentialCountry = pathSegments[2]; // Extract the tag slug from the URL
+  const potentialTag = pathSegments[2];
 
-  // Validate if the extracted segment matches a known country slug
   const posts = await getCollection("posts");
   const validTags = posts.reduce((acc: Set<string>, post) => {
     const tags = Array.isArray(post.data.properties.bTags)
@@ -18,13 +18,13 @@ const currentTagPromise = (async () => {
     return acc;
   }, new Set<string>());
 
-  return validTags.has(potentialCountry) ? potentialCountry : null;
+  return validTags.has(potentialTag) ? potentialTag : null;
 })();
 const currentTag = await currentTagPromise;
 
 const posts = await getCollection("posts");
 
-// Count the number of projects for each country
+// Count the number of posts for each tag
 const tagCounts = posts.reduce((acc: Record<string, number>, post) => {
   const tags = Array.isArray(post.data.properties.bTags)
     ? post.data.properties.bTags
@@ -39,26 +39,24 @@ const tagCounts = posts.reduce((acc: Record<string, number>, post) => {
   return acc;
 }, {});
 
-// Extract unique countries and sort alphabetically
+// Extract unique tags and sort alphabetically
 const uniqueTags = Object.keys(tagCounts).sort();
+
+// Transform to items array for BaseSelectDropdown
+const items = uniqueTags.map((tag) => {
+  const tagSlug = tag.toLowerCase().replace(/\s+/g, "-");
+  return {
+    name: tag,
+    count: tagCounts[tag],
+    slug: tagSlug,
+    url: `/blog/${tagSlug}`,
+  };
+});
 ---
-<form class="w-100%">
-  <select
-    id="countries"
-    class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    onchange="if (this.value) window.location.href = this.value"
-  >
-    <option disabled selected={!currentTag}>Categories</option>
-    {uniqueTags.map((tag) => {
-      const tagSlug = tag.toLowerCase().replace(/\s+/g, "-");
-      return (
-        <option
-          value={`/blog/${tagSlug}`}
-          selected={currentTag === tagSlug}
-        >
-          {tag} ({tagCounts[tag]})
-        </option>
-      );
-    })}
-  </select>
-</form>
+
+<BaseSelectDropdown
+  items={items}
+  currentItem={currentTag}
+  placeholder="Categories"
+  id="blog-tags"
+/>

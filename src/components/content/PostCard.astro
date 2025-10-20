@@ -1,5 +1,6 @@
 ---
 import ResponsiveImage from '../ui/Image/ResponsiveImage.astro';
+import BaseCard from '../ui/BaseCard.astro';
 
 interface Props {
   post: {
@@ -17,8 +18,8 @@ interface Props {
 const { post } = Astro.props;
 ---
 
-<article class="rounded-lg">
-    <div class="relative">
+<BaseCard>
+  <div class="relative">
         <a href={`/blog/${post.data.properties.bSlug}/`}>
           <ResponsiveImage
             class="w-full rounded-lg h-64 object-cover"
@@ -49,4 +50,4 @@ const { post } = Astro.props;
       {post.data.properties.bTitle}
     </a>
   </h2>
-</article>
+</BaseCard>
