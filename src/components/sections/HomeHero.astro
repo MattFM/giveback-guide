@@ -31,31 +31,55 @@ const badge = {
     </svg>
   </a>
 
-  <span slot="title">
+  <span slot="title" class="animate-title">
     Discover amazing ways to <span class="highlight-text">give back</span> to the places you visit
   </span>
 
-  <Button
-    href="/why"
-    size="lg"
-    bgColor="bg-white"
-    textColor="text-black"
-    hoverBg="hover:bg-gray-100"
-  >
-    Learn more
-    <svg
-      class="w-5 h-5"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
+  <!-- Primary CTA: Search Box -->
+  <div class="max-w-2xl mt-8 mb-6 animate-search">
+    <form action="/search" method="get" class="w-full">
+      <div class="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-xl border-2 border-white/30 rounded-2xl p-2 shadow-[0_10px_40px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.5)_inset] transition-all duration-300 hover:shadow-[0_15px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(167,139,250,0.3)_inset,0_0_30px_rgba(167,139,250,0.2)] hover:border-purple-400/60 hover:-translate-y-0.5 focus-within:shadow-[0_15px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(167,139,250,0.3)_inset,0_0_30px_rgba(167,139,250,0.2)] focus-within:border-purple-400/60 focus-within:-translate-y-0.5">
+        <svg class="ml-3 flex-shrink-0 text-gray-500" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <input 
+          type="text" 
+          name="q" 
+          placeholder="Search projects, stays, or destinations..." 
+          class="flex-1 py-3.5 px-2 text-[1.0625rem] text-gray-900 bg-transparent border-none outline-none font-medium placeholder:text-gray-400 placeholder:font-normal"
+          autocomplete="off"
+          aria-label="Search"
+        />
+        <button type="submit" class="inline-flex items-center gap-2 px-4 sm:px-7 py-3.5 bg-gradient-to-br from-gray-800 to-gray-900 text-white font-semibold text-base rounded-xl cursor-pointer transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:from-gray-900 hover:to-black hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(0,0,0,0.2)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(0,0,0,0.15)] whitespace-nowrap group">
+          <span class="hidden sm:inline">Search</span>
+          <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+    
+    <!-- Search suggestions -->
+    <div class="flex items-center gap-3 mt-4 flex-wrap animate-suggestions">
+      <span class="text-sm text-white/70 font-medium">Popular:</span>
+      <a href="/search?q=wildlife" class="inline-flex items-center px-3.5 py-1.5 bg-white/12 backdrop-blur-md border border-white/20 rounded-lg text-sm text-white/95 font-medium transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">Wildlife</a>
+      <a href="/search?q=education" class="inline-flex items-center px-3.5 py-1.5 bg-white/12 backdrop-blur-md border border-white/20 rounded-lg text-sm text-white/95 font-medium transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">Education</a>
+      <a href="/search?q=ocean" class="inline-flex items-center px-3.5 py-1.5 bg-white/12 backdrop-blur-md border border-white/20 rounded-lg text-sm text-white/95 font-medium transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">Ocean</a>
+    </div>
+  </div>
+
+  <!-- Secondary CTA: Learn More Link -->
+  <div class="animate-learn-more">
+    <a 
+      href="/why" 
+      class="inline-flex items-center gap-2 text-white/90 text-base font-medium transition-all duration-300 hover:text-white hover:gap-3 group"
     >
-      <path
-        fill-rule="evenodd"
-        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-        clip-rule="evenodd"
-      ></path>
-    </svg>
-  </Button>
+      <span>Learn more about giving back</span>
+      <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+      </svg>
+    </a>
+  </div>
 </Hero>
 
 <style>
@@ -155,6 +179,23 @@ const badge = {
     50% {
       background-position: 100% 50%;
     }
+  }
+
+  /* Animation classes */
+  .animate-title {
+    animation: fadeInSlideUp 0.6s ease-out;
+  }
+
+  .animate-search {
+    animation: fadeInSlideUp 0.8s ease-out 0.2s both;
+  }
+
+  .animate-suggestions {
+    animation: fadeInSlideUp 0.8s ease-out 0.4s both;
+  }
+
+  .animate-learn-more {
+    animation: fadeInSlideUp 0.8s ease-out 0.6s both;
   }
 
   /* Responsive adjustments */

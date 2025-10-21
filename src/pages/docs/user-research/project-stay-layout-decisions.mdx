@@ -1,0 +1,689 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Project & Stay Page Layout Decisions
+description: Design decisions, three-tier system, and unified action bar approach for page redesign
+---
+
+# Project & Stay Page Layout Decisions
+
+**Last Updated:** October 21, 2025 (Updated with sidebar & ad placement strategy)  
+**Status:** Proposed Design Direction  
+**Related:** [Layout Design Survey](./layout-design-survey) | [Page Layout Mock-up](./page-layout-mockup)
+
+---
+
+## Executive Summary
+
+This document outlines design decisions for improving the layout, visual hierarchy, and user experience of Project and Stay pages on Giveback Guide. The current layout has evolved organically over time, resulting in flat visual hierarchy and inconsistent use of containers. This redesign aims to:
+
+1. **Establish clear visual hierarchy** - Guide user attention through intentional design
+2. **Create consistent patterns** - Unified action bar across all page types
+3. **Emphasize impact** - Make "why this matters" more prominent
+4. **Build trust** - Better integrate verification and social proof
+5. **Improve scannability** - Make key information easier to find
+
+---
+
+## Core Design Principles
+
+### 1. Three-Tier Visual System
+
+We've established a three-tier system to communicate information hierarchy through visual design:
+
+#### **Tier 1: Action Containers**
+- **Visual style:** Border, background, drop shadow
+- **Purpose:** Interactive, actionable content
+- **Examples:** Booking cards, "Get Involved" sections
+- **User signal:** "You can do something here"
+
+#### **Tier 2: Emphasis Containers**
+- **Visual style:** Tinted background (gray-50, blue-50), no border, no shadow
+- **Purpose:** Important information, but not actionable
+- **Examples:** Impact Areas section, Verification testimonials, Stats/metadata
+- **User signal:** "Pay attention to this"
+
+#### **Tier 3: Flow Content**
+- **Visual style:** Page background (white/transparent), natural flow
+- **Purpose:** Reading content, natural narrative
+- **Examples:** About section, Related projects
+- **User signal:** "Read and learn"
+
+### 2. Unified Action Bar
+
+**Challenge:** Projects and Stays have different numbers of action buttons (2-3 for projects, 6+ for stays). How do we create consistency across device sizes and content types?
+
+**Solution:** Expandable action bar pattern that works universally
+
+#### Core Components
+```
+[💾 Save] [Primary Action] [More Options ▾]
+```
+
+- **Save button:** Always present, left position
+- **Primary action:** Context-dependent (Visit Website, View Map, Book)
+- **More Options:** Expandable for additional booking platforms/actions
+
+#### Behavior by Context
+
+**Project Pages:**
+- Primary: "Visit Website" (non-affiliate, direct to organization)
+- More Options: Booking platforms (GetYourGuide, Viator - affiliates)
+- Mobile: Vertical stack OR "More Options" expands inline
+
+**Stay Pages:**
+- Primary: "View on Map" (since direct website isn't revenue-generating)
+- More Options: All booking platforms (Booking.com, Airbnb, etc. - affiliates)
+- Mobile: Expands to show all 6+ booking options
+
+**Benefits:**
+- Consistent visual pattern across site
+- Prioritizes most common action
+- Doesn't hide affiliate revenue opportunities
+- Scales from 2 to 10+ buttons gracefully
+
+### 3. Content Flow & Hierarchy
+
+**Proposed order** (based on user journey: Context → Value → Trust → Action → Story):
+
+```
+1. Hero Image
+2. Title + Metadata Pills (location, type, verification, price)
+3. Action Bar (Save, Primary CTA, More Options)
+4. Your Impact (Tier 2 - color-coded impact areas)
+5. Verification Section (Tier 2 - with testimonial if available)
+6. About This Project (Tier 3 - narrative story)
+7. How to Get Involved (Tier 2 - expanded details on participation)
+8. Support/Verify/Report (utility actions)
+9. Related Projects/Stays
+```
+
+**Rationale:**
+- **Impact before About:** Users see "why it matters" before reading full story
+- **Verification mid-page:** Catches engaged users before commitment
+- **Detailed involvement info lower:** Quick actors get buttons at top, detail-seekers find context lower
+
+---
+
+## Detailed Component Decisions
+
+### Action Bar
+
+**Desktop:**
+```html
+┌─────────────────────────────────────────────────┐
+│ [💾 Save to List]  [→ Visit Website]  [More ▾] │
+└─────────────────────────────────────────────────┘
+```
+
+**Mobile:**
+```html
+┌───────────────────┐
+│ [💾 Save to List] │
+│ [→ Visit Website] │
+│ [📅 More Options ▾]│
+└───────────────────┘
+       ↓ Expands to:
+┌───────────────────────────┐
+│ Book This Experience      │
+│ ─────────────────         │
+│ [GetYourGuide →]          │
+│ [Viator →]                │
+│ [Direct Website →]        │
+└───────────────────────────┘
+```
+
+**Implementation notes:**
+- Use `<details>` element for native expand/collapse
+- Or custom dropdown with proper ARIA labels
+- Consider sticky positioning on mobile (bottom bar)
+- Ensure touch targets are 44x44px minimum
+
+---
+
+### Metadata Pills
+
+**Design:**
+- Clickable tags that filter/navigate to similar projects
+- Distinct colors for different info types
+- Hover states for interactivity cues
+
+**Structure:**
+```html
+┌──────────────────────────────────────────────┐
+│ 📍 Paris, France  🏢 Furahaa                 │
+│ 🍽️ Cafe/Restaurant  ✅ Verified  💰 Free    │
+└──────────────────────────────────────────────┘
+```
+
+**Color coding:**
+- Location: Blue tint
+- Organization: Gray
+- Project type: Purple tint
+- Verification: Green (non-clickable)
+- Pricing: Amber (non-clickable)
+
+**Functionality:**
+- Clicking location → `/projects?location=paris`
+- Clicking organization → `/projects?org=furahaa`
+- Clicking type → `/projects?type=cafe-restaurant`
+
+---
+
+### Impact Areas Section
+
+**Current issue:** Impact areas are core to the mission but visually buried
+
+**Solution:** Tier 2 container with color-coded cards
+
+**Structure:**
+```
+┌─────────────────────────────────────────────────┐
+│ Your Impact                                      │
+│                                                  │
+│ ┌─────────────────────┐ ┌────────────────────┐ │
+│ │ Education & Skills  │ │ Sustainable Food   │ │
+│ │ Training            │ │ Systems            │ │
+│ │                     │ │                    │ │
+│ │ Learning that       │ │ Champions fully    │ │
+│ │ unlocks livelihoods │ │ vegan offerings    │ │
+│ └─────────────────────┘ └────────────────────┘ │
+└─────────────────────────────────────────────────┘
+```
+
+**Color system:**
+Based on existing `/about/impacts/` structure:
+
+- **Environmental (E):** Green shades
+  - E01 Animal Welfare → Green-500
+  - E02 Wildlife Rehabilitation → Green-600
+  - E03 Sustainable Food → Green-400
+  - E04 Waste Reduction → Green-700
+  - E05 Marine Protection → Blue-500
+  - E06 River Health → Blue-600
+  - E07 Reforestation → Green-600
+  - E08 Habitat Restoration → Green-500
+
+- **Social Justice (S):** Purple/Pink shades
+  - S01 Women's Empowerment → Pink-500
+  - S02 LGBTQ+ Inclusion → Purple-500
+  - S03 Disability Inclusion → Indigo-500
+  - S04 Refugee/Migrant → Orange-500
+  - S05 Minority Heritage → Amber-500
+
+- **Community Development (C):** Blue/Teal shades
+  - C01 Youth Development → Cyan-500
+  - C02 Education & Skills → Blue-600
+  - C03 Community Development → Teal-500
+  - C04 Poverty Alleviation → Blue-700
+  - C05 Homelessness Support → Slate-500
+  - C06 Cultural Heritage → Amber-600
+
+**Implementation:**
+- Left border using impact color (4px)
+- Light background tint
+- Impact code (E01, C02) as subtle badge
+- Link to impact area detail page
+
+---
+
+### Verification Section
+
+**Current issue:** Small badge at top + separate explainer box feels disconnected
+
+**New approach:** Combined trust signal with social proof
+
+**When verified:**
+```
+┌──────────────────────────────────────────────────┐
+│ ✅ Verified Project                               │
+│                                                   │
+│ "Furahaa is making real impact in deaf           │
+│  employment. Their commitment to inclusion        │
+│  and sustainability impressed our team."          │
+│  — Sarah M., Giveback Guide Community            │
+│                                                   │
+│ [Learn about our verification process →]         │
+└──────────────────────────────────────────────────┘
+```
+
+**When not verified:**
+- Section does not appear
+- No "Unverified" badge shown
+- Neutral approach (absence of badge = unverified)
+
+**Placement:** Between "Your Impact" and "About This Project"
+
+**Rationale:**
+- User has seen value prop (Impact)
+- Builds trust before reading full story
+- Testimonial acts as social proof + verification
+- Clear CTA to learn more about verification
+
+---
+
+### "Get Involved" Section
+
+**Current:** Mixed educational content with action buttons at top of page
+
+**New approach:** Split into two parts
+
+**Part 1: Action Bar (top of page)**
+- Just the buttons: Save, Primary CTA, More Options
+- Always visible, minimal space
+
+**Part 2: Detailed Involvement (lower on page)**
+```
+┌──────────────────────────────────────────────────┐
+│ How to Get Involved                               │
+│ ─────────────────────                            │
+│                                                   │
+│ Ready to make a difference? Here's how you can   │
+│ participate:                                      │
+│                                                   │
+│ • Visit the venue and support their mission      │
+│ • Book an experience through our partners        │
+│ • Share this project with your network           │
+│                                                   │
+│ The buttons at the top will connect you directly │
+│ with the organization.                           │
+└──────────────────────────────────────────────────┘
+```
+
+**Benefits:**
+- Quick actors get immediate access to buttons
+- Context seekers get educational content
+- Doesn't duplicate CTAs
+- Reduces visual clutter
+
+---
+
+### Desktop Sidebar Layout
+
+**Philosophy:** Sidebar provides persistent access to actions without duplicating main content information.
+
+**Sidebar Components (top to bottom):**
+
+```
+┌─────────────────────────┐
+│ [Sticky from scroll]    │
+│                         │
+│ ┌─────────────────────┐ │
+│ │ 💾 Save to List     │ │
+│ │ → Visit Website     │ │
+│ │ 📅 More Options ▾   │ │
+│ └─────────────────────┘ │
+│                         │
+│ Support Giveback Guide  │
+│ ─────────────           │
+│ Help us keep Giveback   │
+│ Guide free for everyone │
+│                         │
+│ [Buy Us a Coffee]       │
+│                         │
+└─────────────────────────┘
+```
+
+**Width:** 30% of page width (70% main content, 30% sidebar)
+
+**What's Included:**
+- ✅ Action bar (sticky) - Primary user actions
+- ✅ Brief support CTA - Secondary revenue stream
+
+**What's NOT Included:**
+- ❌ Quick facts/metadata - Redundant with pills in main content
+- ❌ Share buttons - Modern browsers have built-in sharing
+- ❌ Related projects - Belongs at end of main content flow
+- ❌ Ad box - Moved to in-content placement (see below)
+
+**Sticky Behavior:**
+```javascript
+// Sidebar starts: position: sticky; top: 100px;
+// Sticks when user scrolls past hero image
+// Unsticks before footer (doesn't overlap)
+```
+
+**Tablet (768-1023px):**
+- No sidebar, everything flows vertically in main content
+
+---
+
+### Ad Placement Strategy
+
+**Previous approach:** Ad box in sidebar (low engagement due to banner blindness)
+
+**New approach:** In-content placement after Impact Areas
+
+**Placement:**
+```
+1. Hero Image
+2. Title + Metadata Pills
+3. Action Bar
+4. Your Impact (Tier 2)
+5. ┌─────────────────────────┐
+   │ [Ad Box - Tier 2 Style] │  ← NEW LOCATION
+   │ Native appearance       │
+   │ "Sponsored" label       │
+   └─────────────────────────┘
+6. Verification Section (if verified)
+7. About This Project
+8. How to Get Involved (detailed)
+9. Support Box (main version)
+10. Related Projects
+```
+
+**Why this placement works:**
+- ✅ Higher visibility (in natural reading flow)
+- ✅ User has seen value prop (Impact Areas) and is engaged
+- ✅ Natural content break before story sections
+- ✅ Works consistently on mobile AND desktop
+- ✅ Can be styled to look native (Tier 2 container)
+
+**Ad Box Styling:**
+- Use Tier 2 visual treatment (tinted background, no border)
+- Clear "Sponsored" or "Advertisement" label
+- Native appearance, blends with content
+- Responsive: full width on mobile, main content width on desktop
+
+**Desktop Layout with Ad:**
+```
+┌──────────────────┬─────────────────┐
+│  Main Content    │ Sidebar (30%)   │
+│  (70%)           │                 │
+│                  │ [Actions]       │
+│  - Hero          │ [Support]       │
+│  - Impact        │                 │
+│  [Ad Here]       │                 │
+│  - Verified      │                 │
+│  - About         │                 │
+│  - Get Involved  │                 │
+│  - Support Box   │                 │
+│  - Related       │                 │
+└──────────────────┴─────────────────┘
+```
+
+---
+
+### Support CTA Strategy
+
+**Dual Placement Approach:**
+
+#### **Sidebar Version (Brief)**
+```
+┌────────────────────────────┐
+│ Support Giveback Guide     │
+│ ──────────────────────     │
+│                            │
+│ Help us keep Giveback      │
+│ Guide free for everyone    │
+│                            │
+│ [☕ Buy Us a Coffee]       │
+└────────────────────────────┘
+```
+
+**Characteristics:**
+- One-line value prop
+- Single CTA button
+- Always visible (sticky with sidebar)
+- Non-intrusive
+
+#### **Main Content Version (Detailed)**
+```
+┌──────────────────────────────────────┐
+│ Enjoying Giveback Guide?             │
+│ ─────────────────────                │
+│                                      │
+│ We're a small team keeping this      │
+│ platform free. Your support helps    │
+│ us discover and verify more projects.│
+│                                      │
+│ [☕ Buy Us a Coffee]  [More Ways →]  │
+└──────────────────────────────────────┘
+```
+
+**Characteristics:**
+- Tier 1 container (actionable)
+- Brief explanation with specific outcome
+- Two CTAs: primary (coffee) + secondary (other options)
+- Placed after "How to Get Involved" section
+
+**Placement:** After "How to Get Involved" detailed section, before Related Projects
+
+**Copy Strategy:**
+- ❌ Remove: Guilt, lengthy explanations, emotional appeals
+- ✅ Add: Clear value prop, specific outcome ("discover and verify more projects")
+- ✅ Make it skimmable with visual hierarchy
+
+**Revenue Balance:**
+1. **Ads** (primary) - In-content, native style
+2. **Affiliate links** (primary) - In action bar
+3. **Support CTAs** (secondary) - Brief, non-intrusive, dual placement
+
+---
+
+## Mobile Considerations
+
+### Sticky Bottom Bar (Optional Enhancement)
+
+**Consideration:** Should mobile have a persistent CTA?
+
+**Proposal:** Sticky bottom bar appears after scroll (200px)
+
+```
+┌──────────────────────────────┐
+│ [💾 Save]  [Book Now →]      │
+└──────────────────────────────┘
+```
+
+**Concerns:**
+- Takes up screen real estate
+- May feel intrusive
+- iOS Safari bottom bar conflicts
+
+**Alternative:** Floating Action Button (FAB)
+- Single button in bottom-right corner
+- Expands to action menu on tap
+- Less intrusive than full bar
+
+**Decision:** Test both approaches in user survey
+
+### Content Stacking
+
+**Desktop:** Two-column layout possible (content + sidebar)
+- Main content (2/3 width)
+- Sticky sidebar (1/3 width) with Get Involved card
+
+**Mobile:** Everything stacks vertically
+- No sticky sidebar (moves inline)
+- Action bar at top
+- Optional sticky bottom bar/FAB
+
+---
+
+## Addressing Original Problems
+
+### Problem 1: "Flat hierarchy, nothing stands out"
+
+**Solutions implemented:**
+- ✅ Three-tier visual system differentiates content types
+- ✅ Impact Areas get Tier 2 treatment (tinted background)
+- ✅ Action containers have borders + shadows
+- ✅ Content flows naturally without boxes
+
+### Problem 2: "Inconsistent use of containers"
+
+**Solutions implemented:**
+- ✅ Clear rules: Actions = Tier 1, Important Info = Tier 2, Content = Tier 3
+- ✅ Documented decision framework
+- ✅ Examples for each tier
+
+### Problem 3: "Don't know where to look first"
+
+**Solutions implemented:**
+- ✅ Clear visual hierarchy: Image → Title → Impact → Trust → Story
+- ✅ Action bar immediately after title (meets directory site expectations)
+- ✅ Impact Areas elevated to #4 position (before About)
+
+### Problem 4: "Mobile vs desktop adds complexity"
+
+**Solutions implemented:**
+- ✅ Unified action bar pattern works across devices
+- ✅ Expandable system handles variable button counts
+- ✅ Content stacking rules for mobile
+
+### Problem 5: "Affiliate links important but cluttering UI"
+
+**Solutions implemented:**
+- ✅ "More Options" dropdown keeps them accessible
+- ✅ Primary action prioritized for common user flow
+- ✅ Full booking section lower on page for browsers
+
+---
+
+## Open Questions & Future Testing
+
+### Questions for User Survey
+
+1. **Action bar preference:** All visible vs. expandable dropdown?
+2. **Impact prominence:** Is Tier 2 treatment enough, or should it be even more prominent?
+3. **Verification placement:** Between Impact and About, or after About?
+4. **Mobile sticky CTA:** Bottom bar, FAB, or neither?
+5. **Metadata format:** Pills vs. sentence vs. both?
+
+### A/B Test Ideas
+
+- **Test A:** Current layout vs. new layout (conversion rate)
+- **Test B:** All booking buttons visible vs. expandable (click-through rate)
+- **Test C:** Impact Areas position 4 vs. position 7 (engagement)
+- **Test D:** Verification with testimonial vs. without (trust metrics)
+
+### Analytics to Track
+
+- **Scroll depth:** Are users seeing Impact Areas?
+- **Click patterns:** First click, action bar usage, affiliate link clicks
+- **Time on page:** Does new layout increase/decrease engagement?
+- **Conversion funnel:** View → Click CTA → External site visit
+
+---
+
+## Implementation Roadmap
+
+### Phase 1: Foundation (Week 1-2)
+- [ ] Create reusable action bar component
+- [ ] Build three-tier CSS classes/utilities
+- [ ] Implement metadata pills with routing
+- [ ] Set up impact area color mapping
+
+### Phase 2: Content Restructuring (Week 2-3)
+- [ ] Reorder page sections (ProjectPage.astro, StayPage.astro)
+- [ ] Move action buttons to unified action bar
+- [ ] Split "Get Involved" into Action Bar + Details section
+- [ ] Relocate Impact Areas to position 4
+
+### Phase 3: Enhancement (Week 3-4)
+- [ ] Add expandable booking options
+- [ ] Implement verification testimonial section
+- [ ] Style clickable metadata pills
+- [ ] Test mobile layouts (stack, sticky bar, FAB)
+
+### Phase 4: Testing & Iteration (Week 4-6)
+- [ ] Deploy user survey
+- [ ] Run A/B tests on key decisions
+- [ ] Gather analytics data
+- [ ] Iterate based on feedback
+
+---
+
+## Design System Updates
+
+### New Components Needed
+
+1. **ActionBar.astro**
+   - Props: `primaryAction`, `moreOptions[]`, `saveEnabled`
+   - Responsive (horizontal → vertical stack)
+   - Expandable dropdown for "More Options"
+
+2. **MetadataPills.astro**
+   - Props: `items[]` with `{ label, value, url, color, clickable }`
+   - Hover states, click handling
+   - Icon support
+
+3. **ImpactCard.astro**
+   - Props: `code`, `title`, `description`, `color`
+   - Color-coded border and text
+   - Link to impact area details
+
+4. **VerificationBox.astro**
+   - Props: `testimonial`, `author`, `date`
+   - Conditional rendering (only if verified)
+   - Link to verification process
+
+### CSS Utilities to Add
+
+```css
+/* Tier 1: Action Containers */
+.tier-1-container {
+  border: 1px solid theme('colors.gray.200');
+  background: white;
+  box-shadow: theme('boxShadow.sm');
+  border-radius: theme('borderRadius.lg');
+  padding: theme('spacing.6');
+}
+
+/* Tier 2: Emphasis Containers */
+.tier-2-container {
+  background: theme('colors.gray.50');
+  border-radius: theme('borderRadius.lg');
+  padding: theme('spacing.6');
+}
+
+/* Tier 3: Flow Content (no special styles) */
+.tier-3-content {
+  /* Natural flow, no container */
+}
+
+/* Impact color borders */
+.impact-border-green { border-left: 4px solid theme('colors.green.500'); }
+.impact-border-blue { border-left: 4px solid theme('colors.blue.500'); }
+/* ... etc for all impact colors */
+```
+
+---
+
+## Success Metrics
+
+### Primary Goals
+- **Increase conversion rate:** CTA clicks → external visits (target: +15%)
+- **Improve engagement:** Time on page, scroll depth (target: +20%)
+- **Boost affiliate revenue:** Booking platform clicks (target: +10%)
+
+### Secondary Goals
+- **Reduce bounce rate:** Users finding what they need faster (target: -10%)
+- **Increase saves:** More projects added to user lists (target: +25%)
+- **Better mobile experience:** Mobile conversion rate matches desktop (target: 90% parity)
+
+---
+
+## Conclusion
+
+This redesign establishes clear design principles, creates consistent patterns across page types, and prioritizes the information users need most. By implementing the three-tier system, unified action bar, and improved content hierarchy, we aim to make Project and Stay pages more effective at converting browsers into participants.
+
+The approach balances:
+- **User needs:** Quick scanning vs. detailed reading
+- **Business needs:** Affiliate revenue vs. clean UI
+- **Brand values:** Impact and verification prominence
+- **Technical constraints:** Responsive design, variable content
+
+Next steps: Validate these decisions through user research and A/B testing before full implementation.
+
+---
+
+## Related Documents
+
+- [Layout Design Survey](./layout-design-survey.md) - User research questions
+- [Page Layout Mock-up](./page-layout-mockup.md) - Visual representation using Furahaa project
+- [Impact Areas Documentation](/about/impacts/) - Color coding reference
+- [Component Organization Guide](../ORGANIZATION.md) - File structure
+
+---
+
+**Questions or feedback?** Reach out to the team or add comments to this doc.
