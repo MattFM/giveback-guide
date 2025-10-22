@@ -361,7 +361,8 @@ const featuredImpactAreas = [
   </main>
   
   <style>
-    .gradient-highlight {
+    /* Gradient highlight for hero sections only (dark backgrounds) */
+    .gradient-highlight-hero {
       background: linear-gradient(
         135deg,
         #DED5FD,
@@ -378,20 +379,9 @@ const featuredImpactAreas = [
       font-weight: 900;
     }
 
-    .gradient-highlight-hero {
-      background: linear-gradient(
-        135deg,
-        #DED5FD,
-        #C4B3FC,
-        #A98FFA,
-        #C4B3FC,
-        #DED5FD
-      );
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientShift 4s ease infinite;
+    /* Solid purple highlight for light backgrounds (better contrast) */
+    .gradient-highlight {
+      color: #7353D4;
       font-weight: 900;
     }
 

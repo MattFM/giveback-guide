@@ -1,14 +1,13 @@
 ---
 export interface Props {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   fullWidth?: boolean;
   href?: string;
   class?: string;
-  rounded?: 'default' | 'full'; // New: control border radius
-  style?: string; // New: allow inline styles for design system colors
+  style?: string; // Allow inline styles for design system colors
   [key: string]: any; // Allow any other HTML attributes
 }
 
@@ -20,21 +19,21 @@ const {
   fullWidth = false,
   href,
   class: className = '',
-  rounded = 'full',
   style: inlineStyle = '',
   ...rest
 } = Astro.props;
 
-// Enhanced base styles with better animations
-const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap';
+// Base styles - no gap animation
+const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap';
 
-// New design system color palette
+// Updated variants with new color hierarchy
 const variants = {
-  primary: 'text-white hover:shadow-[0_8px_24px_rgba(169,143,250,0.3)] hover:-translate-y-0.5', // Tropical Indigo
-  secondary: 'backdrop-blur-md hover:-translate-y-0.5', // Translucent
-  outline: 'border backdrop-blur-sm hover:-translate-y-0.5',
+  primary: 'text-white hover:shadow-lg hover:-translate-y-0.5 focus:ring-gray-700', 
+  secondary: 'border backdrop-blur-md hover:-translate-y-0.5 focus:ring-gray-300',
+  accent: 'text-white hover:shadow-lg hover:-translate-y-0.5 focus:ring-purple-500',
+  outline: 'border backdrop-blur-sm hover:-translate-y-0.5 focus:ring-gray-300',
   ghost: 'hover:bg-gray-100 hover:-translate-y-0.5',
-  danger: 'bg-red-600 text-white hover:bg-red-700 hover:shadow-[0_8px_24px_rgba(220,38,38,0.3)] hover:-translate-y-0.5 focus:ring-red-500',
+  danger: 'bg-red-600 text-white hover:bg-red-700 hover:shadow-lg hover:-translate-y-0.5 focus:ring-red-500',
 };
 
 const sizes = {
@@ -43,31 +42,30 @@ const sizes = {
   lg: 'px-10 py-5 text-lg',
 };
 
-const roundedStyles = {
-  default: 'rounded-lg',
-  full: 'rounded-full',
-};
-
 const widthClass = fullWidth ? 'w-full' : '';
 
-const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${roundedStyles[rounded]} ${widthClass} ${className}`.trim();
+const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`.trim();
 
 const Tag = href ? 'a' : 'button';
 
-// Default inline styles for primary variant using new color palette
+// Updated color logic with new hierarchy
 const defaultPrimaryStyle = variant === 'primary' && !inlineStyle 
-  ? 'background-color: #A98FFA; color: #1C2434;' 
+  ? 'background-color: #1C2434;' // Raisin Black
   : '';
 
 const defaultSecondaryStyle = variant === 'secondary' && !inlineStyle
   ? 'background-color: rgba(246, 247, 246, 0.1); border: 1px solid rgba(246, 247, 246, 0.3); color: #F6F7F6;'
   : '';
 
+const defaultAccentStyle = variant === 'accent' && !inlineStyle
+  ? 'background-color: #A98FFA;' // Light Purple - for dark backgrounds
+  : '';
+
 const defaultOutlineStyle = variant === 'outline' && !inlineStyle
   ? 'border-color: #1C2434; color: #1C2434;'
   : '';
 
-const finalStyle = inlineStyle || defaultPrimaryStyle || defaultSecondaryStyle || defaultOutlineStyle;
+const finalStyle = inlineStyle || defaultPrimaryStyle || defaultSecondaryStyle || defaultAccentStyle || defaultOutlineStyle;
 ---
 
 <Tag
@@ -80,10 +78,3 @@ const finalStyle = inlineStyle || defaultPrimaryStyle || defaultSecondaryStyle |
 >
   <slot />
 </Tag>
-
-<style>
-  /* Enhanced hover effect for gap animation on buttons with icons */
-  button:hover, a:hover {
-    gap: 0.75rem;
-  }
-</style>
