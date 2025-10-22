@@ -1,11 +1,12 @@
 ---
 import { Image } from "astro:assets";
 import Avatar from "../../assets/giveback-guide-avatar.svg";
+import Button from "../ui/Button.astro";
 import { SITE_TITLE } from "../../consts";
 const today = new Date();
 ---
 
-<footer class="p-4 bg-gray-50 sm:p-6 dark:bg-gray-800" role="contentinfo">
+<footer class="p-4 sm:p-6" style="background-color: #F6F7F6;" role="contentinfo">
   <div class="mx-auto max-w-screen-xl">
     <div class="md:flex md:justify-between">
       <div class="mb-6 md:mb-0 max-w-xs">
@@ -15,7 +16,7 @@ const today = new Date();
         
         <!-- Newsletter CTA -->
         <div class="mt-4">
-          <p class="text-sm font-medium text-gray-900 dark:text-white mb-3">
+          <p class="text-sm font-semibold mb-3" style="color: #1C2434;">
             Stay updated with the latest projects
           </p>
           <form
@@ -27,7 +28,8 @@ const today = new Date();
               <div class="relative flex-1">
                 <label for="footer-email" class="sr-only">Email address</label>
                 <input
-                  class="block py-2 px-3 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  class="block py-2 px-3 w-full text-sm bg-white rounded-lg border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-1"
+                  style="color: #1C2434; border-color: #D1D4D1; --tw-ring-color: rgba(169, 143, 250, 0.3);"
                   placeholder="Your email"
                   type="email"
                   id="footer-email"
@@ -42,17 +44,15 @@ const today = new Date();
                   autocomplete="off"
                 />
               </div>
-              <button
-                type="submit"
-                class="py-2 px-4 text-sm font-medium text-white rounded-lg bg-black border-black hover:bg-gray-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
+              <Button type="submit" variant="primary" size="sm">
                 Subscribe
-              </button>
+              </Button>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs" style="color: #7E827E;">
               We care about your data. <a
                 href="/privacy"
-                class="text-gray-700 hover:underline dark:text-gray-300"
+                class="hover:underline"
+                style="color: #1C2434;"
                 >Privacy Policy</a
               >
             </p>
@@ -62,11 +62,12 @@ const today = new Date();
       <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
         <div>
           <h2
-            class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+            class="mb-6 text-sm font-semibold uppercase"
+            style="color: #1C2434;"
           >
             Get Involved
           </h2>
-          <ul class="text-gray-600 dark:text-gray-400">
+          <ul style="color: #7E827E;">
             <li class="mb-4">
               <a href="/why/" class="hover:underline">Better choices</a>
             </li>
@@ -86,11 +87,12 @@ const today = new Date();
         </div>
         <div>
           <h2
-            class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+            class="mb-6 text-sm font-semibold uppercase"
+            style="color: #1C2434;"
           >
             About
           </h2>
-          <ul class="text-gray-600 dark:text-gray-400">
+          <ul style="color: #7E827E;">
             <li class="mb-4">
               <a href="/about/" class="hover:underline">About us</a>
             </li>
@@ -114,11 +116,12 @@ const today = new Date();
         </div>
         <div>
           <h2
-            class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
+            class="mb-6 text-sm font-semibold uppercase"
+            style="color: #1C2434;"
           >
             Policies
           </h2>
-          <ul class="text-gray-600 dark:text-gray-400">
+          <ul style="color: #7E827E;">
             <li class="mb-4">
               <a href="/privacy" class="hover:underline">Privacy Policy</a>
             </li>
@@ -134,15 +137,18 @@ const today = new Date();
         </div>
       </div>
     </div>
-    <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+    <hr class="my-6 sm:mx-auto lg:my-8" style="border-color: #D1D4D1;" />
     <div class="sm:flex sm:items-center sm:justify-between">
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
+      <span class="text-sm sm:text-center" style="color: #7E827E;"
         >&copy; {today.getFullYear()} {SITE_TITLE}. All Rights Reserved.
       </span>
       <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
         <a
           href="https://www.instagram.com/giveback.guide"
-          class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+          class="transition-all duration-300"
+          style="color: #7E827E;"
+          onmouseover="this.style.color='#1C2434'"
+          onmouseout="this.style.color='#7E827E'"
           aria-label="Instagram"
         >
           <svg
@@ -158,7 +164,10 @@ const today = new Date();
         </a>
         <a
           href="https://www.tiktok.com/@giveback.guide"
-          class="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+          class="transition-all duration-300"
+          style="color: #7E827E;"
+          onmouseover="this.style.color='#1C2434'"
+          onmouseout="this.style.color='#7E827E'"
           aria-label="TikTok"
         >
           <svg
