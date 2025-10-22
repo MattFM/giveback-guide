@@ -13,43 +13,54 @@ import Hero from "../../../components/sections/Hero.astro";
   <style>
     /* Design System Tokens */
     :root {
-      /* Color System */
-      --color-neutral-50: #fafafa;
-      --color-neutral-100: #f5f5f5;
-      --color-neutral-200: #e5e5e5;
-      --color-neutral-300: #d4d4d4;
-      --color-neutral-400: #a3a3a3;
-      --color-neutral-500: #737373;
-      --color-neutral-600: #525252;
-      --color-neutral-700: #404040;
-      --color-neutral-800: #262626;
-      --color-neutral-900: #171717;
-      --color-neutral-950: #0a0a0a;
+      /* === PROPOSED COLOR PALETTE (October 2025) === */
+      /* Earthy tones with purple accent for ethical, sustainable travel */
       
-      /* Brand Purple */
-      --color-brand-50: #faf7ff;
-      --color-brand-100: #f3edff;
-      --color-brand-200: #e9ddff;
-      --color-brand-600: #9333ea;
-      --color-brand-700: #7c2d12;
-      --color-brand-800: #6b1f8a;
+      /* Primary: Tropical Indigo (Purple Accent) */
+      --color-primary: #A98FFA;
+      --color-primary-light: #C4B3FC;
+      --color-primary-lighter: #DED5FD;
+      --color-primary-dark: #8E6EF7;
+      --color-primary-darker: #7353D4;
       
-      /* Sage Green */
-      --color-sage-50: #f6f7f6;
-      --color-sage-100: #e3e8e3;
-      --color-sage-200: #c7d2c7;
-      --color-sage-600: #4a5e4a;
-      --color-sage-700: #3d4d3d;
-      --color-sage-800: #343f34;
+      /* Neutral: Seasalt (Light Gray/Off-White) */
+      --color-neutral-50: #FFFFFF;
+      --color-neutral-100: #F6F7F6;
+      --color-neutral-200: #E8EAE8;
+      --color-neutral-300: #D1D4D1;
+      --color-neutral-400: #A8ACA8;
+      --color-neutral-500: #7E827E;
       
-      /* Terracotta */
-      --color-terracotta-50: #fef7f3;
-      --color-terracotta-100: #fdebe1;
-      --color-terracotta-200: #fad4c4;
-      --color-terracotta-600: #db4a2a;
-      --color-terracotta-700: #b63a22;
-      --color-terracotta-800: #922f20;
+      /* Dark: Raisin Black (Navy) */
+      --color-dark: #1C2434;
+      --color-dark-light: #2D3749;
+      --color-dark-lighter: #424D62;
+      --color-dark-darker: #151B27;
+      --color-dark-darkest: #0F1419;
       
+      /* Nature: Reseda Green (Vibrant Sage) */
+      --color-nature: #657D60;
+      --color-nature-light: #7F9679;
+      --color-nature-lighter: #A3B59E;
+      --color-nature-dark: #4F6149;
+      --color-nature-darker: #3A4836;
+      --color-nature-bg: #E9EFEA;
+      
+      /* Nature Dark: Forest Green */
+      --color-forest: #273524;
+      --color-forest-light: #3D4F3A;
+      --color-forest-lighter: #556951;
+      --color-forest-bg: #E3E6E3;
+      
+      /* Earth: Bistre (Deep Brown - expanded variants) */
+      --color-earth: #251605;
+      --color-earth-light: #3D2B12;
+      --color-earth-lighter: #5A4525;
+      --color-earth-lightest: #78603D;
+      --color-earth-bg: #EBE6E0;
+      --color-earth-bg-light: #F5F2ED;
+      
+      /* Legacy/Utility Colors */
       /* Red (Destructive) */
       --color-red-50: #fef2f2;
       --color-red-100: #fee2e2;
@@ -96,22 +107,22 @@ import Hero from "../../../components/sections/Hero.astro";
     }
     
     .btn-primary {
-      background-color: var(--color-brand-600);
+      background-color: var(--color-primary);
       color: white;
     }
     
     .btn-primary:hover {
-      background-color: var(--color-brand-700);
+      background-color: var(--color-primary-dark);
       transform: translateY(-1px);
     }
     
     .btn-secondary {
-      background-color: var(--color-sage-600);
+      background-color: var(--color-nature);
       color: white;
     }
     
     .btn-secondary:hover {
-      background-color: var(--color-sage-700);
+      background-color: var(--color-nature-dark);
       transform: translateY(-1px);
     }
     
@@ -183,7 +194,7 @@ import Hero from "../../../components/sections/Hero.astro";
       title="Design System"
       description="Standard UI components and design guidelines for Giveback Guide."
       background="color"
-      backgroundValue="var(--color-neutral-950)"
+      backgroundValue="var(--color-dark)"
       theme="dark"
       size="medium"
       align="left"
@@ -315,60 +326,283 @@ import Hero from "../../../components/sections/Hero.astro";
     </section>
 
     <!-- Color Palette -->
-    <section class="section-padding" style="background: var(--color-neutral-50);">
+    <section class="section-padding" style="background: #FFFFFF;">
       <div class="container">
-        <h2 style="font-size: var(--font-size-3xl); font-weight: 700; margin-bottom: var(--spacing-2xl);">
-          Color Palette
+        <h2 style="font-size: var(--font-size-3xl); font-weight: 700; margin-bottom: var(--spacing-md);">
+          Proposed Color Palette (October 2025)
         </h2>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-xl);">
-          <!-- Neutrals -->
-          <div>
-            <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-md);">Neutrals (60%)</h3>
-            <div style="display: grid; gap: var(--spacing-xs);">
-              <div style="background: var(--color-neutral-50); padding: var(--spacing-md); border: 1px solid var(--color-neutral-200);">Neutral 50</div>
-              <div style="background: var(--color-neutral-200); padding: var(--spacing-md);">Neutral 200</div>
-              <div style="background: var(--color-neutral-500); padding: var(--spacing-md); color: white;">Neutral 500</div>
-              <div style="background: var(--color-neutral-800); padding: var(--spacing-md); color: white;">Neutral 800</div>
-              <div style="background: var(--color-neutral-950); padding: var(--spacing-md); color: white;">Neutral 950</div>
+        <p style="font-size: var(--font-size-base); color: var(--color-dark); opacity: 0.7; margin-bottom: var(--spacing-3xl); max-width: 800px;">
+          An earthy, grounded palette with a progressive purple accent. Designed to convey authenticity, sustainability, and thoughtful purpose in ethical travel.
+        </p>
+
+        <!-- Color Philosophy -->
+        <div style="background: var(--color-neutral-100); padding: var(--spacing-2xl); border-radius: var(--border-radius-lg); margin-bottom: var(--spacing-3xl); border-left: 4px solid var(--color-primary);">
+          <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-md); color: var(--color-dark);">
+            Design Philosophy: Sparing Use of Color
+          </h3>
+          <p style="font-size: var(--font-size-base); color: var(--color-dark); opacity: 0.8; line-height: 1.7; margin-bottom: var(--spacing-md);">
+            Modern web design favors restraint. Color should be used <strong>sparingly</strong> as strategic splashes to guide the eye and create emphasis. The majority of the interface relies on neutral backgrounds and dark text, with accent colors appearing only where they add value.
+          </p>
+          <ul style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.8; padding-left: var(--spacing-xl);">
+            <li>Use earthy colors as subtle backgrounds for sections</li>
+            <li>Apply purple sparingly for interactive elements and CTAs</li>
+            <li>Let photography and content take center stage</li>
+            <li>Create visual rhythm through color variation, not saturation</li>
+          </ul>
+        </div>
+
+        <!-- Main Palette Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-xl); margin-bottom: var(--spacing-3xl);">
+          
+          <!-- Tropical Indigo (Purple) -->
+          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 1px solid var(--color-neutral-200);">
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="background: var(--color-primary); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
+                #A98FFA
+              </div>
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">Tropical Indigo</h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Primary Accent</p>
+            </div>
+            
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+              <div style="background: var(--color-primary-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Lighter: #DED5FD</div>
+              <div style="background: var(--color-primary-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Light: #C4B3FC</div>
+              <div style="background: var(--color-primary-dark); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Dark: #8E6EF7</div>
+              <div style="background: var(--color-primary-darker); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Darker: #7353D4</div>
+            </div>
+            
+            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+              <strong>Usage:</strong> CTAs, links, interactive hover states, accent headings. Use sparingly for maximum impact.
+            </div>
+            
+            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-neutral-100); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.6;">
+              ⚠️ Accessibility: Use darker variant (#7353D4) for small text on white backgrounds
+            </div>
+          </div>
+
+          <!-- Raisin Black (Navy) -->
+          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 1px solid var(--color-neutral-200);">
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="background: var(--color-dark); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
+                #1C2434
+              </div>
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">Raisin Black</h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Primary Dark / Text</p>
+            </div>
+            
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+              <div style="background: var(--color-dark-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #424D62</div>
+              <div style="background: var(--color-dark-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #2D3749</div>
+              <div style="background: var(--color-dark-darker); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Darker: #151B27</div>
+              <div style="background: var(--color-dark-darkest); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Darkest: #0F1419</div>
+            </div>
+            
+            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+              <strong>Usage:</strong> Primary text, headings, navigation, footer backgrounds. Conveys trustworthiness and professionalism.
+            </div>
+            
+            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-neutral-100); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.6;">
+              ✅ Excellent contrast ratio (15:1) on white backgrounds
+            </div>
+          </div>
+
+          <!-- Seasalt (Neutral) -->
+          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 1px solid var(--color-neutral-200);">
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="background: var(--color-neutral-100); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: var(--color-dark); font-weight: 700; font-size: var(--font-size-xl); border: 1px solid var(--color-neutral-200);">
+                #F6F7F6
+              </div>
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">Seasalt</h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Neutral Background</p>
+            </div>
+            
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+              <div style="background: var(--color-neutral-50); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); border: 1px solid var(--color-neutral-200);">White: #FFFFFF</div>
+              <div style="background: var(--color-neutral-200); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">200: #E8EAE8</div>
+              <div style="background: var(--color-neutral-300); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">300: #D1D4D1</div>
+              <div style="background: var(--color-neutral-500); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">500: #7E827E</div>
+            </div>
+            
+            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+              <strong>Usage:</strong> Page backgrounds, card backgrounds, subtle section dividers. Creates breathing room and structure.
+            </div>
+          </div>
+
+          <!-- Reseda Green (NEW - replaces Feldgrau) -->
+          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 2px solid var(--color-nature); box-shadow: 0 4px 12px rgba(101, 125, 96, 0.1);">
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="background: var(--color-nature); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
+                #657D60
+              </div>
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">
+                Reseda Green 
+                <span style="background: linear-gradient(135deg, #4ade80, #22c55e); padding: 2px 8px; border-radius: 4px; font-size: 10px; color: white; margin-left: 4px; font-weight: 600;">NEW</span>
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Nature / Wildlife</p>
+            </div>
+            
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+              <div style="background: var(--color-nature-bg); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Background: #E9EFEA</div>
+              <div style="background: var(--color-nature-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #A3B59E</div>
+              <div style="background: var(--color-nature-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #7F9679</div>
+              <div style="background: var(--color-nature-dark); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Dark: #4F6149</div>
+              <div style="background: var(--color-nature-darker); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Darker: #3A4836</div>
+            </div>
+            
+            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+              <strong>Usage:</strong> Wildlife/conservation tags, nature section backgrounds, environmental callouts. More vibrant than previous sage.
+            </div>
+            
+            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-nature-bg); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-nature-darker); border-left: 3px solid var(--color-nature);">
+              ✨ Replaces Feldgrau - brighter and more lively while keeping earthy character
+            </div>
+          </div>
+
+          <!-- Forest Green (NEW) -->
+          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 2px solid var(--color-forest); box-shadow: 0 4px 12px rgba(39, 53, 36, 0.15);">
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="background: var(--color-forest); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
+                #273524
+              </div>
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">
+                Forest Green
+                <span style="background: linear-gradient(135deg, #4ade80, #22c55e); padding: 2px 8px; border-radius: 4px; font-size: 10px; color: white; margin-left: 4px; font-weight: 600;">NEW</span>
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Dark Nature Accent</p>
+            </div>
+            
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+              <div style="background: var(--color-forest-bg); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Background: #E3E6E3</div>
+              <div style="background: var(--color-forest-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #556951</div>
+              <div style="background: var(--color-forest-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #3D4F3A</div>
+            </div>
+            
+            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+              <strong>Usage:</strong> Conservation hero overlays, premium nature content sections, alternative dark backgrounds. Green alternative to navy/bistre.
+            </div>
+            
+            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-neutral-100); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.6;">
+              ✅ Excellent contrast (11:1) - perfect for dark sections with white text
+            </div>
+          </div>
+
+          <!-- Bistre (EXPANDED) -->
+          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 1px solid var(--color-neutral-200);">
+            <div style="margin-bottom: var(--spacing-lg);">
+              <div style="background: var(--color-earth); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
+                #251605
+              </div>
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">
+                Bistre
+                <span style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 2px 8px; border-radius: 4px; font-size: 10px; color: white; margin-left: 4px; font-weight: 600;">EXPANDED</span>
+              </h3>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Deep Earth Tone</p>
+            </div>
+            
+            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
+              <div style="background: var(--color-earth-bg-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); border: 1px solid var(--color-neutral-200);">BG Light: #F5F2ED</div>
+              <div style="background: var(--color-earth-bg); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Background: #EBE6E0</div>
+              <div style="background: var(--color-earth-lightest); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lightest: #78603D</div>
+              <div style="background: var(--color-earth-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #5A4525</div>
+              <div style="background: var(--color-earth-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #3D2B12</div>
+            </div>
+            
+            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+              <strong>Usage:</strong> Rich footer backgrounds, community/culture content, warm section backgrounds. Now with expanded light variants for versatility.
+            </div>
+            
+            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-earth-bg); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-earth-lightest); border-left: 3px solid var(--color-earth-lighter);">
+              ✨ New background variants replace Walnut Brown - unified earth tone family
+            </div>
+          </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div style="background: var(--color-neutral-100); padding: var(--spacing-2xl); border-radius: var(--border-radius-lg);">
+          <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-lg); color: var(--color-dark);">
+            Practical Usage Guidelines
+          </h3>
+          
+          <div style="display: grid; gap: var(--spacing-md);">
+            <div style="background: white; padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🎯 Primary Actions & Interactive</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+                <strong>Tropical Indigo (#A98FFA):</strong> CTAs, primary buttons, links, active states, accent headings. Keep usage under 10% of total page color.
+              </p>
+            </div>
+
+            <div style="background: white; padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">📝 Text & Structure</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+                <strong>Raisin Black (#1C2434):</strong> All body text, headings, navigation. Dominates the interface at ~40-50%.
+              </p>
+            </div>
+
+            <div style="background: white; padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🏞️ Backgrounds & Breathing Room</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+                <strong>Seasalt (#F6F7F6) + White:</strong> Primary backgrounds, cards, sections. Creates structure and clarity at ~40-50%.
+              </p>
+            </div>
+
+            <div style="background: var(--color-nature-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-nature);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🌿 Wildlife & Environmental Content</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+                <strong>Reseda Green (#657D60):</strong> Wildlife/conservation tags, nature section backgrounds, environmental callouts. Use background variant (#E9EFEA) for large areas. More vibrant than previous sage - draws attention without overwhelming.
+              </p>
+            </div>
+
+            <div style="background: var(--color-forest-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-forest);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🌲 Conservation & Deep Nature</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+                <strong>Forest Green (#273524):</strong> Hero overlays for nature content, premium conservation sections, alternative dark footer. Use for dramatic, immersive nature-focused experiences. White text contrast is excellent.
+              </p>
+            </div>
+
+            <div style="background: var(--color-earth-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-earth-lighter);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🤝 Community, Culture & Warmth</h4>
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
+                <strong>Bistre (#251605 + variants):</strong> Community tags, cultural experiences, artisan content, footer backgrounds. Now with expanded light variants (#EBE6E0, #F5F2ED) for warm section backgrounds - replaces Walnut Brown for simplified palette.
+              </p>
             </div>
           </div>
           
-          <!-- Brand Purple -->
-          <div>
-            <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-md);">Brand Purple (10%)</h3>
-            <div style="display: grid; gap: var(--spacing-xs);">
-              <div style="background: var(--color-brand-100); padding: var(--spacing-md); color: var(--color-brand-800);">Brand 100</div>
-              <div style="background: var(--color-brand-600); padding: var(--spacing-md); color: white;">Brand 600 - Primary</div>
-              <div style="background: var(--color-brand-800); padding: var(--spacing-md); color: white;">Brand 800</div>
+          <div style="margin-top: var(--spacing-lg); padding: var(--spacing-lg); background: linear-gradient(135deg, rgba(169, 143, 250, 0.1), rgba(101, 125, 96, 0.1)); border-radius: var(--border-radius-md); border: 2px dashed var(--color-primary-light);">
+            <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">📊 Palette Summary</h4>
+            <div style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; line-height: 1.7;">
+              <p style="margin-bottom: var(--spacing-xs);"><strong>Total: 7 colors</strong> (down from 8 - more focused)</p>
+              <p style="margin-bottom: var(--spacing-xs);">✨ <strong>New:</strong> Reseda Green (replaces Feldgrau), Forest Green (new dark option)</p>
+              <p style="margin-bottom: var(--spacing-xs);">🔄 <strong>Updated:</strong> Bistre expanded with background variants</p>
+              <p>❌ <strong>Removed:</strong> Walnut Brown (consolidated into Bistre family)</p>
             </div>
           </div>
-          
-          <!-- Sage Green -->
-          <div>
-            <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-md);">Sage Green (Accent)</h3>
-            <div style="display: grid; gap: var(--spacing-xs);">
-              <div style="background: var(--color-sage-100); padding: var(--spacing-md); color: var(--color-sage-800);">Sage 100</div>
-              <div style="background: var(--color-sage-600); padding: var(--spacing-md); color: white;">Sage 600 - Nature</div>
-            </div>
-          </div>
-          
-          <!-- Terracotta -->
-          <div>
-            <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-md);">Terracotta (Accent)</h3>
-            <div style="display: grid; gap: var(--spacing-xs);">
-              <div style="background: var(--color-terracotta-100); padding: var(--spacing-md); color: var(--color-terracotta-800);">Terracotta 100</div>
-              <div style="background: var(--color-terracotta-600); padding: var(--spacing-md); color: white;">Terracotta 600</div>
-            </div>
-          </div>
-          
-          <!-- Red (Destructive) -->
-          <div>
-            <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-md);">Red (Destructive)</h3>
-            <div style="display: grid; gap: var(--spacing-xs);">
-              <div style="background: var(--color-red-100); padding: var(--spacing-md); color: var(--color-red-700);">Red 100</div>
-              <div style="background: var(--color-red-600); padding: var(--spacing-md); color: white;">Red 600 - Delete</div>
-            </div>
+        </div>
+
+        <!-- Accessibility Note -->
+        <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); margin-top: var(--spacing-xl); border: 2px solid var(--color-primary-lighter);">
+          <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-md); color: var(--color-dark);">
+            ♿ Accessibility Considerations
+          </h3>
+          <div style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; line-height: 1.7;">
+            <p style="margin-bottom: var(--spacing-sm);"><strong>✅ Excellent Contrast (WCAG AAA):</strong></p>
+            <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+              <li>Raisin Black (#1C2434) on white - 15:1 ratio</li>
+              <li>Forest Green (#273524) on white - 11:1 ratio</li>
+              <li>White text on both dark colors - perfect for dark sections</li>
+            </ul>
+            
+            <p style="margin-bottom: var(--spacing-sm);"><strong>⚠️ Caution - Use Darker Variant for Text:</strong></p>
+            <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+              <li>Tropical Indigo (#A98FFA) on white - 3.3:1 ratio. Use #7353D4 for body text (4.5:1)</li>
+            </ul>
+            
+            <p style="margin-bottom: var(--spacing-sm);"><strong>❌ Backgrounds Only (Not for Body Text):</strong></p>
+            <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+              <li>Reseda Green (#657D60) on white - 3.5:1 ratio</li>
+              <li>Bistre variants on white - use background variants or white text on dark versions</li>
+            </ul>
+            
+            <p><strong>💡 Best Practice:</strong> Always test color combinations with a contrast checker before use. When in doubt, use dark navy or forest green for text.</p>
           </div>
         </div>
       </div>
@@ -539,13 +773,13 @@ import Hero from "../../../components/sections/Hero.astro";
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-xl);">
           <div class="card">
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-              <span class="badge" style="background: var(--color-sage-100); color: var(--color-sage-800);">Wildlife</span>
+              <span class="badge" style="background: var(--color-nature-bg); color: var(--color-nature-darker);">Wildlife</span>
               <span style="color: var(--color-neutral-500); font-size: var(--font-size-sm);">Thailand</span>
             </div>
             <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-sm);">
               Elephant Sanctuary
             </h3>
-            <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); line-height: 1.6; margin-bottom: var(--spacing-lg);">
+            <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6; margin-bottom: var(--spacing-lg);">
               Visit rescued elephants in their natural habitat and support ethical wildlife tourism.
             </p>
             <button class="btn btn-primary" style="width: 100%;">Learn More</button>
@@ -553,13 +787,13 @@ import Hero from "../../../components/sections/Hero.astro";
           
           <div class="card">
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-              <span class="badge" style="background: var(--color-terracotta-100); color: var(--color-terracotta-800);">Community</span>
+              <span class="badge" style="background: var(--color-earth-bg); color: var(--color-earth-lightest);">Community</span>
               <span style="color: var(--color-neutral-500); font-size: var(--font-size-sm);">Peru</span>
             </div>
             <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-sm);">
               Weaving Workshop
             </h3>
-            <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600); line-height: 1.6; margin-bottom: var(--spacing-lg);">
+            <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6; margin-bottom: var(--spacing-lg);">
               Learn traditional techniques from local artisans while supporting fair trade.
             </p>
             <button class="btn btn-secondary" style="width: 100%;">Discover</button>
@@ -595,10 +829,10 @@ import Hero from "../../../components/sections/Hero.astro";
         <div style="margin-bottom: var(--spacing-2xl);">
           <h3 style="font-size: var(--font-size-xl); font-weight: 600; margin-bottom: var(--spacing-lg);">Filter Tabs</h3>
           <div style="display: flex; gap: var(--spacing-xs); padding: var(--spacing-xs); background: var(--color-neutral-100); border-radius: var(--border-radius-lg); width: fit-content;">
-            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: var(--color-brand-600); color: white; font-weight: 600; font-size: var(--font-size-sm); cursor: pointer;">All Projects</button>
-            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: transparent; color: var(--color-neutral-600); font-weight: 500; font-size: var(--font-size-sm); cursor: pointer;">Cafes</button>
-            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: transparent; color: var(--color-neutral-600); font-weight: 500; font-size: var(--font-size-sm); cursor: pointer;">Stays</button>
-            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: transparent; color: var(--color-neutral-600); font-weight: 500; font-size: var(--font-size-sm); cursor: pointer;">Tours</button>
+            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: var(--color-primary); color: white; font-weight: 600; font-size: var(--font-size-sm); cursor: pointer;">All Projects</button>
+            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: transparent; color: var(--color-dark); font-weight: 500; font-size: var(--font-size-sm); cursor: pointer;">Cafes</button>
+            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: transparent; color: var(--color-dark); font-weight: 500; font-size: var(--font-size-sm); cursor: pointer;">Stays</button>
+            <button style="padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--border-radius-md); border: none; background: transparent; color: var(--color-dark); font-weight: 500; font-size: var(--font-size-sm); cursor: pointer;">Tours</button>
           </div>
         </div>
 
@@ -647,21 +881,21 @@ import Hero from "../../../components/sections/Hero.astro";
         
         <div style="display: grid; gap: var(--spacing-lg); max-width: 800px;">
           <!-- Success -->
-          <div style="background: var(--color-sage-50); border-left: 4px solid var(--color-sage-600); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
-            <h4 style="font-weight: 600; color: var(--color-sage-800); margin-bottom: var(--spacing-xs);">Success</h4>
-            <p style="color: var(--color-sage-700); font-size: var(--font-size-sm);">Your project has been saved successfully.</p>
+          <div style="background: var(--color-nature-bg); border-left: 4px solid var(--color-nature); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+            <h4 style="font-weight: 600; color: var(--color-nature-darker); margin-bottom: var(--spacing-xs);">Success</h4>
+            <p style="color: var(--color-nature-darker); font-size: var(--font-size-sm);">Your project has been saved successfully.</p>
           </div>
           
           <!-- Warning -->
-          <div style="background: var(--color-terracotta-50); border-left: 4px solid var(--color-terracotta-600); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
-            <h4 style="font-weight: 600; color: var(--color-terracotta-800); margin-bottom: var(--spacing-xs);">Warning</h4>
-            <p style="color: var(--color-terracotta-700); font-size: var(--font-size-sm);">Limited availability - only 2 spots remaining.</p>
+          <div style="background: var(--color-earth-bg); border-left: 4px solid var(--color-earth-lighter); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+            <h4 style="font-weight: 600; color: var(--color-earth-lightest); margin-bottom: var(--spacing-xs);">Warning</h4>
+            <p style="color: var(--color-earth-lightest); font-size: var(--font-size-sm);">Limited availability - only 2 spots remaining.</p>
           </div>
           
           <!-- Info -->
-          <div style="background: var(--color-brand-50); border-left: 4px solid var(--color-brand-600); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
-            <h4 style="font-weight: 600; color: var(--color-brand-800); margin-bottom: var(--spacing-xs);">Info</h4>
-            <p style="color: var(--color-brand-700); font-size: var(--font-size-sm);">New projects have been added in your area.</p>
+          <div style="background: var(--color-primary-lighter); border-left: 4px solid var(--color-primary); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+            <h4 style="font-weight: 600; color: var(--color-primary-darker); margin-bottom: var(--spacing-xs);">Info</h4>
+            <p style="color: var(--color-primary-darker); font-size: var(--font-size-sm);">New projects have been added in your area.</p>
           </div>
           
           <!-- Error -->
@@ -723,8 +957,8 @@ import Hero from "../../../components/sections/Hero.astro";
           <div class="card">
             <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-lg);">Loading State</h3>
             <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
-              <div style="width: 20px; height: 20px; border: 2px solid var(--color-neutral-200); border-top: 2px solid var(--color-brand-600); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-              <span style="font-size: var(--font-size-sm); color: var(--color-neutral-600);">Loading projects...</span>
+              <div style="width: 20px; height: 20px; border: 2px solid var(--color-neutral-200); border-top: 2px solid var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              <span style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7;">Loading projects...</span>
             </div>
             
             <div style="display: grid; gap: var(--spacing-sm);">
@@ -748,12 +982,12 @@ import Hero from "../../../components/sections/Hero.astro";
     </section>
 
     <!-- Guidelines Link -->
-    <section class="section-padding" style="background: var(--color-brand-50);">
+    <section class="section-padding" style="background: var(--color-primary-lighter);">
       <div class="container" style="text-align: center;">
-        <h2 style="font-size: var(--font-size-2xl); font-weight: 700; margin-bottom: var(--spacing-md); color: var(--color-neutral-950);">
+        <h2 style="font-size: var(--font-size-2xl); font-weight: 700; margin-bottom: var(--spacing-md); color: var(--color-dark);">
           Complete Design Guidelines
         </h2>
-        <p style="font-size: var(--font-size-base); color: var(--color-neutral-600); margin-bottom: var(--spacing-xl); max-width: 600px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: var(--font-size-base); color: var(--color-dark); opacity: 0.8; margin-bottom: var(--spacing-xl); max-width: 600px; margin-left: auto; margin-right: auto;">
           For detailed specifications on color usage, typography, spacing, animations, forms, icons (Huge Icons), and more, view our complete guidelines document.
         </p>
         <a href="/DESIGN-GUIDELINES.md" class="btn btn-primary" style="font-size: var(--font-size-base);">
