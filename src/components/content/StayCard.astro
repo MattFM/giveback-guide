@@ -10,14 +10,14 @@ const { stay } = Astro.props as Props;
   <div class="relative">
         <a href={`/stays/${stay.data.properties.sSlug}/`}>
           <ResponsiveImage
-            class="w-full rounded-lg h-64 object-cover"
+            class="w-full rounded-lg h-64 mb-3 object-cover"
             src={stay.data.properties.sImageURL1}
             alt=""
             preset="card"
             fallbackWidth={600}
           />
           {stay.data.properties.sVerify && (
-            <div class="absolute top-2 left-2 bg-gbgyellow bg-opacity-80 rounded-md px-2 py-1 flex items-center gap-1">
+            <div class="absolute top-2 left-2 bg-gbgyellow bg-opacity-80 rounded-lg px-2.5 py-1 flex items-center gap-1 shadow-sm">
               <svg
                 class="h-5 w-5 text-black"
                 aria-hidden="true"
@@ -33,7 +33,7 @@ const { stay } = Astro.props as Props;
                   clip-rule="evenodd"
                 />
               </svg>
-              <p class="text-xs font-medium text-black dark:text-white">
+              <p class="text-xs font-medium text-black">
                 {stay.data.properties.sVerify}
               </p>
             </div>
@@ -43,104 +43,42 @@ const { stay } = Astro.props as Props;
         <div class="absolute top-2 right-2">
           <!-- Save control removed from card; Save UI is available on stay pages only -->
         </div>
-  <p>
-    {Array.isArray(stay.data.properties.sCountry)
-      ? stay.data.properties.sCountry.map((country: string) => (
-          <span
-            class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 ml-2 mt-4 mb-2"
-          >
-            <a
-              href={`/stays/${country.toLowerCase().replace(/\s+/g, "-")}`}
-            >
+  <div class="mb-2">
+    {
+      (() => {
+        const countries = stay.data.properties.sCountry;
+        const countryArray = Array.isArray(countries) ? countries : [countries];
+        
+        return countryArray
+          .filter((country: string) => country !== "United Kingdom" && country !== "UK")
+          .map((country: string) => (
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
               {country}
-            </a>
-          </span>
-        ))
-      : stay.data.properties.sCountry}
-  </p>
-  <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white px-4 line-clamp-3">
+            </span>
+          ));
+      })()
+    }
+  </div>
+  <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white line-clamp-3">
     <a href={`/stays/${stay.data.properties.sSlug}/`}>
       {stay.data.properties.sTitle}
     </a>
   </h2>
-  <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
-           <span class="text-gray-800">{stay.data.properties.sName}</span> is a <span class="text-gray-900">{stay.data.properties.sType}</span> in <span class="text-gray-900">
-      {
-        (() => {
-          const locales = stay.data.properties.sLocale;
-          const country = Array.isArray(stay.data.properties.sCountry) 
-            ? stay.data.properties.sCountry[0] 
-            : stay.data.properties.sCountry;
-          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-          
-          if (!Array.isArray(locales)) {
-            const localeSlug = locales.toLowerCase().replace(/\s+/g, "-");
-            return (
-              <a 
-                href={`/stays/${countrySlug}/${localeSlug}`}
-                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
-              >
-                {locales}
-              </a>
-            );
-          }
-          
+  <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400">
+    {stay.data.properties.sName} is a {stay.data.properties.sType} in
+    {
+      (() => {
+        const locales = stay.data.properties.sLocale;
+        
+        // Format locales
+        if (Array.isArray(locales)) {
           if (locales.length === 0) return "";
-          if (locales.length === 1) {
-            const localeSlug = locales[0].toLowerCase().replace(/\s+/g, "-");
-            return (
-              <a 
-                href={`/stays/${countrySlug}/${localeSlug}`}
-                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
-              >
-                {locales[0]}
-              </a>
-            );
-          }
-          if (locales.length === 2) {
-            return (
-              <>
-                <a 
-                  href={`/stays/${countrySlug}/${locales[0].toLowerCase().replace(/\s+/g, "-")}`}
-                  class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
-                >
-                  {locales[0]}
-                </a>
-                {" & "}
-                <a 
-                  href={`/stays/${countrySlug}/${locales[1].toLowerCase().replace(/\s+/g, "-")}`}
-                  class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
-                >
-                  {locales[1]}
-                </a>
-              </>
-            );
-          }
-          
-          return (
-            <>
-              {locales.slice(0, -1).map((locale, index) => (
-                <>
-                  <a 
-                    href={`/stays/${countrySlug}/${locale.toLowerCase().replace(/\s+/g, "-")}`}
-                    class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
-                  >
-                    {locale}
-                  </a>
-                  {index < locales.length - 2 ? ", " : ""}
-                </>
-              ))}
-              {" & "}
-              <a 
-                href={`/stays/${countrySlug}/${locales[locales.length - 1].toLowerCase().replace(/\s+/g, "-")}`}
-                class="inline-block px-1.5 py-0.5 text-gray-900 border border-gray-300/60 rounded bg-gray-100/40 dark:bg-gray-700/40 dark:border-gray-600/60 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 transition-colors"
-              >
-                {locales[locales.length - 1]}
-              </a>
-            </>
-          );
-        })()
-      }
-    </span>
+          if (locales.length === 1) return locales[0];
+          if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
+          return locales.slice(0, -1).join(", ") + " & " + locales[locales.length - 1];
+        }
+        return locales;
+      })()
+    }
   </p>
 </BaseCard>

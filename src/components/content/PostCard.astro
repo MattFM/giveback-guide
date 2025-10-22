@@ -22,7 +22,7 @@ const { post } = Astro.props;
   <div class="relative">
         <a href={`/blog/${post.data.properties.bSlug}/`}>
           <ResponsiveImage
-            class="w-full rounded-lg h-64 object-cover"
+            class="w-full rounded-lg h-64 mb-3 object-cover"
             src={post.data.properties.bCoverImage}
             alt=""
             preset="card"
@@ -30,11 +30,11 @@ const { post } = Astro.props;
           />
         </a>
       </div>
-  <p>
+  <div class="mb-2">
     {Array.isArray(post.data.properties.bTags)
       ? post.data.properties.bTags.map((tag: string) => (
           <span
-            class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 ml-2 mt-4 mb-2"
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5"
           >
             <a
               href={`/blog/${tag.toLowerCase().replace(/\s+/g, "-")}`}
@@ -44,8 +44,8 @@ const { post } = Astro.props;
           </span>
         ))
       : post.data.properties.bTags}
-  </p>
-  <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white px-4">
+  </div>
+  <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white">
     <a href={`/blog/${post.data.properties.bSlug}/`}>
       {post.data.properties.bTitle}
     </a>
