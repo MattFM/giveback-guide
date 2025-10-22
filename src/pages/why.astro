@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import Hero from "../components/sections/Hero.astro";
 import { SITE_TITLE } from "../consts";
 import { impactAreaData } from "../utils/impactAreas";
 
@@ -14,63 +15,26 @@ const featuredImpactAreas = [
 <MainLayout 
   title={`Why Choose Better - ${SITE_TITLE}`}
   description="Discover cafes, tours, stays, and experiences where your money directly supports local communities - the same things you'd do anyway, just better choices."
+  headerVariant="transparent"
+  headerTheme="dark"
 >
   <main>
-    <!-- Hero Section - Full Bleed -->
-    <section class="relative h-screen flex items-center justify-center overflow-hidden">
-      <!-- Hero background image -->
-      <div class="absolute inset-0 bg-cover bg-center bg-[url('https://res.cloudinary.com/dnxl7wsnx/image/upload/v1759238289/beach-clean-hero-1_lcfxtg.jpg')]">
-        <div class="absolute inset-0 bg-black opacity-40"></div>
-      </div>
+    <!-- Hero Section -->
+    <Hero
+      background="image"
+      backgroundValue="https://res.cloudinary.com/dnxl7wsnx/image/upload/v1759238289/beach-clean-hero-1_lcfxtg.jpg"
+      theme="dark"
+      size="large"
+      align="left"
+    >
+      <span slot="title">
+        Your Travel Choices Can <span class="gradient-highlight-hero">Change Everything</span>
+      </span>
       
-      <div class="relative z-10 text-center text-white max-w-4xl px-6">
-        <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight mb-8">
-          Your Travel Choices Can <span class="bg-white text-black px-2 py-1">Change Everything</span>
-        </h1>
-        <p class="text-xl md:text-2xl font-light mb-12 leading-relaxed">
-          Discover cafes, tours, stays, and experiences where your time and money directly supports local communities. The same things you'd do anyway, just better choices
-        </p>
-        
-        <form action="/search" method="get" class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto mb-8">
-          <div class="relative flex-1 w-full">
-            <input
-              type="text"
-              name="q"
-              placeholder="Where are you traveling to?"
-              class="w-full py-4 px-6 text-lg text-gray-900 border-0 rounded-full bg-white focus:ring-4 focus:ring-white/30 outline-none"
-              required
-            />
-            <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </button>
-          </div>
-        </form>
-        
-        <div class="flex flex-wrap gap-4 justify-center items-center">
-          <a
-            href="/projects"
-            class="px-8 py-4 text-lg font-semibold text-white bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 whitespace-nowrap border border-white/40"
-          >
-            Browse Projects
-          </a>
-          <a
-            href="/stays"
-            class="px-8 py-4 text-lg font-semibold text-white bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 whitespace-nowrap border border-white/40"
-          >
-            Browse Stays
-          </a>
-        </div>
-      </div>
-      
-      <!-- Scroll indicator -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
-      </div>
-    </section>
+      <p class="text-xl md:text-2xl font-light leading-relaxed max-w-3xl" style="color: #E8EAE8;">
+        Discover cafes, tours, stays, and experiences where your time and money directly supports local communities. The same things you'd do anyway, just better choices
+      </p>
+    </Hero>
 
     <!-- Same Things, Better Choices Section -->
     <section class="relative">
@@ -79,43 +43,43 @@ const featuredImpactAreas = [
         <!-- Content -->
         <div class="flex items-center justify-center p-8 lg:p-16 bg-white">
           <div class="max-w-lg">
-            <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-8 leading-tight">
-              Same Things,<br><span class="bg-black text-white px-2 py-1">Better Choices</span>
+            <h2 class="text-4xl lg:text-5xl font-black mb-8 leading-tight" style="color: #1C2434;">
+              Same Things,<br><span class="gradient-highlight">Better Choices</span>
             </h2>
-            <p class="text-xl text-gray-600 mb-12 leading-relaxed">
+            <p class="text-xl mb-12 leading-relaxed" style="color: #7E827E;">
               We all eat, sleep, shop, and explore when we travel. We just help you to make better choices that create real impact.
             </p>
             
             <div class="space-y-8">
               <div class="flex items-start space-x-4">
-                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div class="w-2 h-2 rounded-full mt-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of any cafe</h3>
-                  <p class="text-gray-600">Visit <strong>ZiZo in the Netherlands</strong> where people with disabilities develop their talents through cooking and hospitality</p>
+                  <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Instead of any cafe</h3>
+                  <p style="color: #7E827E;">Visit <strong style="color: #1C2434;">ZiZo in the Netherlands</strong> where people with disabilities develop their talents through cooking and hospitality</p>
                 </div>
               </div>
 
               <div class="flex items-start space-x-4">
-                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div class="w-2 h-2 rounded-full mt-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of any hotel</h3>
-                  <p class="text-gray-600">Stay at <strong>Kindred Spirit Elephant Sanctuary in Thailand</strong> and see rescued elephants living freely</p>
+                  <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Instead of any hotel</h3>
+                  <p style="color: #7E827E;">Stay at <strong style="color: #1C2434;">Kindred Spirit Elephant Sanctuary in Thailand</strong> and see rescued elephants living freely</p>
                 </div>
               </div>
 
               <div class="flex items-start space-x-4">
-                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div class="w-2 h-2 rounded-full mt-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of generic souvenirs</h3>
-                  <p class="text-gray-600">Buy from <strong>Trama Textiles in Xela</strong> and directly support Mayan women in Guatemala</p>
+                  <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Instead of generic souvenirs</h3>
+                  <p style="color: #7E827E;">Buy from <strong style="color: #1C2434;">Trama Textiles in Xela</strong> and directly support Mayan women in Guatemala</p>
                 </div>
               </div>
 
               <div class="flex items-start space-x-4">
-                <div class="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
+                <div class="w-2 h-2 rounded-full mt-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-2">Instead of a regular city tour</h3>
-                  <p class="text-gray-600">Take a bike tour with <strong>Pikala Bikes in Marrakesh</strong> and help to empower young Moroccans</p>
+                  <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Instead of a regular city tour</h3>
+                  <p style="color: #7E827E;">Take a bike tour with <strong style="color: #1C2434;">Pikala Bikes in Marrakesh</strong> and help to empower young Moroccans</p>
                 </div>
               </div>
             </div>
@@ -129,13 +93,13 @@ const featuredImpactAreas = [
     </section>
 
     <!-- Impact Areas Section - Full Width -->
-    <section class="bg-black text-white">
+    <section class="text-white" style="background-color: #1C2434;">
       <div class="px-8 py-20 lg:py-32">
         <div class="max-w-6xl mx-auto text-center mb-16">
           <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">
-            Every Choice Creates <span class="bg-white text-black px-2 py-1">Real Impact</span>
+            Every Choice Creates <span class="gradient-highlight">Real Impact</span>
           </h2>
-          <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p class="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed" style="color: #D1D4D1;">
             Our projects and stays support 19 key impact areas, to help you find what matters most to you
           </p>
         </div>
@@ -145,22 +109,22 @@ const featuredImpactAreas = [
           {featuredImpactAreas.map((areaName) => {
             const data = impactAreaData[areaName];
             return (
-              <div class="border border-gray-700 p-6 hover:border-white transition-colors duration-300">
+              <div class="p-6 hover:border-opacity-100 transition-all duration-300 hover:-translate-y-1" style="border: 1px solid rgba(169, 143, 250, 0.3);">
                 <div class="flex items-center mb-3">
-                  <div class={`text-2xl font-black text-white mr-3 flex-shrink-0`}>{data?.code || "???"}</div>
+                  <div class="text-2xl font-black text-white mr-3 flex-shrink-0">{data?.code || "???"}</div>
                   <h3 class="text-lg font-bold">{areaName}</h3>
                 </div>
-                <p class="text-gray-400 text-sm">{data?.description || "Impact area description not available"}</p>
+                <p class="text-sm" style="color: #A8ACA8;">{data?.description || "Impact area description not available"}</p>
               </div>
             );
           })}
         </div>
 
         <div class="text-center mt-12">
-          <p class="text-gray-400 mb-6">Plus 10 more impact areas covering marine protection, waste reduction, and poverty alleviation</p>
-          <a href="/about/impacts" class="inline-flex items-center text-white hover:text-gray-300 font-semibold text-lg">
+          <p class="mb-6" style="color: #A8ACA8;">Plus 10 more impact areas covering marine protection, waste reduction, and poverty alleviation</p>
+          <a href="/about/impacts" class="inline-flex items-center text-white hover:gap-3 font-semibold text-lg transition-all duration-300 gap-2">
             See all impact areas
-            <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
             </svg>
           </a>
@@ -172,10 +136,10 @@ const featuredImpactAreas = [
     <section class="bg-white">
       <div class="pt-20 lg:pt-32">
         <div class="max-w-4xl mx-auto text-center mb-16 px-8">
-          <h2 class="text-4xl lg:text-6xl font-black text-gray-900 mb-8 leading-tight">
-            Discover What's <span class="bg-black text-white px-2 py-1">Possible</span>
+          <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight" style="color: #1C2434;">
+            Discover What's <span class="gradient-highlight">Possible</span>
           </h2>
-          <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed">
+          <p class="text-xl lg:text-2xl leading-relaxed" style="color: #7E827E;">
             300+ projects across 60+ countries. Everything from quick visits to immersive experiences
           </p>
         </div>
@@ -187,21 +151,21 @@ const featuredImpactAreas = [
           </div>
           <div class="bg-white p-8 lg:p-16 flex items-center">
             <div>
-              <h3 class="text-3xl lg:text-4xl font-black text-gray-900 mb-6">Cafes & Restaurants</h3>
-              <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              <h3 class="text-3xl lg:text-4xl font-black mb-6" style="color: #1C2434;">Cafes & Restaurants</h3>
+              <p class="text-lg mb-8 leading-relaxed" style="color: #7E827E;">
                 Community-focused dining where your meal makes a difference
               </p>
-              <ul class="space-y-3 text-gray-600">
+              <ul class="space-y-3" style="color: #7E827E;">
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Disability employment and training programs</span>
                 </li>
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Migrant and refugee-run establishments</span>
                 </li>
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Social enterprises with transparent impact</span>
                 </li>
               </ul>
@@ -211,21 +175,21 @@ const featuredImpactAreas = [
           <!-- Accommodation (reversed order for desktop) -->
           <div class="bg-white p-8 lg:p-16 flex items-center order-2 lg:order-2">
             <div>
-              <h3 class="text-3xl lg:text-4xl font-black text-gray-900 mb-6">Conscious Accommodation</h3>
-              <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              <h3 class="text-3xl lg:text-4xl font-black mb-6" style="color: #1C2434;">Conscious Accommodation</h3>
+              <p class="text-lg mb-8 leading-relaxed" style="color: #7E827E;">
                 Places to stay that support conservation and communities
               </p>
-              <ul class="space-y-3 text-gray-600">
+              <ul class="space-y-3" style="color: #7E827E;">
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Elephant and animal sanctuaries</span>
                 </li>
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Cultural homestays with local families</span>
                 </li>
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Eco-lodges supporting conservation</span>
                 </li>
               </ul>
@@ -239,21 +203,21 @@ const featuredImpactAreas = [
           </div>
           <div class="bg-white p-8 lg:p-16 flex items-center">
             <div>
-              <h3 class="text-3xl lg:text-4xl font-black text-gray-900 mb-6">Cultural Experiences</h3>
-              <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              <h3 class="text-3xl lg:text-4xl font-black mb-6" style="color: #1C2434;">Cultural Experiences</h3>
+              <p class="text-lg mb-8 leading-relaxed" style="color: #7E827E;">
                 Authentic encounters led by local communities
               </p>
-              <ul class="space-y-3 text-gray-600">
+              <ul class="space-y-3" style="color: #7E827E;">
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Women-led cultural tours and workshops</span>
                 </li>
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Traditional craft experiences with artisans</span>
                 </li>
                 <li class="flex items-start">
-                  <div class="w-1 h-1 bg-black rounded-full mt-3 mr-3 flex-shrink-0"></div>
+                  <div class="w-1 h-1 rounded-full mt-3 mr-3 flex-shrink-0" style="background-color: #A98FFA;"></div>
                   <span>Community-led storytelling and exchanges</span>
                 </li>
               </ul>
@@ -264,13 +228,13 @@ const featuredImpactAreas = [
     </section>
 
     <!-- How It Works - Bold Visual -->
-    <section class="bg-black text-white">
+    <section class="text-white" style="background-color: #1C2434;">
       <div class="py-20 lg:py-32 px-8">
         <div class="max-w-6xl mx-auto text-center mb-20">
           <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">
-            It's Actually <span class="bg-white text-black px-2 py-1">Really Simple</span>
+            It's Actually <span class="gradient-highlight">Really Simple</span>
           </h2>
-          <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p class="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed" style="color: #D1D4D1;">
             Just browse the database, choose what appeals to you and get involved
           </p>
         </div>
@@ -279,25 +243,25 @@ const featuredImpactAreas = [
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">01</div>
             <h3 class="text-xl font-bold mb-4">Going Somewhere?</h3>
-            <p class="text-gray-400 leading-relaxed">Search by your destination to see what conscious choices are available</p>
+            <p class="leading-relaxed" style="color: #A8ACA8;">Search by your destination to see what conscious choices are available</p>
           </div>
           
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">02</div>
             <h3 class="text-xl font-bold mb-4">Pick What Appeals</h3>
-            <p class="text-gray-400 leading-relaxed">Browse cafes, stays, tours, shops in our database</p>
+            <p class="leading-relaxed" style="color: #A8ACA8;">Browse cafes, stays, tours, shops in our database</p>
           </div>
           
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">03</div>
             <h3 class="text-xl font-bold mb-4">Engage With The Project</h3>
-            <p class="text-gray-400 leading-relaxed">Book if required, or simply visit. Each project has clear instructions on how to get involved</p>
+            <p class="leading-relaxed" style="color: #A8ACA8;">Book if required, or simply visit. Each project has clear instructions on how to get involved</p>
           </div>
           
           <div class="text-center">
             <div class="text-6xl font-black text-white mb-6 opacity-20">04</div>
             <h3 class="text-xl font-bold mb-4">Know Your Impact</h3>
-            <p class="text-gray-400 leading-relaxed">Your choices directly support real community projects, social causes and ecosystems</p>
+            <p class="leading-relaxed" style="color: #A8ACA8;">Your choices directly support real community projects, social causes and ecosystems</p>
           </div>
         </div>
       </div>
@@ -313,13 +277,13 @@ const featuredImpactAreas = [
         <!-- Content -->
         <div class="flex items-center justify-center p-8 lg:p-16 bg-white order-1 lg:order-2">
           <div class="max-w-lg">
-            <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-8 leading-tight">
-              How This <span class="bg-black text-white px-2 py-1">Started</span>
+            <h2 class="text-4xl lg:text-5xl font-black mb-8 leading-tight" style="color: #1C2434;">
+              How This <span class="gradient-highlight">Started</span>
             </h2>
-            <div class="bg-gray-50 border-l-4 border-black p-6">
-              <p class="text-lg text-gray-600 italic leading-relaxed">
+            <div class="p-6" style="background-color: #F6F7F6; border-left: 4px solid #A98FFA;">
+              <p class="text-lg italic leading-relaxed mb-4" style="color: #7E827E;">
                 We created Giveback Guide when we began to realise that we wanted more from our travels. We sought out experiences that aligned with our values, but found it hard to discover them. When we started engaging in positive impact projects, we saw the potential for travel to be a force for good. So, we decided to create a platform that would make it easier for others to find and engage with these kinds of experiences.</p>
-              <p class="text-lg text-gray-600 italic leading-relaxed">We hope that Giveback Guide helps you to find and engage with meaningful travel experiences that align with your values, which in turn will enhance your travels.</p>
+              <p class="text-lg italic leading-relaxed" style="color: #7E827E;">We hope that Giveback Guide helps you to find and engage with meaningful travel experiences that align with your values, which in turn will enhance your travels.</p>
             </div>
           </div>
         </div>
@@ -327,13 +291,13 @@ const featuredImpactAreas = [
     </section>
 
     <!-- Final CTA - Bold and Direct -->
-    <section class="bg-black text-white relative overflow-hidden">
+    <section class="text-white relative overflow-hidden" style="background-color: #1C2434;">
       <div class="py-20 lg:py-32 px-8 relative z-10">
         <div class="max-w-4xl mx-auto text-center">
           <h2 class="text-5xl lg:text-7xl font-black mb-8 leading-tight">
-            Ready to Travel <span class="bg-white text-black px-2 py-1">Differently?</span>
+            Ready to Travel <span class="gradient-highlight">Differently?</span>
           </h2>
-          <p class="text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed">
+          <p class="text-xl lg:text-2xl mb-12 leading-relaxed" style="color: #D1D4D1;">
             Start making choices that matter — same activities, bigger impact
           </p>
           
@@ -343,10 +307,11 @@ const featuredImpactAreas = [
                 type="text"
                 name="q"
                 placeholder="Search by destination..."
-                class="w-full py-4 px-6 text-lg text-gray-900 border-0 rounded-full bg-white focus:ring-4 focus:ring-white/30 outline-none"
+                class="w-full py-4 px-6 text-lg border-0 rounded-full bg-white focus:ring-4 outline-none"
+                style="color: #1C2434; --tw-ring-color: rgba(169, 143, 250, 0.3);"
                 required
               />
-              <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black">
+              <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 hover:text-black transition-colors" style="color: #7E827E;">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
@@ -354,33 +319,33 @@ const featuredImpactAreas = [
             </div>
           </form>
           
-          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center text-gray-400 mb-8">
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8" style="color: #A8ACA8;">
             <a
               href="/projects"
-              class="inline-flex items-center hover:text-white font-medium transition-colors"
+              class="inline-flex items-center hover:text-white font-medium transition-all duration-300 gap-2 hover:gap-3"
             >
               Browse all projects
-              <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
               </svg>
             </a>
-            <span class="text-gray-600">•</span>
+            <span style="color: #7E827E;">•</span>
             <a
               href="/stays"
-              class="inline-flex items-center hover:text-white font-medium transition-colors"
+              class="inline-flex items-center hover:text-white font-medium transition-all duration-300 gap-2 hover:gap-3"
             >
               Explore conscious accommodation
-              <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
               </svg>
             </a>
-            <span class="text-gray-600">•</span>
+            <span style="color: #7E827E;">•</span>
             <a
               href="/about"
-              class="inline-flex items-center hover:text-white font-medium transition-colors"
+              class="inline-flex items-center hover:text-white font-medium transition-all duration-300 gap-2 hover:gap-3"
             >
               Learn more about us
-              <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
               </svg>
             </a>
@@ -394,4 +359,49 @@ const featuredImpactAreas = [
       </div>
     </section>
   </main>
+  
+  <style>
+    .gradient-highlight {
+      background: linear-gradient(
+        135deg,
+        #DED5FD,
+        #C4B3FC,
+        #A98FFA,
+        #C4B3FC,
+        #DED5FD
+      );
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+      font-weight: 900;
+    }
+
+    .gradient-highlight-hero {
+      background: linear-gradient(
+        135deg,
+        #DED5FD,
+        #C4B3FC,
+        #A98FFA,
+        #C4B3FC,
+        #DED5FD
+      );
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+      font-weight: 900;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+  </style>
 </MainLayout>

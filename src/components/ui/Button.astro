@@ -7,9 +7,8 @@ export interface Props {
   fullWidth?: boolean;
   href?: string;
   class?: string;
-  bgColor?: string; // Custom background color (e.g., 'bg-white', 'bg-purple-600')
-  textColor?: string; // Custom text color (e.g., 'text-black', 'text-white')
-  hoverBg?: string; // Custom hover background color (e.g., 'hover:bg-gray-100')
+  rounded?: 'default' | 'full'; // New: control border radius
+  style?: string; // New: allow inline styles for design system colors
   [key: string]: any; // Allow any other HTML attributes
 }
 
@@ -21,38 +20,54 @@ const {
   fullWidth = false,
   href,
   class: className = '',
-  bgColor,
-  textColor,
-  hoverBg,
+  rounded = 'full',
+  style: inlineStyle = '',
   ...rest
 } = Astro.props;
 
-const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+// Enhanced base styles with better animations
+const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap';
 
+// New design system color palette
 const variants = {
-  primary: 'bg-black text-white hover:bg-gray-900 focus:ring-gray-500',
-  secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-  outline: 'border-1 border-black text-black hover:bg-gray-100 focus:ring-gray-500',
-  ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+  primary: 'text-white hover:shadow-[0_8px_24px_rgba(169,143,250,0.3)] hover:-translate-y-0.5', // Tropical Indigo
+  secondary: 'backdrop-blur-md hover:-translate-y-0.5', // Translucent
+  outline: 'border backdrop-blur-sm hover:-translate-y-0.5',
+  ghost: 'hover:bg-gray-100 hover:-translate-y-0.5',
+  danger: 'bg-red-600 text-white hover:bg-red-700 hover:shadow-[0_8px_24px_rgba(220,38,38,0.3)] hover:-translate-y-0.5 focus:ring-red-500',
 };
 
 const sizes = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  sm: 'px-5 py-2.5 text-sm',
+  md: 'px-8 py-4 text-base',
+  lg: 'px-10 py-5 text-lg',
+};
+
+const roundedStyles = {
+  default: 'rounded-lg',
+  full: 'rounded-full',
 };
 
 const widthClass = fullWidth ? 'w-full' : '';
 
-// Use custom colors if provided, otherwise use variant styles
-const colorClasses = (bgColor || textColor || hoverBg)
-  ? `${bgColor || ''} ${textColor || ''} ${hoverBg || ''}`
-  : variants[variant];
-
-const classes = `${baseStyles} ${colorClasses} ${sizes[size]} ${widthClass} ${className}`.trim();
+const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${roundedStyles[rounded]} ${widthClass} ${className}`.trim();
 
 const Tag = href ? 'a' : 'button';
+
+// Default inline styles for primary variant using new color palette
+const defaultPrimaryStyle = variant === 'primary' && !inlineStyle 
+  ? 'background-color: #A98FFA; color: #1C2434;' 
+  : '';
+
+const defaultSecondaryStyle = variant === 'secondary' && !inlineStyle
+  ? 'background-color: rgba(246, 247, 246, 0.1); border: 1px solid rgba(246, 247, 246, 0.3); color: #F6F7F6;'
+  : '';
+
+const defaultOutlineStyle = variant === 'outline' && !inlineStyle
+  ? 'border-color: #1C2434; color: #1C2434;'
+  : '';
+
+const finalStyle = inlineStyle || defaultPrimaryStyle || defaultSecondaryStyle || defaultOutlineStyle;
 ---
 
 <Tag
@@ -60,7 +75,15 @@ const Tag = href ? 'a' : 'button';
   type={!href ? type : undefined}
   disabled={disabled}
   href={href}
+  style={finalStyle}
   {...rest}
 >
   <slot />
 </Tag>
+
+<style>
+  /* Enhanced hover effect for gap animation on buttons with icons */
+  button:hover, a:hover {
+    gap: 0.75rem;
+  }
+</style>
