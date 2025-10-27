@@ -38,28 +38,6 @@ import Hero from "../../../components/sections/Hero.astro";
       --color-dark-darker: #151B27;
       --color-dark-darkest: #0F1419;
       
-      /* Nature: Reseda Green (Vibrant Sage) */
-      --color-nature: #657D60;
-      --color-nature-light: #7F9679;
-      --color-nature-lighter: #A3B59E;
-      --color-nature-dark: #4F6149;
-      --color-nature-darker: #3A4836;
-      --color-nature-bg: #E9EFEA;
-      
-      /* Nature Dark: Forest Green */
-      --color-forest: #273524;
-      --color-forest-light: #3D4F3A;
-      --color-forest-lighter: #556951;
-      --color-forest-bg: #E3E6E3;
-      
-      /* Earth: Bistre (Deep Brown - expanded variants) */
-      --color-earth: #251605;
-      --color-earth-light: #3D2B12;
-      --color-earth-lighter: #5A4525;
-      --color-earth-lightest: #78603D;
-      --color-earth-bg: #EBE6E0;
-      --color-earth-bg-light: #F5F2ED;
-      
       /* Legacy/Utility Colors */
       /* Red (Destructive) */
       --color-red-50: #fef2f2;
@@ -117,12 +95,14 @@ import Hero from "../../../components/sections/Hero.astro";
     }
     
     .btn-secondary {
-      background-color: var(--color-nature);
-      color: white;
+      background-color: transparent;
+      color: var(--color-dark);
+      border: 1px solid var(--color-neutral-300);
     }
     
     .btn-secondary:hover {
-      background-color: var(--color-nature-dark);
+      border-color: var(--color-neutral-400);
+      background-color: var(--color-neutral-50);
       transform: translateY(-1px);
     }
     
@@ -261,27 +241,27 @@ import Hero from "../../../components/sections/Hero.astro";
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-lg);">
               <div style="width: 120px; font-size: var(--font-size-sm); font-weight: 600; color: var(--color-neutral-700);">lg (16px)</div>
-              <div style="height: 24px; background: var(--color-nature); border-radius: 2px; width: var(--spacing-lg);"></div>
+              <div style="height: 24px; background: var(--color-neutral-400); border-radius: 2px; width: var(--spacing-lg);"></div>
               <span style="font-size: var(--font-size-xs); color: var(--color-neutral-500);">Card padding, comfortable gaps</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-lg);">
               <div style="width: 120px; font-size: var(--font-size-sm); font-weight: 600; color: var(--color-neutral-700);">xl (24px)</div>
-              <div style="height: 24px; background: var(--color-nature); border-radius: 2px; width: var(--spacing-xl);"></div>
+              <div style="height: 24px; background: var(--color-neutral-400); border-radius: 2px; width: var(--spacing-xl);"></div>
               <span style="font-size: var(--font-size-xs); color: var(--color-neutral-500);">Section internal spacing</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-lg);">
               <div style="width: 120px; font-size: var(--font-size-sm); font-weight: 600; color: var(--color-neutral-700);">2xl (32px)</div>
-              <div style="height: 24px; background: var(--color-nature); border-radius: 2px; width: var(--spacing-2xl);"></div>
+              <div style="height: 24px; background: var(--color-neutral-400); border-radius: 2px; width: var(--spacing-2xl);"></div>
               <span style="font-size: var(--font-size-xs); color: var(--color-neutral-500);">Spacious card padding</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-lg);">
               <div style="width: 120px; font-size: var(--font-size-sm); font-weight: 600; color: var(--color-neutral-700);">3xl (48px)</div>
-              <div style="height: 24px; background: var(--color-earth-lighter); border-radius: 2px; width: var(--spacing-3xl);"></div>
+              <div style="height: 24px; background: var(--color-neutral-500); border-radius: 2px; width: var(--spacing-3xl);"></div>
               <span style="font-size: var(--font-size-xs); color: var(--color-neutral-500);">Section spacing</span>
             </div>
             <div style="display: flex; align-items: center; gap: var(--spacing-lg);">
               <div style="width: 120px; font-size: var(--font-size-sm); font-weight: 600; color: var(--color-neutral-700);">4xl (64px)</div>
-              <div style="height: 24px; background: var(--color-earth-lighter); border-radius: 2px; width: var(--spacing-4xl);"></div>
+              <div style="height: 24px; background: var(--color-neutral-500); border-radius: 2px; width: var(--spacing-4xl);"></div>
               <span style="font-size: var(--font-size-xs); color: var(--color-neutral-500);">Large section padding</span>
             </div>
           </div>
@@ -332,7 +312,7 @@ import Hero from "../../../components/sections/Hero.astro";
           Proposed Color Palette (October 2025)
         </h2>
         <p style="font-size: var(--font-size-base); color: var(--color-dark); opacity: 0.7; margin-bottom: var(--spacing-3xl); max-width: 800px;">
-          An earthy, grounded palette with a progressive purple accent. Designed to convey authenticity, sustainability, and thoughtful purpose in ethical travel.
+          A minimal, professional palette focused on neutrals with a progressive purple accent. Each impact area is assigned specific appropriate colors for consistent, meaningful visual communication.
         </p>
 
         <!-- Color Philosophy -->
@@ -344,10 +324,10 @@ import Hero from "../../../components/sections/Hero.astro";
             Modern web design favors restraint. Color should be used <strong>sparingly</strong> as strategic splashes to guide the eye and create emphasis. The majority of the interface relies on neutral backgrounds and dark text, with accent colors appearing only where they add value.
           </p>
           <ul style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.8; padding-left: var(--spacing-xl);">
-            <li>Use earthy colors as subtle backgrounds for sections</li>
+            <li>Use neutral backgrounds for structure and breathing room</li>
             <li>Apply purple sparingly for interactive elements and CTAs</li>
             <li>Let photography and content take center stage</li>
-            <li>Create visual rhythm through color variation, not saturation</li>
+            <li>Create visual rhythm through thoughtful use of impact area colors</li>
           </ul>
         </div>
 
@@ -427,94 +407,6 @@ import Hero from "../../../components/sections/Hero.astro";
               <strong>Usage:</strong> Page backgrounds, card backgrounds, subtle section dividers. Creates breathing room and structure.
             </div>
           </div>
-
-          <!-- Reseda Green (NEW - replaces Feldgrau) -->
-          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 2px solid var(--color-nature); box-shadow: 0 4px 12px rgba(101, 125, 96, 0.1);">
-            <div style="margin-bottom: var(--spacing-lg);">
-              <div style="background: var(--color-nature); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
-                #657D60
-              </div>
-              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">
-                Reseda Green 
-                <span style="background: linear-gradient(135deg, #4ade80, #22c55e); padding: 2px 8px; border-radius: 4px; font-size: 10px; color: white; margin-left: 4px; font-weight: 600;">NEW</span>
-              </h3>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Nature / Wildlife</p>
-            </div>
-            
-            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
-              <div style="background: var(--color-nature-bg); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Background: #E9EFEA</div>
-              <div style="background: var(--color-nature-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #A3B59E</div>
-              <div style="background: var(--color-nature-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #7F9679</div>
-              <div style="background: var(--color-nature-dark); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Dark: #4F6149</div>
-              <div style="background: var(--color-nature-darker); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Darker: #3A4836</div>
-            </div>
-            
-            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
-              <strong>Usage:</strong> Wildlife/conservation tags, nature section backgrounds, environmental callouts. More vibrant than previous sage.
-            </div>
-            
-            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-nature-bg); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-nature-darker); border-left: 3px solid var(--color-nature);">
-              ✨ Replaces Feldgrau - brighter and more lively while keeping earthy character
-            </div>
-          </div>
-
-          <!-- Forest Green (NEW) -->
-          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 2px solid var(--color-forest); box-shadow: 0 4px 12px rgba(39, 53, 36, 0.15);">
-            <div style="margin-bottom: var(--spacing-lg);">
-              <div style="background: var(--color-forest); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
-                #273524
-              </div>
-              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">
-                Forest Green
-                <span style="background: linear-gradient(135deg, #4ade80, #22c55e); padding: 2px 8px; border-radius: 4px; font-size: 10px; color: white; margin-left: 4px; font-weight: 600;">NEW</span>
-              </h3>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Dark Nature Accent</p>
-            </div>
-            
-            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
-              <div style="background: var(--color-forest-bg); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Background: #E3E6E3</div>
-              <div style="background: var(--color-forest-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #556951</div>
-              <div style="background: var(--color-forest-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #3D4F3A</div>
-            </div>
-            
-            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
-              <strong>Usage:</strong> Conservation hero overlays, premium nature content sections, alternative dark backgrounds. Green alternative to navy/bistre.
-            </div>
-            
-            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-neutral-100); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.6;">
-              ✅ Excellent contrast (11:1) - perfect for dark sections with white text
-            </div>
-          </div>
-
-          <!-- Bistre (EXPANDED) -->
-          <div style="background: white; padding: var(--spacing-xl); border-radius: var(--border-radius-lg); border: 1px solid var(--color-neutral-200);">
-            <div style="margin-bottom: var(--spacing-lg);">
-              <div style="background: var(--color-earth); height: 80px; border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--font-size-xl);">
-                #251605
-              </div>
-              <h3 style="font-size: var(--font-size-lg); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-xs);">
-                Bistre
-                <span style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 2px 8px; border-radius: 4px; font-size: 10px; color: white; margin-left: 4px; font-weight: 600;">EXPANDED</span>
-              </h3>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.6;">Deep Earth Tone</p>
-            </div>
-            
-            <div style="display: grid; gap: var(--spacing-xs); margin-bottom: var(--spacing-md);">
-              <div style="background: var(--color-earth-bg-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); border: 1px solid var(--color-neutral-200);">BG Light: #F5F2ED</div>
-              <div style="background: var(--color-earth-bg); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark);">Background: #EBE6E0</div>
-              <div style="background: var(--color-earth-lightest); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lightest: #78603D</div>
-              <div style="background: var(--color-earth-lighter); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Lighter: #5A4525</div>
-              <div style="background: var(--color-earth-light); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: white;">Light: #3D2B12</div>
-            </div>
-            
-            <div style="font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
-              <strong>Usage:</strong> Rich footer backgrounds, community/culture content, warm section backgrounds. Now with expanded light variants for versatility.
-            </div>
-            
-            <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-earth-bg); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-earth-lightest); border-left: 3px solid var(--color-earth-lighter);">
-              ✨ New background variants replace Walnut Brown - unified earth tone family
-            </div>
-          </div>
         </div>
 
         <!-- Usage Examples -->
@@ -544,36 +436,18 @@ import Hero from "../../../components/sections/Hero.astro";
                 <strong>Seasalt (#F6F7F6) + White:</strong> Primary backgrounds, cards, sections. Creates structure and clarity at ~40-50%.
               </p>
             </div>
-
-            <div style="background: var(--color-nature-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-nature);">
-              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🌿 Wildlife & Environmental Content</h4>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
-                <strong>Reseda Green (#657D60):</strong> Wildlife/conservation tags, nature section backgrounds, environmental callouts. Use background variant (#E9EFEA) for large areas. More vibrant than previous sage - draws attention without overwhelming.
-              </p>
-            </div>
-
-            <div style="background: var(--color-forest-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-forest);">
-              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🌲 Conservation & Deep Nature</h4>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
-                <strong>Forest Green (#273524):</strong> Hero overlays for nature content, premium conservation sections, alternative dark footer. Use for dramatic, immersive nature-focused experiences. White text contrast is excellent.
-              </p>
-            </div>
-
-            <div style="background: var(--color-earth-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-earth-lighter);">
-              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">🤝 Community, Culture & Warmth</h4>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.6;">
-                <strong>Bistre (#251605 + variants):</strong> Community tags, cultural experiences, artisan content, footer backgrounds. Now with expanded light variants (#EBE6E0, #F5F2ED) for warm section backgrounds - replaces Walnut Brown for simplified palette.
-              </p>
-            </div>
           </div>
           
-          <div style="margin-top: var(--spacing-lg); padding: var(--spacing-lg); background: linear-gradient(135deg, rgba(169, 143, 250, 0.1), rgba(101, 125, 96, 0.1)); border-radius: var(--border-radius-md); border: 2px dashed var(--color-primary-light);">
+          <div style="margin-top: var(--spacing-lg); padding: var(--spacing-lg); background: var(--color-neutral-100); border-radius: var(--border-radius-md); border: 2px solid var(--color-primary-light);">
             <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">📊 Palette Summary</h4>
             <div style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; line-height: 1.7;">
-              <p style="margin-bottom: var(--spacing-xs);"><strong>Total: 7 colors</strong> (down from 8 - more focused)</p>
-              <p style="margin-bottom: var(--spacing-xs);">✨ <strong>New:</strong> Reseda Green (replaces Feldgrau), Forest Green (new dark option)</p>
-              <p style="margin-bottom: var(--spacing-xs);">🔄 <strong>Updated:</strong> Bistre expanded with background variants</p>
-              <p>❌ <strong>Removed:</strong> Walnut Brown (consolidated into Bistre family)</p>
+              <p style="margin-bottom: var(--spacing-xs);"><strong>Core System:</strong> 3 foundational colors</p>
+              <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md); opacity: 0.9;">
+                <li><strong>Tropical Indigo (#A98FFA):</strong> Purple accent for CTAs and interactive elements</li>
+                <li><strong>Raisin Black (#1C2434):</strong> Primary text and dark backgrounds</li>
+                <li><strong>Seasalt (#F6F7F6):</strong> Neutral backgrounds and breathing room</li>
+              </ul>
+              <p style="margin-bottom: var(--spacing-xs);"><strong>Impact Areas:</strong> Each of the 19 impact areas is assigned specific appropriate colors for consistent visual identity and meaningful communication.</p>
             </div>
           </div>
         </div>
@@ -587,8 +461,7 @@ import Hero from "../../../components/sections/Hero.astro";
             <p style="margin-bottom: var(--spacing-sm);"><strong>✅ Excellent Contrast (WCAG AAA):</strong></p>
             <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
               <li>Raisin Black (#1C2434) on white - 15:1 ratio</li>
-              <li>Forest Green (#273524) on white - 11:1 ratio</li>
-              <li>White text on both dark colors - perfect for dark sections</li>
+              <li>White text on dark colors - perfect for dark sections</li>
             </ul>
             
             <p style="margin-bottom: var(--spacing-sm);"><strong>⚠️ Caution - Use Darker Variant for Text:</strong></p>
@@ -596,13 +469,7 @@ import Hero from "../../../components/sections/Hero.astro";
               <li>Tropical Indigo (#A98FFA) on white - 3.3:1 ratio. Use #7353D4 for body text (4.5:1)</li>
             </ul>
             
-            <p style="margin-bottom: var(--spacing-sm);"><strong>❌ Backgrounds Only (Not for Body Text):</strong></p>
-            <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
-              <li>Reseda Green (#657D60) on white - 3.5:1 ratio</li>
-              <li>Bistre variants on white - use background variants or white text on dark versions</li>
-            </ul>
-            
-            <p><strong>💡 Best Practice:</strong> Always test color combinations with a contrast checker before use. When in doubt, use dark navy or forest green for text.</p>
+            <p><strong>💡 Best Practice:</strong> Always test color combinations with a contrast checker before use. When in doubt, use Raisin Black (#1C2434) for text.</p>
           </div>
         </div>
       </div>
@@ -774,7 +641,7 @@ import Hero from "../../../components/sections/Hero.astro";
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-xl);">
           <div class="card">
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-              <span class="badge" style="background: var(--color-nature-bg); color: var(--color-nature-darker);">Wildlife</span>
+              <span class="badge" style="background: #E8F5E9; color: #2E7D32;">Wildlife</span>
               <span style="color: var(--color-neutral-500); font-size: var(--font-size-sm);">Thailand</span>
             </div>
             <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-sm);">
@@ -788,7 +655,7 @@ import Hero from "../../../components/sections/Hero.astro";
           
           <div class="card">
             <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-              <span class="badge" style="background: var(--color-earth-bg); color: var(--color-earth-lightest);">Community</span>
+              <span class="badge" style="background: #FFF3E0; color: #E65100;">Community</span>
               <span style="color: var(--color-neutral-500); font-size: var(--font-size-sm);">Peru</span>
             </div>
             <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--spacing-sm);">
@@ -882,15 +749,15 @@ import Hero from "../../../components/sections/Hero.astro";
         
         <div style="display: grid; gap: var(--spacing-lg); max-width: 800px;">
           <!-- Success -->
-          <div style="background: var(--color-nature-bg); border-left: 4px solid var(--color-nature); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
-            <h4 style="font-weight: 600; color: var(--color-nature-darker); margin-bottom: var(--spacing-xs);">Success</h4>
-            <p style="color: var(--color-nature-darker); font-size: var(--font-size-sm);">Your project has been saved successfully.</p>
+          <div style="background: #E8F5E9; border-left: 4px solid #2E7D32; padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+            <h4 style="font-weight: 600; color: #1B5E20; margin-bottom: var(--spacing-xs);">Success</h4>
+            <p style="color: #1B5E20; font-size: var(--font-size-sm);">Your project has been saved successfully.</p>
           </div>
           
           <!-- Warning -->
-          <div style="background: var(--color-earth-bg); border-left: 4px solid var(--color-earth-lighter); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
-            <h4 style="font-weight: 600; color: var(--color-earth-lightest); margin-bottom: var(--spacing-xs);">Warning</h4>
-            <p style="color: var(--color-earth-lightest); font-size: var(--font-size-sm);">Limited availability - only 2 spots remaining.</p>
+          <div style="background: #FFF3E0; border-left: 4px solid #F57C00; padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+            <h4 style="font-weight: 600; color: #E65100; margin-bottom: var(--spacing-xs);">Warning</h4>
+            <p style="color: #E65100; font-size: var(--font-size-sm);">Limited availability - only 2 spots remaining.</p>
           </div>
           
           <!-- Info -->
@@ -1139,52 +1006,17 @@ import Hero from "../../../components/sections/Hero.astro";
           </h3>
           
           <div style="display: grid; gap: var(--spacing-lg);">
-            <!-- Environmental/Wildlife -->
-            <div style="background: var(--color-nature-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-nature);">
-              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-nature-darker); margin-bottom: var(--spacing-sm);">
-                🌿 Environmental & Wildlife - Reseda Green
+            <!-- Overview -->
+            <div style="background: var(--color-neutral-100); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-primary);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">
+                Specific Colors for Each Impact Area
               </h4>
-              <div style="font-size: var(--font-size-sm); color: var(--color-nature-darker); opacity: 0.9; line-height: 1.7; margin-bottom: var(--spacing-md);">
-                <strong>Primary:</strong> #657D60 | <strong>Background:</strong> #E9EFEA
-              </div>
-              <p style="font-size: var(--font-size-sm); color: var(--color-nature-darker); opacity: 0.8; line-height: 1.7; margin-bottom: var(--spacing-sm);">
-                <strong>Impact Areas:</strong> Conservation, Eco-Tourism, Forest Conservation, Marine Conservation, Plastic Reduction, Renewable Energy, Sustainable Farming, Wildlife Preservation, Zero Waste
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; line-height: 1.7; margin-bottom: var(--spacing-md);">
+                Each of the 19 impact areas is assigned specific appropriate colors for consistent visual identity and meaningful communication. Colors are chosen to reflect the nature and values of each impact area, creating intuitive associations for users.
               </p>
-              <div style="background: white; padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-nature-darker); margin-top: var(--spacing-sm);">
-                💡 <strong>Usage:</strong> Section backgrounds (#E9EFEA), headings, tags, borders. More vibrant than previous sage - appropriate for environmental topics.
-              </div>
-            </div>
-
-            <!-- Social Justice -->
-            <div style="background: var(--color-neutral-100); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-primary-darker);">
-              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-primary-darker); margin-bottom: var(--spacing-sm);">
-                ⚖️ Social Justice - Purple
-              </h4>
-              <div style="font-size: var(--font-size-sm); color: var(--color-primary-darker); opacity: 0.9; line-height: 1.7; margin-bottom: var(--spacing-md);">
-                <strong>Primary:</strong> #7353D4 | <strong>Background:</strong> #F6F7F6 (Seasalt neutral)
-              </div>
-              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; line-height: 1.7; margin-bottom: var(--spacing-sm);">
-                <strong>Impact Areas:</strong> Ethical Supply Chains, Ethical Trade, LGBTQ+ Support, Women Empowerment
+              <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; line-height: 1.7;">
+                Impact area colors are defined in <code style="background: white; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: var(--font-size-xs);">/src/utils/impactAreas.ts</code> and include gradients, background colors, and icon assignments for comprehensive visual system implementation.
               </p>
-              <div style="background: white; padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-dark); opacity: 0.7; margin-top: var(--spacing-sm);">
-                💡 <strong>Usage:</strong> Use dark purple (#7353D4) for text/headings on neutral background. Purple represents progressive values and social justice.
-              </div>
-            </div>
-
-            <!-- Community/Culture -->
-            <div style="background: var(--color-earth-bg); padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid var(--color-earth-lighter);">
-              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-earth-lightest); margin-bottom: var(--spacing-sm);">
-                🤝 Community & Culture - Bistre Earth Tones
-              </h4>
-              <div style="font-size: var(--font-size-sm); color: var(--color-earth-lightest); opacity: 0.9; line-height: 1.7; margin-bottom: var(--spacing-md);">
-                <strong>Primary:</strong> #5A4525 | <strong>Background:</strong> #EBE6E0
-              </div>
-              <p style="font-size: var(--font-size-sm); color: var(--color-earth-lightest); opacity: 0.9; line-height: 1.7; margin-bottom: var(--spacing-sm);">
-                <strong>Impact Areas:</strong> Animal Welfare, Community Support, Cultural Preservation, Education, Food Security, Health & Wellness
-              </p>
-              <div style="background: white; padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-earth-lightest); margin-top: var(--spacing-sm);">
-                💡 <strong>Usage:</strong> Warm backgrounds (#EBE6E0) for community-focused sections. Bistre variants (#5A4525, #78603D) for headings/borders. Conveys groundedness and tradition.
-              </div>
             </div>
 
             <!-- Implementation Notes -->
@@ -1196,10 +1028,11 @@ import Hero from "../../../components/sections/Hero.astro";
                 <strong>Strategy:</strong> Color-code impact area sections to create visual hierarchy and help users quickly identify content type.
               </p>
               <ul style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.8; padding-left: var(--spacing-xl);">
-                <li>Use light background variants (#E9EFEA, #EBE6E0, #F6F7F6) for large sections</li>
-                <li>Apply darker color variants to headings, tags, and borders for emphasis</li>
+                <li>Use gradients at 20% opacity for subtle background visual interest</li>
+                <li>Apply color-coded borders and tags for emphasis and categorization</li>
                 <li>Maintain consistent color mapping across all pages (projects, stays, impacts, etc.)</li>
                 <li>Avoid mixing impact colors within a single section - one dominant color per section</li>
+                <li>Environmental areas use green tones, social justice uses purple, community uses warm earth tones</li>
               </ul>
             </div>
           </div>
