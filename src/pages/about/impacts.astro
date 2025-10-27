@@ -1,30 +1,56 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import Hero from "../../components/sections/Hero.astro";
-import { impactAreaData } from "../../utils/impactAreas";
+import ImpactAreaCard from "../../components/content/ImpactAreaCard.astro";
 
 const title = "Impact Areas - Giveback Guide";
-const description = "Learn about the different ways projects and stays on Giveback Guide contribute to positive change for people, places, and the planet.";
+const description =
+  "Learn about the different ways projects and stays on Giveback Guide contribute to positive change for people, places, and the planet.";
 
 // Organize impact areas by category
 const environmentalAreas = [
-  "Animal Welfare", "Wildlife Rehabilitation", "Sustainable Food Systems", 
-  "Waste and Litter Reduction", "Marine Protection", "River Health", 
-  "Reforestation", "Habitat Restoration"
+  "Animal Welfare",
+  "Wildlife Rehabilitation",
+  "Sustainable Food Systems",
+  "Waste and Litter Reduction",
+  "Marine Protection",
+  "River Health",
+  "Reforestation",
+  "Habitat Restoration",
 ];
 
 const socialAreas = [
-  "Women's Empowerment", "LGBTQ+ Inclusion", "Disability Inclusion and Empowerment",
-  "Refugee and Migrant Inclusion", "Minority Heritage and Empowerment"
+  "Women's Empowerment",
+  "LGBTQ+ Inclusion",
+  "Disability Inclusion and Empowerment",
+  "Refugee and Migrant Inclusion",
+  "Minority Heritage and Empowerment",
 ];
 
 const communityAreas = [
-  "Youth Development", "Education and Skills Training", "Community Development",
-  "Poverty Alleviation", "Homelessness Support", "Cultural Heritage Preservation"
+  "Youth Development",
+  "Education and Skills Training",
+  "Community Development",
+  "Poverty Alleviation",
+  "Homelessness Support",
+  "Cultural Heritage Preservation",
 ];
+
+// Global icon settings - apply to all icons unless overridden per-card
+const globalIconPosition = { x: 25, y: 25 };
+const iconSize = 250;
+const iconOpacity = 0.05;
+
+// Display mode: 'code' = alphanumeric codes (E01, S02, etc.) | 'icon' = SVG icons
+const displayMode: 'code' | 'icon' = 'icon';
 ---
 
-<MainLayout title={title} description={description} headerVariant="transparent" headerTheme="dark">
+<MainLayout
+  title={title}
+  description={description}
+  headerVariant="transparent"
+  headerTheme="dark"
+>
   <!-- Hero Section -->
   <Hero
     title="Every Choice Creates Real Impact"
@@ -37,35 +63,36 @@ const communityAreas = [
   />
 
   <!-- Environmental & Conservation Section -->
-  <section style="background-color: #E9EFEA;">
+  <section style="background-color: #F6F7F6;">
     <div class="py-20 lg:py-24 px-8">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-black mb-6" style="color: #1C2434;">
+          <h2
+            class="text-4xl lg:text-5xl font-black mb-6"
+            style="color: #1C2434;"
+          >
             Environmental & Conservation
           </h2>
           <p class="text-xl max-w-3xl mx-auto" style="color: #7E827E;">
-            Protecting our planet's ecosystems, wildlife, and natural resources for future generations
+            Protecting our planet's ecosystems, wildlife, and natural resources
+            for future generations
           </p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {environmentalAreas.map((areaName) => {
-            const data = impactAreaData[areaName];
-            return (
-              <div class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1" style="border: 1px solid #7F9679;">
-                <div class="text-center">
-                  <div class="text-3xl font-black mb-3" style="color: #657D60;">{data?.code}</div>
-                  <h3 class="font-bold text-lg mb-3" style="color: #1C2434;">
-                    {areaName}
-                  </h3>
-                  <p class="text-sm leading-relaxed" style="color: #7E827E;">
-                    {data?.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          {
+            environmentalAreas.map((areaName) => (
+              <ImpactAreaCard
+                name={areaName}
+                mode="full"
+                displayMode={displayMode}
+                showBackground={true}
+                iconPosition={globalIconPosition}
+                iconSize={iconSize}
+                iconOpacity={iconOpacity}
+              />
+            ))
+          }
         </div>
       </div>
     </div>
@@ -76,66 +103,73 @@ const communityAreas = [
     <div class="py-20 lg:py-24 px-8">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-black mb-6" style="color: #1C2434;">
+          <h2
+            class="text-4xl lg:text-5xl font-black mb-6"
+            style="color: #1C2434;"
+          >
             Social Justice & Inclusion
           </h2>
           <p class="text-xl max-w-3xl mx-auto" style="color: #7E827E;">
-            Creating equitable opportunities and safe spaces for marginalised communities
+            Creating equitable opportunities and safe spaces for marginalised
+            communities
           </p>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {socialAreas.map((areaName) => {
-            const data = impactAreaData[areaName];
-            return (
-              <div class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1" style="border: 1px solid rgba(169, 143, 250, 0.3);">
-                <div class="text-center">
-                  <div class="text-3xl font-black mb-3" style="color: #7353D4;">{data?.code}</div>
-                  <h3 class="font-bold text-lg mb-3" style="color: #1C2434;">
-                    {areaName}
-                  </h3>
-                  <p class="text-sm leading-relaxed" style="color: #7E827E;">
-                    {data?.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
+        >
+          {
+            socialAreas.map((areaName) => (
+              <ImpactAreaCard
+                name={areaName}
+                mode="full"
+                displayMode={displayMode}
+                showBackground={true}
+                iconPosition={globalIconPosition}
+                iconSize={iconSize}
+                iconOpacity={iconOpacity}
+              />
+            ))
+          }
         </div>
       </div>
     </div>
   </section>
 
   <!-- Community & Development Section -->
-  <section style="background-color: #EBE6E0;">
+  <!-- Community & Development Section -->
+  <section style="background-color: #F6F7F6;">
     <div class="py-20 lg:py-24 px-8">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-4xl lg:text-5xl font-black mb-6" style="color: #1C2434;">
+          <h2
+            class="text-4xl lg:text-5xl font-black mb-6"
+            style="color: #1C2434;"
+          >
             Community & Development
           </h2>
           <p class="text-xl max-w-3xl mx-auto" style="color: #7E827E;">
-            Strengthening local communities through education, economic empowerment, and cultural preservation
+            Strengthening communities through sustainable economic opportunities
+            and cultural preservation
           </p>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {communityAreas.map((areaName) => {
-            const data = impactAreaData[areaName];
-            return (
-              <div class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1" style="border: 1px solid #78603D;">
-                <div class="text-center">
-                  <div class="text-3xl font-black mb-3" style="color: #5A4525;">{data?.code}</div>
-                  <h3 class="font-bold text-lg mb-3" style="color: #1C2434;">
-                    {areaName}
-                  </h3>
-                  <p class="text-sm leading-relaxed" style="color: #7E827E;">
-                    {data?.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
+        >
+          {
+            communityAreas.map((areaName) => (
+              <ImpactAreaCard
+                name={areaName}
+                mode="full"
+                displayMode={displayMode}
+                showBackground={true}
+                iconPosition={globalIconPosition}
+                iconSize={iconSize}
+                iconOpacity={iconOpacity}
+              />
+            ))
+          }
         </div>
       </div>
     </div>
@@ -145,43 +179,91 @@ const communityAreas = [
   <section class="bg-white">
     <div class="py-20 lg:py-32 px-8">
       <div class="max-w-6xl mx-auto text-center mb-20">
-        <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight" style="color: #1C2434;">
+        <h2
+          class="text-4xl lg:text-6xl font-black mb-8 leading-tight"
+          style="color: #1C2434;"
+        >
           How We Determine <span style="color: #7353D4;">Impact Areas</span>
         </h2>
-        <p class="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed" style="color: #7E827E;">
-          We carefully evaluate every project and stay on our platform to ensure they create meaningful, measurable impact.
+        <p
+          class="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed"
+          style="color: #7E827E;"
+        >
+          We carefully evaluate every project and stay on our platform to ensure
+          they create meaningful, measurable impact.
         </p>
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-6xl mx-auto">
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-6xl mx-auto"
+      >
         <div class="text-center">
-          <div class="text-6xl font-black mb-6 opacity-20" style="color: #1C2434;">01</div>
-          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">Direct Involvement</h3>
-          <p class="leading-relaxed" style="color: #7E827E;">Projects that directly contribute to the cause or issue</p>
+          <div
+            class="text-6xl font-black mb-6 opacity-20"
+            style="color: #1C2434;"
+          >
+            01
+          </div>
+          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">
+            Direct Involvement
+          </h3>
+          <p class="leading-relaxed" style="color: #7E827E;">
+            Projects that directly contribute to the cause or issue
+          </p>
         </div>
-        
+
         <div class="text-center">
-          <div class="text-6xl font-black mb-6 opacity-20" style="color: #1C2434;">02</div>
-          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">Financial Support</h3>
-          <p class="leading-relaxed" style="color: #7E827E;">A portion of proceeds goes toward the impact area</p>
+          <div
+            class="text-6xl font-black mb-6 opacity-20"
+            style="color: #1C2434;"
+          >
+            02
+          </div>
+          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">
+            Financial Support
+          </h3>
+          <p class="leading-relaxed" style="color: #7E827E;">
+            A portion of proceeds goes toward the impact area
+          </p>
         </div>
-        
+
         <div class="text-center">
-          <div class="text-6xl font-black mb-6 opacity-20" style="color: #1C2434;">03</div>
-          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">Educational Component</h3>
-          <p class="leading-relaxed" style="color: #7E827E;">Provides learning opportunities about the issue</p>
+          <div
+            class="text-6xl font-black mb-6 opacity-20"
+            style="color: #1C2434;"
+          >
+            03
+          </div>
+          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">
+            Educational Component
+          </h3>
+          <p class="leading-relaxed" style="color: #7E827E;">
+            Provides learning opportunities about the issue
+          </p>
         </div>
-        
+
         <div class="text-center">
-          <div class="text-6xl font-black mb-6 opacity-20" style="color: #1C2434;">04</div>
-          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">Community Partnership</h3>
-          <p class="leading-relaxed" style="color: #7E827E;">Working with local organisations in that field</p>
+          <div
+            class="text-6xl font-black mb-6 opacity-20"
+            style="color: #1C2434;"
+          >
+            04
+          </div>
+          <h3 class="text-xl font-bold mb-4" style="color: #1C2434;">
+            Community Partnership
+          </h3>
+          <p class="leading-relaxed" style="color: #7E827E;">
+            Working with local organisations in that field
+          </p>
         </div>
       </div>
-      
+
       <div class="text-center mt-16 max-w-3xl mx-auto">
         <p class="text-lg leading-relaxed" style="color: #7E827E;">
-          Many projects and stays contribute to <strong style="color: #1C2434;">multiple impact areas</strong>, giving you diverse ways to make a positive difference through your travels.
+          Many projects and stays contribute to <strong style="color: #1C2434;"
+            >multiple impact areas</strong
+          >, giving you diverse ways to make a positive difference through your
+          travels.
         </p>
       </div>
     </div>
@@ -194,20 +276,26 @@ const communityAreas = [
         <h2 class="text-4xl lg:text-6xl font-black mb-8 leading-tight">
           Ready to Make an <span class="gradient-highlight-cta">Impact?</span>
         </h2>
-        <p class="text-xl lg:text-2xl mb-12 leading-relaxed" style="color: #D1D4D1;">
-          Start exploring projects and stays that align with the causes you care about
+        <p
+          class="text-xl lg:text-2xl mb-12 leading-relaxed"
+          style="color: #D1D4D1;"
+        >
+          Start exploring projects and stays that align with the causes you care
+          about
         </p>
-        
-        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <a 
-            href="/projects" 
+
+        <div
+          class="flex flex-col sm:flex-row gap-6 justify-center items-center"
+        >
+          <a
+            href="/projects"
             class="px-8 py-4 text-lg font-semibold rounded-lg hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 whitespace-nowrap"
             style="background-color: #A98FFA; color: #1C2434;"
           >
             Browse All Projects
           </a>
-          <a 
-            href="/stays" 
+          <a
+            href="/stays"
             class="px-8 py-4 text-lg font-semibold text-white rounded-lg hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
             style="background-color: rgba(246, 247, 246, 0.1); border: 1px solid rgba(246, 247, 246, 0.3);"
           >
@@ -217,17 +305,17 @@ const communityAreas = [
       </div>
     </div>
   </section>
-  
+
   <style>
     /* Animated gradient for hero sections only */
     .gradient-highlight-hero {
       background: linear-gradient(
         135deg,
-        #DED5FD,
-        #C4B3FC,
-        #A98FFA,
-        #C4B3FC,
-        #DED5FD
+        #ded5fd,
+        #c4b3fc,
+        #a98ffa,
+        #c4b3fc,
+        #ded5fd
       );
       background-size: 200% 200%;
       -webkit-background-clip: text;
@@ -240,11 +328,11 @@ const communityAreas = [
     .gradient-highlight-cta {
       background: linear-gradient(
         135deg,
-        #DED5FD,
-        #C4B3FC,
-        #A98FFA,
-        #C4B3FC,
-        #DED5FD
+        #ded5fd,
+        #c4b3fc,
+        #a98ffa,
+        #c4b3fc,
+        #ded5fd
       );
       background-size: 200% 200%;
       -webkit-background-clip: text;
@@ -255,7 +343,8 @@ const communityAreas = [
     }
 
     @keyframes gradientShift {
-      0%, 100% {
+      0%,
+      100% {
         background-position: 0% 50%;
       }
       50% {

@@ -1,0 +1,94 @@
+---
+import { impactAreaData, gradientMap, iconMap, getImpactAreaData } from "../../utils/impactAreas";
+
+interface Props {
+  name: string; // Impact area name
+  mode?: 'full' | 'compact'; // Display mode: 'full' = large card with all features, 'compact' = smaller simplified card
+  displayMode?: 'code' | 'icon'; // Show alphanumeric code (E01, S02) or SVG icon
+  showBackground?: boolean; // Show large background icon
+  iconPosition?: { x: number; y: number }; // Position offset for background icon (percentage)
+  iconSize?: number; // Background icon size in pixels
+  iconOpacity?: number; // Background icon opacity (0-1)
+}
+
+const {
+  name,
+  mode = 'full',
+  displayMode = 'icon',
+  showBackground = true,
+  iconPosition = { x: 25, y: 25 },
+  iconSize = 250,
+  iconOpacity = 0.05,
+} = Astro.props;
+
+// Normalize apostrophes to handle curly quotes vs straight quotes
+const normalizedName = name.replace(/[\u2018\u2019\u201B]/g, "'");
+
+const data = getImpactAreaData(name);
+const gradient = gradientMap[normalizedName] || "";
+const icon = iconMap[normalizedName] || "";
+
+// Compact mode uses simpler styling
+const isCompact = mode === 'compact';
+---
+
+<div
+  class:list={[
+    "bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden",
+    isCompact ? "p-4" : "p-6"
+  ]}
+  style={`border: 1px solid #E5E7EB; background: ${gradient};`}
+>
+  {showBackground && icon && (
+    <div
+      class="absolute pointer-events-none"
+      style={`width: ${iconSize}px; height: ${iconSize}px; top: calc(50% + ${iconPosition.y}%); left: calc(50% + ${iconPosition.x}%); transform: translate(-50%, -50%); color: #1C2434; opacity: ${iconOpacity};`}
+      set:html={icon}
+    />
+  )}
+  <div class:list={["relative z-10", isCompact ? "" : "text-center"]}>
+    {isCompact ? (
+      <div class="flex items-start gap-3">
+        {displayMode === 'code' ? (
+          <div class="text-xl font-black flex-shrink-0" style="color: #1C2434;">
+            {data?.code}
+          </div>
+        ) : (
+          <div
+            class="flex-shrink-0"
+            style="width: 32px; height: 32px; color: #1C2434;"
+            set:html={icon}
+          />
+        )}
+        <div class="flex-1">
+          <h3 class="font-bold text-base mb-2" style="color: #1C2434;">
+            {name}
+          </h3>
+          <p class="text-sm leading-relaxed" style="color: #7E827E;">
+            {data?.description}
+          </p>
+        </div>
+      </div>
+    ) : (
+      <>
+        {displayMode === 'code' ? (
+          <div class="text-3xl font-black mb-3" style="color: #1C2434;">
+            {data?.code}
+          </div>
+        ) : (
+          <div
+            class="mx-auto mb-3"
+            style="width: 48px; height: 48px; color: #1C2434;"
+            set:html={icon}
+          />
+        )}
+        <h3 class="font-bold text-lg mb-3" style="color: #1C2434;">
+          {name}
+        </h3>
+        <p class="text-sm leading-relaxed" style="color: #7E827E;">
+          {data?.description}
+        </p>
+      </>
+    )}
+  </div>
+</div>

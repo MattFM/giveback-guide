@@ -8,6 +8,7 @@ import SupportBox from "../components/sections/SupportBox.astro";
 import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import SaveToList from "../components/features/save/SaveToList.astro";
+import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
 import { enrichImpactAreas } from "../utils/impactAreas";
 
 type Props = CollectionEntry<"projects">["data"];
@@ -578,20 +579,15 @@ const relatedProjects = allProjects
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {
-                  enrichImpactAreas(properties.pImpactsNames).map(({ name, data }) => (
-                    <div class="border border-gray-200 rounded-lg p-4 dark:border-gray-700">
-                      <div class="flex items-start gap-3">
-                        <div class={`text-xl font-black ${data?.color || "text-gray-500"}`}>{data?.code || "???"}</div>
-                        <div class="flex-1">
-                          <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
-                            {name}
-                          </h3>
-                          <p class="text-sm text-gray-600 dark:text-gray-400">
-                            {data?.description || "Contributing to positive impact in this area"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                  properties.pImpactsNames.map((areaName: string) => (
+                    <ImpactAreaCard
+                      name={areaName}
+                      mode="compact"
+                      displayMode="icon"
+                      showBackground={true}
+                      iconSize={200}
+                      iconOpacity={0.04}
+                    />
                   ))
                 }
               </div>
