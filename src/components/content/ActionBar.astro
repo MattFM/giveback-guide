@@ -123,7 +123,7 @@ const icons: Record<string, string> = {
       )}
     </div>
 
-    <!-- Booking Platform Buttons (50/50 split rows) -->
+    <!-- Booking Platform Buttons (50/50 split rows on desktop, 100% on mobile) -->
     {bookingButtons.length > 0 && (
       <>
         {bookingButtons.map((button: any, index: number) => {
@@ -134,8 +134,8 @@ const icons: Record<string, string> = {
           
           if (isStartOfRow) {
             return (
-              <div class="flex gap-3">
-                <div class="flex-1">
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 min-w-0">
                   <Button 
                     href={button.url}
                     variant="secondary"
@@ -150,7 +150,7 @@ const icons: Record<string, string> = {
                   </Button>
                 </div>
                 {nextButton ? (
-                  <div class="flex-1">
+                  <div class="flex-1 min-w-0">
                     <Button 
                       href={nextButton.url}
                       variant="secondary"
@@ -165,7 +165,7 @@ const icons: Record<string, string> = {
                     </Button>
                   </div>
                 ) : (
-                  <div class="flex-1"></div>
+                  <div class="flex-1 min-w-0 hidden sm:block"></div>
                 )}
               </div>
             );

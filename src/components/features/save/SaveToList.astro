@@ -19,9 +19,9 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Save this {itemType} to your personal lists to revisit later.</p>
     </div>
   )}
-  <div class="flex gap-3">
+  <div class="flex gap-3 w-full max-w-full overflow-hidden">
     <!-- Save trigger (50%) -->
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
       <Button
         id={"save-btn-" + itemId}
         variant={variant === 'minimal' ? 'secondary' : 'primary'}
@@ -45,7 +45,7 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
     </div>
 
     <!-- Done toggle (50%) -->
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
       <Button
         id={"done-btn-" + itemId}
         variant="secondary"
