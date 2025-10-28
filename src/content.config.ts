@@ -160,7 +160,6 @@ const posts = defineCollection({
 		  }),
 		  pOrganiser: transformedPropertySchema.rich_text,
 		  pSlug: transformedPropertySchema.rich_text,
-		  pCost: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  pFree: transformedPropertySchema.checkbox,
 		  pURL: transformedPropertySchema.url,
 		  pGYGURL: transformedPropertySchema.url,
