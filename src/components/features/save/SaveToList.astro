@@ -12,7 +12,7 @@ import Button from '../../ui/Button.astro';
 const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = false, mobileFullWidth = false } = Astro.props;
 ---
 
-<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} class={variant === 'minimal' ? 'hidden' : 'hidden bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
+<div id={"save-root-" + itemId} data-item-id={itemId} data-item-type={itemType} class={variant === 'minimal' ? 'hidden pb-3 border-b border-white/10' : 'hidden bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700'}>
   {variant !== 'minimal' && (
     <div class="mb-4">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Save</h3>

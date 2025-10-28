@@ -75,16 +75,14 @@ const icons: Record<string, string> = {
 <!-- ActionBar - Raisin Black container with purple accent -->
 <div class="rounded-lg p-6" style="background-color: #1C2434;">
   <div class="flex flex-col gap-3">
-    <!-- Save/Done Buttons Row (50/50 split) with divider -->
-    <div class="pb-3 border-b border-white/10">
-      <SaveToList 
-        itemType={itemType} 
-        itemId={itemId} 
-        variant="minimal" 
-        mobileShowLabel={true}
-        mobileFullWidth={true}
-      />
-    </div>
+    <!-- Save/Done Buttons Row (50/50 split) with divider - only shows when user is authenticated -->
+    <SaveToList 
+      itemType={itemType} 
+      itemId={itemId} 
+      variant="minimal" 
+      mobileShowLabel={true}
+      mobileFullWidth={true}
+    />
 
     <!-- Primary Action Buttons Row -->
     <div class="flex gap-3">
