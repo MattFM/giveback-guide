@@ -42,7 +42,8 @@ const {
   primaryUrl,
   primaryIcon = 'external',
   moreOptions = [],
-  getInvolvedText
+  getInvolvedText,
+  getInvolvedHeading
 } = Astro.props;
 
 const hasMoreOptions = moreOptions && moreOptions.length > 0;
@@ -52,6 +53,15 @@ const defaultGetInvolvedText = "Visit their website to learn more about this pro
 const displayGetInvolvedText = getInvolvedText && getInvolvedText.trim() !== "" 
   ? getInvolvedText 
   : defaultGetInvolvedText;
+
+const defaultGetInvolvedHeading = "Get Involved";
+const displayGetInvolvedHeading = getInvolvedHeading && getInvolvedHeading.trim() !== ""
+  ? getInvolvedHeading
+  : defaultGetInvolvedHeading;
+
+// Separate booking buttons (calendar icon) from other options
+const bookingButtons = moreOptions.filter((opt: any) => opt.icon === 'calendar');
+const mapButton = moreOptions.find((opt: any) => opt.icon === 'map');
 
 // Material Symbols icons (rounded style, inline SVG)
 const icons: Record<string, string> = {
@@ -96,10 +106,10 @@ const icons: Record<string, string> = {
       )}
 
       <!-- Map Button (30% - Secondary) -->
-      {moreOptions.find((opt: any) => opt.icon === 'map') && (
+      {mapButton && (
         <div class="flex-[3]">
           <Button 
-            href={moreOptions.find((opt: any) => opt.icon === 'map').url}
+            href={mapButton.url}
             variant="secondary"
             size="md"
             fullWidth={true}
@@ -113,24 +123,62 @@ const icons: Record<string, string> = {
       )}
     </div>
 
-    <!-- GetYourGuide Button (Full Width) -->
-    {moreOptions.find((opt: any) => opt.icon === 'calendar') && (
-      <Button 
-        href={moreOptions.find((opt: any) => opt.icon === 'calendar').url}
-        variant="secondary"
-        size="md"
-        fullWidth={true}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Fragment set:html={icons.calendar} />
-        <span>{moreOptions.find((opt: any) => opt.icon === 'calendar').label}</span>
-      </Button>
+    <!-- Booking Platform Buttons (50/50 split rows) -->
+    {bookingButtons.length > 0 && (
+      <>
+        {bookingButtons.map((button: any, index: number) => {
+          // Check if this button should start a new row (even index)
+          const isStartOfRow = index % 2 === 0;
+          const nextButton = bookingButtons[index + 1];
+          const isLastOddButton = index === bookingButtons.length - 1 && bookingButtons.length % 2 === 1;
+          
+          if (isStartOfRow) {
+            return (
+              <div class="flex gap-3">
+                <div class="flex-1">
+                  <Button 
+                    href={button.url}
+                    variant="secondary"
+                    size="md"
+                    fullWidth={true}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="background-color: rgba(169, 143, 250, 0.15); border: 1px solid rgba(169, 143, 250, 0.3); color: #F6F7F6;"
+                  >
+                    <Fragment set:html={icons.calendar} />
+                    <span>{button.label}</span>
+                  </Button>
+                </div>
+                {nextButton ? (
+                  <div class="flex-1">
+                    <Button 
+                      href={nextButton.url}
+                      variant="secondary"
+                      size="md"
+                      fullWidth={true}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style="background-color: rgba(169, 143, 250, 0.15); border: 1px solid rgba(169, 143, 250, 0.3); color: #F6F7F6;"
+                    >
+                      <Fragment set:html={icons.calendar} />
+                      <span>{nextButton.label}</span>
+                    </Button>
+                  </div>
+                ) : (
+                  <div class="flex-1"></div>
+                )}
+              </div>
+            );
+          }
+          // Skip odd-indexed buttons as they're already rendered with their pair
+          return null;
+        })}
+      </>
     )}
 
     <!-- Get Involved Heading & Description -->
     <div class="pt-2">
-      <h3 class="text-base font-semibold text-white mb-1">Get Involved</h3>
+      <h3 class="text-base font-semibold text-white mb-1">{displayGetInvolvedHeading}</h3>
       <p class="text-sm text-gray-300 leading-relaxed">
         {displayGetInvolvedText}
       </p>

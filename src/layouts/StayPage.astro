@@ -4,11 +4,14 @@ import MainLayout from "./MainLayout.astro";
 import AdBox from "../components/features/ads/AdBox.astro";
 import StayCard from "../components/content/StayCard.astro";
 import { getCollection } from "astro:content";
-import SupportBox from "../components/sections/SupportBox.astro";
 import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import SaveToList from "../components/features/save/SaveToList.astro";
 import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
+import ActionBar from "../components/content/ActionBar.astro";
+import StayMetadata from "../components/content/StayMetadata.astro";
+import VerificationBox from "../components/content/VerificationBox.astro";
+import SupportCTA from "../components/sections/SupportCTA.astro";
 
 type Props = CollectionEntry<"stays">["data"];
 
@@ -178,494 +181,67 @@ if (images.length === 0) {
           />
         </section>
 
-        <!-- Actions (Save, Done) -->
+        <!-- Title and Metadata -->
+        <section class="py-6 px-4">
+          <StayMetadata 
+            stayName={properties.sName}
+            types={properties.sType}
+            locales={properties.sLocale}
+            countries={properties.sCountry}
+            verificationStatus={properties.sVerify}
+            isFree={false}
+          >
+            <h1
+              class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+              data-pagefind-meta="title"
+            >
+              {properties.sTitle}
+            </h1>
+          </StayMetadata>
+        </section>
+
+        <!-- Action Bar (mobile/tablet only) -->
         {actionId && (
-          <section class="py-2 px-4">
-            <SaveToList itemType="stay" itemId={actionId} variant="minimal" mobileShowLabel={true} mobileFullWidth={true} />
+          <section class="py-6 px-4 lg:hidden">
+            <ActionBar 
+              itemType="stay"
+              itemId={actionId}
+              primaryLabel="Official Website"
+              primaryUrl={properties.sURL}
+              primaryIcon="external"
+              getInvolvedHeading="Reserve your stay"
+              getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+              moreOptions={[
+                ...(properties.sBookingURL ? [{ label: "Booking.com", url: properties.sBookingURL, icon: "calendar" }] : []),
+                ...(properties.sHotelsURL ? [{ label: "Hotels.com", url: properties.sHotelsURL, icon: "calendar" }] : []),
+                ...(properties.sAgodaURL ? [{ label: "Agoda", url: properties.sAgodaURL, icon: "calendar" }] : []),
+                ...(properties.sOtherURL ? [{ label: "Alternative Booking", url: properties.sOtherURL, icon: "calendar" }] : []),
+                ...(properties.sMapsURL ? [{ label: "View on Map", url: properties.sMapsURL, icon: "map" }] : [])
+              ].filter(Boolean)}
+            />
           </section>
         )}
-
-        <!-- Title and Key Information Cards -->
-        <section class="py-6 px-4">
-          {
-            properties.sVerify && (
-              <div class="inline-flex bg-gbgpink bg-gbgyellow bg-opacity-80 rounded-md px-2 py-1 items-center gap-1 mb-2">
-                <svg
-                  class="h-5 w-5 text-black"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <p class="text-sm font-medium text-black">
-                  {properties.sVerify}
-                </p>
-              </div>
-            )
-          }
-          
-          <h1
-            class="mb-4 mt-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-            data-pagefind-meta="title"
-          >
-            {properties.sTitle}
-          </h1>
-          <ul class="space-y-4 text-left text-gray-500 dark:text-gray-400">
-            <!-- Name -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-                ></path>
-              </svg>
-              <span>
-                Name of stay: <span
-                  class="font-medium text-gray-900 dark:text-white"
-                  data-pagefind-meta="organiser"
-                  >{properties.sName}</span
-                >
-              </span>
-            </li>
-            <!-- Locale(s) -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm0 0v6M9.5 9A2.5 2.5 0 0 1 12 6.5"
-                ></path>
-              </svg>
-              <span>
-                Locale(s): <span
-                  class="font-medium text-gray-900 dark:text-white"
-                  data-pagefind-meta="locale"
-                >
-                  {
-                    Array.isArray(properties.sLocale)
-                      ? properties.sLocale.map((locale, index) => {
-                          const country = Array.isArray(properties.sCountry)
-                            ? properties.sCountry[0]
-                            : properties.sCountry;
-                          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-                          const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-                          return (
-                            <>
-                              <a href={`/stays/${countrySlug}/${localeSlug}`}>
-                                {locale}
-                              </a>
-                              {index < properties.sLocale.length - 1 && ", "}
-                            </>
-                          );
-                        })
-                      : properties.sLocale && (
-                          (() => {
-                            const country = Array.isArray(properties.sCountry)
-                              ? properties.sCountry[0]
-                              : properties.sCountry;
-                            const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-                            const localeSlug = (properties.sLocale as string).toLowerCase().replace(/\s+/g, "-");
-                            return (
-                              <a href={`/stays/${countrySlug}/${localeSlug}`}>
-                                {properties.sLocale}
-                              </a>
-                            );
-                          })()
-                        )
-                  }
-                </span>
-              </span>
-            </li>
-            <!-- Nation(s) -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17.8 13.938h-.011a7 7 0 1 0-11.464.144h-.016l.14.171c.1.127.2.251.3.371L12 21l5.13-6.248c.194-.209.374-.429.54-.659l.13-.155Z"
-                ></path>
-              </svg>
-              <span>
-                Nation(s): <span
-                  class="font-medium text-gray-900 dark:text-white"
-                  data-pagefind-meta="countries"
-                >
-                  {
-                    Array.isArray(properties.sCountry)
-                      ? properties.sCountry.map((country, index) => (
-                          <>
-                            <a
-                              href={`/stays/${country.toLowerCase().replace(/\s+/g, "-")}`}
-                            >
-                              {country}
-                            </a>
-                            {index < properties.sCountry.length - 1 && ","}{" "}
-                          </>
-                        ))
-                      : properties.sCountry && (
-                          <a
-                            href={`/stays/${(properties.sCountry as string).toLowerCase().replace(/\s+/g, "-")}`}
-                          >
-                            {properties.sCountry}
-                          </a>
-                        )
-                  }
-                </span>
-              </span>
-            </li>
-            <!-- Categories -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15.583 8.445h.01M10.86 19.71l-6.573-6.63a.993.993 0 0 1 0-1.4l7.329-7.394A.98.98 0 0 1 12.31 4l5.734.007A1.968 1.968 0 0 1 20 5.983v5.5a.992.992 0 0 1-.316.727l-7.44 7.5a.974.974 0 0 1-1.384.001Z"
-                ></path>
-              </svg>
-              <span>
-                Categories: <span
-                  class="font-medium text-gray-900 dark:text-white"
-                >
-                  {
-                    Array.isArray(properties.sCategory)
-                      ? properties.sCategory.map((category, index) => (
-                          <>
-                            {category}
-                            {index < properties.sCategory.length - 1
-                              ? ", "
-                              : ""}
-                          </>
-                        ))
-                      : properties.sCategory
-                  }
-                </span>
-              </span>
-            </li>
-          </ul>
-        </section>
-
-        <!-- AdBox (mobile only) -->
-        <section class="py-6 px-4 md:hidden">
-          <div class="mx-auto w-full max-w-2xl">
-            <AdBox />
-          </div>
-        </section>
-
-  
-
-        <!-- Booking Card (mobile only) -->
-        <section class="py-6 px-4 lg:hidden">
-          <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Book Your Stay
-              </h3>
-            </div>
-            
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Reserve your stay at {properties.sName} through these trusted platforms:
-            </p>
-            
-            <div class="space-y-3">
-              {
-                properties.sURL && (
-                  <a
-                    href={properties.sURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Official Website
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              <!-- save UI moved to its own section above -->
-              
-              {
-                properties.sBookingURL && (
-                  <a
-                    href={properties.sBookingURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Book on Booking.com
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sHotelsURL && (
-                  <a
-                    href={properties.sHotelsURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Book on Hotels.com
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sAgodaURL && (
-                  <a
-                    href={properties.sAgodaURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Book on Agoda
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sOtherURL && (
-                  <a
-                    href={properties.sOtherURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-                  >
-                    Alternative Booking
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sMapsURL && (
-                  <a
-                    href={properties.sMapsURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-                  >
-                    View on Google Maps
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-            </div>
-            
-            <p class="mt-4 text-xs text-gray-600 dark:text-gray-400">
-              We may earn a commission if you book through these links. This helps support our platform at no extra cost to you.
-            </p>
-            
-            {
-              !properties.sURL && !properties.sBookingURL && !properties.sHotelsURL && !properties.sAgodaURL && !properties.sOtherURL && !properties.sMapsURL && (
-                <div class="text-center py-8">
-                  <svg
-                    class="w-12 h-12 text-gray-400 mx-auto mb-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-                    ></path>
-                  </svg>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Booking information coming soon
-                  </p>
-                </div>
-              )
-            }
-          </div>
-        </section>
-
-        <!-- Facilities and Amenities Section -->
-        <section class="py-6 px-4">
-            <h2
-              class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-            >
-              Facilities and amenities
-            </h2>
-            
-            {
-              facilitiesLeft.length > 0 || facilitiesRight.length > 0 ? (
-                <div class="flex flex-wrap gap-2">
-                  {facilitiesLeft.map((facility) => (
-                    <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1.5 rounded-lg dark:bg-green-900 dark:text-green-300">
-                      {facility}
-                    </span>
-                  ))}
-                  {facilitiesRight.map((facility) => (
-                    <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1.5 rounded-lg dark:bg-green-900 dark:text-green-300">
-                      {facility}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p class="text-gray-500 dark:text-gray-400">
-                  Facilities information is currently unavailable
-                </p>
-              )
-            }
-        </section>
 
         <!-- Impact Areas Section -->
         {
           properties.sImpactsNames && properties.sImpactsNames.length > 0 && (
             <section class="py-6 px-4">
-              <div class="flex items-center gap-2 mb-4">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  Impact Areas
-                </h2>
+              <div class="flex items-center justify-between gap-4 mb-4">
+                <div class="flex-1">
+                  <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
+                    Impact Areas
+                  </h2>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    This stay has a positive impact in the following areas.
+                  </p>
+                </div>
                 <a 
                   href="/about/impacts" 
-                  class="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                  aria-label="Learn more about impact areas"
+                  class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 flex-shrink-0"
                 >
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                  Learn more
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
               </div>
@@ -687,10 +263,52 @@ if (images.length === 0) {
           )
         }
 
-        <!-- About Section -->
+        <!-- Ad Box (in-content placement after Impact Areas) -->
         <section class="py-6 px-4">
+          <AdBox />
+        </section>
+
+        <!-- Facilities and Amenities Section -->
+        <section class="pt-6 pb-3 px-4">
+          <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
             <h2
-              class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+              class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+            >
+              Facilities and amenities
+            </h2>
+            
+            {
+              facilitiesLeft.length > 0 || facilitiesRight.length > 0 ? (
+                <div class="flex flex-wrap gap-2">
+                  {facilitiesLeft.map((facility) => (
+                    <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor" class="text-green-600 dark:text-green-400">
+                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+                      </svg>
+                      {facility}
+                    </span>
+                  ))}
+                  {facilitiesRight.map((facility) => (
+                    <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor" class="text-green-600 dark:text-green-400">
+                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+                      </svg>
+                      {facility}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p class="text-gray-500 dark:text-gray-400">
+                  Facilities information is currently unavailable
+                </p>
+              )
+            }
+          </div>
+        </section>        <!-- About Section -->
+        <section class="pt-6 pb-3 px-4">
+          <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
+            <h2
+              class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
               About this stay
             </h2>
@@ -718,150 +336,65 @@ if (images.length === 0) {
                 )}
               </div>
             </article>
+          </div>
         </section>
 
         <!-- Verification Section -->
-        {
-          properties.sVerify && (
-            <div class="py-4 px-4">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-                <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  This stay is {properties.sVerify}
-                </h5>
-                <a
-                  href="/about/verification"
-                  class="inline-flex items-center text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors self-start sm:self-auto"
-                >
-                  How does verification work?
-                  <svg
-                    class="ml-1 w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
-              </div>
-              
-              {properties.sReview && properties.sReview.trim() !== "" ? (
-                <!-- Review Speech Bubble Style -->
-                <div class="relative bg-gray-50 rounded-lg p-6 my-4 dark:bg-gray-800 before:content-[''] before:absolute before:bottom-0 before:left-8 before:w-0 before:h-0 before:border-l-[15px] before:border-l-transparent before:border-r-[15px] before:border-r-transparent before:border-t-[15px] before:border-t-gray-50 dark:before:border-t-gray-800 before:transform before:translate-y-full">
-                  <div class="flex">
-                    <div class="flex-shrink-0">
-                      <svg class="h-6 w-6 text-black dark:text-gray-300" fill="currentColor" viewBox="0 0 32 32">
-                        <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/>
-                      </svg>
-                    </div>
-                    <div class="ml-4 flex-1">
-                      <blockquote class="text-lg italic font-medium text-gray-900 dark:text-white mb-4">
-                        {properties.sReview}
-                      </blockquote>
-                      <cite class="flex items-center">
-                        <div class="flex-shrink-0">
-                          <div class="h-10 w-10 rounded-full bg-black dark:bg-gray-300 flex items-center justify-center">
-                            <svg class="h-6 w-6 text-white dark:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                          </div>
-                        </div>
-                        <div class="ml-4">
-                          <div class="text-sm text-gray-500 dark:text-gray-400">
-                            Verified by
-                          </div>
-                          <div class="text-sm font-medium text-gray-900 dark:text-white">
-                            Giveback Guide Team
-                          </div>
-                        </div>
-                      </cite>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <!-- Standard verification design when no review -->
-                <div>
-                  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                    We want you to feel confident when engaging with projects just like this one. That's why we have a verification system. Projects can either be verified by a member of our team or by a member of the Giveback community.
-                  </p>
-                  <a
-                    href="/about/verification"
-                    class="inline-flex font-medium items-center text-gray-500 hover:underline"
-                  >
-                    Find out more about verification
-                    <svg
-                      class="ml-2 -mr-1 w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              )}
-            </div>
-          )
-        }        <SupportBox />
+        <section class="pt-3 pb-3 px-4">
+          <VerificationBox 
+            verificationStatus={properties.sVerify}
+            testimonial={properties.sReview}
+          />
+        </section>
+
+        <!-- Support CTA (mobile/tablet only) -->
+        <section class="pt-3 pb-6 px-4 lg:hidden">
+          <SupportCTA />
+        </section>
 
         <!-- Verify/Report Buttons -->
-        <section class="pt-6 pb-8">
-          <div
-            class="mx-auto w-full max-w-2xl flex justify-center items-center"
-          >
-            <a href="/verify">
-              <button
-                type="button"
-                class="cursor-pointer text-black bg-gray-100 hover:bg-gray-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        <section class="pt-6 pb-8 px-4">
+          <div class="flex justify-center items-center gap-3">
+            <a 
+              href="/verify"
+              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+            >
+              <svg
+                class="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 22 22"
               >
-                <svg
-                  class="w-4 h-4 me-2"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 22 22"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                  ></path>
-                </svg>
-                Verify this stay
-              </button>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
+                ></path>
+              </svg>
+              Verify this stay
             </a>
-            <a href="/report">
-              <button
-                type="button"
-                class="cursor-pointer text-black bg-gray-100 hover:bg-gray-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            <a 
+              href="/report"
+              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+            >
+              <svg
+                class="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 22 22"
               >
-                <svg
-                  class="w-4 h-4 me-2"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 22 22"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  ></path>
-                </svg>
-                Report a problem
-              </button>
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                ></path>
+              </svg>
+              Report a problem
             </a>
-            <!-- Save button intentionally shown in the booking card(s) to match style -->
           </div>
         </section>
       </main>
@@ -869,222 +402,28 @@ if (images.length === 0) {
       <!-- Aside column (desktop only) -->
       <aside class="hidden lg:block pt-16">
         <div class="sticky top-24 space-y-6 pb-24">
-          <!-- Booking Card -->
-          <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Book Your Stay
-              </h3>
-            </div>
-            
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Reserve your stay at {properties.sName} through these trusted platforms:
-            </p>
-            
-            <div class="space-y-3">
-              {
-                properties.sURL && (
-                  <a
-                    href={properties.sURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Official Website
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              <!-- save UI moved to its own section above -->
-              
-              {
-                properties.sBookingURL && (
-                  <a
-                    href={properties.sBookingURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Book on Booking.com
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sHotelsURL && (
-                  <a
-                    href={properties.sHotelsURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Book on Hotels.com
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sAgodaURL && (
-                  <a
-                    href={properties.sAgodaURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Book on Agoda
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sOtherURL && (
-                  <a
-                    href={properties.sOtherURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-                  >
-                    Alternative Booking
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.sMapsURL && (
-                  <a
-                    href={properties.sMapsURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-                  >
-                    View on Google Maps
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-            </div>
-            
-            <p class="mt-4 text-xs text-gray-600 dark:text-gray-400">
-              We may earn a commission if you book through these links. This helps support our platform at no extra cost to you.
-            </p>
-            
-            {
-              !properties.sURL && !properties.sBookingURL && !properties.sHotelsURL && !properties.sAgodaURL && !properties.sOtherURL && !properties.sMapsURL && (
-                <div class="text-center py-8">
-                  <svg
-                    class="w-12 h-12 text-gray-400 mx-auto mb-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-                    ></path>
-                  </svg>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Booking information coming soon
-                  </p>
-                </div>
-              )
-            }
-          </div>
-
-          <AdBox />
+          <!-- Action Bar (sticky in sidebar) -->
+          {actionId && (
+            <ActionBar 
+              itemType="stay"
+              itemId={actionId}
+              primaryLabel="Official Website"
+              primaryUrl={properties.sURL}
+              primaryIcon="external"
+              getInvolvedHeading="Reserve your stay"
+              getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+              moreOptions={[
+                ...(properties.sBookingURL ? [{ label: "Booking.com", url: properties.sBookingURL, icon: "calendar" }] : []),
+                ...(properties.sHotelsURL ? [{ label: "Hotels.com", url: properties.sHotelsURL, icon: "calendar" }] : []),
+                ...(properties.sAgodaURL ? [{ label: "Agoda", url: properties.sAgodaURL, icon: "calendar" }] : []),
+                ...(properties.sOtherURL ? [{ label: "Alternative Booking", url: properties.sOtherURL, icon: "calendar" }] : []),
+                ...(properties.sMapsURL ? [{ label: "View on Map", url: properties.sMapsURL, icon: "map" }] : [])
+              ].filter(Boolean)}
+            />
+          )}
+          
+          <!-- Support CTA (desktop only) -->
+          <SupportCTA />
         </div>
       </aside>
     </div>

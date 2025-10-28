@@ -1,0 +1,170 @@
+---
+/*
+  StayMetadata Component
+  Displays verification/free badges above title, and a descriptive sentence below title
+  with pill-styled variables for stay name, types, locales, and countries.
+  
+  Props:
+    - stayName: string (accommodation name)
+    - types: string[] (e.g., ["Hostel", "Eco-Lodge"])
+    - locales: string[] (cities/regions)
+    - countries: string[] (countries)
+    - verificationStatus: string | null (e.g., "Verified", "Community Verified")
+    - isFree: boolean
+*/
+
+interface Props {
+  stayName?: string;
+  types?: string[];
+  locales?: string[];
+  countries?: string[];
+  verificationStatus?: string | null;
+  isFree?: boolean;
+}
+
+const {
+  stayName,
+  types = [],
+  locales = [],
+  countries = [],
+  verificationStatus = null,
+  isFree = false
+} = Astro.props;
+
+// Helper function to format array with ampersands
+function formatWithAmpersand(items: string[]): (string | { text: string; isPill: boolean })[] {
+  if (items.length === 0) return [];
+  if (items.length === 1) return [{ text: items[0], isPill: true }];
+  if (items.length === 2) return [
+    { text: items[0], isPill: true },
+    ' & ',
+    { text: items[1], isPill: true }
+  ];
+  
+  const result: (string | { text: string; isPill: boolean })[] = [];
+  items.forEach((item, index) => {
+    result.push({ text: item, isPill: true });
+    if (index < items.length - 2) {
+      result.push(', ');
+    } else if (index === items.length - 2) {
+      result.push(' & ');
+    }
+  });
+  return result;
+}
+
+const stayNameFormatted = stayName ? [{ text: stayName, isPill: true }] : [];
+const typesFormatted = formatWithAmpersand(types);
+const localesFormatted = formatWithAmpersand(locales);
+const countriesFormatted = formatWithAmpersand(countries);
+
+const hasMetadata = stayName || types.length > 0 || locales.length > 0 || countries.length > 0;
+
+// Determine if we should use simple comma format for locations (single locale + single country)
+const useSimpleLocationFormat = locales.length === 1 && countries.length === 1;
+---
+
+<!-- Status Badges (Verified & Free) - Render above where this component is placed -->
+{(verificationStatus || isFree) && (
+  <div class="flex flex-wrap items-center gap-2 mb-3">
+    {verificationStatus && (
+      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-800 bg-green-100 rounded-full border border-green-200">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
+          <path d="m346-60-76-130-151-31 17-147-96-112 96-111-17-147 151-31 76-131 134 62 134-62 77 131 150 31-17 147 96 111-96 112 17 147-150 31-77 130-134-62-134 62Zm91-287 227-225-45-41-182 180-95-99-46 45 141 140Z"/>
+        </svg>
+        {verificationStatus}
+      </span>
+    )}
+    {isFree && (
+      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-800 bg-amber-100 rounded-full border border-amber-200">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor">
+          <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+        </svg>
+        Free
+      </span>
+    )}
+  </div>
+)}
+
+<!-- Title slot - parent component should place <h1> here -->
+<slot />
+
+<!-- Descriptive Sentence with Pills - Renders below the title -->
+{hasMetadata && (
+  <p class="text-base text-gray-700 dark:text-gray-300 leading-relaxed mt-3">
+    {stayNameFormatted.map((item) => (
+      typeof item === 'string' 
+        ? item 
+        : <span class="inline-flex items-center px-2 py-0.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md dark:text-gray-300 dark:bg-gray-700">{item.text}</span>
+    ))}
+    {stayName && (types.length > 0 || locales.length > 0 || countries.length > 0) && ' is '}
+    {types.length > 0 && (
+      <>
+        {types.length === 1 ? 'a ' : ''}
+        {typesFormatted.map((item) => (
+          typeof item === 'string' 
+            ? item 
+            : <span class="inline-flex items-center px-2 py-0.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md dark:text-gray-300 dark:bg-gray-700">{item.text}</span>
+        ))}
+      </>
+    )}
+    {types.length > 0 && (locales.length > 0 || countries.length > 0) && ' in '}
+    
+    {/* Location formatting - two styles depending on complexity */}
+    {useSimpleLocationFormat ? (
+      /* Simple format: "Brighton, UK" for single locale + country */
+      <>
+        <a 
+          href={`/stays/${countries[0].toLowerCase().replace(/\s+/g, '-')}/${locales[0].toLowerCase().replace(/\s+/g, '-')}`}
+          class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
+          style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
+        >
+          {locales[0]}
+        </a>
+        <span>, </span>
+        <a 
+          href={`/stays/${countries[0].toLowerCase().replace(/\s+/g, '-')}`}
+          class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
+          style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
+        >
+          {countries[0]}
+        </a>
+      </>
+    ) : (
+      /* Complex format: "in X & Y in A & B" for multiple locations */
+      <>
+        {locales.length > 0 && (
+          <>
+            {localesFormatted.map((item, index) => (
+              typeof item === 'string' 
+                ? item 
+                : <a 
+                    href={`/stays/${countries[0]?.toLowerCase().replace(/\s+/g, '-') || 'all'}/${item.text.toLowerCase().replace(/\s+/g, '-')}`}
+                    class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
+                    style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
+                  >
+                    {item.text}
+                  </a>
+            ))}
+          </>
+        )}
+        {locales.length > 0 && countries.length > 0 && ' in '}
+        {countries.length > 0 && (
+          <>
+            {countriesFormatted.map((item) => (
+              typeof item === 'string' 
+                ? item 
+                : <a 
+                    href={`/stays/${item.text.toLowerCase().replace(/\s+/g, '-')}`}
+                    class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
+                    style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
+                  >
+                    {item.text}
+                  </a>
+            ))}
+          </>
+        )}
+      </>
+    )}.
+  </p>
+)}

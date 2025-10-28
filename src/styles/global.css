@@ -57,6 +57,29 @@ body.dark {
  * Tier 3 (Flow Content): No special styling - natural flow
  */
 
+/* Custom link colors for content format - use dark purple accent */
+.format a {
+    color: #7353D4; /* Darker purple for links */
+    text-decoration: underline;
+    text-decoration-color: rgba(115, 83, 212, 0.3);
+    text-underline-offset: 2px;
+}
+
+.format a:hover {
+    color: #5a3fb8; /* Even darker on hover */
+    text-decoration-color: rgba(115, 83, 212, 0.6);
+}
+
+.dark .format a {
+    color: #A98FFA; /* Tropical Indigo for dark mode */
+    text-decoration-color: rgba(169, 143, 250, 0.3);
+}
+
+.dark .format a:hover {
+    color: #c4b0fc; /* Lighter on hover in dark mode */
+    text-decoration-color: rgba(169, 143, 250, 0.6);
+}
+
 /* Fixed header spacing for pages without transparent header */
 body:has(.site-header.header-default) main {
     padding-top: 0;
