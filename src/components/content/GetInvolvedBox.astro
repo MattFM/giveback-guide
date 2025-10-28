@@ -1,0 +1,89 @@
+---
+interface Props {
+  description?: string | null;
+  websiteUrl?: string | null;
+  getYourGuideUrl?: string | null;
+  mapsUrl?: string | null;
+}
+
+const { description, websiteUrl, getYourGuideUrl, mapsUrl } = Astro.props;
+
+// Don't render if no URLs are provided
+const hasAnyUrl = websiteUrl || getYourGuideUrl || mapsUrl;
+---
+
+{hasAnyUrl && (
+  <div class="bg-gray-50 rounded-lg p-6">
+    <div class="mb-4">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+        <!-- Material Symbols: volunteer_activism (rounded) -->
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+          <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480v53q0 56-39.5 95.5T745-292q-36 0-68-17.5T627-352q-26 32-63.5 50T480-284q-75 0-127.5-52.5T300-464q0-75 52.5-127.5T480-644q75 0 127.5 52.5T660-464v53q0 31 22.5 52t54.5 21q31 0 52-21t21-52v-53q0-141-99.5-240.5T470-804q-141 0-240.5 99.5T130-464q0 141 99.5 240.5T470-124h150v44H480Zm0-283q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41Z"/>
+        </svg>
+        How to Get Involved
+      </h3>
+    </div>
+    
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      {description && description.trim() !== ""
+        ? description
+        : "The links below will take you to the relevant websites for this project, where you'll find all the details you need to get involved."}
+    </p>
+    
+    <div class="space-y-3">
+      {websiteUrl && (
+        <a
+          href={websiteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+        >
+          Visit Website
+          <!-- Material Symbols: open_in_new (rounded) -->
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" class="ml-2">
+            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/>
+          </svg>
+        </a>
+      )}
+      
+      {getYourGuideUrl && (
+        <a
+          href={getYourGuideUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+          style="background-color: #ff5533;"
+          onmouseover="this.style.backgroundColor='#e04a2d'"
+          onmouseout="this.style.backgroundColor='#ff5533'"
+        >
+          Book on GetYourGuide
+          <!-- Material Symbols: open_in_new (rounded) -->
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" class="ml-2">
+            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/>
+          </svg>
+        </a>
+      )}
+      
+      {mapsUrl && (
+        <a
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
+        >
+          View on Google Maps
+          <!-- Material Symbols: open_in_new (rounded) -->
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" class="ml-2">
+            <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/>
+          </svg>
+        </a>
+      )}
+    </div>
+    
+    {getYourGuideUrl && (
+      <p class="mt-4 text-xs text-gray-600 dark:text-gray-400">
+        We may earn a commission if you book through these links. This helps support our platform at no extra cost to you.
+      </p>
+    )}
+  </div>
+)}

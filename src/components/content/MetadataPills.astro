@@ -1,0 +1,144 @@
+---
+/*
+  MetadataPills Component - Display metadata as styled pills
+  
+  Props:
+    - itemType: 'project' | 'stay' (required)
+    - countries: array of country strings (clickable)
+    - cities: array of city strings (clickable) 
+    - organizationName: string (non-clickable, prefixed with "Operated by")
+    - types: array of type strings (non-clickable)
+    - verificationStatus: string | null (shows verification badge if present)
+    - isFree: boolean (shows "Free to Visit" if true)
+    
+  Usage (Project):
+    <MetadataPills 
+      itemType="project"
+      countries={properties.pCountry}
+      cities={properties.pLocale}
+      organizationName={properties.pOrganiser}
+      types={properties.pTypesNames}
+      verificationStatus={properties.pVerify}
+      isFree={properties.pFree}
+    />
+    
+  Usage (Stay):
+    <MetadataPills 
+      itemType="stay"
+      countries={properties.sCountry}
+      cities={properties.sLocale}
+      organizationName={properties.sName}
+      types={properties.sCategory}
+      verificationStatus={properties.sVerify}
+    />
+*/
+
+const { 
+  itemType = 'project',
+  countries = [],
+  cities = [],
+  organizationName,
+  types = [],
+  verificationStatus = null,
+  isFree = false
+} = Astro.props;
+
+// Helper to create URL-friendly slugs
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+// Material Symbols (Rounded) - from https://fonts.google.com/icons
+const icons = {
+  location: `<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M480-301q100-84 150-156.5T680-594q0-91-55.5-144.5T480-792q-89 0-144.5 53.5T280-594q0 64 50 136.5T480-301Zm0 101Q339-304 269.5-402T200-594q0-125 78-205.5T480-880q124 0 202 80.5T760-594q0 94-69.5 192T480-200Zm0-320q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520ZM200-80v-80h560v80H200Zm280-514Z"/></svg>`,
+  business: `<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M120-120v-560h240v-160h240v160h240v560H120Zm80-80h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm240 320h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm240 480h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Z"/></svg>`,
+  category: `<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="m260-520 220-360 220 360H260ZM700-80q-75 0-127.5-52.5T520-260q0-75 52.5-127.5T700-440q75 0 127.5 52.5T880-260q0 75-52.5 127.5T700-80Zm-580-20v-320h320v320H120Zm580-60q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Zm-500-20h160v-160H200v160Zm202-420h156l-78-126-78 126Zm78 0ZM360-340Zm340 80Z"/></svg>`,
+  verified: `<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="m346-60-76-130-151-31 17-147-96-112 96-111-17-147 151-31 76-131 134 62 134-62 77 131 150 31-17 147 96 111-96 112 17 147-150 31-77 130-134-62-134 62Zm91-287 227-226-57-57-170 170-85-85-56 57 141 141Zm43-133Z"/></svg>`,
+  money: `<svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor"><path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z"/></svg>`
+};
+---
+
+<div class="flex flex-wrap items-center gap-2 text-sm">
+  <!-- 1. Verification Badge (Non-clickable) -->
+  {verificationStatus && (
+    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full">
+      <Fragment set:html={icons.verified} />
+      <span class="font-medium">{verificationStatus}</span>
+    </span>
+  )}
+
+  <!-- 2. Free to Visit (Non-clickable) -->
+  {isFree && (
+    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full">
+      <Fragment set:html={icons.money} />
+      <span>Free to Visit</span>
+    </span>
+  )}
+
+  <!-- 3. City/Locale Pills (Clickable) -->
+  {cities && (Array.isArray(cities) ? cities : [cities]).map((city: string) => {
+    // For cities, we need a country to build the URL
+    // Use the first country if multiple exist
+    const firstCountry = Array.isArray(countries) ? countries[0] : countries;
+    if (!firstCountry) return null;
+    
+    const countrySlug = slugify(firstCountry);
+    const citySlug = slugify(city);
+    const url = `/${itemType}s/${countrySlug}/${citySlug}/`;
+    
+    return (
+      <a
+        href={url}
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 transition-colors"
+        title={`View all ${itemType}s in ${city}`}
+      >
+        <Fragment set:html={icons.location} />
+        <span class="font-medium">{city}</span>
+      </a>
+    );
+  })}
+
+  <!-- 4. Country Pills (Clickable) -->
+  {countries && (Array.isArray(countries) ? countries : [countries]).map((country: string) => {
+    const countrySlug = slugify(country);
+    const url = `/${itemType}s/${countrySlug}/`;
+    
+    return (
+      <a
+        href={url}
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 transition-colors"
+        title={`View all ${itemType}s in ${country}`}
+      >
+        <Fragment set:html={icons.location} />
+        <span class="font-medium">{country}</span>
+      </a>
+    );
+  })}
+
+  <!-- 5. Types (Non-clickable) -->
+  {types && (Array.isArray(types) ? types : [types]).map((type: string) => (
+    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full">
+      <Fragment set:html={icons.category} />
+      <span>{type}</span>
+    </span>
+  ))}
+
+  <!-- 6. Organization Name (Non-clickable, with "Operated by" prefix) -->
+  {organizationName && (
+    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full">
+      <Fragment set:html={icons.business} />
+      <span>Operated by {organizationName}</span>
+    </span>
+  )}
+</div>
+
+<style>
+  /* Ensure icons are vertically centered and sized consistently */
+  svg {
+    flex-shrink: 0;
+    margin-top: -1px; /* Fine-tune vertical alignment */
+  }
+</style>

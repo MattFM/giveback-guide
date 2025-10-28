@@ -48,6 +48,15 @@ body.dark {
     display: none; /* Chrome, Safari, and Edge */
   }
 
+/* Three-Tier Visual System
+ * Use these classes or their Tailwind equivalents directly in components
+ * 
+ * Tier 1 (Action Containers): border border-gray-200 bg-white rounded-lg shadow-sm p-6
+ * Tier 2 (Emphasis Containers): bg-gray-50 rounded-lg p-6
+ * Tier 2 Blue variant: bg-blue-50 rounded-lg p-6
+ * Tier 3 (Flow Content): No special styling - natural flow
+ */
+
 /* Fixed header spacing for pages without transparent header */
 body:has(.site-header.header-default) main {
     padding-top: 0;

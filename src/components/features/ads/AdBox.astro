@@ -3,39 +3,39 @@ import { Image } from 'astro:assets';
 import AdAvatar from '../../../assets/favicon.png';
 ---
 
-<div class="p-4 border border-gray-200 rounded-lg text-gray-500 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-400 dark:border-gray-800">
-  <aside class="text-xs text-gray-500 uppercase mb-2">
-Sponsored
+<div class="bg-gray-50 border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
+  <aside class="text-xs text-gray-500 uppercase mb-2 dark:text-gray-400">
+    Sponsored
   </aside>
-      <div class="flex items-center gap-2 mb-2">
+  <div class="flex items-center gap-2 mb-2">
     <Image 
       src={AdAvatar} 
-      alt="G Adventures Avatar" 
+      alt="Giveback Guide Avatar" 
       class="w-8 h-8 rounded-md object-cover"
     />
     <h3 class="text-lg font-medium text-gray-800 dark:text-gray-300 m-0">Advertise on Giveback Guide</h3>
   </div>
-    <div class="mt-2 mb-4 text-sm text-gray-500 dark:text-gray-300">
-      Advertise your business or project on Giveback Guide. We offer a range of advertising options to help you reach our engaged audience of socially conscious travellers.
-    </div>
-    <a
-              href="/about/advertising"
-              class="inline-flex items-center border border-solid border-gray-200 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-black hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Enquire now
-              <svg
-                class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 10"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M1 5h12m0 0L9 1m4 4L9 9"></path>
-              </svg>
-            </a>
+  <div class="mt-2 mb-4 text-sm text-gray-600 dark:text-gray-300">
+    Advertise your business or project on Giveback Guide. We offer a range of advertising options to help you reach our engaged audience of socially conscious travellers.
   </div>
+  <a
+    href="/about/advertising"
+    class="inline-flex items-center border border-solid border-gray-200 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-black hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+  >
+    Enquire now
+    <svg
+      class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 14 10"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M1 5h12m0 0L9 1m4 4L9 9"></path>
+      </svg>
+    </a>
+</div>

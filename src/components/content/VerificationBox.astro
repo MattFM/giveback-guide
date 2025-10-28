@@ -1,0 +1,89 @@
+---
+/*
+  VerificationBox Component - Displays verification status with optional testimonial
+  
+  Tier 2: Emphasis Container (tinted background, no border)
+  
+  Props:
+    - verificationStatus: string | null (e.g., "Verified", "Community Verified")
+    - testimonial: string | null (optional review/testimonial text)
+    - author: string | null (optional, for future use if we add author attribution)
+    - date: string | null (optional, for future use if we add verification date)
+    
+  Usage:
+    <VerificationBox 
+      verificationStatus={properties.pVerify}
+      testimonial={properties.pReview}
+    />
+*/
+
+const { 
+  verificationStatus = null,
+  testimonial = null,
+  author = null,
+  date = null
+} = Astro.props;
+
+// Only render if there's a verification status
+if (!verificationStatus) {
+  return null;
+}
+
+// Material Symbols (Rounded) - Verified icon
+const verifiedIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="28" fill="currentColor"><path d="m346-60-76-130-151-31 17-147-96-112 96-111-17-147 151-31 76-131 134 62 134-62 77 131 150 31-17 147 96 111-96 112 17 147-150 31-77 130-134-62-134 62Zm91-287 227-226-57-57-170 170-85-85-56 57 141 141Zm43-133Z"/></svg>`;
+
+// Default testimonial if none provided
+const defaultTestimonial = "We want you to feel confident when engaging with projects just like this one. That's why we have a verification system. Projects can either be verified by a member of our team or by a member of the Giveback community.";
+
+const displayTestimonial = testimonial && testimonial.trim() !== "" ? testimonial : defaultTestimonial;
+---
+
+<div class="bg-gray-50 border border-gray-200 rounded-lg p-6 dark:bg-gray-800/50 dark:border-gray-700">
+  <!-- Verification Status Header -->
+  <div class="flex items-center gap-2 mb-4">
+    <span class="text-green-600 dark:text-green-400" aria-hidden="true">
+      <Fragment set:html={verifiedIcon} />
+    </span>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+      This project is {verificationStatus}
+    </h3>
+  </div>
+
+  <!-- Testimonial/Description -->
+  <p class="text-gray-700 dark:text-gray-400 mb-4">
+    {displayTestimonial}
+  </p>
+
+  <!-- Optional: Author and Date (for future enhancement) -->
+  {(author || date) && (
+    <div class="text-sm text-gray-600 dark:text-gray-500 mb-4">
+      {author && <span>— {author}</span>}
+      {date && <span class="ml-2">Verified: {date}</span>}
+    </div>
+  )}
+
+  <!-- Learn More Link -->
+  <a
+    href="/about/verification"
+    class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+  >
+    Learn about our verification process
+    <svg 
+      class="w-4 h-4" 
+      aria-hidden="true" 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="20" 
+      height="20" 
+      fill="none" 
+      viewBox="0 0 20 20"
+    >
+      <path 
+        stroke="currentColor" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        stroke-width="2" 
+        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+      />
+    </svg>
+  </a>
+</div>

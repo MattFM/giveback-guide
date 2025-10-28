@@ -5,11 +5,17 @@ import AdBox from "../components/features/ads/AdBox.astro";
 import ProjectCard from "../components/content/ProjectCard.astro";
 import { getCollection } from "astro:content";
 import SupportBox from "../components/sections/SupportBox.astro";
+import SupportCTA from "../components/sections/SupportCTA.astro";
 import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import SaveToList from "../components/features/save/SaveToList.astro";
 import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
 import { enrichImpactAreas } from "../utils/impactAreas";
+import ActionBar from "../components/content/ActionBar.astro";
+import MetadataPills from "../components/content/MetadataPills.astro";
+import ProjectMetadata from "../components/content/ProjectMetadata.astro";
+import VerificationBox from "../components/content/VerificationBox.astro";
+import GetInvolvedBox from "../components/content/GetInvolvedBox.astro";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -157,423 +163,61 @@ const relatedProjects = allProjects
 
         <!-- Title and Info (now below gallery, full width) -->
         <section class="py-6 px-4">
-          {
-            (properties.pVerify || properties.pFree) && (
-              <div class="inline-flex items-start gap-2 mb-2">
-                {properties.pVerify && (
-                  <div class="bg-gbgyellow bg-opacity-80 rounded-md px-2 py-1 inline-flex items-center gap-1">
-                    <svg
-                      class="h-5 w-5 text-black"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <p class="text-sm font-medium text-black">
-                      {properties.pVerify}
-                    </p>
-                  </div>
-                )}
-                {properties.pFree && (
-                  <div class="rounded-md px-2 py-1 inline-flex items-center gap-1 bg-[#e3dcf6] bg-opacity-80">
-                    <svg
-                      class="w-5 h-5 text-gray-800 dark:text-white"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18.5 12A2.5 2.5 0 0 1 21 9.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v2.5a2.5 2.5 0 0 1 0 5V17a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2.5a2.5 2.5 0 0 1-2.5-2.5Z"
-                      />
-                    </svg>
-                    <p class="text-sm font-medium text-black">Free</p>
-                  </div>
-                )}
-              </div>
-            )
-          }
-          <h1
-            class="mb-4 mt-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-            data-pagefind-meta="title"
+          <ProjectMetadata 
+            operator={properties.pOrganiser}
+            types={properties.pTypesNames}
+            locales={properties.pLocale}
+            countries={properties.pCountry}
+            verificationStatus={!!properties.pVerify}
+            isFree={!!properties.pFree}
           >
-            {properties.pTitle}
-          </h1>
-          <ul class="space-y-4 text-left text-gray-500 dark:text-gray-400">
-            <!-- Name -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <!-- ...name icon and content... -->
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-                ></path>
-              </svg>
-              <span>
-                Name of project: <span
-                  class="font-medium text-gray-900 dark:text-white"
-                  data-pagefind-meta="organiser"
-                  >{properties.pOrganiser}</span
-                >
-              </span>
-            </li>
-            <!-- Locale(s) -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <!-- ...locale icon and content... -->
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm0 0v6M9.5 9A2.5 2.5 0 0 1 12 6.5"
-                ></path>
-              </svg>
-              <span>
-                Locale(s): <span
-                  class="font-medium text-gray-900 dark:text-white"
-                  data-pagefind-meta="locale"
-                >
-                  {
-                    Array.isArray(properties.pLocale)
-                      ? properties.pLocale.map((locale, index) => {
-                          const country = Array.isArray(properties.pCountry)
-                            ? properties.pCountry[0]
-                            : properties.pCountry;
-                          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-                          const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-                          return (
-                            <>
-                              <a href={`/projects/${countrySlug}/${localeSlug}`}>
-                                {locale}
-                              </a>
-                              {index < properties.pLocale.length - 1 && ", "}
-                            </>
-                          );
-                        })
-                      : (() => {
-                          const country = Array.isArray(properties.pCountry)
-                            ? properties.pCountry[0]
-                            : properties.pCountry;
-                          const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-                          const localeSlug = properties.pLocale.toLowerCase().replace(/\s+/g, "-");
-                          return (
-                            <a href={`/projects/${countrySlug}/${localeSlug}`}>
-                              {properties.pLocale}
-                            </a>
-                          );
-                        })()
-                  }
-                </span>
-              </span>
-            </li>
-            <!-- Nation(s) -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <!-- ...nation icon and content... -->
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17.8 13.938h-.011a7 7 0 1 0-11.464.144h-.016l.14.171c.1.127.2.251.3.371L12 21l5.13-6.248c.194-.209.374-.429.54-.659l.13-.155Z"
-                ></path>
-              </svg>
-              <span>
-                Nation(s): <span
-                  class="font-medium text-gray-900 dark:text-white"
-                  data-pagefind-meta="countries"
-                >
-                  {
-                    Array.isArray(properties.pCountry)
-                      ? properties.pCountry.map((country, index) => (
-                          <>
-                            <a
-                              href={`/projects/${country.toLowerCase().replace(/\s+/g, "-")}`}
-                            >
-                              {country}
-                            </a>
-                            {index < properties.pCountry.length - 1 && ","}{" "}
-                          </>
-                        ))
-                      : properties.pCountry
-                  }
-                </span>
-              </span>
-            </li>
-            <!-- Project Types -->
-            <li class="flex items-center space-x-3 rtl:space-x-reverse">
-              <!-- ...categories icon and content... -->
-              <svg
-                class="w-6 h-6 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15.583 8.445h.01M10.86 19.71l-6.573-6.63a.993.993 0 0 1 0-1.4l7.329-7.394A.98.98 0 0 1 12.31 4l5.734.007A1.968 1.968 0 0 1 20 5.983v5.5a.992.992 0 0 1-.316.727l-7.44 7.5a.974.974 0 0 1-1.384.001Z"
-                ></path>
-              </svg>
-              <span>
-                Project Types: <span
-                  class="font-medium text-gray-900 dark:text-white"
-                >
-                  {
-                    (() => {
-                      const allCategories = properties.pTypesNames && Array.isArray(properties.pTypesNames) ? properties.pTypesNames : properties.pTypesNames ? [properties.pTypesNames] : [];
-                      return allCategories.map((category, index) => (
-                        <>
-                          {category}
-                          {index < allCategories.length - 1 ? ", " : ""}
-                        </>
-                      ));
-                    })()
-                  }
-                </span>
-              </span>
-            </li>
-          </ul>
+            <h1
+              class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+              data-pagefind-meta="title"
+            >
+              {properties.pTitle}
+            </h1>
+          </ProjectMetadata>
         </section>
 
-        <!-- AdBox (mobile only) -->
-        <section class="py-6 px-4 md:hidden">
-          <div class="mx-auto w-full max-w-2xl">
-            <AdBox />
-          </div>
-        </section>
-
-        <!-- Actions (Save, Done) -->
+        <!-- Action Bar -->
         {actionId && (
-          <section class="py-2 px-4">
-            <SaveToList itemType="project" itemId={actionId} variant="minimal" mobileShowLabel={true} mobileFullWidth={true} />
+          <section class="py-6 px-4 lg:hidden">
+            <ActionBar 
+              itemType="project"
+              itemId={actionId}
+              primaryLabel="Visit Website"
+              primaryUrl={properties.pURL}
+              primaryIcon="external"
+              getInvolvedText={properties.pGetInvolved}
+              moreOptions={[
+                ...(properties.pGYGURL ? [{ label: "Book on GetYourGuide", url: properties.pGYGURL, icon: "calendar" }] : []),
+                ...(properties.pMapsURL ? [{ label: "View on Map", url: properties.pMapsURL, icon: "map" }] : [])
+              ].filter(Boolean)}
+            />
           </section>
         )}
-
-        <!-- Get Involved Card (mobile only) -->
-        <section class="py-6 px-4 lg:hidden">
-          <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                How to Get Involved
-              </h3>
-            </div>
-            
-            <div class="mb-4">
-              <span class="text-sm text-gray-600 dark:text-gray-400">
-                Cost: <span class="font-medium text-gray-900 dark:text-white">
-                  {
-                    Array.isArray(properties.pCost)
-                      ? properties.pCost.map((cost, index) => (
-                          <>
-                            {cost}
-                            {index < properties.pCost.length - 1 && ", "}
-                          </>
-                        ))
-                      : properties.pCost
-                  }
-                </span>
-              </span>
-            </div>
-            
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              {
-                properties.pGetInvolved && properties.pGetInvolved.trim() !== ""
-                  ? properties.pGetInvolved
-                  : "The button below will take you to the relevant website for this project, where you'll find all the details you'll need to get involved."
-              }
-            </p>
-            
-            <div class="space-y-3">
-              {
-                properties.pURL && (
-                  <a
-                    href={properties.pURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Visit Website
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.pGYGURL && (
-                  <a
-                    href={properties.pGYGURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                    style="background-color: #ff5533;"
-                    onmouseover="this.style.backgroundColor='#e04a2d'"
-                    onmouseout="this.style.backgroundColor='#ff5533'"
-                  >
-                    Book on GetYourGuide
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.pMapsURL && (
-                  <a
-                    href={properties.pMapsURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-                  >
-                    View on Google Maps
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-            </div>
-            
-            {
-              properties.pGYGURL && (
-                <p class="mt-4 text-xs text-gray-600 dark:text-gray-400">
-                  We may earn a commission if you book through these links. This helps support our platform at no extra cost to you.
-                </p>
-              )
-            }
-            
-            {
-              !properties.pURL && !properties.pGYGURL && (
-                <div class="text-center py-8">
-                  <svg
-                    class="w-12 h-12 text-gray-400 mx-auto mb-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-                    ></path>
-                  </svg>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Involvement information coming soon
-                  </p>
-                </div>
-              )
-            }
-          </div>
-        </section>
 
         <!-- Impact Areas Section -->
         {
           properties.pImpactsNames && properties.pImpactsNames.length > 0 && (
             <section class="py-6 px-4">
-              <div class="flex items-center gap-2 mb-4">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  Impact Areas
-                </h2>
+              <div class="flex items-center justify-between gap-4 mb-4">
+                <div class="flex-1">
+                  <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
+                    Impact Areas
+                  </h2>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    This project has a positive impact in the following areas.
+                  </p>
+                </div>
                 <a 
                   href="/about/impacts" 
-                  class="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                  aria-label="Learn more about impact areas"
+                  class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 flex-shrink-0"
                 >
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                  Learn more
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
               </div>
@@ -595,140 +239,102 @@ const relatedProjects = allProjects
           )
         }
 
-        <!-- About Section -->
+        <!-- Ad Box (in-content placement after Impact Areas) -->
         <section class="py-6 px-4">
-          <h2
-            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-          >
-            About this project
-          </h2>
-          <article
-            class="format format-sm sm:format-base lg:format-lg format-teal dark:format-invert"
-            data-pagefind-body
-            data-pagefind-filter="type:project"
-          >
-            <slot />
-            <!-- Hidden searchable metadata for improved search indexing -->
-            <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
-              {properties.pCountry && (
-                <span>
-                  {Array.isArray(properties.pCountry) 
-                    ? properties.pCountry.join(" ") 
-                    : properties.pCountry}
-                </span>
-              )}
-              {properties.pLocale && (
-                <span>
-                  {Array.isArray(properties.pLocale) 
-                    ? properties.pLocale.join(" ") 
-                    : properties.pLocale}
-                </span>
-              )}
-            </div>
-          </article>
+          <AdBox />
+        </section>
+
+        <!-- About Section -->
+        <section class="pt-6 pb-3 px-4">
+          <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
+            <h2
+              class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+            >
+              About this project
+            </h2>
+            <article
+              class="format format-sm sm:format-base lg:format-lg format-teal dark:format-invert"
+              data-pagefind-body
+              data-pagefind-filter="type:project"
+            >
+              <slot />
+              <!-- Hidden searchable metadata for improved search indexing -->
+              <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+                {properties.pCountry && (
+                  <span>
+                    {Array.isArray(properties.pCountry) 
+                      ? properties.pCountry.join(" ") 
+                      : properties.pCountry}
+                  </span>
+                )}
+                {properties.pLocale && (
+                  <span>
+                    {Array.isArray(properties.pLocale) 
+                      ? properties.pLocale.join(" ") 
+                      : properties.pLocale}
+                  </span>
+                )}
+              </div>
+            </article>
+          </div>
         </section>
 
         <!-- Verification Section -->
-        {
-          properties.pVerify && (
-            <div class="py-4 px-4">
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                <svg
-                  class="h-7 w-7 text-black inline-block"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                This project is {properties.pVerify}
-              </h5>
-              <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                {properties.pReview && properties.pReview.trim() !== ""
-                  ? properties.pReview
-                  : "We want you to feel confident when engaging with projects just like this one. That's why we have a verification system. Projects can either be verified by a member of our team or by a member of the Giveback community."}
-              </p>
-              <a
-                href="/about/verification"
-                class="inline-flex font-medium items-center text-gray-500 hover:underline"
-              >
-                Find out more about verification
-                <svg
-                  class="ml-2 -mr-1 w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
-            </div>
-          )
-        }
+        <section class="pt-3 pb-3 px-4">
+          <VerificationBox 
+            verificationStatus={properties.pVerify}
+            testimonial={properties.pReview}
+          />
+        </section>
 
-        <SupportBox />
+        <!-- Support CTA (mobile/tablet only) -->
+        <section class="pt-3 pb-6 px-4 lg:hidden">
+          <SupportCTA />
+        </section>
 
         <!-- Verify/Report Buttons -->
-  <section class="pt-6 pb-8">
-          <div
-            class="mx-auto w-full max-w-2xl flex justify-center items-center"
-          >
-            <a href="/verify">
-              <button
-                type="button"
-                class="cursor-pointer text-black bg-gray-100 hover:bg-gray-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        <section class="pt-6 pb-8 px-4">
+          <div class="flex justify-center items-center gap-3">
+            <a 
+              href="/verify"
+              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+            >
+              <svg
+                class="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 22 22"
               >
-                <svg
-                  class="w-4 h-4 me-2"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 22 22"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                  ></path>
-                </svg>
-                Verify this project
-              </button>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
+                ></path>
+              </svg>
+              Verify this project
             </a>
-            <a href="/report">
-              <button
-                type="button"
-                class="cursor-pointer text-black bg-gray-100 hover:bg-gray-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            <a 
+              href="/report"
+              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+            >
+              <svg
+                class="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 22 22"
               >
-                <svg
-                  class="w-4 h-4 me-2"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 22 22"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  ></path>
-                </svg>
-                Report a problem
-              </button>
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                ></path>
+              </svg>
+              Report a problem
             </a>
-            <!-- Save moved to its own section above the Get Involved card -->
           </div>
         </section>
       </main>
@@ -736,148 +342,24 @@ const relatedProjects = allProjects
     <!-- Aside column (desktop only) -->
       <aside class="hidden lg:block pt-16">
         <div class="sticky top-24 space-y-6 pb-24">
-          <!-- Get Involved Card (desktop only) -->
-          <div class="bg-white border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                How to Get Involved
-              </h3>
-            </div>
-            
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              {
-                properties.pGetInvolved && properties.pGetInvolved.trim() !== ""
-                  ? properties.pGetInvolved
-                  : "The button below will take you to the relevant website for this project, where you'll find all the details you'll need to get involved."
-              }
-            </p>
-            
-            <div class="space-y-3">
-              {
-                properties.pURL && (
-                  <a
-                    href={properties.pURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    Visit Website
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.pGYGURL && (
-                  <a
-                    href={properties.pGYGURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                    style="background-color: #ff5533;"
-                    onmouseover="this.style.backgroundColor='#e04a2d'"
-                    onmouseout="this.style.backgroundColor='#ff5533'"
-                  >
-                    Book on GetYourGuide
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-              
-              {
-                properties.pMapsURL && (
-                  <a
-                    href={properties.pMapsURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
-                  >
-                    View on Google Maps
-                    <svg
-                      class="w-4 h-4 ml-2"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18 14v4.833A1.166 1.166 0 0 1 16.833 20H5.167A1.167 1.167 0 0 1 4 18.833V7.167A1.166 1.166 0 0 1 5.167 6h4.618m4.447-2H20v5.768m-7.889 2.121 7.778-7.778"
-                      ></path>
-                    </svg>
-                  </a>
-                )
-              }
-            </div>
-            
-            {
-              properties.pGYGURL && (
-                <p class="mt-4 text-xs text-gray-600 dark:text-gray-400">
-                  We may earn a commission if you book through these links. This helps support our platform at no extra cost to you.
-                </p>
-              )
-            }
-            
-            {
-              !properties.pURL && !properties.pGYGURL && (
-                <div class="text-center py-8">
-                  <svg
-                    class="w-12 h-12 text-gray-400 mx-auto mb-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
-                    ></path>
-                  </svg>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Involvement information coming soon
-                  </p>
-                </div>
-              )
-            }
-          </div>
+          <!-- Action Bar (sticky in sidebar) -->
+          {actionId && (
+            <ActionBar 
+              itemType="project"
+              itemId={actionId}
+              primaryLabel="Visit Website"
+              primaryUrl={properties.pURL}
+              primaryIcon="external"
+              getInvolvedText={properties.pGetInvolved}
+              moreOptions={[
+                ...(properties.pGYGURL ? [{ label: "Book on GetYourGuide", url: properties.pGYGURL, icon: "calendar" }] : []),
+                ...(properties.pMapsURL ? [{ label: "View on Map", url: properties.pMapsURL, icon: "map" }] : [])
+              ].filter(Boolean)}
+            />
+          )}
           
-          <AdBox />
+          <!-- Support CTA (desktop only) -->
+          <SupportCTA />
         </div>
       </aside>
     </div>

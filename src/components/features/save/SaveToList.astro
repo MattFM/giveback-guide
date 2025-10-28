@@ -1,4 +1,6 @@
 ---
+import Button from '../../ui/Button.astro';
+
 /*
   Props:
     - itemType: 'project' | 'stay'
@@ -17,50 +19,54 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Save this {itemType} to your personal lists to revisit later.</p>
     </div>
   )}
-  <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:flex-wrap sm:items-center">
-    <!-- Save trigger -->
-    <button
-      id={"save-btn-" + itemId}
-      class={
-        variant === 'minimal'
-          ? `${mobileFullWidth ? 'w-full sm:w-auto ' : ''}inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500`
-          : 'w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md px-4 py-2 dark:focus:ring-primary-800'
-      }
-      aria-expanded="false"
-      aria-controls={"save-panel-" + itemId}
-      type="button"
-      title="Save to a list"
-    >
-      <!-- Save icon (unsaved) -->
-      <svg id={"save-ic-off-" + itemId} class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
-      </svg>
-      <!-- Save icon (saved) -->
-      <svg id={"save-ic-on-" + itemId} class="w-6 h-6 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-        <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
-      </svg>
-      <span id={"save-label-" + itemId} class={variant === 'minimal' ? (mobileShowLabel ? '' : 'hidden sm:inline') : ''}>Save</span>
-    </button>
+  <div class="flex gap-3">
+    <!-- Save trigger (50%) -->
+    <div class="flex-1">
+      <Button
+        id={"save-btn-" + itemId}
+        variant={variant === 'minimal' ? 'secondary' : 'primary'}
+        size="md"
+        fullWidth={true}
+        type="button"
+        aria-expanded="false"
+        aria-controls={"save-panel-" + itemId}
+        title="Save to a list"
+      >
+        <!-- Save icon (unsaved) -->
+        <svg id={"save-ic-off-" + itemId} class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
+        </svg>
+        <!-- Save icon (saved) -->
+        <svg id={"save-ic-on-" + itemId} class="w-5 h-5 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
+        </svg>
+        <span id={"save-label-" + itemId} class={variant === 'minimal' ? (mobileShowLabel ? '' : 'hidden sm:inline') : ''}>Save</span>
+      </Button>
+    </div>
 
-    <!-- Done toggle -->
-    <button
-      id={"done-btn-" + itemId}
-      type="button"
-      class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      aria-pressed="false"
-      aria-label="Mark as done"
-      title="Mark as done"
-    >
-      <!-- Done icon (not completed) -->
-      <svg id={"done-ic-off-" + itemId} class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-      </svg>
-      <!-- Done icon (completed) -->
-      <svg id={"done-ic-on-" + itemId} class="w-6 h-6 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
-      </svg>
-      <span id={"done-label-" + itemId}>Mark as done</span>
-    </button>
+    <!-- Done toggle (50%) -->
+    <div class="flex-1">
+      <Button
+        id={"done-btn-" + itemId}
+        variant="secondary"
+        size="md"
+        fullWidth={true}
+        type="button"
+        aria-pressed="false"
+        aria-label="Mark as done"
+        title="Mark as done"
+      >
+        <!-- Done icon (not completed) -->
+        <svg id={"done-ic-off-" + itemId} class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+        <!-- Done icon (completed) -->
+        <svg id={"done-ic-on-" + itemId} class="w-5 h-5 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
+        </svg>
+        <span id={"done-label-" + itemId}>Mark as done</span>
+      </Button>
+    </div>
   </div>
 
   <div id={"actions-msg-" + itemId} class="mt-2 text-sm" aria-live="polite"></div>
@@ -193,15 +199,18 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
           }
         }
         if (label) label.textContent = isSaved ? 'Saved' : 'Save';
+        // Update button variant by toggling between secondary and primary
         if (btn) {
-          const inactive = ['bg-white','hover:bg-gray-50','text-gray-700','border-gray-300','focus:ring-blue-500'];
-          const active = ['bg-primary-600','hover:bg-primary-700','text-white','border-primary-600','focus:ring-primary-300','shadow'];
           if (isSaved) {
-            inactive.forEach(c => btn.classList.remove(c));
-            active.forEach(c => btn.classList.add(c));
+            // Switch to primary variant appearance
+            btn.style.backgroundColor = '#1C2434';
+            btn.style.color = 'white';
+            btn.style.borderColor = '#1C2434';
           } else {
-            active.forEach(c => btn.classList.remove(c));
-            inactive.forEach(c => btn.classList.add(c));
+            // Keep secondary variant appearance
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
           }
         }
       } catch (e) {
@@ -249,15 +258,18 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       const off = byId('done-ic-off-' + itemIdStr);
       const on = byId('done-ic-on-' + itemIdStr);
       const label = byId('done-label-' + itemIdStr);
-      const inactive = ['bg-white','hover:bg-gray-50','text-gray-700','border-gray-300','focus:ring-blue-500'];
-      const active = ['bg-primary-600','hover:bg-primary-700','text-white','border-primary-600','focus:ring-primary-300','shadow'];
+      
+      // Update button appearance using inline styles (since we're using Button component)
       if (isDone) {
-        inactive.forEach(c => doneBtn.classList.remove(c));
-        active.forEach(c => doneBtn.classList.add(c));
+        doneBtn.style.backgroundColor = '#1C2434';
+        doneBtn.style.color = 'white';
+        doneBtn.style.borderColor = '#1C2434';
       } else {
-        active.forEach(c => doneBtn.classList.remove(c));
-        inactive.forEach(c => doneBtn.classList.add(c));
+        doneBtn.style.backgroundColor = '';
+        doneBtn.style.color = '';
+        doneBtn.style.borderColor = '';
       }
+      
       if (off && on) {
         if (isDone) { off.classList.add('hidden'); on.classList.remove('hidden'); }
         else { on.classList.add('hidden'); off.classList.remove('hidden'); }

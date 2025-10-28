@@ -1,0 +1,140 @@
+---
+import SaveToList from '../features/save/SaveToList.astro';
+import Button from '../ui/Button.astro';
+
+/*
+  ActionBar Component - Unified action bar for Project and Stay pages
+  Uses Raisin Black background (#1C2434) with Tropical Indigo accent (#A98FFA)
+  
+  Props:
+    - itemType: 'project' | 'stay' (required)
+    - itemId: string (required for save functionality)
+    
+    Primary Action:
+    - primaryLabel: string (e.g., "Visit Website", "View on Map")
+    - primaryUrl: string (required)
+    - primaryIcon: 'external' | 'map' | 'calendar' (optional)
+    
+    More Options (array of booking/action links):
+    - moreOptions: array of { label, url, icon? }
+    
+    Get Involved:
+    - getInvolvedText: string (optional, custom description for how to get involved)
+    
+  Usage:
+    <ActionBar 
+      itemType="project" 
+      itemId="PRO-123"
+      primaryLabel="Visit Website"
+      primaryUrl="https://example.com"
+      primaryIcon="external"
+      getInvolvedText="Contact the organization to volunteer..."
+      moreOptions={[
+        { label: "Book on GetYourGuide", url: "https://...", icon: "calendar" }
+      ]}
+    />
+*/
+
+const { 
+  itemType = 'project',
+  itemId,
+  primaryLabel = 'Visit Website',
+  primaryUrl,
+  primaryIcon = 'external',
+  moreOptions = [],
+  getInvolvedText
+} = Astro.props;
+
+const hasMoreOptions = moreOptions && moreOptions.length > 0;
+
+// Default "Get Involved" text if none provided
+const defaultGetInvolvedText = "Visit their website to learn more about this project and discover ways you can contribute or participate.";
+const displayGetInvolvedText = getInvolvedText && getInvolvedText.trim() !== "" 
+  ? getInvolvedText 
+  : defaultGetInvolvedText;
+
+// Material Symbols icons (rounded style, inline SVG)
+const icons: Record<string, string> = {
+  external: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>`,
+  map: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m600-120-240-84-186 72q-20 8-37-4.5T120-170v-560q0-13 7.5-23t20.5-15l212-72 240 84 186-72q20-8 37 4.5t17 33.5v560q0 13-7.5 23T812-192l-212 72Zm-40-98v-468l-160-56v468l160 56Zm80 0 120-40v-474l-120 46v468Zm-440-10 120-46v-468l-120 40v474Zm440-458v468-468Zm-320-56v468-468Z"/></svg>`,
+  calendar: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>`,
+  chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`
+};
+---
+
+<!-- ActionBar - Raisin Black container with purple accent -->
+<div class="rounded-lg p-6" style="background-color: #1C2434;">
+  <div class="flex flex-col gap-3">
+    <!-- Save/Done Buttons Row (50/50 split) with divider -->
+    <div class="pb-3 border-b border-white/10">
+      <SaveToList 
+        itemType={itemType} 
+        itemId={itemId} 
+        variant="minimal" 
+        mobileShowLabel={true}
+        mobileFullWidth={true}
+      />
+    </div>
+
+    <!-- Primary Action Buttons Row -->
+    <div class="flex gap-3">
+      <!-- Primary Action Button (70% - Purple Accent) -->
+      {primaryUrl && (
+        <div class="flex-[7]">
+          <Button 
+            href={primaryUrl}
+            variant="accent"
+            size="md"
+            fullWidth={true}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>{primaryLabel}</span>
+            <Fragment set:html={icons[primaryIcon] || icons.external} />
+          </Button>
+        </div>
+      )}
+
+      <!-- Map Button (30% - Secondary) -->
+      {moreOptions.find((opt: any) => opt.icon === 'map') && (
+        <div class="flex-[3]">
+          <Button 
+            href={moreOptions.find((opt: any) => opt.icon === 'map').url}
+            variant="secondary"
+            size="md"
+            fullWidth={true}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Fragment set:html={icons.map} />
+            <span class="hidden sm:inline">Map</span>
+          </Button>
+        </div>
+      )}
+    </div>
+
+    <!-- GetYourGuide Button (Full Width) -->
+    {moreOptions.find((opt: any) => opt.icon === 'calendar') && (
+      <Button 
+        href={moreOptions.find((opt: any) => opt.icon === 'calendar').url}
+        variant="secondary"
+        size="md"
+        fullWidth={true}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Fragment set:html={icons.calendar} />
+        <span>{moreOptions.find((opt: any) => opt.icon === 'calendar').label}</span>
+      </Button>
+    )}
+
+    <!-- Get Involved Heading & Description -->
+    <div class="pt-2">
+      <h3 class="text-base font-semibold text-white mb-1">Get Involved</h3>
+      <p class="text-sm text-gray-300 leading-relaxed">
+        {displayGetInvolvedText}
+      </p>
+    </div>
+  </div>
+</div>
+
