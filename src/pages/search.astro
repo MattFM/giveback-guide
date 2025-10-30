@@ -195,7 +195,7 @@ import { SITE_TITLE } from "../consts";
   let displayedResults = 0;
   const resultsPerPage = 12;
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  async function initSearch() {
     const searchInput = document.getElementById("search-input") as HTMLInputElement;
     const searchResults = document.getElementById("search-results");
     const statusText = document.getElementById("status-text");
@@ -860,7 +860,10 @@ import { SITE_TITLE } from "../consts";
         </article>
       `;
     }
-  });
+  }
+
+  // Run on initial load and after View Transitions
+  document.addEventListener("astro:page-load", initSearch);
 </script>
 
 <style>

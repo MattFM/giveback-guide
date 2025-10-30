@@ -119,6 +119,7 @@ const formattedDate = (() => {
                 fetchpriority="high"
                 loading="eager"
                 preset="hero"
+                transitionName={`post-${properties.bSlug}`}
               />
         </section>
 
@@ -142,6 +143,7 @@ const formattedDate = (() => {
           <h1
             class="mb-4 mt-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
             data-pagefind-meta="title"
+            style={`view-transition-name: post-title-${properties.bSlug}`}
           >
             {properties.bTitle}
           </h1>

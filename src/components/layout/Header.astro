@@ -287,6 +287,9 @@ const mobileButtonClasses = theme === 'dark'
               });
               window.addEventListener("load", decideAndToggle);
               
+              // Re-run after View Transitions
+              document.addEventListener("astro:page-load", decideAndToggle);
+              
               // React to auth changes from other tabs/windows
               window.addEventListener("storage", function (e) {
                 const k = (e && e.key) || "";
@@ -553,7 +556,13 @@ const mobileButtonClasses = theme === 'dark'
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  // Detect OS once (persists across navigations)
+  const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+  
+  // Store keyboard handler so we can manage it
+  let keydownHandler: ((e: KeyboardEvent) => void) | null = null;
+
+  function initSearchModal() {
     const searchModal = document.getElementById("search-modal");
     const modalSearchInput = document.getElementById(
       "modal-search-input"
@@ -564,12 +573,9 @@ const mobileButtonClasses = theme === 'dark'
     const searchSuggestions = document.querySelectorAll(".search-suggestion");
     const searchButton = document.getElementById("search-button");
 
-    // Detect OS and update keyboard shortcut display
-    const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    // Update keyboard shortcut display
     const searchKbd = document.getElementById("search-kbd");
-
     if (searchKbd && !isMac) {
-      // Replace ⌘K with Ctrl+K for Windows/Linux
       searchKbd.textContent = "Ctrl+K";
     }
 
@@ -578,10 +584,8 @@ const mobileButtonClasses = theme === 'dark'
       if (searchModal) {
         searchModal.classList.remove("hidden");
         searchModal.setAttribute("aria-hidden", "false");
-        // Focus input immediately in the same event cycle
         if (modalSearchInput) {
           modalSearchInput.focus();
-          // Force click on input for iOS keyboard (sometimes needed)
           modalSearchInput.click();
         }
       }
@@ -614,15 +618,19 @@ const mobileButtonClasses = theme === 'dark'
     // Handle backdrop clicks
     if (searchModal) {
       searchModal.addEventListener("click", (e) => {
-        // Only close if clicking the backdrop (not the modal content)
         if (e.target === searchModal) {
           hideModal();
         }
       });
     }
 
-    // Handle global keyboard shortcut and escape key
-    document.addEventListener("keydown", (e) => {
+    // Remove old keyboard handler if it exists
+    if (keydownHandler) {
+      document.removeEventListener("keydown", keydownHandler);
+    }
+
+    // Create and store new keyboard handler
+    keydownHandler = (e: KeyboardEvent) => {
       // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
       if (
         (isMac && e.metaKey && e.key === "k") ||
@@ -641,7 +649,9 @@ const mobileButtonClasses = theme === 'dark'
       ) {
         hideModal();
       }
-    });
+    };
+
+    document.addEventListener("keydown", keydownHandler);
 
     // Handle form submission
     if (modalSearchForm) {
@@ -651,7 +661,6 @@ const mobileButtonClasses = theme === 'dark'
           e.preventDefault();
           return;
         }
-        // Form will naturally submit to /search?q=query
       });
     }
 
@@ -665,5 +674,8 @@ const mobileButtonClasses = theme === 'dark'
         }
       });
     });
-  });
+  }
+
+  // Run on initial load and after View Transitions
+  document.addEventListener("astro:page-load", initSearchModal);
 </script>

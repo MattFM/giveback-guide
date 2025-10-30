@@ -27,6 +27,7 @@ const { post } = Astro.props;
             alt=""
             preset="card"
             fallbackWidth={600}
+            transitionName={`post-${post.data.properties.bSlug}`}
           />
         </a>
       </div>
@@ -46,7 +47,7 @@ const { post } = Astro.props;
       : post.data.properties.bTags}
   </div>
   <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white">
-    <a href={`/blog/${post.data.properties.bSlug}/`}>
+    <a href={`/blog/${post.data.properties.bSlug}/`} style={`view-transition-name: post-title-${post.data.properties.bSlug}`}>
       {post.data.properties.bTitle}
     </a>
   </h2>

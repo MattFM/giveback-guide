@@ -178,6 +178,7 @@ if (images.length === 0) {
             fetchpriority="high"
             loading="eager"
             preset="hero"
+            transitionName={`stay-${properties.sSlug}`}
           />
         </section>
 
@@ -194,6 +195,7 @@ if (images.length === 0) {
             <h1
               class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
               data-pagefind-meta="title"
+              style={`view-transition-name: stay-title-${properties.sSlug}`}
             >
               {properties.sTitle}
             </h1>

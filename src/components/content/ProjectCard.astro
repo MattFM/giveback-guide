@@ -18,6 +18,7 @@ const { project } = Astro.props as Props;
         alt=""
         preset="card"
         fallbackWidth={600}
+        transitionName={`project-${project.data.properties.pSlug}`}
       />
 
       {
@@ -64,7 +65,7 @@ const { project } = Astro.props as Props;
   <h2
     class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white"
   >
-    <a href={`/projects/${project.data.properties.pSlug}/`}>
+    <a href={`/projects/${project.data.properties.pSlug}/`} style={`view-transition-name: project-title-${project.data.properties.pSlug}`}>
       {project.data.properties.pTitle}
     </a>
   </h2>

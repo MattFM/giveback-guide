@@ -15,6 +15,7 @@ const { stay } = Astro.props as Props;
             alt=""
             preset="card"
             fallbackWidth={600}
+            transitionName={`stay-${stay.data.properties.sSlug}`}
           />
           {stay.data.properties.sVerify && (
             <div class="absolute top-2 left-2">
@@ -48,7 +49,7 @@ const { stay } = Astro.props as Props;
     }
   </div>
   <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white line-clamp-3">
-    <a href={`/stays/${stay.data.properties.sSlug}/`}>
+    <a href={`/stays/${stay.data.properties.sSlug}/`} style={`view-transition-name: stay-title-${stay.data.properties.sSlug}`}>
       {stay.data.properties.sTitle}
     </a>
   </h2>

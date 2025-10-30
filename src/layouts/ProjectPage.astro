@@ -158,6 +158,7 @@ const relatedProjects = allProjects
             fetchpriority="high"
             loading="eager"
             preset="hero"
+            transitionName={`project-${properties.pSlug}`}
           />
         </section>
 
@@ -174,6 +175,7 @@ const relatedProjects = allProjects
             <h1
               class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
               data-pagefind-meta="title"
+              style={`view-transition-name: project-title-${properties.pSlug}`}
             >
               {properties.pTitle}
             </h1>
