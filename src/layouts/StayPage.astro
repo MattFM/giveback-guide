@@ -323,9 +323,9 @@ if (images.length === 0) {
               <!-- Hidden searchable metadata for improved search indexing -->
               <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
                 {properties.sCountry && (
-                  <span>
+                  <span data-pagefind-meta="countries">
                     {Array.isArray(properties.sCountry) 
-                      ? properties.sCountry.join(" ") 
+                      ? properties.sCountry.join(", ") 
                       : properties.sCountry}
                   </span>
                 )}
@@ -334,6 +334,13 @@ if (images.length === 0) {
                     {Array.isArray(properties.sLocale) 
                       ? properties.sLocale.join(" ") 
                       : properties.sLocale}
+                  </span>
+                )}
+                {properties.sImpactsNames && (
+                  <span data-pagefind-meta="impactAreas">
+                    {Array.isArray(properties.sImpactsNames) 
+                      ? properties.sImpactsNames.join(", ") 
+                      : properties.sImpactsNames}
                   </span>
                 )}
               </div>

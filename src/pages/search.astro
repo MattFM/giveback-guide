@@ -1,20 +1,29 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import Hero from "../components/sections/Hero.astro";
 import { SITE_TITLE } from "../consts";
 ---
 
-<MainLayout title={`Search ${SITE_TITLE}`}>
+<MainLayout 
+  title={`Search ${SITE_TITLE}`}
+  headerVariant="transparent"
+  headerTheme="dark"
+>
   <main>
+    <!-- Hero Section -->
+    <Hero
+      title="Search"
+      description="Find projects, stays and blog posts"
+      background="color"
+      backgroundValue="#1C2434"
+      theme="dark"
+      size="small"
+      align="left"
+    >
+    </Hero>
+
     <section class="bg-white dark:bg-gray-900">
       <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-        <div class="max-w-screen-md mb-8 lg:mb-16">
-          <h1 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-            Search
-          </h1>
-          <p class="text-gray-500 sm:text-xl dark:text-gray-400">
-            Find projects, stays and blog posts.
-          </p>
-        </div>
 
         <!-- Search Input -->
         <div class="max-w-screen-md mx-auto mb-8">
@@ -57,65 +66,306 @@ import { SITE_TITLE } from "../consts";
         <div class="mb-6">
           <div id="filters-and-status" class="hidden">
             
-            <!-- Responsive Layout: Mobile stacked, Desktop side-by-side -->
-            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-6 mb-6">
+            <!-- Responsive Layout: Side-by-side on all screen sizes -->
+            <div class="flex justify-between items-center gap-4 mb-6">
               
-              <!-- Filter buttons: top on mobile, right on desktop -->
-              <div class="order-1 md:order-2">
-                <div class="overflow-x-auto scrollbar-hide md:overflow-x-visible">
-                  <div class="flex gap-2 min-w-max md:min-w-0">
-                    <button 
-                      type="button" 
-                      id="filter-all" 
-                      class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 focus:z-10 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 text-white bg-gray-900 border-gray-900 hover:bg-black hover:border-black dark:bg-gray-700 dark:border-gray-700 dark:hover:bg-gray-600 dark:hover:border-gray-600 cursor-pointer whitespace-nowrap"
-                      data-filter="all"
-                      aria-pressed="true"
-                    >
-                      All <span id="count-all" class="ml-1 opacity-75"></span>
-                    </button>
-                    <button 
-                      type="button" 
-                      id="filter-projects" 
-                      class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 focus:z-10 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap"
-                      data-filter="projects"
-                      aria-pressed="false"
-                    >
-                      Projects <span id="count-projects" class="ml-1 opacity-75"></span>
-                    </button>
-                    <button 
-                      type="button" 
-                      id="filter-stays" 
-                      class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 focus:z-10 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap"
-                      data-filter="stays"
-                      aria-pressed="false"
-                    >
-                      Stays <span id="count-stays" class="ml-1 opacity-75"></span>
-                    </button>
-                    <button 
-                      type="button" 
-                      id="filter-posts" 
-                      class="px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 focus:z-10 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap"
-                      data-filter="posts"
-                      aria-pressed="false"
-                    >
-                      Blog Posts <span id="count-posts" class="ml-1 opacity-75"></span>
-                    </button>
+              <!-- Status text: left side -->
+              <div class="flex-1 text-left">
+                <p id="status-text" class="text-sm font-normal text-gray-500 dark:text-gray-400">Enter a search term to get started</p>
+              </div>
+
+              <!-- Filters button: right side -->
+              <div class="flex-shrink-0">
+                <button 
+                  type="button" 
+                  id="filters-btn"
+                  class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer"
+                >
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                  </svg>
+                  Filters
+                  <span id="total-filter-count" class="hidden ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-900 text-white dark:bg-gray-700"></span>
+                </button>
+              </div>
+              
+            </div>
+
+            <!-- Filters Modal -->
+            <div id="filters-modal" class="hidden fixed inset-0 z-[9999] overflow-y-auto" aria-labelledby="filters-modal-title" role="dialog" aria-modal="true">
+              <!-- Backdrop overlay -->
+              <div id="filters-modal-overlay" class="fixed inset-0 bg-black/30 backdrop-blur-md cursor-pointer" aria-hidden="true"></div>
+              
+              <!-- Modal container -->
+              <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <!-- Modal panel -->
+                <div id="filters-modal-panel" class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-10">
+                  
+                  <!-- Modal Header -->
+                  <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                      <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="filters-modal-title">
+                        Filters
+                      </h3>
+                      <button 
+                        type="button" 
+                        id="close-filters-modal"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+                        aria-label="Close filters"
+                      >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Modal Body -->
+                  <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 max-h-[60vh] overflow-y-auto">
+                    
+                    <!-- Content Type Filters -->
+                    <div class="mb-8">
+                      <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3">Content Type</h4>
+                      <div class="flex flex-wrap gap-2">
+                        <button 
+                          type="button" 
+                          id="modal-filter-all" 
+                          class="modal-content-filter px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 text-white bg-gray-900 border-gray-900 hover:bg-black dark:bg-gray-700 dark:border-gray-700 dark:hover:bg-gray-600 cursor-pointer whitespace-nowrap"
+                          data-filter="all"
+                          data-active="true"
+                        >
+                          All <span id="modal-count-all" class="ml-1 opacity-75"></span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="modal-filter-projects" 
+                          class="modal-content-filter px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap"
+                          data-filter="projects"
+                          data-active="false"
+                        >
+                          Projects <span id="modal-count-projects" class="ml-1 opacity-75"></span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="modal-filter-stays" 
+                          class="modal-content-filter px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap"
+                          data-filter="stays"
+                          data-active="false"
+                        >
+                          Stays <span id="modal-count-stays" class="ml-1 opacity-75"></span>
+                        </button>
+                        <button 
+                          type="button" 
+                          id="modal-filter-posts" 
+                          class="modal-content-filter px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap"
+                          data-filter="posts"
+                          data-active="false"
+                        >
+                          Blog Posts <span id="modal-count-posts" class="ml-1 opacity-75"></span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Impact Areas Filters -->
+                    <div>
+                      <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">Impact Areas</h4>
+                      <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                        Filter Projects and Stays by their impact focus.
+                      </p>
+              
+              <!-- Environmental & Conservation -->
+              <div class="mb-4">
+                  <button 
+                    type="button" 
+                    class="impact-category-toggle flex items-center justify-between w-full text-left text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 mb-2 hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer"
+                    data-category="environmental"
+                  >
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        class="category-select-all hidden w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" 
+                        data-category="environmental"
+                        onclick="event.stopPropagation()"
+                      >
+                      <span>Environmental & Conservation</span>
+                    </div>
+                    <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="impact-category-content hidden space-y-2 pl-4" data-category="environmental">
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" data-impact="Animal Welfare">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Animal Welfare</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Wildlife Rehabilitation">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Wildlife Rehabilitation</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Sustainable Food Systems">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Sustainable Food Systems</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Waste and Litter Reduction">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Waste and Litter Reduction</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Marine Protection">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Marine Protection</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="River Health">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">River Health</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Reforestation">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Reforestation</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Habitat Restoration">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Habitat Restoration</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <!-- Social Justice & Inclusion -->
+                <div class="mb-4">
+                  <button 
+                    type="button" 
+                    class="impact-category-toggle flex items-center justify-between w-full text-left text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 mb-2 hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer"
+                    data-category="social"
+                  >
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        class="category-select-all hidden w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" 
+                        data-category="social"
+                        onclick="event.stopPropagation()"
+                      >
+                      <span>Social Justice & Inclusion</span>
+                    </div>
+                    <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="impact-category-content hidden space-y-2 pl-4" data-category="social">
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Women's Empowerment">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Women's Empowerment</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="LGBTQ+ Inclusion">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">LGBTQ+ Inclusion</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Disability Inclusion and Empowerment">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Disability Inclusion and Empowerment</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Refugee and Migrant Inclusion">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Refugee and Migrant Inclusion</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Minority Heritage and Empowerment">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Minority Heritage and Empowerment</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <!-- Community & Development -->
+                <div class="mb-4">
+                  <button 
+                    type="button" 
+                    class="impact-category-toggle flex items-center justify-between w-full text-left text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 mb-2 hover:text-gray-900 dark:hover:text-gray-100 cursor-pointer"
+                    data-category="community"
+                  >
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        class="category-select-all hidden w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 cursor-pointer" 
+                        data-category="community"
+                        onclick="event.stopPropagation()"
+                      >
+                      <span>Community & Development</span>
+                    </div>
+                    <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  <div class="impact-category-content hidden space-y-2 pl-4" data-category="community">
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Youth Development">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Youth Development</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Education and Skills Training">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Education and Skills Training</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Community Development">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Community Development</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Poverty Alleviation">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Poverty Alleviation</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Homelessness Support">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Homelessness Support</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                      <input type="checkbox" class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact="Cultural Heritage Preservation">
+                      <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Cultural Heritage Preservation</span>
+                    </label>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Status text: bottom on mobile, left on desktop -->
-              <div class="order-2 md:order-1 text-left">
-                <p id="status-text" class="text-sm font-normal text-gray-500 dark:text-gray-400">Enter a search term to get started</p>
+                  <!-- Modal Footer -->
+                  <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                    <button 
+                      type="button"
+                      id="apply-filters-btn"
+                      class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-gray-900 text-base font-medium text-white hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-700 dark:hover:bg-gray-600 cursor-pointer"
+                    >
+                      Apply Filters
+                    </button>
+                    <button 
+                      type="button"
+                      id="clear-all-filters-btn"
+                      class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:w-auto sm:text-sm dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 cursor-pointer"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+
+                </div>
               </div>
-              
             </div>
 
           </div>
         </div>
 
         <!-- Search Results -->
-        <div id="search-results" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div id="search-results" class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
+          <!-- Results will be populated here -->
+        </div>
+
+        <!-- No Results Section -->
+        <div id="no-results" class="hidden text-center py-12">
+          <div class="max-w-md mx-auto">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">No results found</h3>
+            <p id="no-results-query" class="mb-6 text-gray-500 dark:text-gray-400">We couldn't find anything for your search.</p>
+          </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="search-results" class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
           <!-- Results will be populated here -->
         </div>
 
@@ -192,6 +442,7 @@ import { SITE_TITLE } from "../consts";
   let currentQuery = '';
   let allResults: any[] = [];
   let activeFilters = new Set(['all']);
+  let activeImpactAreas = new Set<string>();
   let displayedResults = 0;
   const resultsPerPage = 12;
 
@@ -203,11 +454,24 @@ import { SITE_TITLE } from "../consts";
     const loadMoreContainer = document.getElementById("load-more-container");
     const loadMoreBtn = document.getElementById("load-more-btn");
     const searchForm = searchInput?.closest("form");
-    const allFilterButtons = document.querySelectorAll('[data-filter]');
     const filtersAndStatus = document.getElementById("filters-and-status");
     const clearButton = document.getElementById("clear-search");
     const noResults = document.getElementById("no-results");
     const noResultsQuery = document.getElementById("no-results-query");
+    
+    // Modal elements
+    const filtersBtn = document.getElementById("filters-btn");
+    const filtersModal = document.getElementById("filters-modal");
+    const filtersModalOverlay = document.getElementById("filters-modal-overlay");
+    const closeFiltersModalBtn = document.getElementById("close-filters-modal");
+    const applyFiltersBtn = document.getElementById("apply-filters-btn");
+    const clearAllFiltersBtn = document.getElementById("clear-all-filters-btn");
+    const totalFilterCount = document.getElementById("total-filter-count");
+    
+    // Filter elements
+    const modalContentFilterButtons = document.querySelectorAll('.modal-content-filter');
+    const impactAreaCheckboxes = document.querySelectorAll('.impact-area-checkbox');
+    const categoryToggles = document.querySelectorAll('.impact-category-toggle');
 
     // Initialize Pagefind (works in dev mode if search index exists)
     try {
@@ -235,6 +499,7 @@ import { SITE_TITLE } from "../consts";
     const urlParams = new URLSearchParams(window.location.search);
     const initialQuery = urlParams.get('q');
     const initialFilters = urlParams.get('filters');
+    const initialImpacts = urlParams.get('impacts');
     
     // Initialize filters from URL if present
     if (initialFilters) {
@@ -242,7 +507,25 @@ import { SITE_TITLE } from "../consts";
       if (filterArray.length > 0) {
         activeFilters.clear();
         filterArray.forEach(filter => activeFilters.add(filter));
-        updateFilterButtons();
+        // Sync buttons with active filters
+        updateModalFilterButtons();
+        updateTotalFilterCount();
+      }
+    }
+    
+    // Initialize impact areas from URL if present
+    if (initialImpacts) {
+      const impactArray = initialImpacts.split(',').filter(i => i.length > 0);
+      if (impactArray.length > 0) {
+        impactArray.forEach(impact => activeImpactAreas.add(impact));
+        // Check the corresponding checkboxes
+        impactAreaCheckboxes.forEach(checkbox => {
+          const impactArea = (checkbox as HTMLInputElement).getAttribute('data-impact');
+          if (impactArea && activeImpactAreas.has(impactArea)) {
+            (checkbox as HTMLInputElement).checked = true;
+          }
+        });
+        updateTotalFilterCount();
       }
     }
     
@@ -332,10 +615,163 @@ import { SITE_TITLE } from "../consts";
       });
     }
 
-    // Setup filter buttons - single event listener for all filter buttons
-    allFilterButtons.forEach(button => {
-      button.addEventListener('click', handleFilterClick);
+    // Setup filters modal
+    function openFiltersModal() {
+      if (filtersModal) {
+        filtersModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeFiltersModal() {
+      if (filtersModal) {
+        filtersModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function applyAndCloseFiltersModal() {
+      updateURL(currentQuery);
+      displayFilteredResults();
+      closeFiltersModal();
+      
+      // Track filter application
+      if (typeof window !== 'undefined' && window.posthog) {
+        window.posthog.capture('filters_applied', {
+          content_types: Array.from(activeFilters),
+          impact_areas: Array.from(activeImpactAreas),
+          current_query: currentQuery || null,
+          trigger: 'overlay_click'
+        });
+      }
+    }
+
+    if (filtersBtn) {
+      filtersBtn.addEventListener('click', openFiltersModal);
+    }
+
+    if (closeFiltersModalBtn) {
+      closeFiltersModalBtn.addEventListener('click', closeFiltersModal);
+    }
+
+    // Handle clicks on modal - close if clicking overlay, not if clicking modal content
+    if (filtersModal) {
+      filtersModal.addEventListener('click', (e) => {
+        const modalPanel = document.getElementById('filters-modal-panel');
+        // Only apply and close if clicking outside the modal panel
+        if (modalPanel && !modalPanel.contains(e.target as Node)) {
+          applyAndCloseFiltersModal();
+        }
+      });
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && filtersModal && !filtersModal.classList.contains('hidden')) {
+        closeFiltersModal();
+      }
     });
+
+    // Setup content type filter buttons
+    modalContentFilterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+        if (!filter) return;
+        
+        const isActive = button.getAttribute('data-active') === 'true';
+        
+        if (filter === 'all') {
+          // If "All" is clicked, clear other filters and activate only "All"
+          activeFilters.clear();
+          activeFilters.add('all');
+          updateModalFilterButtons();
+        } else {
+          // Remove "All" if it's active
+          if (activeFilters.has('all')) {
+            activeFilters.delete('all');
+          }
+          
+          // Toggle the specific filter
+          if (isActive) {
+            activeFilters.delete(filter);
+          } else {
+            activeFilters.add(filter);
+          }
+          
+          // If no filters are active, activate "All"
+          if (activeFilters.size === 0) {
+            activeFilters.add('all');
+          }
+          
+          updateModalFilterButtons();
+        }
+        
+        updateTotalFilterCount();
+      });
+    });
+
+    // Apply filters button
+    if (applyFiltersBtn) {
+      applyFiltersBtn.addEventListener('click', () => {
+        updateURL(currentQuery);
+        displayFilteredResults();
+        closeFiltersModal();
+        
+        // Track filter application
+        if (typeof window !== 'undefined' && window.posthog) {
+          window.posthog.capture('filters_applied', {
+            content_types: Array.from(activeFilters),
+            impact_areas: Array.from(activeImpactAreas),
+            current_query: currentQuery || null,
+            trigger: 'button_click'
+          });
+        }
+      });
+    }
+
+    // Update modal filter button states
+    function updateModalFilterButtons() {
+      modalContentFilterButtons.forEach(button => {
+        const filter = button.getAttribute('data-filter');
+        if (!filter) return;
+        
+        const isActive = activeFilters.has(filter);
+        button.setAttribute('data-active', isActive.toString());
+        
+        if (isActive) {
+          button.className = 'modal-content-filter px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 text-white bg-gray-900 border-gray-900 hover:bg-black dark:bg-gray-700 dark:border-gray-700 dark:hover:bg-gray-600 cursor-pointer whitespace-nowrap';
+        } else {
+          button.className = 'modal-content-filter px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200 text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:hover:border-gray-500 cursor-pointer whitespace-nowrap';
+        }
+      });
+    }
+
+    // Clear all filters button
+    if (clearAllFiltersBtn) {
+      clearAllFiltersBtn.addEventListener('click', () => {
+        // Clear content type filters
+        activeFilters.clear();
+        activeFilters.add('all'); // Reset to "All"
+        updateModalFilterButtons();
+        
+        // Clear impact area filters
+        activeImpactAreas.clear();
+        impactAreaCheckboxes.forEach(checkbox => {
+          (checkbox as HTMLInputElement).checked = false;
+        });
+        
+        updateTotalFilterCount();
+        updateURL(currentQuery);
+        displayFilteredResults();
+        
+        // Track clear all
+        if (typeof window !== 'undefined' && window.posthog) {
+          window.posthog.capture('all_filters_cleared', {
+            current_query: currentQuery || null
+          });
+        }
+      });
+    }
 
     // Setup load more button
     if (loadMoreBtn) {
@@ -351,6 +787,174 @@ import { SITE_TITLE } from "../consts";
         });
       }
     });
+
+    // Setup category toggles (collapsible sections)
+    categoryToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const category = toggle.getAttribute('data-category');
+        const content = document.querySelector(`.impact-category-content[data-category="${category}"]`);
+        const icon = toggle.querySelector('svg');
+        const checkbox = toggle.querySelector('.category-select-all') as HTMLInputElement;
+        
+        if (content && icon) {
+          const isHidden = content.classList.contains('hidden');
+          content.classList.toggle('hidden');
+          icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+          
+          // Show/hide the select-all checkbox based on expanded state
+          if (checkbox) {
+            if (isHidden) {
+              checkbox.classList.remove('hidden');
+            } else {
+              checkbox.classList.add('hidden');
+            }
+          }
+        }
+      });
+    });
+
+    // Setup impact area checkboxes
+    impactAreaCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const impactArea = target.getAttribute('data-impact');
+        
+        if (!impactArea) return;
+        
+        if (target.checked) {
+          activeImpactAreas.add(impactArea);
+        } else {
+          activeImpactAreas.delete(impactArea);
+        }
+        
+        // Update the category select-all checkbox state
+        const categoryContent = target.closest('.impact-category-content');
+        if (categoryContent) {
+          const category = categoryContent.getAttribute('data-category');
+          const categorySelectAll = document.querySelector(`.category-select-all[data-category="${category}"]`) as HTMLInputElement;
+          
+          if (categorySelectAll) {
+            const categoryCheckboxes = categoryContent.querySelectorAll('.impact-area-checkbox') as NodeListOf<HTMLInputElement>;
+            const checkedCount = Array.from(categoryCheckboxes).filter(cb => cb.checked).length;
+            
+            if (checkedCount === 0) {
+              categorySelectAll.checked = false;
+              categorySelectAll.indeterminate = false;
+            } else if (checkedCount === categoryCheckboxes.length) {
+              categorySelectAll.checked = true;
+              categorySelectAll.indeterminate = false;
+            } else {
+              categorySelectAll.checked = false;
+              categorySelectAll.indeterminate = true;
+            }
+          }
+        }
+        
+        updateTotalFilterCount();
+        
+        // Track impact filter change
+        if (typeof window !== 'undefined' && window.posthog) {
+          window.posthog.capture('impact_filter_applied', {
+            impact_area: impactArea,
+            action: target.checked ? 'add' : 'remove',
+            active_impact_areas: Array.from(activeImpactAreas),
+            current_query: currentQuery || null
+          });
+        }
+        
+        // Re-filter and display current results
+        if (allResults.length > 0) {
+          displayFilteredResults();
+        }
+      });
+    });
+
+    // Setup "Select All" checkboxes for each category
+    const selectAllCheckboxes = document.querySelectorAll('.category-select-all');
+    
+    // Define impact areas by category
+    const categoryImpactAreas = {
+      environmental: [
+        'Animal Welfare',
+        'Wildlife Rehabilitation',
+        'Sustainable Food Systems',
+        'Waste and Litter Reduction',
+        'Marine Protection',
+        'River Health',
+        'Reforestation',
+        'Habitat Restoration'
+      ],
+      social: [
+        "Women's Empowerment",
+        'LGBTQ+ Inclusion',
+        'Disability Inclusion and Empowerment',
+        'Refugee and Migrant Inclusion',
+        'Minority Heritage and Empowerment'
+      ],
+      community: [
+        'Youth Development',
+        'Education and Skills Training',
+        'Community Development',
+        'Poverty Alleviation',
+        'Homelessness Support',
+        'Cultural Heritage Preservation'
+      ]
+    };
+
+    selectAllCheckboxes.forEach(selectAllCheckbox => {
+      selectAllCheckbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const category = target.getAttribute('data-category');
+        
+        if (!category) return;
+        
+        const impactAreas = categoryImpactAreas[category as keyof typeof categoryImpactAreas];
+        
+        if (!impactAreas) return;
+        
+        // Get all checkboxes in this category
+        const categoryCheckboxes = document.querySelectorAll(
+          `.impact-category-content[data-category="${category}"] .impact-area-checkbox`
+        ) as NodeListOf<HTMLInputElement>;
+        
+        if (target.checked) {
+          // Select all in this category
+          impactAreas.forEach(impact => activeImpactAreas.add(impact));
+          categoryCheckboxes.forEach(checkbox => {
+            checkbox.checked = true;
+          });
+        } else {
+          // Deselect all in this category
+          impactAreas.forEach(impact => activeImpactAreas.delete(impact));
+          categoryCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+          });
+        }
+        
+        updateTotalFilterCount();
+        
+        // Re-filter and display current results
+        if (allResults.length > 0) {
+          displayFilteredResults();
+        }
+      });
+    });
+
+    // Update total filter count badge
+    function updateTotalFilterCount() {
+      if (!totalFilterCount) return;
+      
+      const contentTypeCount = activeFilters.has('all') ? 0 : activeFilters.size;
+      const impactCount = activeImpactAreas.size;
+      const total = contentTypeCount + impactCount;
+      
+      if (total > 0) {
+        totalFilterCount.textContent = total.toString();
+        totalFilterCount.classList.remove('hidden');
+      } else {
+        totalFilterCount.classList.add('hidden');
+      }
+    }
 
     function handleFilterClick(event: Event) {
       const button = event.currentTarget as HTMLButtonElement;
@@ -462,6 +1066,13 @@ import { SITE_TITLE } from "../consts";
       } else {
         // Add filters param when specific filters are selected
         newUrl.searchParams.set('filters', filtersArray.join(','));
+      }
+      
+      // Add active impact areas to URL
+      if (activeImpactAreas.size > 0) {
+        newUrl.searchParams.set('impacts', Array.from(activeImpactAreas).join(','));
+      } else {
+        newUrl.searchParams.delete('impacts');
       }
       
       window.history.replaceState(null, '', newUrl.toString());
@@ -689,6 +1300,17 @@ import { SITE_TITLE } from "../consts";
       if (countProjects) countProjects.textContent = projectsText;
       if (countPosts) countPosts.textContent = postsText;
       if (countStays) countStays.textContent = staysText;
+      
+      // Also update modal counts
+      const modalCountAll = document.getElementById('modal-count-all');
+      const modalCountProjects = document.getElementById('modal-count-projects');
+      const modalCountPosts = document.getElementById('modal-count-posts');
+      const modalCountStays = document.getElementById('modal-count-stays');
+      
+      if (modalCountAll) modalCountAll.textContent = totalText;
+      if (modalCountProjects) modalCountProjects.textContent = projectsText;
+      if (modalCountPosts) modalCountPosts.textContent = postsText;
+      if (modalCountStays) modalCountStays.textContent = staysText;
     }
 
     function displayFilteredResults(replace: boolean = true) {
@@ -696,11 +1318,30 @@ import { SITE_TITLE } from "../consts";
 
       let filteredResults = allResults;
       
-      // Apply filters unless "all" is selected
+      // Apply content type filters unless "all" is selected
       if (!activeFilters.has('all')) {
         filteredResults = allResults.filter(result => 
           activeFilters.has(result.contentType)
         );
+      }
+      
+      // Apply impact area filters (only for projects and stays)
+      if (activeImpactAreas.size > 0) {
+        filteredResults = filteredResults.filter(result => {
+          // Blog posts are not affected by impact filters
+          if (result.contentType === 'posts' || result.contentType === 'page') {
+            return true;
+          }
+          
+          // Check if the project/stay has any of the selected impact areas
+          const impactAreas = result.data.meta?.impactAreas || '';
+          if (!impactAreas) return false;
+          
+          const resultImpacts = impactAreas.split(',').map((i: string) => i.trim());
+          return Array.from(activeImpactAreas).some(selectedImpact => 
+            resultImpacts.includes(selectedImpact)
+          );
+        });
       }
 
       // Update status
@@ -790,47 +1431,53 @@ import { SITE_TITLE } from "../consts";
       const countries = data.meta?.countries || '';
       const categories = data.meta?.categories || '';
 
-      // Create countries/tags badges for projects, stays and posts
+      // Create countries/tags badges for projects, stays and posts (matching existing card design)
       let badgesLine = '';
       if (contentTypeSlug === 'projects' && countries) {
-        const countryArray = countries.split(',').map((c: string) => c.trim());
-        badgesLine = `<p>
-          ${countryArray.map((country: string) => 
-            `<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 ml-2 mt-4 mb-2">
-              ${country}
-            </span>`
-          ).join('')}
-        </p>`;
+        const countryArray = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
+        if (countryArray.length > 0) {
+          badgesLine = `<div class="mb-2">
+            ${countryArray.map((country: string) => 
+              `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
+                ${country}
+              </span>`
+            ).join('')}
+          </div>`;
+        }
       } else if (contentTypeSlug === 'stays' && countries) {
-        const countryArray = countries.split(',').map((c: string) => c.trim());
-        badgesLine = `<p>
-          ${countryArray.map((country: string) => 
-            `<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 ml-2 mt-4 mb-2">
-              ${country}
-            </span>`
-          ).join('')}
-        </p>`;
+        const countryArray = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
+        if (countryArray.length > 0) {
+          badgesLine = `<div class="mb-2">
+            ${countryArray.map((country: string) => 
+              `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
+                ${country}
+              </span>`
+            ).join('')}
+          </div>`;
+        }
       } else if (contentTypeSlug === 'posts' && categories) {
         // For blog posts, extract categories from the captured text (split only on commas to preserve multi-word categories)
         const categoryArray = categories.split(',').map((cat: string) => cat.trim()).filter((cat: string) => cat.length > 0);
-        badgesLine = `<p>
-          ${categoryArray.map((category: string) => 
-            `<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 ml-2 mt-4 mb-2">
-              ${category}
-            </span>`
-          ).join('')}
-        </p>`;
+        if (categoryArray.length > 0) {
+          badgesLine = `<div class="mb-2">
+            ${categoryArray.map((category: string) => 
+              `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
+                ${category}
+              </span>`
+            ).join('')}
+          </div>`;
+        }
       }
 
       // Create metadata line based on content type (matching the original card styles)
       let metadataLine = '';
       if (contentTypeSlug === 'projects' && organiser && locale) {
-        metadataLine = `<p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
-          By <span class="text-gray-800 dark:text-gray-200">${organiser}</span> in <span class="text-gray-900 dark:text-gray-100">${locale}</span>
+        metadataLine = `<p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400">
+          ${organiser} in ${locale}
         </p>`;
       } else if (contentTypeSlug === 'stays' && organiser && locale) {
-        metadataLine = `<p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 px-4">
-          <span class="text-gray-800 dark:text-gray-200">${organiser}</span> is a stay in <span class="text-gray-900 dark:text-gray-100">${locale}</span>
+        metadataLine = `<p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400">
+          ${organiser} is a stay in ${locale}
         </p>`;
       }
 
@@ -839,19 +1486,19 @@ import { SITE_TITLE } from "../consts";
           <div class="relative">
             <a href="${data.url}">
               <img 
-                class="w-full rounded-lg h-64 object-cover" 
+                class="w-full rounded-lg h-64 mb-3 object-cover" 
                 src="${image}" 
                 alt="${title}"
                 loading="lazy"
                 onerror="this.src='/giveback-guide-placeholder.jpg'"
               />
             </a>
-            <span class="absolute top-2 left-2 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-blue-300 bg-blue-50 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+            <span class="absolute top-2 left-2 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium text-white bg-gray-800 dark:bg-gray-700">
               ${contentType}
             </span>
           </div>
           ${badgesLine}
-          <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white px-4">
+          <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white">
             <a href="${data.url}">
               ${title}
             </a>
