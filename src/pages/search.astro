@@ -1348,11 +1348,18 @@ import { SITE_TITLE } from "../consts";
       const totalCount = allResults.length;
       const filteredCount = filteredResults.length;
       
+      // Create status message
+      let statusMessage = '';
       if (activeFilters.has('all')) {
-        showStatus(`Found ${totalCount} result${totalCount !== 1 ? 's' : ''} for "${currentQuery}"`);
+        if (activeImpactAreas.size > 0) {
+          statusMessage = `Found ${filteredCount} result${filteredCount !== 1 ? 's' : ''} for "${currentQuery}" (Impact filters apply to Projects & Stays only)`;
+        } else {
+          statusMessage = `Found ${totalCount} result${totalCount !== 1 ? 's' : ''} for "${currentQuery}"`;
+        }
       } else {
-        showStatus(`Showing ${filteredCount} of ${totalCount} results for "${currentQuery}"`);
+        statusMessage = `Showing ${filteredCount} of ${totalCount} results for "${currentQuery}"`;
       }
+      showStatus(statusMessage);
 
       // Determine how many results to show
       const startIndex = replace ? 0 : displayedResults;
