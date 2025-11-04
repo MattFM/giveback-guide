@@ -1,0 +1,238 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../consts";
+
+// Changelog entries - add new entries at the top
+const changelog = [
+  {
+    date: "2025-11-04",
+    category: "feature",
+    title: "Introducing the Changelog",
+    items: [
+      "Added a new changelog page so you can track what's new",
+      "See all the latest updates, improvements, and features in one place",
+      "Find it in the footer under 'About'"
+    ]
+  },
+  {
+    date: "2025-11-03",
+    category: "improvement",
+    title: "Easier Searching & Filtering",
+    items: [
+      "Made it clearer how to filter projects by impact area",
+      "Improved the filter menu so it's easier to use",
+      "Added helpful tips when browsing different categories"
+    ]
+  },
+  {
+    date: "2025-10-30",
+    category: "feature",
+    title: "Smoother Page Navigation",
+    items: [
+      "Pages now transition smoothly when you click between them",
+      "Images and titles flow beautifully from one page to the next",
+      "The site feels faster and more polished overall"
+    ]
+  },
+  {
+    date: "2025-10-28",
+    category: "design",
+    title: "Better Look on Mobile & Tablets",
+    items: [
+      "Refreshed the homepage with clearer messaging",
+      "Made the site easier to read and navigate on phones",
+      "Updated how 'Verified' and 'Free' badges look",
+      "Improved how booking options display on accommodation pages"
+    ]
+  },
+  {
+    date: "2025-10-27",
+    category: "feature",
+    title: "Impact Areas Now Show on Stays",
+    items: [
+      "You can now see what causes each accommodation supports",
+      "Stay listings show their impact areas just like projects do",
+      "Makes it easier to find places that align with your values"
+    ]
+  },
+  {
+    date: "2025-10-22",
+    category: "design",
+    title: "Fresh New Look & Color Scheme",
+    items: [
+      "Introduced a beautiful new purple accent color throughout the site",
+      "Redesigned buttons and cards for better visual appeal",
+      "Updated the homepage hero to focus on search",
+      "Simplified layouts to make content easier to scan",
+      "Refreshed the overall color palette with warmer, more inviting tones"
+    ]
+  },
+  {
+    date: "2025-10-21",
+    category: "improvement",
+    title: "Homepage Gets Search-First Design",
+    items: [
+      "Made finding projects the main focus when you land on the site",
+      "Redesigned the hero section to be cleaner and more purposeful",
+      "Improved the visual flow of the homepage"
+    ]
+  }
+];
+
+// Category configurations
+const categoryConfig = {
+  feature: {
+    label: "New Feature",
+    color: "#A98FFA",
+    bgColor: "rgba(169, 143, 250, 0.12)",
+    borderColor: "rgba(169, 143, 250, 0.25)"
+  },
+  improvement: {
+    label: "Improvement",
+    color: "#7CC4A6",
+    bgColor: "rgba(124, 196, 166, 0.12)",
+    borderColor: "rgba(124, 196, 166, 0.25)"
+  },
+  design: {
+    label: "Design",
+    color: "#F5A962",
+    bgColor: "rgba(245, 169, 98, 0.12)",
+    borderColor: "rgba(245, 169, 98, 0.25)"
+  },
+  fix: {
+    label: "Bug Fix",
+    color: "#E85D75",
+    bgColor: "rgba(232, 93, 117, 0.12)",
+    borderColor: "rgba(232, 93, 117, 0.25)"
+  }
+};
+
+// Format date
+function formatDate(dateString: string) {
+  const date = new Date(dateString + 'T00:00:00');
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+}
+---
+
+<MainLayout 
+  title={`Changelog - ${SITE_TITLE}`}
+  description="Stay up to date with the latest changes, improvements, and new features on Giveback Guide."
+>
+  <main>
+    <section class="bg-white dark:bg-gray-900">
+      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+        <!-- Header -->
+        <div class="max-w-screen-lg mb-12">
+          <h1 class="mb-4 text-4xl sm:text-5xl tracking-tight font-bold text-gray-900 dark:text-white">
+            Changelog
+          </h1>
+          <p class="text-xl text-gray-500 dark:text-gray-400">
+            Track the latest updates, improvements, and new features as we continue building {SITE_TITLE}.
+          </p>
+        </div>
+
+        <!-- Changelog Timeline -->
+        <div class="max-w-screen-lg">
+          <div class="relative border-l-2 border-gray-200 dark:border-gray-700 pl-8 ml-4">
+            {changelog.map((entry, index) => {
+              const config = categoryConfig[entry.category as keyof typeof categoryConfig];
+              return (
+                <div class="mb-10 relative">
+                  <!-- Timeline dot -->
+                  <div 
+                    class="absolute -left-[42px] w-4 h-4 rounded-full border-2 border-white dark:border-gray-900"
+                    style={`background-color: ${config.color};`}
+                  ></div>
+
+                  <!-- Entry Card -->
+                  <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-300">
+                    <!-- Date and Category Badge -->
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                      <time class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        {formatDate(entry.date)}
+                      </time>
+                      <span 
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
+                        style={`
+                          color: ${config.color};
+                          background-color: ${config.bgColor};
+                          border: 1px solid ${config.borderColor};
+                        `}
+                      >
+                        {config.label}
+                      </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                      {entry.title}
+                    </h2>
+
+                    <!-- Items List -->
+                    <ul class="space-y-2">
+                      {entry.items.map(item => (
+                        <li class="flex items-start">
+                          <svg 
+                            class="w-5 h-5 mt-0.5 mr-2 flex-shrink-0" 
+                            style={`color: ${config.color};`}
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path 
+                              fill-rule="evenodd" 
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          <span class="text-gray-600 dark:text-gray-300">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- Footer Note -->
+        <div class="max-w-screen-lg mt-12 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div class="flex items-start">
+            <svg 
+              class="w-6 h-6 mr-3 flex-shrink-0 text-gray-400" 
+              fill="currentColor" 
+              viewBox="0 0 20 20"
+            >
+              <path 
+                fill-rule="evenodd" 
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" 
+                clip-rule="evenodd"
+              />
+            </svg>
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
+                Stay Updated
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                Want to be notified about new features and updates? <a href="/join" class="font-medium underline hover:no-underline" style="color: #A98FFA;">Join our community</a> or follow us on <a href="https://www.instagram.com/giveback.guide" class="font-medium underline hover:no-underline" style="color: #A98FFA;">Instagram</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<style>
+  /* Smooth transitions */
+  .hover\:shadow-md {
+    transition: box-shadow 0.3s ease-in-out;
+  }
+</style>
