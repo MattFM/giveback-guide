@@ -38,7 +38,7 @@ const badge = {
   <!-- Primary CTA: Search Box -->
   <div class="max-w-2xl mt-8 mb-6 animate-search">
     <form action="/search" method="get" class="w-full">
-      <div class="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-xl border-2 border-white/30 rounded-2xl p-2 shadow-[0_10px_40px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.5)_inset] transition-all duration-300 hover:shadow-[0_15px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(167,139,250,0.3)_inset,0_0_30px_rgba(167,139,250,0.2)] hover:border-purple-400/60 hover:-translate-y-0.5 focus-within:shadow-[0_15px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(167,139,250,0.3)_inset,0_0_30px_rgba(167,139,250,0.2)] focus-within:border-purple-400/60 focus-within:-translate-y-0.5">
+      <div class="flex items-center gap-2 sm:gap-3 bg-white/95 backdrop-blur-xl border-2 border-white/30 rounded-2xl p-2 shadow-[0_10px_40px_rgba(0,0,0,0.12),0_0_0_1px_rgba(255,255,255,0.5)_inset] transition-all duration-300 hover:shadow-[0_15px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(167,139,250,0.3)_inset,0_0_30px_rgba(167,139,250,0.2)] hover:border-purple-400/60 focus-within:shadow-[0_15px_50px_rgba(0,0,0,0.15),0_0_0_1px_rgba(167,139,250,0.3)_inset,0_0_30px_rgba(167,139,250,0.2)] focus-within:border-purple-400/60">
         <svg class="ml-3 flex-shrink-0 text-gray-500" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -61,10 +61,10 @@ const badge = {
     
     <!-- Search suggestions -->
     <div class="flex items-center gap-3 mt-4 overflow-x-auto hide-scrollbar animate-suggestions">
-      <span class="text-sm text-white/70 font-medium flex-shrink-0">Try these:</span>
-      <a href="/search/?q=cafes+cambodia" class="inline-flex items-center px-3.5 py-1.5 bg-white/12 backdrop-blur-md border border-white/20 rounded-lg text-sm text-white/95 font-medium transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex-shrink-0">Cafes in Cambodia</a>
-      <a href="/search/?q=beach+cleans" class="inline-flex items-center px-3.5 py-1.5 bg-white/12 backdrop-blur-md border border-white/20 rounded-lg text-sm text-white/95 font-medium transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex-shrink-0">Beach Cleans</a>
-      <a href="/search/?q=animal+sanctuary+usa" class="inline-flex items-center px-3.5 py-1.5 bg-white/12 backdrop-blur-md border border-white/20 rounded-lg text-sm text-white/95 font-medium transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex-shrink-0">Animal Sanctuaries in the USA</a>
+      <span class="text-sm text-white font-medium flex-shrink-0">Try these:</span>
+      <a href="/search/?q=cafes+cambodia" class="suggestion-chip">Cafes in Cambodia</a>
+      <a href="/search/?q=beach+cleans" class="suggestion-chip">Beach Cleans</a>
+      <a href="/search/?q=animal+sanctuary+usa" class="suggestion-chip">Animal Sanctuaries in the USA</a>
     </div>
   </div>
 
@@ -72,7 +72,7 @@ const badge = {
   <div class="animate-learn-more">
     <a 
       href="/why" 
-      class="inline-flex items-center gap-2 text-white/90 text-base font-medium transition-all duration-300 hover:text-white hover:gap-3 group"
+      class="learn-more-link"
     >
       <span>Learn more about Giveback Guide</span>
       <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -90,28 +90,34 @@ const badge = {
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     margin-bottom: 1.5rem;
-    background: rgba(243, 232, 255, 0.15);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(243, 232, 255, 0.3);
+    background: rgba(139, 92, 246, 0.65);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 9999px;
     font-size: 0.875rem;
-    font-weight: 500;
-    color: #f3e8ff;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     text-decoration: none;
     transition: all 0.3s ease;
     animation: fadeInSlideUp 0.6s ease-out;
   }
 
   .update-badge:hover {
-    background: rgba(243, 232, 255, 0.25);
-    border-color: rgba(243, 232, 255, 0.5);
-    transform: translateY(-2px);
+    background: rgba(124, 58, 237, 0.75);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .update-badge:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
   }
 
   .sparkle-icon {
     width: 16px;
     height: 16px;
-    color: #e9d5ff;
+    color: #ffffff;
     flex-shrink: 0;
     animation: sparkle 3s ease-in-out infinite;
   }
@@ -123,7 +129,7 @@ const badge = {
   .arrow-icon {
     width: 14px;
     height: 14px;
-    color: #e9d5ff;
+    color: #ffffff;
     flex-shrink: 0;
     transition: transform 0.3s ease;
   }
@@ -181,6 +187,55 @@ const badge = {
     }
   }
 
+  /* Search Box Styles */
+  .search-box-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .search-box-wrapper:hover,
+  .search-box-wrapper:focus-within {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(167, 139, 250, 0.5);
+  }
+
+  .search-submit-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.75rem;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .search-submit-button:hover {
+    background: rgba(0, 0, 0, 0.65);
+    border-color: rgba(167, 139, 250, 0.5);
+  }
+
+  .search-submit-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
   /* Animation classes */
   .animate-title {
     animation: fadeInSlideUp 0.6s ease-out;
@@ -196,6 +251,57 @@ const badge = {
 
   .animate-learn-more {
     animation: fadeInSlideUp 0.8s ease-out 0.6s both;
+  }
+
+  /* Suggestion Chips */
+  .suggestion-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .suggestion-chip:hover {
+    background: rgba(0, 0, 0, 0.65);
+    border-color: rgba(167, 139, 250, 0.5);
+  }
+
+  .suggestion-chip:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  /* Learn More Link */
+  .learn-more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .learn-more-link:hover {
+    gap: 0.75rem;
+  }
+
+  .learn-more-link:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 4px;
+    border-radius: 0.25rem;
   }
 
   /* Responsive adjustments */

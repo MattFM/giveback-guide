@@ -27,7 +27,7 @@ const linkClasses = theme === 'dark'
 
 // Search button colors
 const searchButtonClasses = theme === 'dark'
-  ? 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+  ? 'header-search-dark'
   : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-100';
 
 // Mobile menu button colors  
@@ -679,3 +679,34 @@ const mobileButtonClasses = theme === 'dark'
   // Run on initial load and after View Transitions
   document.addEventListener("astro:page-load", initSearchModal);
 </script>
+
+<style>
+  /* Frosted glass search button for dark theme */
+  .header-search-dark {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .header-search-dark:hover {
+    background: rgba(0, 0, 0, 0.65);
+    border-color: rgba(167, 139, 250, 0.5);
+  }
+
+  .header-search-dark:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  /* Update kbd styling for dark theme */
+  .header-search-dark #search-kbd {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.9);
+  }
+</style>
