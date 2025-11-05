@@ -115,7 +115,7 @@ const useSimpleLocationFormat = locales.length === 1 && countries.length === 1;
       /* Simple format: "Brighton, UK" for single locale + country */
       <>
         <a 
-          href={`/projects/?locale=${encodeURIComponent(locales[0])}`}
+          href={`/projects/${countries[0].toLowerCase().replace(/\s+/g, '-')}/${locales[0].toLowerCase().replace(/\s+/g, '-')}`}
           class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
           style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
         >
@@ -123,7 +123,7 @@ const useSimpleLocationFormat = locales.length === 1 && countries.length === 1;
         </a>
         <span>, </span>
         <a 
-          href={`/projects/?country=${encodeURIComponent(countries[0])}`}
+          href={`/projects/${countries[0].toLowerCase().replace(/\s+/g, '-')}`}
           class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
           style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
         >
@@ -135,11 +135,11 @@ const useSimpleLocationFormat = locales.length === 1 && countries.length === 1;
       <>
         {locales.length > 0 && (
           <>
-            {localesFormatted.map((item) => (
+            {localesFormatted.map((item, index) => (
               typeof item === 'string' 
                 ? item 
                 : <a 
-                    href={`/projects/?locale=${encodeURIComponent(item.text)}`}
+                    href={`/projects/${countries[0]?.toLowerCase().replace(/\s+/g, '-') || 'all'}/${item.text.toLowerCase().replace(/\s+/g, '-')}`}
                     class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
                     style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
                   >
@@ -155,7 +155,7 @@ const useSimpleLocationFormat = locales.length === 1 && countries.length === 1;
               typeof item === 'string' 
                 ? item 
                 : <a 
-                    href={`/projects/?country=${encodeURIComponent(item.text)}`}
+                    href={`/projects/${item.text.toLowerCase().replace(/\s+/g, '-')}`}
                     class="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-md hover:bg-purple-100 transition-colors border"
                     style="background-color: #E9D5FF; color: #7353D4; border-color: #C084FC;"
                   >
