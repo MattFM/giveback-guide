@@ -1,8 +1,9 @@
 ---
 layout: ../../../layouts/DocsLayout.astro
-title: Integrated Header Guide  
-description: Complete guide for implementing integrated/transparent headers
+title: Integrated Header System
+description: Complete guide for implementing and troubleshooting integrated/transparent headers
 ---
+
 # Integrated Header System
 
 ## Overview
@@ -209,13 +210,32 @@ import Hero from "../components/sections/Hero.astro";
 </Hero>
 ```
 
-## Header Scroll Behavior
+## How It Works
+
+### Header Positioning Strategy
+
+| Screen Size | Position | Behavior |
+|-------------|----------|----------|
+| Mobile (< 1024px) | `sticky` | Sticks to top when scrolling |
+| Desktop (≥ 1024px) | `relative` | Flows with content, no sticking |
+
+### Scroll Behavior
 
 When using `headerVariant="transparent"`, the header automatically:
 
 1. **At top of page**: Transparent background, theme colors apply
 2. **After scrolling 50px**: Transitions to solid background with subtle backdrop blur
 3. **Dark theme**: Automatically adjusts to light colors when scrolled (for readability)
+
+### Theme Color System
+
+| Element | Light Theme | Dark Theme | Scrolled (Dark) |
+|---------|-------------|------------|-----------------|
+| Logo | Black | White | Black |
+| Text/Links | Gray-700 | White | Gray-700 |
+| Search Button | White bg | Semi-transparent white | White bg |
+| CTA Buttons | Black bg | White bg | Black bg |
+| Mobile Menu | Gray | White | Gray |
 
 ## Available Color Variables
 
@@ -235,24 +255,35 @@ Use these in your `backgroundValue` prop:
 - `var(--color-gbgyellow)`: #ffe8b5
 - `var(--color-gbgteal)`: #b7e5e5
 
-## Migration Path
+## Implementation Details
 
-### Phase 1: Test on Design System Page
-- Already implemented on `/design-system`
-- Review and iterate on the design
+### Files Modified
 
-### Phase 2: Add to High-Impact Pages
-Consider adding to:
-- Homepage (`/`)
-- About page (`/about`)
-- Country overview pages
-- Project category pages
+#### 1. `/src/layouts/MainLayout.astro`
+Added props:
+- `headerVariant?: 'default' | 'transparent'`
+- `headerTheme?: 'light' | 'dark'`
 
-### Phase 3: Evaluate Content Pages
-Decide which individual project/stay pages benefit from integrated headers
+#### 2. `/src/components/layout/Header.astro`
+Enhanced with:
+- Variant system (default/transparent)
+- Theme system (light/dark)
+- Scroll behavior (transparent → solid on scroll)
+- Smooth transitions
+- Theme-aware button/link styling
+- Inline SVG logo for theme color control
 
-### Phase 4: Document Best Practices
-Based on real usage, document when to use transparent vs. default headers
+#### 3. `/src/components/sections/Hero.astro`
+A reusable hero component with:
+- Support for color, image, or gradient backgrounds
+- Light and dark theme variants
+- Three size options (small, medium, large)
+- Left or center text alignment
+- Automatic spacing for fixed header
+- Responsive design
+
+#### 4. `/src/styles/global.css`
+Added utility classes for proper spacing with fixed headers
 
 ## Best Practices
 
@@ -284,6 +315,7 @@ Based on real usage, document when to use transparent vs. default headers
 - Scroll listener uses `passive: true` for performance
 - No layout shift or flicker
 - Works with Astro view transitions
+- Inline SVG adds ~3KB but eliminates HTTP request
 
 ## Troubleshooting
 
@@ -298,6 +330,91 @@ Check that you've set `headerVariant="transparent"` on MainLayout.
 
 ### Mobile menu issues
 The header remains responsive. Test at different breakpoints.
+
+### Logo not changing color
+Logo uses inline SVG with CSS `fill: currentColor` property. Check that parent elements aren't overriding the color.
+
+## Testing Checklist
+
+### Mobile (< 1024px)
+- [ ] Header is transparent on pages with `headerVariant="transparent"`
+- [ ] Header sticks to top when scrolling
+- [ ] Logo changes to white on dark theme
+- [ ] Search button is visible (white outline)
+- [ ] Menu hamburger icon is white on dark theme
+- [ ] CTA buttons are visible (white background)
+- [ ] When scrolled, header gets semi-transparent background
+
+### Desktop (≥ 1024px)
+- [ ] Header is not sticky (flows with content)
+- [ ] Header is transparent on pages with `headerVariant="transparent"`
+- [ ] Logo changes to white on dark theme
+- [ ] All navigation items visible on dark backgrounds
+- [ ] When scrolled, header gets semi-transparent background
+- [ ] When scrolled on dark theme, colors revert to light theme
+
+### Both Sizes
+- [ ] Logo color matches theme
+- [ ] Text is always readable (proper contrast)
+- [ ] Smooth transitions between states
+- [ ] No layout shift when scrolling
+- [ ] Default pages (without transparent prop) unchanged
+
+## Browser Compatibility
+
+- ✅ Chrome/Edge (latest)
+- ✅ Firefox (latest)
+- ✅ Safari (latest)
+- ✅ iOS Safari
+- ✅ Chrome Mobile
+
+## Migration Path
+
+### Phase 1: Test on Design System Page
+- Already implemented on `/design-system`
+- Review and iterate on the design
+
+### Phase 2: Add to High-Impact Pages
+Consider adding to:
+- Homepage (`/`)
+- About page (`/about`)
+- Country overview pages
+- Project category pages
+
+### Phase 3: Evaluate Content Pages
+Decide which individual project/stay pages benefit from integrated headers
+
+### Phase 4: Document Best Practices
+Based on real usage, document when to use transparent vs. default headers
+
+## Key Implementation Notes
+
+### 🎨 **Opt-In Design**
+- **Default behavior unchanged**: Existing pages work exactly as before
+- **No breaking changes**: All pages use solid white header unless you opt-in
+- **Gradual rollout**: Implement page by page
+
+### 🎭 **Theme System**
+- **Light theme**: Dark text/icons on light background (default)
+- **Dark theme**: White text/icons on dark background
+- **Auto-adjust**: Dark theme transitions to light on scroll for readability
+
+### 📱 **Responsive**
+- Works on all screen sizes
+- Mobile-optimized spacing
+- Touch-friendly interactions
+
+### ⚡ **Performance**
+- Minimal CSS and JavaScript
+- No layout shifts
+- Smooth 60fps transitions
+- Passive scroll listeners
+
+### ♿ **Accessible**
+- Proper ARIA labels maintained
+- Focus indicators visible on all backgrounds
+- Keyboard navigation works
+- Screen reader compatible
 
 ## Future Enhancements
 

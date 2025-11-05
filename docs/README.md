@@ -6,29 +6,27 @@ This directory contains internal documentation and example pages that are **not 
 
 ```
 /docs/
-├── components/          # Component-specific documentation
-│   └── navigation-drawer.md
-├── features/            # Feature implementation docs
-│   ├── integrated-header-guide.md
-│   ├── integrated-header-implementation.md
-│   └── integrated-header-fixes.md
-├── guides/              # General guides and references
-│   ├── design-guidelines.md
-│   ├── component-migration-plan.md
-│   ├── import-update-reference.md
-│   ├── migration-complete.md
-│   └── responsive-images.md
-└── user-research/       # User research and design decisions
-    ├── layout-design-survey.md
-    ├── project-stay-layout-decisions.md
-    └── page-layout-mockup.md
+├── how-tos/             # Implementation guides and how-to documentation
+│   ├── integrated-header.mdx
+│   ├── navigation-drawer.mdx
+│   └── responsive-images.mdx
+├── examples/            # Live interactive demonstrations
+│   ├── design-system.astro
+│   └── hero-examples.astro
+└── research/            # User research and feedback collection
+    └── layout-design-survey.mdx
 ```
 
-## Demo Pages
+## Categories
 
-Demo pages are located in `/src/pages/docs/examples/`:
-- **Design System** (`/docs/examples/design-system/`)
-- **Hero Examples** (`/docs/examples/hero-examples/`)
+### How-To Guides (`/docs/how-tos/`)
+Implementation guides for features and components. Technical documentation for developers.
+
+### Examples (`/docs/examples/`)
+Live interactive demonstrations and visual references.
+
+### Research (`/docs/research/`)
+User research surveys and feedback collection tools for ongoing site improvements.
 
 View all at: `/docs/`
 
@@ -68,23 +66,10 @@ Pages will automatically be:
 
 ---
 
-## User Research & Design
+## Research
 
-### Project & Stay Page Redesign (October 2025)
+Ongoing user research and feedback collection to improve the Giveback Guide experience.
 
-A comprehensive review and redesign of the Project and Stay page layouts to improve visual hierarchy, user flow, and conversion rates.
+**Active Surveys:**
 
-**Key Documents:**
-
-- **[Layout Design Survey](./user-research/layout-design-survey.md)** - User research questions to validate design decisions
-- **[Design Decisions](./user-research/project-stay-layout-decisions.md)** - Full rationale, three-tier visual system, and unified action bar approach
-- **[Page Layout Mock-up](./user-research/page-layout-mockup.md)** - Visual representation using real Furahaa project data
-
-**Key Proposals:**
-- Three-tier visual system (Action, Emphasis, Flow)
-- Unified expandable action bar across all page types
-- Impact Areas elevated to position 4 (after title)
-- Color-coded impact area cards
-- Clickable metadata pills for filtering
-- Improved verification section with testimonials
-- Mobile-optimized action access
+- **User Experience Survey** - Continuous feedback collection about site features, usability, and user preferences
