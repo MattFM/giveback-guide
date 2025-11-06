@@ -6,6 +6,12 @@ import type { GetStaticPathsOptions } from "astro";
 import PostCard from "../../../components/content/PostCard.astro";
 import BlogTagsDropdown from "../../../components/ui/Dropdown/BlogTagsDropdown.astro";
 
+// Helper function to parse dates in dd/mm/yyyy format
+function parseDate(dateStr: string): Date {
+  const [day, month, year] = dateStr.split('/');
+  return new Date(`${year}-${month}-${day}`);
+}
+
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all posts
   const posts = await getCollection("posts");
@@ -32,7 +38,22 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
           tag.toLowerCase().replace(/\s+/g, "-")
     );
 
-    const paginatedPaths = paginate(filteredPosts, {
+    // Sort filtered posts by date (descending order)
+    const sortedPosts = filteredPosts.sort((a, b) => {
+      const dateA = a.data.properties.bPublished?.start 
+        ? (typeof a.data.properties.bPublished.start === 'string' 
+            ? parseDate(a.data.properties.bPublished.start) 
+            : a.data.properties.bPublished.start) 
+        : new Date(0);
+      const dateB = b.data.properties.bPublished?.start 
+        ? (typeof b.data.properties.bPublished.start === 'string' 
+            ? parseDate(b.data.properties.bPublished.start) 
+            : b.data.properties.bPublished.start) 
+        : new Date(0);
+      return dateB.getTime() - dateA.getTime(); // Most recent first
+    });
+
+    const paginatedPaths = paginate(sortedPosts, {
       pageSize: 9, // Number of projects per page
       params: { tag: tag.toLowerCase().replace(/\s+/g, "-") },
       props: { tag }, // Pass the country as a prop
