@@ -44,6 +44,14 @@ import MainLayout from "../layouts/MainLayout.astro";
             (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
           }
         </script>
+        <script>
+          // Re-initialize Tally forms after View Transitions
+          document.addEventListener("astro:page-load", () => {
+            if (typeof window !== "undefined" && "Tally" in window) {
+              (window as any).Tally.loadEmbeds();
+            }
+          });
+        </script>
       </div>
     </section>
   </main>
