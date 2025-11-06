@@ -8,6 +8,9 @@ interface Props {
 
 const { variant = 'default', theme = 'light' } = Astro.props;
 
+// Get current path for active link detection
+const currentPath = Astro.url.pathname;
+
 // Tailwind classes for header positioning and background
 const positionClasses = variant === 'transparent' 
   ? 'absolute top-0 left-0 right-0 z-50' 
@@ -24,6 +27,15 @@ const logoFillClass = theme === 'dark' ? 'fill-white' : 'fill-black';
 const linkClasses = theme === 'dark'
   ? 'text-white hover:text-white/80'
   : 'text-gray-700 hover:text-purple-600';
+
+// Helper function to check if a link is active
+const isActive = (path: string) => {
+  if (path === '/') return currentPath === '/';
+  return currentPath.startsWith(path);
+};
+
+// Active link styling
+const activeLinkClass = 'font-bold';
 
 // Search button colors - subtle field-like appearance
 const searchButtonClasses = theme === 'dark'
@@ -361,19 +373,19 @@ const mobileButtonClasses = theme === 'dark'
       <div class="hidden lg:flex lg:items-center lg:order-1">
         <ul class="flex flex-row space-x-8">
           <li>
-            <a href="/projects" class={`cursor-pointer ${linkClasses}`}>Projects</a>
+            <a href="/projects/" class={`cursor-pointer ${linkClasses} ${isActive('/projects') ? activeLinkClass : ''}`}>Projects</a>
           </li>
           <li>
-            <a href="/stays" class={`cursor-pointer ${linkClasses}`}>Stays</a>
+            <a href="/stays/" class={`cursor-pointer ${linkClasses} ${isActive('/stays') ? activeLinkClass : ''}`}>Stays</a>
           </li>
           <li>
-            <a href="/blog" class={`cursor-pointer ${linkClasses}`}>Blog</a>
+            <a href="/blog/" class={`cursor-pointer ${linkClasses} ${isActive('/blog') ? activeLinkClass : ''}`}>Blog</a>
           </li>
           <li>
-            <a href="/concierge" class={`cursor-pointer ${linkClasses}`}>Concierge</a>
+            <a href="/concierge/" class={`cursor-pointer ${linkClasses} ${isActive('/concierge') ? activeLinkClass : ''}`}>Concierge</a>
           </li>
           <li>
-            <a href="/submit" class={`cursor-pointer ${linkClasses}`}>Submit</a>
+            <a href="/submit/" class={`cursor-pointer ${linkClasses} ${isActive('/submit') ? activeLinkClass : ''}`}>Submit</a>
           </li>
         </ul>
       </div>
