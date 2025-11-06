@@ -201,6 +201,11 @@ const relatedProjects = allProjects
               <slot />
               <!-- Hidden searchable metadata for improved search indexing -->
               <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+                {properties.pOrganiser && (
+                  <span data-pagefind-meta="organiser">
+                    {properties.pOrganiser}
+                  </span>
+                )}
                 {properties.pCountry && (
                   <span data-pagefind-meta="countries">
                     {Array.isArray(properties.pCountry) 
@@ -209,9 +214,9 @@ const relatedProjects = allProjects
                   </span>
                 )}
                 {properties.pLocale && (
-                  <span>
+                  <span data-pagefind-meta="locale">
                     {Array.isArray(properties.pLocale) 
-                      ? properties.pLocale.join(" ") 
+                      ? properties.pLocale.join(", ") 
                       : properties.pLocale}
                   </span>
                 )}

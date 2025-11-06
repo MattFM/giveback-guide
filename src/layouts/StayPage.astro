@@ -261,6 +261,11 @@ if (images.length === 0) {
               <slot />
               <!-- Hidden searchable metadata for improved search indexing -->
               <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+                {properties.sName && (
+                  <span data-pagefind-meta="organiser">
+                    {properties.sName}
+                  </span>
+                )}
                 {properties.sCountry && (
                   <span data-pagefind-meta="countries">
                     {Array.isArray(properties.sCountry) 
@@ -269,9 +274,9 @@ if (images.length === 0) {
                   </span>
                 )}
                 {properties.sLocale && (
-                  <span>
+                  <span data-pagefind-meta="locale">
                     {Array.isArray(properties.sLocale) 
-                      ? properties.sLocale.join(" ") 
+                      ? properties.sLocale.join(", ") 
                       : properties.sLocale}
                   </span>
                 )}
