@@ -215,23 +215,22 @@ const mobileButtonClasses = theme === 'dark'
 
         <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
         <script is:inline>
-          (async function () {
-            try {
-              const dash = document.getElementById("header-dashboard-link");
-              const join = document.getElementById("header-join-link");
-              if (!dash || !join) return;
-
-              function setVisible(el, visible) {
+          // Define functions in global scope so they persist across page transitions
+          if (!window.headerAuthCheck) {
+            window.headerAuthCheck = {
+              initialized: false,
+              
+              setVisible: function(el, visible) {
+                if (!el) return;
                 el.style.display = visible ? "inline-flex" : "none";
                 el.setAttribute("aria-hidden", visible ? "false" : "true");
-              }
-
-              // Use the same reliable auth detection logic as getCurrentUser()
-              async function getCurrentUserReliable() {
+              },
+              
+              getCurrentUserReliable: function() {
                 try {
                   let authToken = null;
                   
-                  // Find the Supabase auth token using the same logic as getCurrentUser()
+                  // Find the Supabase auth token
                   if (typeof window !== "undefined" && "localStorage" in window) {
                     for (let i = 0; i < localStorage.length; i++) {
                       const k = localStorage.key(i);
@@ -261,49 +260,64 @@ const mobileButtonClasses = theme === 'dark'
                 } catch {
                   return null;
                 }
-              }
-
-              async function decideAndToggle() {
+              },
+              
+              updateButtons: function() {
                 try {
-                  const user = await getCurrentUserReliable();
+                  const dash = document.getElementById("header-dashboard-link");
+                  const join = document.getElementById("header-join-link");
+                  
+                  if (!dash || !join) {
+                    console.log('Header: Buttons not found in DOM yet');
+                    return;
+                  }
+                  
+                  const user = this.getCurrentUserReliable();
                   const loggedIn = !!user;
-                  console.log('Header auth check:', { hasUser: loggedIn, userId: user?.id });
-                  setVisible(dash, loggedIn);
-                  setVisible(join, !loggedIn);
+                  console.log('Header auth check:', { hasUser: loggedIn, userId: user?.id, timestamp: Date.now() });
+                  
+                  this.setVisible(dash, loggedIn);
+                  this.setVisible(join, !loggedIn);
                 } catch (error) {
                   console.error('Header auth check failed:', error);
                   // On error, show join button (safer default)
-                  setVisible(dash, false);
-                  setVisible(join, true);
+                  const dash = document.getElementById("header-dashboard-link");
+                  const join = document.getElementById("header-join-link");
+                  this.setVisible(dash, false);
+                  this.setVisible(join, true);
                 }
+              },
+              
+              init: function() {
+                if (this.initialized) {
+                  console.log('Header: Already initialized, just updating buttons');
+                  this.updateButtons();
+                  return;
+                }
+                
+                console.log('Header: Initializing auth check');
+                this.initialized = true;
+                
+                // Initial check
+                this.updateButtons();
+                
+                // React to auth changes from other tabs/windows
+                window.addEventListener("storage", (e) => {
+                  const k = (e && e.key) || "";
+                  if (
+                    /^sb-.*-auth-token$/.test(k) ||
+                    k.indexOf("supabase.auth.token") !== -1
+                  ) {
+                    console.log('Header: Storage event detected, updating buttons');
+                    this.updateButtons();
+                  }
+                });
               }
-
-              // Run immediately 
-              await decideAndToggle();
-              
-              // Re-run on DOM and load in case of timing issues
-              document.addEventListener("DOMContentLoaded", decideAndToggle, {
-                once: true,
-              });
-              window.addEventListener("load", decideAndToggle);
-              
-              // Re-run after View Transitions
-              document.addEventListener("astro:page-load", decideAndToggle);
-              
-              // React to auth changes from other tabs/windows
-              window.addEventListener("storage", function (e) {
-                const k = (e && e.key) || "";
-                if (
-                  /^sb-.*-auth-token$/.test(k) ||
-                  k.indexOf("supabase.auth.token") !== -1
-                ) {
-                  decideAndToggle();
-                }
-              });
-            } catch (error) {
-              console.error('Header initialization failed:', error);
-            }
-          })();
+            };
+          }
+          
+          // Run immediately
+          window.headerAuthCheck.init();
         </script>
 
         <!-- Mobile Menu Toggle -->
@@ -678,6 +692,24 @@ const mobileButtonClasses = theme === 'dark'
 
   // Run on initial load and after View Transitions
   document.addEventListener("astro:page-load", initSearchModal);
+</script>
+
+<script>
+  // Handle auth button visibility on View Transitions
+  document.addEventListener("astro:page-load", () => {
+    if ((window as any).headerAuthCheck) {
+      console.log('Header: astro:page-load event, updating buttons');
+      (window as any).headerAuthCheck.updateButtons();
+    }
+  });
+  
+  // Also run immediately on script load
+  document.addEventListener("astro:after-swap", () => {
+    if ((window as any).headerAuthCheck) {
+      console.log('Header: astro:after-swap event, updating buttons');
+      (window as any).headerAuthCheck.updateButtons();
+    }
+  });
 </script>
 
 <style>

@@ -445,8 +445,19 @@ import { SITE_TITLE } from "../consts";
   let activeImpactAreas = new Set<string>();
   let displayedResults = 0;
   const resultsPerPage = 12;
+  let isInitialized = false;
 
   async function initSearch() {
+    // Reset state on each init to handle back/forward navigation
+    if (isInitialized) {
+      console.log('Re-initializing search after navigation');
+      currentQuery = '';
+      allResults = [];
+      activeFilters = new Set(['all']);
+      activeImpactAreas = new Set<string>();
+      displayedResults = 0;
+    }
+    isInitialized = true;
     const searchInput = document.getElementById("search-input") as HTMLInputElement;
     const searchResults = document.getElementById("search-results");
     const statusText = document.getElementById("status-text");
