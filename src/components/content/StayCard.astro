@@ -32,18 +32,38 @@ const { stay } = Astro.props as Props;
         <div class="absolute top-2 right-2">
           <!-- Save control removed from card; Save UI is available on stay pages only -->
         </div>
-  <div class="mb-2">
+  <div class="mb-2 flex items-center flex-wrap gap-1.5">
     {
       (() => {
         const countries = stay.data.properties.sCountry;
         const countryArray = Array.isArray(countries) ? countries : [countries];
+        const locales = stay.data.properties.sLocale;
+        const localeArray = Array.isArray(locales) ? locales : [locales];
+        
+        // Format locales based on count
+        const formatLocales = (locales: string[]) => {
+          if (locales.length === 0) return "";
+          if (locales.length === 1) return locales[0];
+          if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
+          if (locales.length === 3) return `${locales[0]}, ${locales[1]} & ${locales[2]}`;
+          // For 4+, show first two and count remaining
+          const remaining = locales.length - 2;
+          return `${locales[0]}, ${locales[1]} & ${remaining} more`;
+        };
         
         return countryArray
           .filter((country: string) => country !== "United Kingdom" && country !== "UK")
           .map((country: string) => (
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
-              {country}
-            </span>
+            <div class="inline-flex items-center gap-1.5">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                {country}
+              </span>
+              {localeArray.length > 0 && (
+                <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                  |&nbsp; {formatLocales(localeArray)}
+                </span>
+              )}
+            </div>
           ));
       })()
     }
@@ -54,20 +74,6 @@ const { stay } = Astro.props as Props;
     </a>
   </h2>
   <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400">
-    {stay.data.properties.sName} is a {stay.data.properties.sType} in
-    {
-      (() => {
-        const locales = stay.data.properties.sLocale;
-        
-        // Format locales
-        if (Array.isArray(locales)) {
-          if (locales.length === 0) return "";
-          if (locales.length === 1) return locales[0];
-          if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
-          return locales.slice(0, -1).join(", ") + " & " + locales[locales.length - 1];
-        }
-        return locales;
-      })()
-    }
+    {stay.data.properties.sName} is a {stay.data.properties.sType}
   </p>
 </BaseCard>

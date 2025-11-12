@@ -1449,27 +1449,48 @@ import { SITE_TITLE } from "../consts";
       const countries = data.meta?.countries || '';
       const categories = data.meta?.categories || '';
 
+      // Helper function to format locales
+      const formatLocales = (locales: string[]) => {
+        if (locales.length === 0) return "";
+        if (locales.length === 1) return locales[0];
+        if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
+        if (locales.length === 3) return `${locales[0]}, ${locales[1]} & ${locales[2]}`;
+        // For 4+, show first two and count remaining
+        const remaining = locales.length - 2;
+        return `${locales[0]}, ${locales[1]} & ${remaining} more`;
+      };
+
       // Create countries/tags badges for projects, stays and posts (matching existing card design)
       let badgesLine = '';
       if (contentTypeSlug === 'projects' && countries) {
         const countryArray = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
+        const localeArray = locale ? locale.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
+        
         if (countryArray.length > 0) {
-          badgesLine = `<div class="mb-2">
+          badgesLine = `<div class="mb-2 flex items-center flex-wrap gap-1.5">
             ${countryArray.map((country: string) => 
-              `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
-                ${country}
-              </span>`
+              `<div class="inline-flex items-center gap-1.5">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                  ${country}
+                </span>
+                ${localeArray.length > 0 ? `<span class="text-xs font-medium text-gray-700 dark:text-gray-300">|&nbsp; ${formatLocales(localeArray)}</span>` : ''}
+              </div>`
             ).join('')}
           </div>`;
         }
       } else if (contentTypeSlug === 'stays' && countries) {
         const countryArray = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
+        const localeArray = locale ? locale.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
+        
         if (countryArray.length > 0) {
-          badgesLine = `<div class="mb-2">
+          badgesLine = `<div class="mb-2 flex items-center flex-wrap gap-1.5">
             ${countryArray.map((country: string) => 
-              `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
-                ${country}
-              </span>`
+              `<div class="inline-flex items-center gap-1.5">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                  ${country}
+                </span>
+                ${localeArray.length > 0 ? `<span class="text-xs font-medium text-gray-700 dark:text-gray-300">|&nbsp; ${formatLocales(localeArray)}</span>` : ''}
+              </div>`
             ).join('')}
           </div>`;
         }
@@ -1489,13 +1510,14 @@ import { SITE_TITLE } from "../consts";
 
       // Create metadata line based on content type (matching the original card styles)
       let metadataLine = '';
-      if (contentTypeSlug === 'projects' && organiser && locale) {
+      if (contentTypeSlug === 'projects' && organiser) {
         metadataLine = `<p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400">
-          ${organiser} in ${locale}
+          ${organiser}
         </p>`;
-      } else if (contentTypeSlug === 'stays' && organiser && locale) {
+      } else if (contentTypeSlug === 'stays' && organiser) {
+        const stayType = data.meta?.stayType || 'stay';
         metadataLine = `<p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400">
-          ${organiser} is a stay in ${locale}
+          ${organiser} is a ${stayType}
         </p>`;
       }
 
