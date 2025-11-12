@@ -1,0 +1,503 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Ford Foundation Design System Analysis
+description: Design patterns and components observed from fordfoundation.org for potential inspiration
+---
+
+# Ford Foundation Design System Analysis
+
+**Reference document** - Design patterns and components observed from fordfoundation.org  
+**Last updated:** November 11, 2025  
+**Purpose:** Reference for potential design inspiration and component ideas for Giveback Guide
+
+---
+
+## Overview
+
+The Ford Foundation website employs a clean, professional design system that balances bold visual elements with excellent readability and accessibility. The design prioritizes content hierarchy, uses generous whitespace, and maintains a strong focus on social justice messaging through its visual language.
+
+### Design Philosophy
+- **Mission-first**: Every design decision reinforces their social justice mission
+- **Accessible**: Clear contrast, readable typography, semantic structure
+- **Bold yet restrained**: Strong hero elements with clean content areas
+- **Image-driven storytelling**: High-quality photography showcasing people and impact
+- **Interconnected content**: Visual and textual emphasis on how topics relate
+
+---
+
+## Color Palette
+
+### Primary Colors
+Based on observed elements throughout the site:
+
+**Deep Teal/Blue-Green**: Primary brand color used for headers, accents, and interactive elements
+- Appears in navigation, section headers, and graphic elements
+- Hex estimate: `#0A7373` to `#008080` range
+
+**Vibrant Orange**: Secondary accent color
+- Used for CTAs and emphasis
+- Creates strong contrast with teal
+- Hex estimate: `#FF6B35` to `#FF7F50` range
+
+**Deep Charcoal/Black**: Primary text color
+- Used for body copy and headlines
+- Hex estimate: `#1A1A1A` to `#2C2C2C`
+
+**Soft Gray**: Secondary text and subtle backgrounds
+- Used for metadata, captions, and light backgrounds
+- Hex estimate: `#F5F5F5` to `#E8E8E8` for backgrounds
+- Hex estimate: `#666666` to `#777777` for text
+
+**Pure White**: Primary background color
+- Clean, generous use throughout
+
+### Accent & Supporting Colors
+
+**Green/Lime Green**: Used in inequality graphics and accent elements
+- Hex estimate: `#7AC943` to `#8FD14F`
+
+**Warm Red**: Occasionally used for emphasis in imagery
+- Part of the overall warm color story
+
+### Color Usage Patterns
+
+1. **Headers & Navigation**: Deep teal/blue-green
+2. **Body Text**: Deep charcoal on white
+3. **CTAs**: Orange buttons with white text
+4. **Backgrounds**: White primary, soft gray for sections
+5. **Links**: Teal/blue-green with underlines
+6. **Hover States**: Slightly lighter or darker versions of primary colors
+
+---
+
+## Typography
+
+### Type Scale & Hierarchy
+
+**Large Display Text** (Hero Headlines):
+- Very large, bold sans-serif
+- Likely 48px+ on desktop
+- Used for main hero sections
+- Strong line height (1.1-1.2)
+
+**Section Headlines** (H2):
+- Medium-large sans-serif
+- Likely 32-40px on desktop
+- Bold weight
+- Used for major content sections
+
+**Subsection Headlines** (H3):
+- Medium sans-serif
+- Likely 24-28px on desktop
+- Medium to bold weight
+- Used for card titles and content groups
+
+**Body Text**:
+- Readable sans-serif
+- Likely 16-18px base size
+- Comfortable line height (1.6-1.8)
+- Medium weight for readability
+
+**Small Text** (Captions, Metadata):
+- 14-16px
+- Regular or medium weight
+- Used for tags, dates, bylines
+
+### Font Characteristics
+
+- **Sans-serif throughout**: Modern, clean, accessible
+- **Likely a web-optimized system font or custom font**:
+  - Possible fonts: Inter, Proxima Nova, Helvetica Neue, or custom
+  - Excellent legibility at all sizes
+  - Strong geometric forms
+
+### Typographic Patterns
+
+1. **Sentence case for headlines**: "Working with visionaries on the frontlines"
+2. **Proper hierarchy**: Clear visual distinction between levels
+3. **Generous line-height**: Text breathes, easy to scan
+4. **Limited character width**: Content columns don't exceed ~70-80 characters
+5. **Strategic bolding**: Used sparingly for emphasis within paragraphs
+
+---
+
+## Layout & Grid System
+
+### Grid Structure
+
+**Content Width**:
+- Maximum content width appears to be ~1200-1400px
+- Centered with generous side margins
+- Responsive breakpoints for mobile/tablet/desktop
+
+**Column System**:
+- Appears to use a 12-column grid
+- Card layouts often use 3-column (desktop) → 2-column (tablet) → 1-column (mobile)
+- Some sections use 2-column layouts for featured content
+
+### Spacing System
+
+**Consistent vertical rhythm**:
+- Large sections: 80-120px spacing between
+- Medium sections: 40-60px spacing
+- Card/content padding: 24-32px
+- Tight groupings: 16-24px
+
+**Horizontal spacing**:
+- Card gaps: 24-32px between items
+- Side margins: 40-60px on desktop, 16-24px on mobile
+
+### Layout Patterns
+
+1. **Full-width hero sections**: Large images or video with overlaid text
+2. **Contained content sections**: Max-width containers with breathing room
+3. **Card grids**: 2-3 column grids for content cards
+4. **Alternating layouts**: Image-left/text-right alternates with text-left/image-right
+5. **Full-width color blocks**: Occasional colored background sections for emphasis
+
+---
+
+## Component Library
+
+### Navigation
+
+**Header**:
+- Fixed or sticky navigation bar
+- Logo on left, main nav links in center/right
+- Search toggle, possibly mobile menu toggle
+- Clean horizontal layout
+- Likely includes mega-menu dropdowns for complex navigation
+
+**Footer**:
+- Multi-column layout (4-5 columns)
+- Newsletter signup form
+- Social media links
+- Quick links organized by category
+- Contact information
+- Copyright and legal links
+
+### Hero Components
+
+**Homepage Hero**:
+- Large format (viewport height or near it)
+- Background video or high-quality image
+- Large headline overlaid
+- Minimal text for impact
+- Single CTA button
+
+**Section Heroes**:
+- Smaller than homepage hero
+- Full-width image backgrounds
+- Centered or left-aligned text
+- Mission-driven headlines
+
+### Cards
+
+**Content Cards** (Projects, News, Stories):
+- Image at top (16:9 or 3:2 aspect ratio)
+- Small category/tag label above or on image
+- Headline (H3 size)
+- Brief description text (2-3 lines)
+- Optional metadata (date, author)
+- Hover state: slight elevation/shadow, image zoom
+
+**Feature Cards** (Large):
+- Larger format, potentially 2-column span
+- Horizontal layout option (image left, content right)
+- More description text
+- Multiple CTAs possible
+
+**Icon Cards** (Priority Areas):
+- Minimal design
+- Icon or small image
+- Title
+- Short description
+- Link to detail page
+
+### Buttons & CTAs
+
+**Primary Button**:
+- Orange background
+- White text
+- Medium padding (12-16px vertical, 24-32px horizontal)
+- Subtle rounded corners (4-6px)
+- Hover: slightly darker shade
+
+**Secondary Button**:
+- Outlined version (teal border)
+- Teal text
+- Transparent background
+- Hover: filled background
+
+**Text Links**:
+- Teal color
+- Underline (always visible or on hover)
+- Arrow icon often follows link text →
+
+### Form Elements
+
+**Newsletter Signup**:
+- Horizontal layout on desktop
+- Multiple fields (email, first name, last name, country)
+- Submit button in brand colors
+- Labels above or placeholder text
+
+**Search**:
+- Toggle button in header
+- Overlay or slide-in search panel
+- Large search input field
+- Autocomplete/suggestions likely
+
+### Image Components
+
+**Hero Images**:
+- Full-width, high-quality
+- Often with subtle overlay for text readability
+- Focal point positioned strategically
+
+**Content Images**:
+- Responsive images with proper srcset
+- Aspect ratio maintained
+- Lazy loading likely implemented
+- Alt text for accessibility
+
+**Photo Collages**:
+- Multi-image compositions
+- Often 3-4 images arranged artfully
+- Used to show diversity and impact
+
+### Lists & Content Groupings
+
+**Priority Areas Grid**:
+- 3-column grid of linked items
+- Icon or small image
+- Title + brief description
+- Hover state clearly indicates clickability
+
+**News/Stories Lists**:
+- Mixed card sizes (feature + standard cards)
+- Category tags visible
+- Publication dates
+- "Read more" CTAs
+
+---
+
+## Interactive Patterns
+
+### Hover States
+
+1. **Cards**: Subtle lift (shadow increase), slight scale on image
+2. **Buttons**: Color darkens or lightens
+3. **Links**: Underline appears, color may slightly shift
+4. **Images**: Subtle zoom or overlay fade
+
+### Transitions
+
+- Smooth, not jarring (200-300ms duration typical)
+- Ease-in-out or custom easing curves
+- Applied to shadows, transforms, colors
+
+### Loading States
+
+- Likely skeleton screens or spinners
+- Progressive image loading
+- Smooth content appearance
+
+---
+
+## Content Patterns
+
+### Storytelling Approach
+
+1. **Bold headlines**: Mission-driven, action-oriented language
+2. **Human-centered imagery**: Photos of real people, communities
+3. **Interconnected messaging**: Frequent references to how topics relate
+4. **Data + narrative**: Statistics paired with human stories
+5. **Clear CTAs**: Every section guides to next action
+
+### Section Templates
+
+**"What We Do" Sections**:
+- Headline
+- Introductory paragraph
+- Grid of related items (3-4 across)
+- Link to learn more
+
+**"Featured Content" Sections**:
+- Large featured item
+- Supporting items below
+- Category filtering or tags
+- "See all" CTA
+
+**"About/Explainer" Sections**:
+- Headline
+- 2-3 paragraphs of body text
+- Supporting image (often to the side)
+- Optional list or callout boxes
+
+---
+
+## Accessibility Features
+
+Based on observed patterns:
+
+1. **Semantic HTML**: Proper heading hierarchy, landmarks
+2. **Color contrast**: Strong contrast ratios throughout
+3. **Focus indicators**: Visible focus states on interactive elements
+4. **Alt text**: Images have descriptive alt text
+5. **Keyboard navigation**: All interactive elements accessible via keyboard
+6. **ARIA labels**: Likely used where needed for screen readers
+7. **Responsive text**: Text scales appropriately at all sizes
+8. **No color-only information**: Information not conveyed by color alone
+
+---
+
+## Responsive Behavior
+
+### Breakpoints (Estimated)
+
+- **Mobile**: < 768px
+- **Tablet**: 768px - 1024px
+- **Desktop**: 1024px - 1440px
+- **Large Desktop**: > 1440px
+
+### Mobile Adaptations
+
+1. **Navigation**: Hamburger menu
+2. **Cards**: Stack to single column
+3. **Hero text**: Smaller font sizes
+4. **Spacing**: Reduced vertical/horizontal spacing
+5. **Forms**: Stack vertically
+6. **Images**: Full-width, adjusted aspect ratios
+
+---
+
+## Motion & Animation
+
+### Subtle Animations
+
+1. **Scroll-triggered fades**: Content fades in as you scroll
+2. **Parallax effects**: Minimal, tasteful parallax on hero images
+3. **Hover animations**: Smooth transitions on cards and buttons
+4. **Loading animations**: Skeleton screens or fade-ins for content
+
+### Animation Principles
+
+- **Performance-first**: Hardware-accelerated transforms
+- **Purposeful**: Animation supports understanding, not decoration
+- **Respectful**: Respects prefers-reduced-motion settings
+- **Smooth**: 60fps animations, no jank
+
+---
+
+## Unique Design Elements
+
+### "Blob" Graphics
+
+- Organic, layered shapes used in inequality diagrams
+- Soft, rounded forms
+- Overlapping with transparency
+- Reinforces interconnected themes
+
+### Directional Arrows
+
+- Graphic element showing progression
+- Often colorful, pointing right
+- Used in section headers and illustrations
+
+### Collage-Style Layouts
+
+- Multiple images composed together
+- Represents diversity and global reach
+- Creates visual interest and energy
+
+---
+
+## Comparison to Giveback Guide
+
+### Potential Inspirations
+
+**What Could Work Well**:
+
+1. **Bold hero sections**: Your homepage could benefit from larger, more impactful hero
+2. **Card hover effects**: More pronounced hover states on project/stay cards
+3. **Category/tag presentation**: Ford's clean pill-style tags are very readable
+4. **Whitespace**: More generous spacing between sections
+5. **Color blocking**: Occasional full-width colored sections for variety
+6. **Mission-first headlines**: Bolder, more action-oriented language
+7. **Collage imagery**: Could work well for impact stories or multiple projects
+
+**What Wouldn't Work**:
+
+1. **Corporate aesthetic**: Ford's design is more formal than Giveback's friendly vibe
+2. **Limited color palette**: GBG benefits from more colorful, vibrant approach
+3. **Heavy institutional feel**: GBG should feel more grassroots and accessible
+
+### Implementation Ideas
+
+1. **Enhanced card component**: Add Ford-style hover lift and image zoom
+2. **Section dividers**: Full-width colored sections between major content areas
+3. **Improved type hierarchy**: Larger headlines for more impact
+4. **Newsletter signup**: Horizontal multi-field design like Ford's
+5. **About sections**: Two-column image+text layouts for storytelling
+6. **Priority/impact areas**: Grid layout similar to Ford's priority areas
+
+---
+
+## Technical Notes
+
+### Performance
+
+- Images optimized and responsive
+- Lazy loading implemented
+- Minimal JavaScript for core experience
+- Progressive enhancement approach
+
+### Browser Support
+
+- Modern browsers (last 2 versions)
+- Graceful degradation for older browsers
+- Mobile-first responsive design
+
+---
+
+## Questions for Implementation
+
+Before borrowing from this design system, consider:
+
+1. **Brand alignment**: Does Ford's more corporate/institutional aesthetic fit Giveback Guide's friendly, grassroots vibe?
+2. **Color palette**: Should we adopt similar color relationships (teal + orange) or maintain GBG's existing palette?
+3. **Typography scale**: How much larger should our headlines be?
+4. **Spacing system**: Should we standardize spacing to match Ford's rhythm?
+5. **Component complexity**: Which components provide the most value for the effort?
+6. **Accessibility parity**: Are we already meeting the same accessibility standards?
+
+---
+
+## Resources & References
+
+- **Website**: [https://www.fordfoundation.org](https://www.fordfoundation.org)
+- **Key Pages Analyzed**:
+  - Homepage
+  - /work/challenging-inequality/
+  - /about/
+- **Design Strengths**: Clean typography, strong hierarchy, accessible, mission-focused
+- **Design Approach**: Corporate philanthropy with social justice focus
+
+---
+
+## Next Steps
+
+To implement ideas from this design system:
+
+1. **Audit current GBG components** against Ford's patterns
+2. **Prioritize changes** by impact and effort
+3. **Create component variants** for testing
+4. **A/B test** changes with users if possible
+5. **Document decisions** and maintain design system consistency
+
+---
+
+## Version History
+
+- **v1.0** (Nov 11, 2025): Initial analysis created based on Ford Foundation website review
