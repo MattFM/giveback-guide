@@ -201,82 +201,79 @@ import MainLayout from "../../layouts/MainLayout.astro";
           </div>
         </div>
 
-        <!-- My Lists section -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100">
-          <div class="p-6 sm:p-8">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
-              <div class="flex-1">
-                <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">My Lists</h2>
-                <p class="text-base mb-4" style="color: #7E827E;">
-                  Create lists to save projects and stays for later.
-                </p>
-                <div class="sm:hidden flex items-center gap-3">
-                  <button
-                    id="createListBtn"
-                    aria-label="Create new list"
-                    title="Create new list"
-                    class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
-                    style="background-color: #1C2434;"
-                  >
-                    <svg
-                      class="w-4 h-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"></path>
-                    </svg>
-                    <span>New List</span>
-                  </button>
-                  <button
-                    id="hideDoneChipMobile"
-                    aria-pressed="false"
-                    class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
-                    style="border-color: #E8EAE8; color: #1C2434; background: white;"
-                    >Hide visited</button
-                  >
-                </div>
-              </div>
-              <div class="hidden sm:flex items-center gap-3">
-                <button
-                  id="hideDoneChip"
-                  aria-pressed="false"
-                  class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
-                  style="border-color: #E8EAE8; color: #1C2434; background: white;"
-                  >Hide visited</button
+        <!-- My Lists section header (no box) -->
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mt-6 mb-4 gap-4">
+          <div class="flex-1">
+            <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">My Lists</h2>
+            <p class="text-base mb-4 sm:mb-0" style="color: #7E827E;">
+              Create lists to save projects and stays for later.
+            </p>
+            <div class="sm:hidden flex items-center gap-3">
+              <button
+                id="createListBtn"
+                aria-label="Create new list"
+                title="Create new list"
+                class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
+                style="background-color: #1C2434;"
+              >
+                <svg
+                  class="w-4 h-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
                 >
-                <button
-                  id="createListBtnDesktop"
-                  aria-label="Create new list"
-                  title="Create new list"
-                  class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
-                  style="background-color: #1C2434;"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"></path>
-                  </svg>
-                  <span>New List</span>
-                </button>
-              </div>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"></path>
+                </svg>
+                <span>New List</span>
+              </button>
+              <button
+                id="hideDoneChipMobile"
+                aria-pressed="false"
+                class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
+                style="border-color: #E8EAE8; color: #1C2434; background: white;"
+                >Hide visited</button
+              >
             </div>
           </div>
+          <div class="hidden sm:flex items-center gap-3">
+            <button
+              id="hideDoneChip"
+              aria-pressed="false"
+              class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
+              style="border-color: #E8EAE8; color: #1C2434; background: white;"
+              >Hide visited</button
+            >
+            <button
+              id="createListBtnDesktop"
+              aria-label="Create new list"
+              title="Create new list"
+              class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
+              style="background-color: #1C2434;"
+            >
+              <svg
+                class="w-4 h-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"></path>
+              </svg>
+              <span>New List</span>
+            </button>
+          </div>
+        </div>
 
           <!-- New List Modal / Bottom Sheet -->
           <div id="newListModal" class="fixed inset-0 z-50 hidden">
@@ -320,47 +317,48 @@ import MainLayout from "../../layouts/MainLayout.astro";
             </div>
           </div>
 
-          <!-- Lists Skeleton (shown while loading) -->
-          <div id="listsSkeleton" class="space-y-4 px-6 sm:px-8 pb-6 sm:pb-8">
-            <div class="rounded-xl p-6 border animate-pulse" style="background-color: #F6F7F6; border-color: #E8EAE8;">
-              <div class="flex items-center justify-between mb-4">
-                <div class="h-6 rounded" style="background-color: #E8EAE8; width: 30%;"></div>
-                <div class="flex gap-2">
-                  <div class="w-8 h-8 rounded-lg" style="background-color: #E8EAE8;"></div>
-                  <div class="w-8 h-8 rounded-lg" style="background-color: #E8EAE8;"></div>
+        <!-- Lists Skeleton (shown while loading) -->
+        <div id="listsSkeleton" class="space-y-4">
+          <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100 animate-pulse">
+            <div class="flex items-center justify-between mb-4">
+              <div class="h-6 rounded" style="background-color: #E8EAE8; width: 30%;"></div>
+              <div class="flex gap-2">
+                <div class="w-6 h-6 rounded-lg" style="background-color: #E8EAE8;"></div>
+                <div class="w-6 h-6 rounded-lg" style="background-color: #E8EAE8;"></div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 p-4 rounded-lg" style="background-color: #F6F7F6;">
+                <div class="w-5 h-5 rounded" style="background-color: #E8EAE8;"></div>
+                <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-4 rounded" style="background-color: #E8EAE8; width: 60%;"></div>
+                  <div class="h-3 rounded" style="background-color: #E8EAE8; width: 40%;"></div>
                 </div>
               </div>
-              <div class="space-y-2">
-                <div class="flex items-center gap-3 p-3 rounded-lg bg-white">
-                  <div class="w-4 h-4 rounded" style="background-color: #E8EAE8;"></div>
-                  <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
-                  <div class="flex-1 space-y-2">
-                    <div class="h-4 rounded" style="background-color: #E8EAE8; width: 60%;"></div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-3 p-3 rounded-lg bg-white">
-                  <div class="w-4 h-4 rounded" style="background-color: #E8EAE8;"></div>
-                  <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
-                  <div class="flex-1 space-y-2">
-                    <div class="h-4 rounded" style="background-color: #E8EAE8; width: 50%;"></div>
-                  </div>
+              <div class="flex items-center gap-3 p-4 rounded-lg" style="background-color: #F6F7F6;">
+                <div class="w-5 h-5 rounded" style="background-color: #E8EAE8;"></div>
+                <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-4 rounded" style="background-color: #E8EAE8; width: 50%;"></div>
+                  <div class="h-3 rounded" style="background-color: #E8EAE8; width: 35%;"></div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Lists placeholder -->
-          <div id="listsContainer" class="space-y-4 px-6 sm:px-8 pb-6 sm:pb-8 hidden">
-            <div
-              class="p-8 rounded-xl border-2 border-dashed text-center"
-              style="border-color: #E8EAE8; background: #F6F7F6;"
-            >
-              <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
-              <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>
-            </div>
+        <!-- Lists placeholder -->
+        <div id="listsContainer" class="space-y-4 hidden">
+          <div
+            class="p-8 rounded-xl border-2 border-dashed text-center bg-white"
+            style="border-color: #E8EAE8;"
+          >
+            <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
+            <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>
           </div>
         </div>
 
@@ -652,9 +650,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
       const frag = document.createDocumentFragment();
       lists.forEach((l) => {
         const wrap = document.createElement("div");
-        wrap.className = "p-6 rounded-xl border" ;
-        wrap.style.borderColor = "#E8EAE8";
-        wrap.style.backgroundColor = "#F6F7F6";
+        wrap.className = "bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100";
         wrap.setAttribute("data-list-id", l.id);
         const count = l.items?.length || 0;
         const lsKey = `dashListCollapsed:${l.id}`;
@@ -673,14 +669,14 @@ import MainLayout from "../../layouts/MainLayout.astro";
           }
         }
         wrap.innerHTML = `
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between mb-6">
                     <div>
-                                                <div class="font-semibold cursor-pointer" data-list-title style="color: #1C2434;">${l.title}${l.is_default ? ' <span class="text-xs" style="color: #7E827E;">(default)</span>' : ""}</div>
+                        <div class="font-bold text-lg cursor-pointer" data-list-title style="color: #1C2434;">${l.title}${l.is_default ? ' <span class="text-xs font-normal" style="color: #7E827E;">(default)</span>' : ""}</div>
                         <div class="text-sm" style="color: #7E827E;">${count} item${count === 1 ? "" : "s"}</div>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 relative">
                         <div class="relative">
-                            <button data-menu-toggle="${l.id}" aria-haspopup="menu" aria-expanded="false" aria-label="List options" class="p-2 rounded-lg cursor-pointer transition-all duration-300 hover:bg-white" style="color: #7E827E;">
+                            <button data-menu-toggle="${l.id}" aria-haspopup="menu" aria-expanded="false" aria-label="List options" class="p-2 rounded-lg cursor-pointer transition-all duration-300" style="color: #7E827E; background: transparent;" onmouseover="this.style.backgroundColor='#F6F7F6'" onmouseout="this.style.backgroundColor='transparent'">
                                 <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
                                 </svg>
@@ -692,14 +688,14 @@ import MainLayout from "../../layouts/MainLayout.astro";
                                 <button role="menuitem" data-action-delete="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-red-50" style="color: #EF4444;">Delete</button>
                             </div>
                         </div>
-                                                                        <button data-toggle-list="${l.id}" aria-expanded="${initialCollapsed ? "false" : "true"}" aria-label="${initialCollapsed ? "Expand list" : "Collapse list"}" class="p-1 rounded cursor-pointer transition-all duration-300 hover:bg-white" style="color: #7E827E;">
-                                                    <svg class="w-4 h-4 transition-transform ${initialCollapsed ? "rotate-180" : ""}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
-                                                    </svg>
-                                                </button>
+                        <button data-toggle-list="${l.id}" aria-expanded="${initialCollapsed ? "false" : "true"}" aria-label="${initialCollapsed ? "Expand list" : "Collapse list"}" class="p-2 rounded-lg cursor-pointer transition-all duration-300" style="color: #7E827E; background: transparent;" onmouseover="this.style.backgroundColor='#F6F7F6'" onmouseout="this.style.backgroundColor='transparent'">
+                            <svg class="w-4 h-4 transition-transform ${initialCollapsed ? "rotate-180" : ""}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-        <div class="mt-4 space-y-2 ${initialCollapsed ? "hidden" : ""}" data-items></div>
+        <div class="space-y-3 ${initialCollapsed ? "hidden" : ""}" data-items></div>
             `;
         const itemsHost = wrap.querySelector("[data-items]");
         const todo: any[] = [];
@@ -719,26 +715,26 @@ import MainLayout from "../../layouts/MainLayout.astro";
               ? `/projects/${item.item_id}/`
               : `/stays/${item.item_id}/`);
           const row = document.createElement("div");
-          row.className = `flex items-center justify-between rounded-lg p-4 transition-all duration-300 ${isDone ? "opacity-60" : ""}`;
+          row.className = `flex items-center justify-between rounded-lg p-4 transition-all duration-300 hover:shadow-md cursor-pointer ${isDone ? "opacity-60" : ""}`;
           row.style.backgroundColor = "white";
-          row.style.border = isDone ? "1px solid #E8EAE8" : "2px solid #E8EAE8";
+          row.style.border = "1px solid #E8EAE8";
           const key = `${item.item_type}:${item.item_id}`;
           row.innerHTML = `
-                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
                         <input type="checkbox" data-toggle-done data-type="${item.item_type}" data-id="${item.item_id}" ${isDone ? "checked" : ""}
-                               aria-label="Mark as done: ${title}"
+                               aria-label="Mark as visited: ${title}"
                                class="w-5 h-5 shrink-0 rounded cursor-pointer transition-all duration-300" style="accent-color: #A98FFA;" />
                         ${
                           meta?.image
-                            ? `<img src="${meta.image}" alt="" class="w-12 h-12 rounded object-cover shrink-0"/>`
-                            : `<div class="w-12 h-12 rounded flex items-center justify-center text-xs shrink-0" style="background-color: #F6F7F6; color: #7E827E;">${item.item_type}</div>`
+                            ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover shrink-0"/>`
+                            : `<div class="w-10 h-10 rounded flex items-center justify-center text-xs shrink-0" style="background-color: #F6F7F6; color: #7E827E;">${item.item_type}</div>`
                         }
                         <div class="flex-1 min-w-0">
                             <a class="font-semibold hover:underline block truncate cursor-pointer" style="color: ${isDone ? '#A8ACA8' : '#1C2434'};" href="${url}">${title}</a>
-                            ${meta?.location ? `<div class="text-sm mt-1 truncate" style="color: #7E827E;">${meta.location}</div>` : ''}
+                            ${meta?.location ? `<div class="text-xs mt-0.5 truncate" style="color: #A8ACA8;">${meta.location}</div>` : ''}
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 sm:gap-3 relative shrink-0 ml-3">
+                    <div class="flex items-center gap-2 relative shrink-0 ml-2">
                         <span class="hidden sm:inline text-xs" style="color: #A8ACA8;">${new Date(item.added_at).toLocaleDateString?.() || ""}</span>
                         <div class="relative">
                             <button data-item-menu-toggle="${key}" aria-haspopup="menu" aria-expanded="false" aria-label="Item options" class="p-2 rounded-lg cursor-pointer transition-all duration-300" style="color: #7E827E; background: transparent;" onmouseover="this.style.backgroundColor='#F6F7F6'" onmouseout="this.style.backgroundColor='transparent'">
