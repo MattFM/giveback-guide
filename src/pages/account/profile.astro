@@ -18,7 +18,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                     return false;
                 })();
                 if (!hasToken) {
-                    window.location.replace('/auth/login');
+                    window.location.replace('/login');
                 }
             } catch {}
         </script>
@@ -29,61 +29,80 @@ import MainLayout from '../../layouts/MainLayout.astro';
             </div>
         </noscript>
 
-        <div id="profileGuard" aria-busy="true" class="hidden max-w-3xl mx-auto px-4 py-8">
-        <div class="p-6"> <!-- flattened container: no border/box -->
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h1 class="text-2xl font-semibold">Your Profile</h1>
+        <div id="profileGuard" aria-busy="true" class="hidden">
+        <!-- Hero Section -->
+        <section style="background-color: #1C2434; padding: 2rem 1rem;">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-3xl sm:text-4xl font-black text-white">Profile Settings</h1>
+                    <a href="/account/dashboard/" class="px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300" style="background: rgba(255, 255, 255, 0.1); color: white; hover:background: rgba(255, 255, 255, 0.2);">
+                        Back to Dashboard
+                    </a>
                 </div>
-                <a href="/auth/dashboard" class="text-sm text-primary-600 hover:underline">Back to dashboard</a>
             </div>
+        </section>
 
-            <div class="space-y-6">
+        <!-- Main Content -->
+        <section style="background-color: #F6F7F6; padding: 3rem 1rem;">
+            <div class="max-w-4xl mx-auto space-y-6">
+
                 <!-- Profile section -->
-                <section id="profileSection" class="bg-gray-50 p-6 rounded-md">
-                    <div class="mb-2">
-                        <h2 class="text-lg font-medium">Profile</h2>
-                        <p class="text-sm text-gray-500">Edit your profile</p>
+                <section id="profileSection" class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">Profile Information</h2>
+                        <p class="text-base" style="color: #7E827E;">Update your personal details</p>
                     </div>
-                    <div id="profileArea">Loading...</div>
+                    <div id="profileArea" style="color: #7E827E;">Loading...</div>
                 </section>
 
                 <!-- Newsletter section (separate from the profile form) -->
-                <section id="newsletterSection" class="bg-gray-50 p-6 rounded-md">
-                    <div class="mb-2">
-                        <h2 class="text-lg font-medium">Newsletter</h2>
-                        <p class="text-sm text-gray-500">Manage your subscription preferences</p>
+                <section id="newsletterSection" class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">Newsletter</h2>
+                        <p class="text-base" style="color: #7E827E;">Manage your subscription preferences</p>
                     </div>
                     <div id="newsletterArea"><!-- populated by JS --></div>
                 </section>
 
                 <!-- Danger section -->
-                <section id="dangerSection" class="bg-gray-50 p-6 rounded-md">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-sm font-semibold text-red-700">Danger zone</h3>
-                            <p class="text-sm text-gray-500">Account deletion is irreversible. Open the confirmation modal to proceed.</p>
+                <section id="dangerSection" class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border-2" style="border-color: #FEE2E2;">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-black mb-2" style="color: #EF4444;">Danger Zone</h3>
+                            <p class="text-sm" style="color: #7E827E;">Account deletion is permanent and cannot be undone. All your data will be lost.</p>
                         </div>
                         <div>
-                            <button id="deleteTriggerBtn" class="text-sm text-red-600 hover:underline cursor-pointer">Delete account</button>
+                            <button id="deleteTriggerBtn" class="px-4 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg whitespace-nowrap" style="background-color: #EF4444; color: white;">
+                                Delete Account
+                            </button>
                         </div>
                     </div>
                 </section>
+            </div>
+        </section>
 
-            <!-- Confirmation modal (hidden until triggered) -->
-            <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-                <div role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" class="w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
-                    <h2 id="deleteModalTitle" class="text-lg font-semibold text-red-700">Confirm account deletion</h2>
-                    <p class="mt-2 text-sm text-gray-700">This action will permanently delete your account and all associated data. To confirm, type <code>DELETE</code> below and click Confirm.</p>
+        <!-- Confirmation modal (hidden until triggered) -->
+        <div id="deleteModal" class="hidden fixed inset-0 z-50">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            <div class="absolute inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center p-4">
+                <div role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" class="bg-white rounded-2xl shadow-2xl w-full sm:max-w-lg p-6 sm:p-8 border border-gray-100 relative">
+                    <h2 id="deleteModalTitle" class="text-xl font-black mb-3" style="color: #EF4444;">Confirm Account Deletion</h2>
+                    <p class="text-sm mb-6" style="color: #7E827E;">
+                        This action will permanently delete your account and all associated data. To confirm, type <code class="px-2 py-1 rounded text-sm font-mono" style="background-color: #F6F7F6; color: #1C2434;">DELETE</code> below.
+                    </p>
 
-                    <div class="mt-4">
-                        <label for="modalDangerInput" class="block text-sm font-medium text-gray-700">Type <code>DELETE</code> to confirm</label>
-                        <input id="modalDangerInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="DELETE" />
+                    <div class="mb-6">
+                        <label for="modalDangerInput" class="block text-sm font-semibold mb-2" style="color: #1C2434;">Type DELETE to confirm</label>
+                        <input id="modalDangerInput" class="w-full px-4 py-3 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2" style="border: 2px solid #E8EAE8; background: #FFFFFF; focus:border-color: #EF4444;" placeholder="DELETE" />
                     </div>
 
-                    <div class="mt-6 flex items-center justify-end gap-3">
-                        <button id="modalCancelBtn" class="px-4 py-2 border rounded-md cursor-pointer">Cancel</button>
-                        <button id="modalConfirmBtn" class="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer" disabled>Confirm delete</button>
+                    <div class="flex gap-3 pt-2">
+                        <button id="modalCancelBtn" class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300" style="background: #F6F7F6; color: #1C2434;">
+                            Cancel
+                        </button>
+                        <button id="modalConfirmBtn" class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm text-white cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #EF4444;" disabled>
+                            Confirm Delete
+                        </button>
                     </div>
                 </div>
             </div>
@@ -167,24 +186,23 @@ import MainLayout from '../../layouts/MainLayout.astro';
         if (!profileArea) return;
 
         profileArea.innerHTML = `
-            <div class="space-y-4">
-                <form id="profileForm" class="space-y-4" novalidate>
-                    <div>
-                        <label for="nameInput" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input id="nameInput" name="name" type="text" value="${user.name || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
-                    </div>
+            <form id="profileForm" class="space-y-6" novalidate>
+                <div>
+                    <label for="nameInput" class="block text-sm font-semibold mb-2" style="color: #1C2434;">Name</label>
+                    <input id="nameInput" name="name" type="text" value="${user.name || ''}" class="w-full px-4 py-3 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2" style="border: 2px solid #E8EAE8; background: #FFFFFF;" />
+                </div>
 
-                    <div>
-                        <label for="emailInput" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input id="emailInput" name="email" type="email" value="${user.email || ''}" disabled class="mt-1 block w-full rounded-md border-gray-200 bg-gray-50 text-gray-600" />
-                    </div>
+                <div>
+                    <label for="emailInput" class="block text-sm font-semibold mb-2" style="color: #1C2434;">Email</label>
+                    <input id="emailInput" name="email" type="email" value="${user.email || ''}" disabled class="w-full px-4 py-3 text-base rounded-lg" style="border: 2px solid #E8EAE8; background: #F6F7F6; color: #A8ACA8; cursor: not-allowed;" />
+                    <p class="text-xs mt-2" style="color: #A8ACA8;">Email cannot be changed</p>
+                </div>
 
-                    <div class="flex items-center gap-3">
-                        <button id="saveBtn" type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md cursor-pointer" disabled>Save changes</button>
-                        <span id="saveStatus" class="text-sm text-green-600 hidden">Saved</span>
-                    </div>
-                </form>
-            </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <button id="saveBtn" type="submit" class="px-5 py-3 font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434; color: white;" disabled>Save Changes</button>
+                    <span id="saveStatus" class="text-sm font-medium hidden" style="color: #10B981;">Saved ✓</span>
+                </div>
+            </form>
         `;
 
         const profileForm = document.getElementById('profileForm') as HTMLFormElement | null;
@@ -251,16 +269,27 @@ import MainLayout from '../../layouts/MainLayout.astro';
             const subscribed = !!(prefs && prefs.newsletter === true);
             if (subscribed) {
                 newsletterArea.innerHTML = `
-                    <div class="flex items-center justify-between bg-white p-3 rounded-md">
-                        <div class="text-sm text-gray-700">You are subscribed to the newsletter.</div>
-                        <button id="unsubscribeBtn" class="px-3 py-1 text-sm text-red-600 hover:underline cursor-pointer">Unsubscribe</button>
+                    <div class="flex items-center justify-between p-4 rounded-lg" style="background-color: #F6F7F6; border: 1px solid #E8EAE8;">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" style="color: #10B981;" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <div>
+                                <div class="text-sm font-semibold" style="color: #1C2434;">Subscribed</div>
+                                <div class="text-xs" style="color: #7E827E;">You're receiving our newsletter</div>
+                            </div>
+                        </div>
+                        <button id="unsubscribeBtn" class="px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300" style="color: #EF4444; background: white; border: 1px solid #E8EAE8;">Unsubscribe</button>
                     </div>
                 `;
             } else {
                 newsletterArea.innerHTML = `
-                    <div class="flex items-center justify-between bg-white p-3 rounded-md">
-                        <div class="text-sm text-gray-700">You're not subscribed to the newsletter.</div>
-                        <button id="subscribeBtn" class="px-3 py-1 text-sm bg-primary-600 text-white rounded-md cursor-pointer">Subscribe</button>
+                    <div class="flex items-center justify-between p-4 rounded-lg" style="background-color: #F6F7F6; border: 1px solid #E8EAE8;">
+                        <div>
+                            <div class="text-sm font-semibold mb-1" style="color: #1C2434;">Not subscribed</div>
+                            <div class="text-xs" style="color: #7E827E;">Get updates about new projects and stays</div>
+                        </div>
+                        <button id="subscribeBtn" class="px-4 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434; color: white;">Subscribe</button>
                     </div>
                 `;
             }
@@ -379,7 +408,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                     await deleteAccount();
                     showToast('success', 'Account deleted');
                     // small delay so toast can be seen
-                    setTimeout(() => window.location.href = '/auth/login', 700);
+                    setTimeout(() => window.location.href = '/login', 700);
                 } catch (err) {
                     console.error('Delete failed', err);
                     showToast('error', 'Failed to delete account');
@@ -391,7 +420,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
     (async () => {
         const user = await getCurrentUser().catch(() => null);
         if (!user) {
-            window.location.href = '/auth/login';
+            window.location.href = '/login';
             return;
         }
         const guard = document.getElementById('profileGuard');

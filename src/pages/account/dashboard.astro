@@ -2,7 +2,11 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 ---
 
-<MainLayout title="Dashboard">
+<MainLayout 
+  title="Dashboard"
+  headerVariant="transparent"
+  headerTheme="dark"
+>
   <!-- Early client-side heuristic: if no Supabase token, redirect fast to login (keeps site static) -->
   <script is:inline>
     try {
@@ -19,42 +23,40 @@ import MainLayout from "../../layouts/MainLayout.astro";
         return false;
       })();
       if (!hasToken) {
-        window.location.replace("/auth/login");
+        window.location.replace("/login");
       }
     } catch {}
   </script>
 
   <noscript>
     <div
-      class="max-w-3xl mx-auto my-6 p-4 bg-yellow-50 text-yellow-800 rounded-md"
+      class="max-w-3xl mx-auto my-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800"
     >
       JavaScript is required to view the dashboard. Please enable JavaScript and
       refresh.
     </div>
   </noscript>
 
-  <div
-    id="dashGuard"
-    aria-busy="true"
-    class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-  >
-    <div class="px-2 sm:px-6 py-4 sm:py-6">
-      <!-- flattened container: removed border/background/shadow and reduced mobile padding -->
-      <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4"
-      >
-        <div class="flex items-center gap-4">
+  <!-- Hero/Header Section -->
+  <section style="background-color: #1C2434; padding: 6rem 1rem 3rem;">
+    <div
+      id="dashGuard"
+      aria-busy="true"
+      class="hidden max-w-7xl mx-auto"
+    >
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
+        <div class="flex items-center gap-5">
           <div
-            class="rounded-full overflow-hidden w-12 h-12 bg-gray-100 flex items-center justify-center"
+            class="rounded-full overflow-hidden w-16 h-16 flex items-center justify-center shadow-lg"
+            style="background: linear-gradient(135deg, #A98FFA, #7353D4);"
           >
-            <!-- avatar populated by JS -->
             <img
               id="userAvatar"
               alt="avatar"
               class="w-full h-full object-cover hidden"
             />
             <svg
-              class="w-6 h-6 text-gray-800 dark:text-white"
+              class="w-8 h-8 text-white"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -69,11 +71,13 @@ import MainLayout from "../../layouts/MainLayout.astro";
             </svg>
           </div>
           <div>
-            <h1 class="text-2xl font-semibold" id="dashTitle">Dashboard</h1>
+            <h1 class="text-3xl sm:text-4xl font-black text-white mb-1" id="dashTitle">Dashboard</h1>
             <a
               id="dashSubtitle"
-              href="/auth/profile"
-              class="text-sm text-gray-500 hover:underline">Edit your profile</a
+              href="/account/profile/"
+              class="text-sm font-medium hover:underline cursor-pointer transition-colors duration-300"
+              style="color: #C4B3FC;"
+              >Edit your profile</a
             >
           </div>
         </div>
@@ -81,97 +85,151 @@ import MainLayout from "../../layouts/MainLayout.astro";
         <div class="flex items-center gap-3">
           <button
             id="logoutBtn"
-            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 cursor-pointer"
+            class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 hover:shadow-lg cursor-pointer"
+            style="background-color: rgba(220, 38, 38, 0.9); color: white;"
             >Logout</button
           >
         </div>
       </div>
-      <div class="mb-6">
-        <div class="p-2 sm:p-4 bg-gray-50 rounded-lg">
-          <!-- Stats row -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div
-              class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs sm:text-sm text-gray-500">Saved items</p>
-                <div
-                  class="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold"
-                  id="savedCount"
-                >
-                  —
-                </div>
-              </div>
-              <div class="hidden sm:block text-sm text-gray-400">
-                Projects & Stays
-              </div>
-            </div>
 
-            <div
-              class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs sm:text-sm text-gray-500">Lists</p>
-                <div
-                  class="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold"
-                  id="listsCount"
-                >
-                  —
-                </div>
-              </div>
-              <div class="hidden sm:block text-sm text-gray-400">
-                Custom collections
-              </div>
+      <!-- Stats Cards Skeleton (shown while loading) -->
+      <div id="statsSkeleton" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div class="bg-white rounded-lg p-4 animate-pulse" style="border: 1px solid #E8EAE8;">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <div class="h-3 rounded mb-2" style="background-color: #E8EAE8; width: 70%;"></div>
+              <div class="h-7 rounded" style="background-color: #F6F7F6; width: 50%;"></div>
             </div>
+            <div class="w-12 h-12 rounded" style="background-color: #F6F7F6;"></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 animate-pulse" style="border: 1px solid #E8EAE8;">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <div class="h-3 rounded mb-2" style="background-color: #E8EAE8; width: 55%;"></div>
+              <div class="h-7 rounded" style="background-color: #F6F7F6; width: 50%;"></div>
+            </div>
+            <div class="w-12 h-12 rounded" style="background-color: #F6F7F6;"></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 animate-pulse col-span-2 sm:col-span-1" style="border: 1px solid #E8EAE8;">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <div class="h-3 rounded mb-2" style="background-color: #E8EAE8; width: 60%;"></div>
+              <div class="h-7 rounded" style="background-color: #F6F7F6; width: 50%;"></div>
+            </div>
+            <div class="w-12 h-12 rounded" style="background-color: #F6F7F6;"></div>
+          </div>
+        </div>
+      </div>
 
-            <div
-              class="p-3 sm:p-4 bg-white rounded-lg flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs sm:text-sm text-gray-500">Completed</p>
-                <div
-                  class="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold"
-                  id="completedCount"
-                >
-                  —
+      <!-- Stats Cards (shown after loading) -->
+      <div id="statsContent" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 hidden">
+        <!-- Saved Items Card -->
+        <div class="rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5" style="background: white; border: 1px solid #E8EAE8;">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold mb-1.5" style="color: #7E827E;">Saved Items</p>
+              <div class="text-2xl sm:text-3xl font-black" style="color: #1C2434;" id="savedCount">—</div>
+            </div>
+            <svg class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14" style="color: #A98FFA; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Lists Card -->
+        <div class="rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5" style="background: white; border: 1px solid #E8EAE8;">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold mb-1.5" style="color: #7E827E;">Lists</p>
+              <div class="text-2xl sm:text-3xl font-black" style="color: #1C2434;" id="listsCount">—</div>
+            </div>
+            <svg class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14" style="color: #A98FFA; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Visited Card -->
+        <div class="rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 col-span-2 sm:col-span-1" style="background: white; border: 1px solid #E8EAE8;">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold mb-1.5" style="color: #7E827E;">Visited</p>
+              <div class="text-2xl sm:text-3xl font-black" style="color: #1C2434;" id="completedCount">—</div>
+            </div>
+            <svg class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14" style="color: #A98FFA; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Section -->
+  <section style="background-color: #F6F7F6; padding: 3rem 1rem;">
+    <div class="max-w-7xl mx-auto">
+      <div id="dashGuardContent" aria-busy="true" class="hidden">
+
+        <!-- Beta Message Banner -->
+        <div class="rounded-xl p-4 sm:p-5 relative overflow-hidden mb-6" style="background: linear-gradient(135deg, #A98FFA, #7353D4); border: 1px solid #7353D4;">
+          <div class="relative z-10">
+            <div class="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold" style="background: rgba(255, 255, 255, 0.25); color: white;">
+                    BETA
+                  </span>
+                  <h3 class="text-lg font-black text-white">We're testing out new features</h3>
                 </div>
+                <p class="text-sm text-white/90 leading-relaxed">
+                  Thank you for being a beta tester. Please don't rely on your dashboard for trip planning just yet. Your save lists may be reset while we're refining things. Please provide us with your feedback to help us improve your experience.
+                </p>
               </div>
-              <div class="hidden sm:block text-sm text-gray-400">
-                Done items
-              </div>
+              <a
+                href="/contact/"
+                class="px-4 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg whitespace-nowrap flex-shrink-0"
+                style="background: white; color: #7353D4;"
+              >
+                Send Feedback
+              </a>
             </div>
           </div>
         </div>
 
-        <!-- My Lists section (separate box) -->
-        <div class="p-2 sm:p-4 bg-gray-50 rounded-lg mt-6">
-          <div class="flex items-center justify-between mb-3 gap-3">
-            <div>
-              <h3 class="text-lg font-semibold">My Lists</h3>
-              <p class="text-sm text-gray-500">
+        <!-- My Lists section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
+            <div class="flex-1">
+              <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">My Lists</h2>
+              <p class="text-base mb-4" style="color: #7E827E;">
                 Create lists to save projects and stays for later.
               </p>
-              <div class="mt-2 sm:hidden">
+              <div class="sm:hidden">
                 <button
                   id="hideDoneChipMobile"
                   aria-pressed="false"
-                  class="inline-flex items-center px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm cursor-pointer"
+                  class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
+                  style="border-color: #E8EAE8; color: #1C2434; background: white;"
                   >Hide done</button
                 >
               </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
               <button
                 id="hideDoneChip"
                 aria-pressed="false"
-                class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm cursor-pointer"
+                class="hidden sm:inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
+                style="border-color: #E8EAE8; color: #1C2434; background: white;"
                 >Hide done</button
               >
               <button
                 id="createListBtn"
                 aria-label="Create new list"
                 title="Create new list"
-                class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer inline-flex items-center gap-2"
+                class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
+                style="background-color: #1C2434;"
               >
                 <svg
                   class="w-4 h-4"
@@ -187,43 +245,46 @@ import MainLayout from "../../layouts/MainLayout.astro";
                     stroke-linejoin="round"
                     d="M12 4.5v15m7.5-7.5h-15"></path>
                 </svg>
-                <span>New</span>
+                <span>New List</span>
               </button>
             </div>
           </div>
 
           <!-- New List Modal / Bottom Sheet -->
           <div id="newListModal" class="fixed inset-0 z-50 hidden">
-            <div id="newListOverlay" class="absolute inset-0 bg-black/40"></div>
+            <div id="newListOverlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
             <div
-              class="absolute inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center"
+              class="absolute inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center p-4"
             >
               <div
-                class="bg-white rounded-t-xl sm:rounded-xl shadow-lg w-full sm:max-w-md p-4 sm:p-6"
+                class="bg-white rounded-2xl shadow-2xl w-full sm:max-w-md p-6 sm:p-8 border border-gray-100"
               >
-                <div class="mb-3">
-                  <h3 class="text-base font-semibold">Create new list</h3>
-                  <p class="text-sm text-gray-500">
-                    Add a name to get started.
+                <div class="mb-6">
+                  <h3 class="text-xl font-black mb-2" style="color: #1C2434;">Create New List</h3>
+                  <p class="text-sm" style="color: #7E827E;">
+                    Give your list a name to organize your saved items.
                   </p>
                 </div>
-                <div class="space-y-3">
+                <div class="space-y-4">
                   <input
                     id="newListNameInput"
                     type="text"
-                    placeholder="E.g., Weekend ideas"
-                    class="w-full px-3 py-2 border rounded-md"
+                    placeholder="E.g., Weekend Adventures"
+                    class="w-full px-4 py-3 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                    style="border: 2px solid #E8EAE8; background: #FFFFFF;"
                   />
-                  <div class="flex justify-end gap-2">
+                  <div class="flex gap-3 pt-2">
                     <button
                       id="newListCancelBtn"
-                      class="px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300"
+                      style="background: #F6F7F6; color: #1C2434;"
                       >Cancel</button
                     >
                     <button
                       id="newListCreateBtn"
-                      class="px-3 py-2 rounded-md bg-primary-600 text-white hover:bg-primary-700"
-                      >Create</button
+                      class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm text-white cursor-pointer transition-all duration-300 hover:shadow-lg"
+                      style="background-color: #1C2434;"
+                      >Create List</button
                     >
                   </div>
                 </div>
@@ -231,34 +292,71 @@ import MainLayout from "../../layouts/MainLayout.astro";
             </div>
           </div>
 
+          <!-- Lists Skeleton (shown while loading) -->
+          <div id="listsSkeleton" class="space-y-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 animate-pulse">
+              <div class="flex items-center justify-between mb-4">
+                <div class="h-6 rounded" style="background-color: #E8EAE8; width: 30%;"></div>
+                <div class="flex gap-2">
+                  <div class="w-8 h-8 rounded-lg" style="background-color: #F6F7F6;"></div>
+                  <div class="w-8 h-8 rounded-lg" style="background-color: #F6F7F6;"></div>
+                  <div class="w-8 h-8 rounded-lg" style="background-color: #F6F7F6;"></div>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 rounded-lg" style="background-color: #F6F7F6;">
+                  <div class="w-4 h-4 rounded" style="background-color: #E8EAE8;"></div>
+                  <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
+                  <div class="flex-1 space-y-2">
+                    <div class="h-4 rounded" style="background-color: #E8EAE8; width: 60%;"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-lg" style="background-color: #F6F7F6;">
+                  <div class="w-4 h-4 rounded" style="background-color: #E8EAE8;"></div>
+                  <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
+                  <div class="flex-1 space-y-2">
+                    <div class="h-4 rounded" style="background-color: #E8EAE8; width: 50%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Lists placeholder -->
-          <div id="listsContainer" class="space-y-3">
+          <div id="listsContainer" class="space-y-4 hidden">
             <div
-              class="p-4 bg-white rounded-lg border border-dashed border-gray-200 text-sm text-gray-500"
+              class="p-8 rounded-xl border-2 border-dashed text-center"
+              style="border-color: #E8EAE8; background: #F6F7F6;"
             >
-              You don't have any lists yet. Create one to get started.
+              <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
+              <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>
             </div>
           </div>
         </div>
 
-        <!-- Recently completed (separate shaded box) -->
+        <!-- Most recent visits -->
         <div
-          class="p-2 sm:p-4 bg-gray-50 rounded-lg mt-6 mb-6"
+          class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100 mt-6"
           id="recentCompletedBox"
           hidden
         >
-          <div class="flex items-center justify-between mb-3">
-            <h3
+          <div class="flex items-center justify-between mb-6">
+            <h2
               id="recentCompletedTitle"
-              class="text-lg font-semibold cursor-pointer"
+              class="text-2xl font-black cursor-pointer"
+              style="color: #1C2434;"
             >
-              Recently completed
-            </h3>
+              Most Recent Visits
+            </h2>
             <button
               id="recentCompletedToggle"
               aria-expanded="false"
               aria-label="Expand section"
-              class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer"
+              class="p-2 rounded-lg cursor-pointer transition-colors duration-300"
+              style="color: #7E827E;"
             >
               <svg
                 class="w-4 h-4 transition-transform rotate-180"
@@ -282,12 +380,68 @@ import MainLayout from "../../layouts/MainLayout.astro";
           </div>
         </div>
 
-        <div id="userInfo" class="prose prose-sm text-sm text-gray-700">
-          Loading...
+        <!-- User Info Skeleton -->
+        <div id="userInfoSkeleton" class="mt-6">
+          <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 animate-pulse">
+            <div class="flex items-center justify-between">
+              <div class="space-y-3 flex-1">
+                <div class="h-3 rounded" style="background-color: #E8EAE8; width: 25%;"></div>
+                <div class="h-5 rounded" style="background-color: #F6F7F6; width: 40%;"></div>
+                <div class="h-4 rounded" style="background-color: #E8EAE8; width: 50%;"></div>
+              </div>
+              <div class="w-24 h-10 rounded-lg" style="background-color: #F6F7F6;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="userInfo" class="mt-6 hidden">
+          <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <p class="text-base" style="color: #7E827E;">Loading...</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <style>
+    /* Skeleton loading animation */
+    @keyframes skeleton-pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .animate-pulse {
+      animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* Hide done button active state */
+    button[aria-pressed="true"] {
+      background: linear-gradient(135deg, #A98FFA, #7353D4) !important;
+      color: white !important;
+      border-color: #7353D4 !important;
+    }
+
+    /* Input focus state */
+    #newListNameInput:focus {
+      border-color: #A98FFA !important;
+      ring-color: #A98FFA !important;
+    }
+
+    /* Dashboard guard visibility */
+    #dashGuard.hidden,
+    #dashGuardContent.hidden {
+      display: none !important;
+    }
+
+    #dashGuard:not(.hidden),
+    #dashGuardContent:not(.hidden) {
+      display: block !important;
+    }
+  </style>
 
   <script>
     import { getCurrentUser, logout } from "../../lib/auth";
@@ -314,16 +468,21 @@ import MainLayout from "../../layouts/MainLayout.astro";
       console.debug("Dashboard auth check user:", user);
       if (!user) {
         console.debug("No user found - redirecting to login");
-        window.location.href = "/auth/login";
+        window.location.href = "/login";
         return;
       }
 
       const userInfo = document.getElementById("userInfo");
       const guard = document.getElementById("dashGuard");
+      const guardContent = document.getElementById("dashGuardContent");
       // Reveal guarded content now that we have a user
       if (guard) {
         guard.classList.remove("hidden");
         guard.removeAttribute("aria-busy");
+      }
+      if (guardContent) {
+        guardContent.classList.remove("hidden");
+        guardContent.removeAttribute("aria-busy");
       }
       if (userInfo) {
         // populate profile summary and header greeting
@@ -339,14 +498,16 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
         // Fill userInfo with useful summary and a profile action
         userInfo.innerHTML = `
-                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                    <div>
-                        <p class="text-sm text-gray-500">Signed in as</p>
-                        <p class="text-base font-medium text-gray-900">${user.name || user.email || "Member"}</p>
-                        <p class="text-sm text-gray-500">${user.email || ""}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <a href="/auth/profile" class="px-3 py-2 bg-primary-600 text-white rounded-md cursor-pointer">Edit profile</a>
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="space-y-1">
+                            <p class="text-xs font-medium" style="color: #7E827E;">Signed in as</p>
+                            <p class="text-lg font-bold" style="color: #1C2434;">${user.name || user.email || "Member"}</p>
+                            <p class="text-sm" style="color: #A8ACA8;">${user.email || ""}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="/account/profile/" class="px-4 py-2.5 text-sm font-semibold text-white rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434;">Edit profile</a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -363,7 +524,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
       logoutBtn.addEventListener("click", async () => {
         try {
           await logout();
-          window.location.href = "/auth/login";
+          window.location.href = "/login";
         } catch (error) {
           console.error("Logout failed:", error);
         }
@@ -488,15 +649,16 @@ import MainLayout from "../../layouts/MainLayout.astro";
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 relative">
                         <div class="relative">
-                            <button data-menu-toggle="${l.id}" aria-haspopup="menu" aria-expanded="false" aria-label="List options" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
+                            <button data-menu-toggle="${l.id}" aria-haspopup="menu" aria-expanded="false" aria-label="List options" class="p-2 rounded-lg cursor-pointer transition-all duration-300 hover:bg-gray-100" style="color: #7E827E;">
                                 <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
                                 </svg>
                             </button>
-                            <div data-menu="${l.id}" role="menu" class="hidden absolute right-0 mt-2 w-40 bg-white border rounded-md overflow-hidden shadow-lg z-10">
-                                <button role="menuitem" data-action-rename="${l.id}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">Rename</button>
-                                ${l.is_default ? "" : `<button role="menuitem" data-action-default="${l.id}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">Set as default</button>`}
-                                <button role="menuitem" data-action-delete="${l.id}" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Delete</button>
+                            <div data-menu="${l.id}" role="menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl z-10 py-2" style="border: 1px solid #E8EAE8;">
+                                <button role="menuitem" data-action-rename="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">Rename</button>
+                                ${l.is_default ? "" : `<button role="menuitem" data-action-default="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">Set as default</button>`}
+                                <div class="my-2" style="border-top: 1px solid #E8EAE8;"></div>
+                                <button role="menuitem" data-action-delete="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-red-50" style="color: #EF4444;">Delete</button>
                             </div>
                         </div>
                                                                         <button data-toggle-list="${l.id}" aria-expanded="${initialCollapsed ? "false" : "true"}" aria-label="${initialCollapsed ? "Expand list" : "Collapse list"}" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
@@ -523,10 +685,10 @@ import MainLayout from "../../layouts/MainLayout.astro";
           const url =
             meta?.url ||
             (item.item_type === "project"
-              ? `/projects/${item.item_id}`
-              : `/stays/${item.item_id}`);
+              ? `/projects/${item.item_id}/`
+              : `/stays/${item.item_id}/`);
           const row = document.createElement("div");
-          row.className = `flex items-center justify-between border rounded-md px-3 py-2 ${isDone ? "bg-gray-50" : ""}`;
+          row.className = `flex items-center justify-between rounded-lg px-4 py-3 transition-all duration-300 ${isDone ? "bg-gray-50" : "bg-white shadow-sm hover:shadow-md border border-gray-100"}`;
           const key = `${item.item_type}:${item.item_id}`;
           row.innerHTML = `
                     <div class="flex items-center gap-3 flex-1">
@@ -538,21 +700,25 @@ import MainLayout from "../../layouts/MainLayout.astro";
                             ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>`
                             : `<div class="w-10 h-10 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${item.item_type}</div>`
                         }
-                        <a class="font-medium hover:underline break-words ${isDone ? "line-through text-gray-500" : ""}" href="${url}">${title}</a>
+                        <div class="flex-1 min-w-0">
+                            <a class="font-medium hover:underline break-words cursor-pointer block" style="color: ${isDone ? '#A8ACA8' : '#1C2434'};" href="${url}">${title}</a>
+                            ${meta?.location ? `<div class="text-xs mt-0.5" style="color: #A8ACA8;">${meta.location}</div>` : ''}
+                        </div>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-3 relative shrink-0 ml-3">
                         <span class="hidden sm:inline text-xs text-gray-400">${new Date(item.added_at).toLocaleDateString?.() || ""}</span>
                         <div class="relative">
-                            <button data-item-menu-toggle="${key}" aria-haspopup="menu" aria-expanded="false" aria-label="Item options" class="p-1 text-gray-600 hover:text-gray-800 rounded cursor-pointer">
+                            <button data-item-menu-toggle="${key}" aria-haspopup="menu" aria-expanded="false" aria-label="Item options" class="p-2 rounded-lg cursor-pointer transition-all duration-300 hover:bg-gray-100" style="color: #7E827E;">
                                 <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
                                 </svg>
                             </button>
-                            <div data-item-menu="${key}" role="menu" class="hidden absolute right-0 mt-2 w-44 bg-white border rounded-md overflow-hidden shadow-lg z-10">
-                                <button role="menuitem" data-item-action-visit="${key}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">View details</button>
-                                <button role="menuitem" data-item-action-move-toggle="${key}" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50">Move to…</button>
-                                <div data-item-move-menu="${key}" class="hidden border-t py-1"></div>
-                                <button role="menuitem" data-item-action-remove data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Remove</button>
+                            <div data-item-menu="${key}" role="menu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl z-10 py-2" style="border: 1px solid #E8EAE8;">
+                                <button role="menuitem" data-item-action-visit="${key}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">View details</button>
+                                <button role="menuitem" data-item-action-move-toggle="${key}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">Move to…</button>
+                                <div data-item-move-menu="${key}" class="hidden mt-1 pt-2 space-y-1" style="border-top: 1px solid #E8EAE8;"></div>
+                                <div class="my-2" style="border-top: 1px solid #E8EAE8;"></div>
+                                <button role="menuitem" data-item-action-remove data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-red-50" style="color: #EF4444;">Remove</button>
                             </div>
                         </div>
                     </div>
@@ -583,6 +749,21 @@ import MainLayout from "../../layouts/MainLayout.astro";
               const isOpen = !(menu as HTMLElement).classList.contains(
                 "hidden"
               );
+              
+              // Close all other menus (both list menus and item menus)
+              if (!isOpen) {
+                document.querySelectorAll('[data-menu], [data-item-menu]').forEach((otherMenu) => {
+                  if (otherMenu !== menu) {
+                    otherMenu.classList.add("hidden");
+                    const otherId = otherMenu.getAttribute('data-menu') || otherMenu.getAttribute('data-item-menu');
+                    const otherToggle = document.querySelector(`[data-menu-toggle="${otherId}"], [data-item-menu-toggle="${otherId}"]`);
+                    if (otherToggle) {
+                      otherToggle.setAttribute("aria-expanded", "false");
+                    }
+                  }
+                });
+              }
+              
               isOpen ? closeMenu() : openMenu();
             });
             const onDocClick = (evt: MouseEvent) => {
@@ -626,7 +807,8 @@ import MainLayout from "../../layouts/MainLayout.astro";
                   const b = document.createElement("button");
                   b.setAttribute("role", "menuitem");
                   b.className =
-                    "w-full text-left px-3 py-2 text-sm hover:bg-gray-50";
+                    "w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-purple-50 rounded-lg";
+                  b.style.color = "#7E827E";
                   b.textContent = ol.title || "Untitled";
                   b.addEventListener("click", async () => {
                     closeMenu();
@@ -645,11 +827,19 @@ import MainLayout from "../../layouts/MainLayout.astro";
                   (moveMenu as HTMLElement).appendChild(b);
                 });
                 // toggle visibility
+                let moveMenuOpen = false;
                 (moveToggle as HTMLButtonElement).addEventListener(
                   "click",
                   (evt) => {
                     evt.stopPropagation();
+                    moveMenuOpen = !moveMenuOpen;
                     (moveMenu as HTMLElement).classList.toggle("hidden");
+                    // Update button styling to show active state
+                    if (moveMenuOpen) {
+                      (moveToggle as HTMLButtonElement).style.backgroundColor = "#F6F7F6";
+                    } else {
+                      (moveToggle as HTMLButtonElement).style.backgroundColor = "";
+                    }
                   }
                 );
               }
@@ -686,10 +876,10 @@ import MainLayout from "../../layouts/MainLayout.astro";
           return row;
         };
 
-        // To do section
+        // Saved section
         if (todo.length) {
           const sec = document.createElement("div");
-          sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">To do <span class="text-gray-400">(${todo.length})</span></div>`;
+          sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">Saved <span class="text-gray-400">(${todo.length})</span></div>`;
           const list = document.createElement("div");
           list.className = "mt-2 space-y-2";
           todo.forEach((it: any) => list.appendChild(renderRow(it, false)));
@@ -697,10 +887,10 @@ import MainLayout from "../../layouts/MainLayout.astro";
           itemsHost?.appendChild(sec);
         }
 
-        // Completed section (optional)
+        // Visited section (optional)
         if (!hideCompleted && done.length) {
           const sec = document.createElement("div");
-          sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">Completed <span class="text-gray-400">(${done.length})</span></div>`;
+          sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">Visited <span class="text-gray-400">(${done.length})</span></div>`;
           const list = document.createElement("div");
           list.className = "mt-2 space-y-2";
           done.forEach((it: any) => list.appendChild(renderRow(it, true)));
@@ -730,6 +920,21 @@ import MainLayout from "../../layouts/MainLayout.astro";
           menuToggle.addEventListener("click", (e) => {
             e.stopPropagation();
             const isOpen = !(menu as HTMLElement).classList.contains("hidden");
+            
+            // Close all other menus first
+            if (!isOpen) {
+              document.querySelectorAll('[data-menu]').forEach((otherMenu) => {
+                if (otherMenu !== menu) {
+                  otherMenu.classList.add("hidden");
+                  const otherId = otherMenu.getAttribute('data-menu');
+                  const otherToggle = document.querySelector(`[data-menu-toggle="${otherId}"]`);
+                  if (otherToggle) {
+                    otherToggle.setAttribute("aria-expanded", "false");
+                  }
+                }
+              });
+            }
+            
             isOpen ? closeMenu() : openMenu();
           });
           // click outside to close
@@ -894,6 +1099,21 @@ import MainLayout from "../../layouts/MainLayout.astro";
         // Ensure auth first
         const user = await getCurrentUser();
         if (!user) return; // redirect already handled earlier
+        
+        // Hide skeletons and show real content
+        const statsSkeleton = document.getElementById("statsSkeleton");
+        const statsContent = document.getElementById("statsContent");
+        const listsSkeleton = document.getElementById("listsSkeleton");
+        const userInfoSkeleton = document.getElementById("userInfoSkeleton");
+        const userInfo = document.getElementById("userInfo");
+        
+        if (statsSkeleton) statsSkeleton.classList.add("hidden");
+        if (statsContent) statsContent.classList.remove("hidden");
+        if (listsSkeleton) listsSkeleton.classList.add("hidden");
+        if (listsContainer) listsContainer.classList.remove("hidden");
+        if (userInfoSkeleton) userInfoSkeleton.classList.add("hidden");
+        if (userInfo) userInfo.classList.remove("hidden");
+        
         await fetchIndex();
         const counts = await getSavedCounts();
         if (listsCount) listsCount.textContent = String(counts.lists);
@@ -916,21 +1136,25 @@ import MainLayout from "../../layouts/MainLayout.astro";
               const url =
                 meta?.url ||
                 (r.item_type === "project"
-                  ? `/projects/${r.item_id}`
-                  : `/stays/${r.item_id}`);
+                  ? `/projects/${r.item_id}/`
+                  : `/stays/${r.item_id}/`);
               const card = document.createElement("a");
               card.href = url;
               card.className =
-                "flex items-center gap-3 p-3 bg-white rounded-lg border hover:border-gray-300";
+                "flex items-center gap-3 p-4 rounded-lg transition-all duration-300 hover:shadow-md cursor-pointer";
+              card.style.cssText = "background: white; border: 1px solid #E8EAE8;";
               card.innerHTML = `
                             ${
                               meta?.image
-                                ? `<img src="${meta.image}" alt="" class="w-12 h-12 rounded object-cover"/>`
-                                : `<div class="w-12 h-12 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">${r.item_type}</div>`
+                                ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>`
+                                : `<div class="w-10 h-10 rounded flex items-center justify-center text-xs" style="background-color: #F6F7F6; color: #7E827E;">${r.item_type}</div>`
                             }
-                            <div class="min-w-0">
-                                <div class="font-medium truncate">${meta?.title || `${r.item_type} ${r.item_id}`}</div>
-                                <div class="text-xs text-gray-500">Completed ${new Date(r.completed_at).toLocaleDateString?.() || ""}</div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-semibold truncate" style="color: #1C2434;">${meta?.title || `${r.item_type} ${r.item_id}`}</div>
+                                <div class="text-xs space-y-0.5">
+                                    ${meta?.location ? `<div style="color: #A8ACA8;">${meta.location}</div>` : ''}
+                                    <div style="color: #A8ACA8;">Marked as visited ${new Date(r.completed_at).toLocaleDateString?.() || ""}</div>
+                                </div>
                             </div>
                         `;
               rf.appendChild(card);

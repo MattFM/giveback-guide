@@ -2,7 +2,11 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 ---
 
-<MainLayout title="Welcome">
+<MainLayout 
+  title="Welcome"
+  headerVariant="transparent"
+  headerTheme="dark"
+>
   <!-- Early client-side heuristic redirect if no Supabase auth token found -->
   <script is:inline>
     try {
@@ -18,50 +22,155 @@ import MainLayout from '../../layouts/MainLayout.astro';
         return false;
       })();
       if (!hasToken) {
-        window.location.replace('/auth/login');
+        window.location.replace('/login');
       }
     } catch {}
   </script>
 
   <noscript>
-    <div class="max-w-screen-md mx-auto my-6 p-4 bg-yellow-50 text-yellow-800 rounded-md">
+    <div class="max-w-screen-md mx-auto my-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
       JavaScript is required to complete onboarding. Please enable JavaScript and refresh.
     </div>
   </noscript>
 
-  <div id="onboardGuard" aria-busy="true" class="hidden max-w-screen-md mx-auto px-4 py-16 lg:py-24">
-    <div class="max-w-xl mx-auto">
-      <div class="mb-6 text-center">
-        <h1 class="mb-2 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white">Welcome to Giveback Guide</h1>
-        <p class="text-base text-gray-500 dark:text-gray-400">A few quick questions to personalise your experience.</p>
+  <!-- Hero Section with Dark Background -->
+  <section style="background-color: #1C2434; padding: 6rem 1rem 0;">
+    <div class="max-w-3xl mx-auto text-center pb-12">
+      <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full" style="background: rgba(169, 143, 250, 0.12); border: 1px solid rgba(169, 143, 250, 0.25);">
+        <svg class="w-4 h-4" style="color: #C4B3FC;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"/>
+        </svg>
+        <span class="text-sm font-semibold" style="color: #FFFFFF;">Quick Setup</span>
       </div>
-
-      <form id="onboardForm" class="space-y-6">
-        <div>
-          <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-200">First name</label>
-          <input id="firstName" name="name" type="text" required placeholder="Your first name" class="mt-1 block w-full text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-800 p-3" />
-        </div>
-
-        <div class="flex items-center gap-3">
-          <input id="newsletter" name="newsletter" type="checkbox" class="w-4 h-4 text-primary-600 bg-gray-100 rounded border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800" />
-          <label for="newsletter" class="text-sm text-gray-700 dark:text-gray-200">I'd like to receive the newsletter</label>
-        </div>
-
-        <div class="flex items-start gap-3">
-          <input id="consent" name="consent" type="checkbox" required class="w-4 h-4 mt-1 text-primary-600 bg-gray-100 rounded border-gray-300" />
-          <label for="consent" class="text-sm text-gray-700 dark:text-gray-200">I agree to the <a href="/terms" class="text-primary-600 hover:underline">Terms</a> and <a href="/privacy" class="text-primary-600 hover:underline">Privacy Policy</a></label>
-        </div>
-
-        <div>
-          <button id="submitBtn" type="submit" class="w-full py-3 px-4 text-sm font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700">Continue</button>
-        </div>
-
-        <div id="formMessage" class="mt-2 text-center text-sm hidden"></div>
-      </form>
+      
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4" style="color: #FFFFFF;">
+        Welcome to <span class="gradient-highlight">Giveback Guide</span>
+      </h1>
+      <p class="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style="color: #D1D4D1;">
+        Just a few quick questions to personalize your experience and help you discover the perfect ways to make a difference.
+      </p>
     </div>
+  </section>
+
+  <!-- Form Section -->
+  <section style="background: linear-gradient(to bottom, #1C2434 0%, #F6F7F6 20%);">
+    <div id="onboardGuard" aria-busy="true" class="hidden max-w-xl mx-auto px-4 pb-24">
+      <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-12 border border-gray-200">
+        <form id="onboardForm" class="space-y-8">
+          <!-- First Name -->
+          <div>
+            <label for="firstName" class="block text-base font-semibold mb-2" style="color: #1C2434;">
+              What should we call you?
+            </label>
+            <input 
+              id="firstName" 
+              name="name" 
+              type="text" 
+              required 
+              placeholder="Your first name" 
+              class="w-full px-4 py-3.5 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+              style="border: 2px solid #E8EAE8; background: #FFFFFF;"
+            />
+          </div>
+
+          <!-- Newsletter Opt-in -->
+          <div class="flex items-start gap-4 p-4 rounded-lg" style="background: #F6F7F6; border: 1px solid #E8EAE8;">
+            <input 
+              id="newsletter" 
+              name="newsletter" 
+              type="checkbox" 
+              class="w-5 h-5 mt-0.5 rounded cursor-pointer"
+              style="accent-color: #A98FFA;"
+            />
+            <div class="flex-1">
+              <label for="newsletter" class="block text-base font-medium cursor-pointer" style="color: #1C2434;">
+                Keep me updated
+              </label>
+              <p class="text-sm mt-1" style="color: #7E827E;">
+                Get monthly inspiration, new projects, and travel tips delivered to your inbox.
+              </p>
+            </div>
+          </div>
+
+          <!-- Terms Consent -->
+          <div class="flex items-start gap-4">
+            <input 
+              id="consent" 
+              name="consent" 
+              type="checkbox" 
+              required 
+              class="w-5 h-5 mt-0.5 rounded cursor-pointer"
+              style="accent-color: #A98FFA;"
+            />
+            <label for="consent" class="text-sm leading-relaxed cursor-pointer" style="color: #424D62;">
+              I agree to the <a href="/terms" class="font-semibold underline hover:no-underline cursor-pointer" style="color: #7353D4;">Terms of Service</a> and <a href="/privacy" class="font-semibold underline hover:no-underline cursor-pointer" style="color: #7353D4;">Privacy Policy</a>
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <button 
+              id="submitBtn" 
+              type="submit" 
+              class="w-full py-4 px-6 text-base font-semibold text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              style="background-color: #1C2434;"
+            >
+              <span class="inline-flex items-center gap-2">
+                Continue to Dashboard
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </button>
+          </div>
+
+          <!-- Form Message -->
+          <div id="formMessage" class="mt-4 text-center text-sm font-medium hidden"></div>
+        </form>
+      </div>
     </div>
-  </div>
+  </section>
 </MainLayout>
+
+<style>
+  /* Gradient text highlight for hero */
+  .gradient-highlight {
+    background: linear-gradient(
+      135deg,
+      #DED5FD,
+      #C4B3FC,
+      #A98FFA,
+      #C4B3FC,
+      #DED5FD
+    );
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite;
+    font-weight: 900;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Input focus state */
+  input[type="text"]:focus {
+    border-color: #A98FFA !important;
+    ring-color: #A98FFA !important;
+  }
+
+  /* Button hover state */
+  #submitBtn:hover:not(:disabled) {
+    background-color: #0F1419;
+  }
+</style>
 
 <script>
   import { account, getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/auth';
@@ -170,7 +279,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
         console.warn('Profile update not yet reflected in auth session after save; proceeding to dashboard anyway');
       }
 
-      setTimeout(() => window.location.href = '/auth/dashboard', 400);
+      setTimeout(() => window.location.href = '/account/dashboard', 400);
     } catch (err: any) {
       console.error('Onboarding save failed', err);
       showMessage((err && err.message) ? err.message : 'Failed to save profile', true);
@@ -181,7 +290,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
   (async () => {
     const user: any = await getCurrentUser().catch(() => null);
     if (!user) {
-      window.location.href = '/auth/login';
+      window.location.href = '/login';
       return;
     }
 
@@ -205,7 +314,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
   if (hasName && hasPreferences) {
     console.log('User has completed onboarding, redirecting to dashboard');
     // Already onboarded
-    window.location.href = '/auth/dashboard';
+    window.location.href = '/account/dashboard';
     return;
   }
   

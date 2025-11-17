@@ -11,6 +11,7 @@ type ItemIndexEntry = {
   slug: string;
   url: string;
   image?: string | null;
+  location?: string | null; // locale and country combined
 };
 
 export async function GET() {
@@ -25,6 +26,19 @@ export async function GET() {
     const pID = (props.pID ?? '').toString().trim();
     const id = pID || slug;
     if (!id || !slug) continue;
+    
+    // Build location string
+    const locale = props.pLocale || '';
+    const country = props.pCountry || '';
+    let location = null;
+    if (locale && country) {
+      location = `${locale}, ${country}`;
+    } else if (locale) {
+      location = locale;
+    } else if (country) {
+      location = country;
+    }
+    
     items.push({
       type: 'project',
       id,
@@ -33,6 +47,7 @@ export async function GET() {
       slug,
       url: `/projects/${slug}`,
       image: props.pImageURL || null,
+      location,
     });
   }
 
@@ -42,6 +57,19 @@ export async function GET() {
     const sID = (props.sID ?? '').toString().trim();
     const id = sID || slug;
     if (!id || !slug) continue;
+    
+    // Build location string
+    const locale = props.sLocale || '';
+    const country = props.sCountry || '';
+    let location = null;
+    if (locale && country) {
+      location = `${locale}, ${country}`;
+    } else if (locale) {
+      location = locale;
+    } else if (country) {
+      location = country;
+    }
+    
     items.push({
       type: 'stay',
       id,
@@ -50,6 +78,7 @@ export async function GET() {
       slug,
       url: `/stays/${slug}`,
       image: props.sImageURL1 || props.sImageURL2 || props.sImageURL3 || null,
+      location,
     });
   }
 

@@ -235,7 +235,7 @@ Required for development and deployment:
 **No formal test suite** - all testing is currently manual:
 - Local development: `npm run dev` for Astro dev server (runs continuously)
 - Build testing: `npm run build` to test production build locally
-- Auth flows: Test via `/auth/login` and `/auth/dashboard` pages
+- Auth flows: Test via `/login` and `/account/dashboard` pages
 - Saved lists API: Test in browser console with `await window.SaveToListAPI.getLists()`
 - Check localStorage: Look for `sb-*-auth-token` keys for session data
 - Notion sync: Content updates require rebuild (`npm run build`) to reflect changes

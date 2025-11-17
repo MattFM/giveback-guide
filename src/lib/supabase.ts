@@ -83,7 +83,7 @@ export const account = {
     try {
       // Default redirect to our verify handler if not provided
       if (!redirectTo && typeof window !== 'undefined') {
-        redirectTo = `${window.location.origin}/auth/verify`;
+        redirectTo = `${window.location.origin}/account/verify`;
       }
 
       console.debug('createMagicURLSession using redirectTo=', redirectTo);
@@ -93,6 +93,10 @@ export const account = {
       console.debug('supabase.signInWithOtp response for', email, resp);
       if (resp.error) {
         console.error('signInWithOtp error', resp.error);
+        // Provide friendlier error message for signup restrictions
+        if (resp.error.message?.includes('Signups not allowed')) {
+          throw new Error('This is an invite-only beta. Please contact us if you\'d like access.');
+        }
         throw resp.error;
       }
       return resp;

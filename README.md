@@ -121,10 +121,10 @@ Business logic and integrations:
 - `/stays/` - Accommodation listings (dynamic routes)
 
 **User Features:**
-- `/auth/` - Authentication system:
+- `/login.astro` - Login page (root level)
+- `/account/` - User account management:
   - `dashboard.astro` - User dashboard
   - `dashboard.client.js` - Dashboard client logic
-  - `login.astro` - Login page
   - `onboarding.astro` - User onboarding
   - `profile.astro` - User profile
   - `verify.astro` - Account verification
