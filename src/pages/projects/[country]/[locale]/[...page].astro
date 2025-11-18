@@ -5,6 +5,7 @@ import type { GetStaticPathsOptions } from "astro";
 import ProjectCard from "../../../../components/content/ProjectCard.astro";
 import ProjectCountryDropdown from "../../../../components/ui/Dropdown/ProjectCountryDropdown.astro";
 import ProjectLocaleDropdown from "../../../../components/ui/Dropdown/ProjectLocaleDropdown.astro";
+import Pagination from "../../../../components/ui/Pagination.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all projects
@@ -133,22 +134,15 @@ const readableLocale = locale
     </div>
   </section>
 
-  <!-- Pagination -->
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-      <div class="flex justify-center items-center">
-        <!-- Previous Button -->
-        {page.url.prev ? (
-          <a href={page.url.prev} class="flex items-center justify-center px-4 h-10 me-3 text-base font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            Previous
-          </a>
-        ) : null}
-        {page.url.next ? (
-          <a href={page.url.next} class="flex items-center justify-center px-4 h-10 text-base font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            Next
-          </a>
-        ) : null}
-      </div>
+      <Pagination 
+        currentPage={page.currentPage}
+        lastPage={page.lastPage}
+        prevUrl={page.url.prev}
+        nextUrl={page.url.next}
+        baseUrl={`/projects/${country}/${locale}`}
+      />
     </div>
   </section>
 </MainLayout>
