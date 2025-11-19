@@ -781,6 +781,20 @@ import Hero from "../../../components/sections/Hero.astro";
         <h2 style="font-size: var(--font-size-3xl); font-weight: 700; margin-bottom: var(--spacing-2xl);">
           Form Elements
         </h2>
+
+        <!-- Mobile Input Guidelines -->
+        <div style="background: #FFF3E0; border-left: 4px solid #F57C00; padding: var(--spacing-lg); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-2xl); max-width: 800px;">
+          <h3 style="font-weight: 600; color: #E65100; margin-bottom: var(--spacing-xs); font-size: var(--font-size-lg);">⚠️ Critical: Minimum 16px Font Size for Inputs</h3>
+          <p style="color: #E65100; font-size: var(--font-size-sm); line-height: 1.6; margin-bottom: var(--spacing-sm);">
+            <strong>iOS Safari automatically zooms in on input fields with font-size smaller than 16px.</strong> This is annoying for users and breaks the layout experience.
+          </p>
+          <p style="color: #E65100; font-size: var(--font-size-sm); line-height: 1.6; margin-bottom: var(--spacing-sm);">
+            <strong>Solution:</strong> All input fields, textareas, and select elements MUST have a minimum font-size of 16px on mobile devices.
+          </p>
+          <p style="color: #E65100; font-size: var(--font-size-sm); line-height: 1.6;">
+            <strong>Implementation:</strong> Global CSS rule in <code style="background: white; padding: 2px 6px; border-radius: 3px;">global.css</code> ensures all form fields default to 16px, with optional smaller sizes on desktop (768px+) when using <code style="background: white; padding: 2px 6px; border-radius: 3px;">.text-sm</code> class.
+          </p>
+        </div>
         
         <div style="max-width: 600px; display: grid; gap: var(--spacing-lg);">
           <div>
@@ -788,13 +802,16 @@ import Hero from "../../../components/sections/Hero.astro";
             <input 
               type="text" 
               placeholder="Enter destination..." 
-              style="width: 100%; padding: var(--spacing-md) var(--spacing-lg); border: 2px solid var(--color-neutral-200); border-radius: var(--border-radius-lg); font-size: var(--font-size-base);"
+              style="width: 100%; padding: var(--spacing-md) var(--spacing-lg); border: 2px solid var(--color-neutral-200); border-radius: var(--border-radius-lg); font-size: 16px;"
             />
+            <p style="font-size: var(--font-size-xs); color: var(--color-neutral-600); margin-top: var(--spacing-xs);">
+              Note: Explicitly set to 16px to prevent iOS zoom
+            </p>
           </div>
           
           <div>
             <label style="display: block; font-weight: 600; color: var(--color-neutral-800); margin-bottom: var(--spacing-xs);">Select Dropdown</label>
-            <select style="width: 100%; padding: var(--spacing-md) var(--spacing-lg); border: 2px solid var(--color-neutral-200); border-radius: var(--border-radius-lg); font-size: var(--font-size-base); background: white;">
+            <select style="width: 100%; padding: var(--spacing-md) var(--spacing-lg); border: 2px solid var(--color-neutral-200); border-radius: var(--border-radius-lg); font-size: 16px; background: white;">
               <option>All Countries</option>
               <option>Thailand</option>
               <option>Peru</option>
@@ -806,8 +823,28 @@ import Hero from "../../../components/sections/Hero.astro";
             <label style="display: block; font-weight: 600; color: var(--color-neutral-800); margin-bottom: var(--spacing-xs);">Textarea</label>
             <textarea 
               placeholder="Tell us about your travel plans..." 
-              style="width: 100%; padding: var(--spacing-md) var(--spacing-lg); border: 2px solid var(--color-neutral-200); border-radius: var(--border-radius-lg); font-size: var(--font-size-base); min-height: 120px; resize: vertical; font-family: inherit;"
+              style="width: 100%; padding: var(--spacing-md) var(--spacing-lg); border: 2px solid var(--color-neutral-200); border-radius: var(--border-radius-lg); font-size: 16px; min-height: 120px; resize: vertical; font-family: inherit;"
             ></textarea>
+          </div>
+
+          <div style="background: white; padding: var(--spacing-lg); border-radius: var(--border-radius-md); border: 1px solid var(--color-neutral-200);">
+            <h4 style="font-size: var(--font-size-base); font-weight: 700; margin-bottom: var(--spacing-sm);">Usage Guidelines</h4>
+            <pre style="font-size: 12px; color: var(--color-neutral-700); overflow-x: auto; margin-bottom: var(--spacing-md);"><code>&lt;!-- Always use font-size: 16px for inputs on mobile --&gt;
+&lt;input 
+  type="text" 
+  style="font-size: 16px;" 
+  placeholder="Your text"
+/&gt;
+
+&lt;!-- Or rely on global.css default (recommended) --&gt;
+&lt;input type="email" placeholder="Your email" /&gt;
+
+&lt;!-- For desktop-only smaller inputs --&gt;
+&lt;input type="text" class="text-sm" /&gt;
+&lt;!-- Will be 16px on mobile, 14px on desktop 768px+ --&gt;</code></pre>
+            <p style="font-size: var(--font-size-sm); color: var(--color-neutral-600);">
+              <strong>Why 16px?</strong> iOS Safari zooms in on any input with font-size &lt; 16px to help users read the text. While well-intentioned, this breaks layout and is jarring. Setting minimum 16px prevents this behavior.
+            </p>
           </div>
         </div>
       </div>
@@ -1123,6 +1160,62 @@ import Hero from "../../../components/sections/Hero.astro";
               <div style="background: var(--color-red-50); padding: var(--spacing-sm); border-radius: 4px; font-size: var(--font-size-xs); color: var(--color-red-700); border-left: 3px solid var(--color-red-600); margin-top: var(--spacing-sm);">
                 ❌ <strong>Avoid:</strong> Changing spacing (gap, padding, margin), scale transforms on buttons, width/height changes
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Input Guidelines -->
+        <div style="background: white; padding: var(--spacing-2xl); border-radius: var(--border-radius-lg); margin-bottom: var(--spacing-xl);">
+          <h3 style="font-size: var(--font-size-xl); font-weight: 700; margin-bottom: var(--spacing-lg); color: var(--color-dark);">
+            📱 Form Input & Mobile UX
+          </h3>
+          
+          <div style="display: grid; gap: var(--spacing-lg);">
+            <!-- Minimum Font Size -->
+            <div style="background: #FFF3E0; padding: var(--spacing-lg); border-radius: var(--border-radius-md); border-left: 4px solid #F57C00;">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: #E65100; margin-bottom: var(--spacing-sm);">
+                Minimum 16px Font Size for Input Fields (Critical)
+              </h4>
+              <p style="font-size: var(--font-size-sm); color: #E65100; opacity: 0.9; line-height: 1.7; margin-bottom: var(--spacing-md);">
+                <strong>Problem:</strong> iOS Safari automatically zooms in on input fields with font-size smaller than 16px. This is jarring and breaks the user experience.
+              </p>
+              <p style="font-size: var(--font-size-sm); color: #E65100; opacity: 0.9; line-height: 1.7; margin-bottom: var(--spacing-md);">
+                <strong>Solution:</strong> All form inputs (text, email, password, search, tel, url), textareas, and select elements MUST have minimum 16px font-size on mobile devices.
+              </p>
+              <div style="background: white; padding: var(--spacing-md); border-radius: 4px; margin-bottom: var(--spacing-md);">
+                <p style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.8; margin-bottom: var(--spacing-sm);"><strong>Implementation:</strong></p>
+                <pre style="font-size: 12px; color: var(--color-dark); font-family: monospace; overflow-x: auto;">{`/* Global rule in global.css */
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+    font-size: 16px;
+}
+
+/* Allow smaller on desktop if needed */
+@media (min-width: 768px) {
+    input.text-sm {
+        font-size: 0.875rem;
+    }
+}`}</pre>
+              </div>
+              <p style="font-size: var(--font-size-sm); color: #E65100; opacity: 0.9; line-height: 1.7;">
+                <strong>Where Applied:</strong> SaveToList component ("New list title" field), Footer newsletter signup, all form inputs across the site.
+              </p>
+            </div>
+
+            <!-- Best Practices -->
+            <div style="background: var(--color-neutral-100); padding: var(--spacing-lg); border-radius: var(--border-radius-md);">
+              <h4 style="font-size: var(--font-size-base); font-weight: 700; color: var(--color-dark); margin-bottom: var(--spacing-sm);">
+                Form Input Best Practices
+              </h4>
+              <ul style="font-size: var(--font-size-sm); color: var(--color-dark); opacity: 0.7; line-height: 1.8; padding-left: var(--spacing-xl);">
+                <li>Always set explicit <code style="background: white; padding: 2px 6px; border-radius: 3px;">font-size: 16px</code> or rely on global CSS default</li>
+                <li>Use proper <code style="background: white; padding: 2px 6px; border-radius: 3px;">type</code> attributes (email, tel, url) for correct mobile keyboards</li>
+                <li>Include visible <code style="background: white; padding: 2px 6px; border-radius: 3px;">&lt;label&gt;</code> elements or <code style="background: white; padding: 2px 6px; border-radius: 3px;">aria-label</code> for screen readers</li>
+                <li>Use <code style="background: white; padding: 2px 6px; border-radius: 3px;">placeholder</code> as a hint, never as a replacement for labels</li>
+                <li>Ensure adequate touch target size (minimum 44px × 44px) for mobile</li>
+              </ul>
             </div>
           </div>
         </div>

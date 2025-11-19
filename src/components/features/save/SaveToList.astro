@@ -47,11 +47,11 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
         aria-pressed="false"
         aria-label="Mark as visited"
         title="Mark as visited"
-        class="w-full px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer hover:shadow-md"
-        style="border: 2px solid #1C2434; color: #1C2434; background: white;"
+        class="w-full px-4 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 cursor-pointer hover:shadow-md"
+        style="border: 2px solid #1C2434; color: #1C2434; background: white; transition: box-shadow 0.3s ease;"
       >
         <!-- Visited icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-5 h-5" viewBox="0 0 16 16">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-5 h-5" viewBox="0 0 16 16" style="display: block;">
           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
           <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
         </svg>
@@ -72,7 +72,7 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
     <div id={"lists-area-" + itemId} class="lists-area text-sm" style="color: #7E827E;">Loading lists…</div>
 
     <form id={"create-form-" + itemId} class="mt-4 flex items-center gap-2">
-      <input id={"new-title-" + itemId} placeholder="New list title" class="flex-1 px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300" style="border: 2px solid #E8EAE8; color: #1C2434; focus:ring-color: #A98FFA;" />
+      <input id={"new-title-" + itemId} placeholder="New list title" class="flex-1 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300" style="border: 2px solid #E8EAE8; color: #1C2434; font-size: 16px;" />
       <button type="submit" class="px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434; color: white;">Create</button>
     </form>
 
@@ -82,6 +82,21 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
 
 <!-- Import the external client script -->
 <script src="/src/components/features/save/saveToList.client.js"></script>
+
+<style>
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>
 
 <script is:inline>
 // Client-side SaveToList functionality for static builds
@@ -258,6 +273,9 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       if (!doneBtn) return;
       doneBtn.setAttribute('aria-pressed', String(isDone));
       
+      // Temporarily disable transitions to prevent glitching
+      doneBtn.style.transition = 'none';
+      
       // Update button appearance using inline styles
       if (isDone) {
         // Active/Visited state: Light purple background
@@ -272,6 +290,13 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       }
       
       doneBtn.title = isDone ? 'Marked as visited' : 'Mark as visited';
+      
+      // Re-enable transitions after a brief delay
+      setTimeout(() => {
+        if (doneBtn) {
+          doneBtn.style.transition = '';
+        }
+      }, 50);
     }
 
     function showMessage(txt, isError = false) {
@@ -309,13 +334,16 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       }
       listsArea.innerHTML = '';
       const group = document.createElement('div');
-      group.className = 'divide-y rounded-lg overflow-hidden';
-      group.style.borderColor = '#E8EAE8';
+      group.className = 'rounded-lg overflow-hidden';
       group.style.border = '1px solid #E8EAE8';
-      lists.forEach((l) => {
+      lists.forEach((l, index) => {
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between gap-3 p-3 bg-white dark:bg-gray-800 hover:bg-gray-50 transition-colors duration-200';
         row.dataset.listId = l.id;
+        // Add border-top to all but first item, matching outer border color
+        if (index > 0) {
+          row.style.borderTop = '1px solid #E8EAE8';
+        }
 
         const left = document.createElement('div');
         left.className = 'flex items-center gap-3';
@@ -339,9 +367,20 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
         left.appendChild(label);
 
         const status = document.createElement('span');
-        status.className = 'text-xs';
-        status.style.color = '#A8ACA8';
-        status.textContent = savedSet.has(l.id) ? 'Saved' : '';
+        status.className = 'text-xs font-semibold flex items-center gap-1.5 transition-all duration-300';
+        status.dataset.listStatus = l.id;
+        if (savedSet.has(l.id)) {
+          status.style.color = '#10B981'; // Green for saved
+          status.innerHTML = `
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Saved
+          `;
+        } else {
+          status.style.color = '#A8ACA8';
+          status.textContent = '';
+        }
 
         row.appendChild(left);
         row.appendChild(status);
@@ -354,29 +393,69 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
       loadingMap[listId] = true;
       cbEl.disabled = true;
       showMessage('');
+      
+      const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
+      const status = row?.querySelector('[data-list-status]');
+      
+      // Show loading spinner
+      if (status) {
+        status.style.color = '#A98FFA';
+        status.innerHTML = `
+          <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          ${shouldSave ? 'Saving…' : 'Removing…'}
+        `;
+      }
+      
       try {
-        const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
-        const status = row?.querySelector('span');
-        if (status) status.textContent = shouldSave ? 'Saving…' : 'Removing…';
-      } catch {}
-      try {
+        // Add minimum delay to ensure user sees the loading state
+        const actionPromise = shouldSave 
+          ? saveItemToList(listId, itemTypeStr, itemIdStr)
+          : removeItemFromList(listId, itemTypeStr, itemIdStr);
+        
+        const minDelay = new Promise(resolve => setTimeout(resolve, 400));
+        await Promise.all([actionPromise, minDelay]);
+        
         if (shouldSave) {
-          await saveItemToList(listId, itemTypeStr, itemIdStr);
           savedSet.add(listId);
-          const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
-          const status = row?.querySelector('span');
-          if (status) status.textContent = 'Saved';
+          // Show success state with animation
+          if (status) {
+            status.style.color = '#10B981';
+            status.innerHTML = `
+              <svg class="w-3.5 h-3.5 animate-bounce-once" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" style="animation: bounce-once 0.5s ease-out;">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Saved
+            `;
+          }
         } else {
-          await removeItemFromList(listId, itemTypeStr, itemIdStr);
           savedSet.delete(listId);
-          const row = listsArea?.querySelector(`[data-list-id="${listId}"]`);
-          const status = row?.querySelector('span');
-          if (status) status.textContent = '';
+          if (status) {
+            status.style.color = '#A8ACA8';
+            status.textContent = '';
+          }
         }
       } catch (err) {
         cbEl.checked = !shouldSave;
         showMessage(err && err.message ? err.message : String(err), true);
         console.error(err);
+        // Reset status on error
+        if (status) {
+          if (savedSet.has(listId)) {
+            status.style.color = '#10B981';
+            status.innerHTML = `
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Saved
+            `;
+          } else {
+            status.style.color = '#A8ACA8';
+            status.textContent = '';
+          }
+        }
       } finally {
         loadingMap[listId] = false;
         cbEl.disabled = false;
@@ -453,25 +532,87 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
         // Check auth on button click
         const user = await getCurrentUser();
         if (!user) {
-          if (actionsMsg) actionsMsg.textContent = 'Please log in to mark items as visited.';
+          if (actionsMsg) {
+            actionsMsg.textContent = 'Please log in to mark items as visited.';
+            actionsMsg.style.color = '#EF4444';
+          }
           return;
         }
         
         const pressed = (doneBtn.getAttribute('aria-pressed') === 'true');
         const next = !pressed;
-        setDoneButtonVisual(next);
+        const doneLabel = doneBtn.querySelector(`#done-label-${itemIdStr}`);
+        const doneIcon = doneBtn.querySelector('svg');
+        
+        // Show loading state - hide icon and change label
+        doneBtn.disabled = true;
+        doneBtn.style.opacity = '0.6';
+        doneBtn.style.cursor = 'wait';
+        if (doneIcon) {
+          doneIcon.style.display = 'none';
+        }
+        if (doneLabel) {
+          doneLabel.textContent = next ? 'Marking...' : 'Removing...';
+        }
+        
         try {
-          const res = await setCompleted(itemTypeStr, itemIdStr, next);
+          // Add minimum delay to ensure user sees the loading state
+          const actionPromise = setCompleted(itemTypeStr, itemIdStr, next);
+          const minDelay = new Promise(resolve => setTimeout(resolve, 400));
+          const [res] = await Promise.all([actionPromise, minDelay]);
+          
           if (!res || !res.success) {
+            // Reset on failure
+            doneBtn.disabled = false;
+            doneBtn.style.opacity = '1';
+            doneBtn.style.cursor = 'pointer';
+            if (doneIcon) {
+              doneIcon.style.display = '';
+            }
+            if (doneLabel) {
+              doneLabel.textContent = 'Visited';
+            }
             setDoneButtonVisual(pressed);
-            if (actionsMsg) actionsMsg.textContent = 'Unable to update status.';
+            if (actionsMsg) {
+              actionsMsg.textContent = 'Unable to update status.';
+              actionsMsg.style.color = '#EF4444';
+            }
             return;
           }
+          
+          // Get updated status
           const status = await getCompletedStatus(itemTypeStr, itemIdStr);
-          setDoneButtonVisual(!!(status && status.is_completed));
+          const finalState = !!(status && status.is_completed);
+          
+          // Restore button state
+          doneBtn.disabled = false;
+          doneBtn.style.opacity = '1';
+          doneBtn.style.cursor = 'pointer';
+          if (doneIcon) {
+            doneIcon.style.display = '';
+          }
+          if (doneLabel) {
+            doneLabel.textContent = 'Visited';
+          }
+          
+          // Set final visual state without animation
+          setDoneButtonVisual(finalState);
         } catch (err) {
+          // Reset on error
+          doneBtn.disabled = false;
+          doneBtn.style.opacity = '1';
+          doneBtn.style.cursor = 'pointer';
+          if (doneIcon) {
+            doneIcon.style.display = '';
+          }
+          if (doneLabel) {
+            doneLabel.textContent = 'Visited';
+          }
           setDoneButtonVisual(pressed);
-          if (actionsMsg) actionsMsg.textContent = 'Unable to update status.';
+          if (actionsMsg) {
+            actionsMsg.textContent = 'Unable to update status.';
+            actionsMsg.style.color = '#EF4444';
+          }
           console.error('Done button error:', err);
         }
       });

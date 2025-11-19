@@ -91,3 +91,29 @@ body:has(.site-header.header-default) main {
         padding-top: 0;
     }
 }
+
+/* Prevent iOS zoom on input focus - minimum 16px font size required */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+    font-size: 16px;
+}
+
+/* Allow specific smaller sizes on desktop if needed */
+@media (min-width: 768px) {
+    input[type="text"].text-sm,
+    input[type="email"].text-sm,
+    input[type="password"].text-sm,
+    input[type="search"].text-sm,
+    input[type="tel"].text-sm,
+    input[type="url"].text-sm,
+    textarea.text-sm,
+    select.text-sm {
+        font-size: 0.875rem;
+    }
+}
