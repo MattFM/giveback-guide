@@ -1,41 +1,92 @@
 ---
 import { Image } from 'astro:assets';
 import AdAvatar from '../../../assets/favicon.png';
+
+// Editable content variables
+const heading = "Advertise on Giveback Guide";
+const tagline = "Reach our growing audience of conscious travellers";
+const description = "Showcase your sustainable business or impactful project to our growing engaged audience who value authenticity, positive change and good business practices.";
+const ctaText = "Learn More & Enquire";
+const ctaUrl = "/about/advertising";
+const sponsoredLabel = "Sponsored";
+
+// Editable style variables
+const gradientBorderColors = "linear-gradient(135deg, #10b981 0%, #0d9488 100%)"; // Teal to emerald
+const buttonGradient = "from-teal-600 to-emerald-600"; // Tailwind classes
+const buttonGradientHover = "from-teal-700 to-emerald-700"; // Tailwind classes
+const accentColor = "text-teal-600 dark:text-teal-400"; // Tailwind classes
 ---
 
-<div class="bg-gray-50 border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-  <aside class="text-xs text-gray-500 uppercase mb-2 dark:text-gray-400">
-    Sponsored
-  </aside>
-  <div class="flex items-center gap-2 mb-2">
-    <Image 
-      src={AdAvatar} 
-      alt="Giveback Guide Avatar" 
-      class="w-8 h-8 rounded-md object-cover"
-    />
-    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-300 m-0">Advertise on Giveback Guide</h3>
-  </div>
-  <div class="mt-2 mb-4 text-sm text-gray-600 dark:text-gray-300">
-    Advertise your business or project on Giveback Guide. We offer a range of advertising options to help you reach our engaged audience of socially conscious travellers.
-  </div>
-  <a
-    href="/about/advertising"
-    class="inline-flex items-center border border-solid border-gray-200 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-black hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-  >
-    Enquire now
-    <svg
-      class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 14 10"
+<div class="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 overflow-hidden dark:from-gray-800 dark:to-gray-900 border-2 border-transparent bg-clip-padding" style={`background-image: linear-gradient(white, white), ${gradientBorderColors}; background-origin: border-box; background-clip: padding-box, border-box; --tw-gradient-from: rgb(249 250 251); --tw-gradient-to: rgb(243 244 246);`}>
+  <!-- Subtle background pattern -->
+  <div class="absolute inset-0 opacity-5 dark:opacity-10" style="background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0); background-size: 20px 20px;"></div>
+  
+  <div class="relative">
+    <!-- Sponsored label with icon -->
+    <div class="flex items-center gap-1.5 mb-3">
+      <svg xmlns="http://www.w3.org/2000/svg" height="14px" viewBox="0 -960 960 960" width="14px" fill="currentColor" class={accentColor}>
+        <path d="M720-440v-80h160v80H720Zm48 280-128-96 48-64 128 96-48 64Zm-80-480-48-64 128-96 48 64-128 96ZM200-200v-160h-80v-80l80-200h400l80 200v80h-80v160h-80v-160H280v160h-80Zm80-240h320-320Zm0 0h320l-40-100H320l-40 100Z"/>
+      </svg>
+      <aside class={`text-xs uppercase font-semibold tracking-wide ${accentColor}`}>
+        {sponsoredLabel}
+      </aside>
+    </div>
+    
+    <!-- Main heading with icon -->
+    <div class="flex items-start gap-3 mb-3">
+      <div class="flex-shrink-0 mt-0.5">
+        <Image 
+          src={AdAvatar} 
+          alt="Giveback Guide Avatar" 
+          class="w-10 h-10 rounded-lg object-cover ring-2 ring-teal-500/20 dark:ring-teal-400/30"
+        />
+      </div>
+      <div class="flex-1">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white m-0 mb-1 leading-tight">
+          {heading}
+        </h3>
+        <p class={`text-xs font-medium ${accentColor}`}>
+          {tagline}
+        </p>
+      </div>
+    </div>
+    
+    <!-- Description -->
+    <p class="mb-5 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+      {description}
+    </p>
+    
+    <!-- Enhanced CTA button -->
+    <a
+      href={ctaUrl}
+      class={`group inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r ${buttonGradient} rounded-lg hover:${buttonGradientHover} focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5`}
+      aria-label={`Learn more about ${heading.toLowerCase()}`}
     >
-      <path
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M1 5h12m0 0L9 1m4 4L9 9"></path>
+      <span>{ctaText}</span>
+      <svg
+        class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 14 10"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M1 5h12m0 0L9 1m4 4L9 9"></path>
       </svg>
     </a>
+  </div>
 </div>
+
+<style>
+  /* Dark mode gradient border fix */
+  @media (prefers-color-scheme: dark) {
+    [style*="background-clip: padding-box, border-box"] {
+      --tw-gradient-from: rgb(31 41 55);
+      --tw-gradient-to: rgb(17 24 39);
+    }
+  }
+</style>
