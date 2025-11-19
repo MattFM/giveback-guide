@@ -42,7 +42,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
     <div
       id="dashGuard"
       aria-busy="true"
-      class="hidden max-w-7xl mx-auto"
+      class="max-w-7xl mx-auto"
     >
       <div class="flex items-start justify-between gap-4 mb-8">
         <div class="flex items-center gap-5 flex-1 min-w-0">
@@ -173,7 +173,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
   <!-- Main Content Section -->
   <section style="background-color: #F6F7F6; padding: 3rem 1rem;">
     <div class="max-w-7xl mx-auto">
-      <div id="dashGuardContent" aria-busy="true" class="hidden">
+      <div id="dashGuardContent" aria-busy="true">
 
         <!-- Beta Message Banner -->
         <div class="rounded-xl p-4 sm:p-5 relative overflow-hidden mb-6 hidden" style="background: linear-gradient(135deg, #A98FFA, #7353D4); border: 1px solid #7353D4;">
@@ -348,19 +348,8 @@ import MainLayout from "../../layouts/MainLayout.astro";
           </div>
         </div>
 
-        <!-- Lists placeholder -->
-        <div id="listsContainer" class="space-y-4 hidden">
-          <div
-            class="p-8 rounded-xl border-2 border-dashed text-center bg-white"
-            style="border-color: #E8EAE8;"
-          >
-            <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
-            <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>
-          </div>
-        </div>
+        <!-- Lists container (populated by JS) -->
+        <div id="listsContainer" class="space-y-4 hidden"></div>
 
         <!-- Most recent visits -->
         <div
@@ -456,15 +445,18 @@ import MainLayout from "../../layouts/MainLayout.astro";
       ring-color: #A98FFA !important;
     }
 
-    /* Dashboard guard visibility */
-    #dashGuard.hidden,
-    #dashGuardContent.hidden {
-      display: none !important;
+    /* Dashboard guard visibility - controlled by opacity instead of display */
+    #dashGuard[aria-busy="true"],
+    #dashGuardContent[aria-busy="true"] {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    #dashGuard:not(.hidden),
-    #dashGuardContent:not(.hidden) {
-      display: block !important;
+    #dashGuard[aria-busy="false"],
+    #dashGuardContent[aria-busy="false"] {
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 0.2s ease-in;
     }
   </style>
 
@@ -487,6 +479,11 @@ import MainLayout from "../../layouts/MainLayout.astro";
       setCompleted,
     } from "../../lib/completed";
 
+    // Track if already initialized to prevent duplicate listeners
+    let dashboardInitialized = false;
+
+    // Initialize dashboard - wrapped in function to support view transitions
+    const initDashboard = () => {
     // Check if user is logged in
     const checkAuth = async () => {
       const user = await getCurrentUser().catch(() => null);
@@ -502,12 +499,10 @@ import MainLayout from "../../layouts/MainLayout.astro";
       const guardContent = document.getElementById("dashGuardContent");
       // Reveal guarded content now that we have a user
       if (guard) {
-        guard.classList.remove("hidden");
-        guard.removeAttribute("aria-busy");
+        guard.setAttribute("aria-busy", "false");
       }
       if (guardContent) {
-        guardContent.classList.remove("hidden");
-        guardContent.removeAttribute("aria-busy");
+        guardContent.setAttribute("aria-busy", "false");
       }
       if (userInfo) {
         // populate profile summary and header greeting
@@ -543,9 +538,9 @@ import MainLayout from "../../layouts/MainLayout.astro";
       }
     };
 
-    // Handle logout with confirmation
+    // Handle logout with confirmation (only attach once)
     const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
+    if (logoutBtn && !dashboardInitialized) {
       logoutBtn.addEventListener("click", async () => {
         if (confirm("Are you sure you want to logout?")) {
           try {
@@ -633,8 +628,15 @@ import MainLayout from "../../layouts/MainLayout.astro";
     function renderLists() {
       if (!listsContainer) return;
       if (!lists || lists.length === 0) {
-        listsContainer.innerHTML =
-          '<div class="p-4 bg-white rounded-lg border border-dashed border-gray-200 text-sm text-gray-500">You don\'t have any lists yet. Create one to get started.</div>';
+        listsContainer.innerHTML = `
+          <div class="p-8 rounded-xl border-2 border-dashed text-center bg-white" style="border-color: #E8EAE8;">
+            <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
+            <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>
+          </div>
+        `;
         if (listsCount) listsCount.textContent = "0";
         if (savedCount) savedCount.textContent = "0";
         return;
@@ -1129,7 +1131,34 @@ import MainLayout from "../../layouts/MainLayout.astro";
         const user = await getCurrentUser();
         if (!user) return; // redirect already handled earlier
         
-        // Hide skeletons and show real content
+        // Fetch data while skeletons are visible
+        await fetchIndex();
+        const counts = await getSavedCounts();
+        
+        // Lists and completed statuses
+        lists = await getListsWithItems();
+        const pairs: any[] = [];
+        lists.forEach((l: any) =>
+          (l.items || []).forEach((it: any) => {
+            pairs.push({
+              item_type: it.item_type,
+              item_id: String(it.item_id),
+            });
+          })
+        );
+        try {
+          statusByKey = await getStatusesForItems(pairs);
+        } catch {
+          statusByKey = {};
+        }
+        
+        // Completed count
+        let completedCount = 0;
+        try {
+          completedCount = await getCompletedCount();
+        } catch {}
+        
+        // Now hide skeletons and show stats/user info
         const statsSkeleton = document.getElementById("statsSkeleton");
         const statsContent = document.getElementById("statsContent");
         const listsSkeleton = document.getElementById("listsSkeleton");
@@ -1138,20 +1167,14 @@ import MainLayout from "../../layouts/MainLayout.astro";
         
         if (statsSkeleton) statsSkeleton.classList.add("hidden");
         if (statsContent) statsContent.classList.remove("hidden");
-        if (listsSkeleton) listsSkeleton.classList.add("hidden");
-        if (listsContainer) listsContainer.classList.remove("hidden");
         if (userInfoSkeleton) userInfoSkeleton.classList.add("hidden");
         if (userInfo) userInfo.classList.remove("hidden");
         
-        await fetchIndex();
-        const counts = await getSavedCounts();
+        // Update stats
         if (listsCount) listsCount.textContent = String(counts.lists);
         if (savedCount) savedCount.textContent = String(counts.items);
-        // Completed count
-        try {
-          const c = await getCompletedCount();
-          if (completedCountEl) completedCountEl.textContent = String(c);
-        } catch {}
+        if (completedCountEl) completedCountEl.textContent = String(completedCount);
+        
         // Recent completed
         try {
           const rec = await getRecentCompleted(6);
@@ -1259,23 +1282,13 @@ import MainLayout from "../../layouts/MainLayout.astro";
             recentCompletedBox.hidden = true;
           }
         } catch {}
-        // Lists and completed statuses
-        lists = await getListsWithItems();
-        const pairs: any[] = [];
-        lists.forEach((l: any) =>
-          (l.items || []).forEach((it: any) => {
-            pairs.push({
-              item_type: it.item_type,
-              item_id: String(it.item_id),
-            });
-          })
-        );
-        try {
-          statusByKey = await getStatusesForItems(pairs);
-        } catch {
-          statusByKey = {};
-        }
+        
+        // Render the lists (this populates listsContainer with content)
         renderLists();
+        
+        // Now show the lists container and hide its skeleton
+        if (listsSkeleton) listsSkeleton.classList.add("hidden");
+        if (listsContainer) listsContainer.classList.remove("hidden");
       } catch (e) {
         console.error("Failed loading lists", e);
       }
@@ -1344,46 +1357,60 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
     const createListBtnDesktop = document.getElementById("createListBtnDesktop");
     
-    if (createListBtn)
-      createListBtn.addEventListener("click", openNewListModal);
-    if (createListBtnDesktop)
-      createListBtnDesktop.addEventListener("click", openNewListModal);
-    if (newListOverlay)
-      newListOverlay.addEventListener("click", closeNewListModal);
-    if (newListCancelBtn)
-      newListCancelBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        closeNewListModal();
-      });
-    if (newListCreateBtn)
-      newListCreateBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        handleCreateNewList();
-      });
-    if (newListNameInput)
-      newListNameInput.addEventListener("keydown", (e: KeyboardEvent) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          handleCreateNewList();
-        } else if (e.key === "Escape") {
+    // Only attach event listeners once
+    if (!dashboardInitialized) {
+      if (createListBtn)
+        createListBtn.addEventListener("click", openNewListModal);
+      if (createListBtnDesktop)
+        createListBtnDesktop.addEventListener("click", openNewListModal);
+      if (newListOverlay)
+        newListOverlay.addEventListener("click", closeNewListModal);
+      if (newListCancelBtn)
+        newListCancelBtn.addEventListener("click", (e) => {
           e.preventDefault();
           closeNewListModal();
-        }
-      });
+        });
+      if (newListCreateBtn)
+        newListCreateBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          handleCreateNewList();
+        });
+      if (newListNameInput)
+        newListNameInput.addEventListener("keydown", (e: KeyboardEvent) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleCreateNewList();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            closeNewListModal();
+          }
+        });
 
-    const onToggleHideDone = () => {
-      hideCompleted = !hideCompleted;
-      try {
-        localStorage.setItem(HIDE_COMPLETED_LS, hideCompleted ? "1" : "0");
-      } catch (_) {}
-      applyHideDoneVisual();
-      renderLists();
-    };
-    if (hideDoneChip) hideDoneChip.addEventListener("click", onToggleHideDone);
-    if (hideDoneChipMobile)
-      hideDoneChipMobile.addEventListener("click", onToggleHideDone);
+      const onToggleHideDone = () => {
+        hideCompleted = !hideCompleted;
+        try {
+          localStorage.setItem(HIDE_COMPLETED_LS, hideCompleted ? "1" : "0");
+        } catch (_) {}
+        applyHideDoneVisual();
+        renderLists();
+      };
+      if (hideDoneChip) hideDoneChip.addEventListener("click", onToggleHideDone);
+      if (hideDoneChipMobile)
+        hideDoneChipMobile.addEventListener("click", onToggleHideDone);
+      
+      dashboardInitialized = true;
+    }
 
-    // Initial load
+    // Initial load (runs every time, including view transitions)
     loadAndRender();
+    }; // end initDashboard
+
+    // Run on initial page load
+    initDashboard();
+
+    // Re-run on Astro view transitions
+    document.addEventListener('astro:page-load', () => {
+      initDashboard();
+    });
   </script>
 </MainLayout>
