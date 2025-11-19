@@ -1,0 +1,97 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Beta Feedback" headerVariant="transparent" headerTheme="dark">
+  <section style="background-color: #1C2434; padding: 6rem 1rem 3rem;">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold mb-4" style="background: rgba(255, 255, 255, 0.25); color: white;">
+        BETA
+      </div>
+      <h1 class="text-4xl font-black text-white mb-4">We'd Love Your Feedback</h1>
+      <p class="text-lg text-white/90">
+        You're one of our first beta testers. Your input shapes what we build next.
+      </p>
+    </div>
+  </section>
+
+  <section style="background-color: #F6F7F6; padding: 3rem 1rem;">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Triage Cards -->
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Bug Report Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300">
+          <div class="w-14 h-14 rounded-full mb-4 flex items-center justify-center" style="background: rgba(239, 68, 68, 0.1);">
+            <svg class="w-7 h-7" style="color: #EF4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-black mb-3" style="color: #1C2434;">Something's Broken</h2>
+          <p class="text-base mb-6" style="color: #7E827E;">
+            Found a bug or something not working as expected? Let us know so we can fix it.
+          </p>
+          <a 
+            href="#bug-form" 
+            class="inline-flex items-center justify-center w-full px-6 py-3 rounded-lg font-semibold text-white transition-all hover:shadow-lg"
+            style="background-color: #EF4444;"
+          >
+            Report a Bug
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Feature Request Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300">
+          <div class="w-14 h-14 rounded-full mb-4 flex items-center justify-center" style="background: rgba(115, 83, 212, 0.1);">
+            <svg class="w-7 h-7" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-black mb-3" style="color: #1C2434;">I Have an Idea</h2>
+          <p class="text-base mb-6" style="color: #7E827E;">
+            Wish it did something different? Have a feature request? We want to hear it.
+          </p>
+          <a 
+            href="#feature-form" 
+            class="inline-flex items-center justify-center w-full px-6 py-3 rounded-lg font-semibold text-white transition-all hover:shadow-lg"
+            style="background-color: #7353D4;"
+          >
+            Request a Feature
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Direct Contact Option -->
+      <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100 text-center">
+        <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Prefer to Chat Directly?</h3>
+        <p class="text-base mb-4" style="color: #7E827E;">
+          Honestly, just reply to your welcome email or shoot me a message. I read everything.
+        </p>
+        <a 
+          href="mailto:matt@giveback.guide" 
+          class="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-md"
+          style="background-color: #F6F7F6; color: #1C2434;"
+        >
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Email Matt
+        </a>
+      </div>
+
+      <!-- Placeholder for Tally forms (update after creating forms) -->
+      <div class="mt-8 text-center text-sm" style="color: #A8ACA8;">
+        <p>💡 Tip: You'll be redirected to a quick form. Takes less than 2 minutes.</p>
+      </div>
+
+    </div>
+  </section>
+</MainLayout>
