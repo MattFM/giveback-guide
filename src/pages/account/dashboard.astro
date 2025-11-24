@@ -928,6 +928,25 @@ import MainLayout from "../../layouts/MainLayout.astro";
           sec.appendChild(list);
           itemsHost?.appendChild(sec);
         }
+
+        // Empty state when list has no items
+        if (todo.length === 0 && done.length === 0) {
+          const emptyState = document.createElement("div");
+          emptyState.className = "p-6 text-center rounded-lg";
+          emptyState.style.backgroundColor = "#F6F7F6";
+          emptyState.innerHTML = `
+            <svg class="w-10 h-10 mx-auto mb-3" style="color: #A98FFA; opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+            <p class="text-sm font-semibold mb-1" style="color: #1C2434;">Your list is empty</p>
+            <p class="text-xs mb-3" style="color: #7E827E;">
+              Browse <a href="/projects/" class="underline hover:no-underline" style="color: #7353D4;">projects</a> 
+              or <a href="/stays/" class="underline hover:no-underline" style="color: #7353D4;">stays</a> 
+              and click the Save button to add them here.
+            </p>
+          `;
+          itemsHost?.appendChild(emptyState);
+        }
         // menu toggle
         const menuToggle = wrap.querySelector(
           `button[data-menu-toggle="${l.id}"]`

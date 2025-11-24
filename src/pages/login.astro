@@ -95,10 +95,20 @@ import MainLayout from '../layouts/MainLayout.astro';
                 
                 <button 
                     type="submit" 
-                    class="w-full py-3.5 text-sm font-semibold rounded-lg transition-all duration-300 hover:shadow-lg cursor-pointer"
+                    id="submit-button"
+                    class="w-full py-3.5 text-sm font-semibold rounded-lg transition-all duration-300 hover:shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     style="background-color: #1C2434; color: white;"
                 >
-                    Send Magic Link
+                    <span id="button-text">Send Magic Link</span>
+                    <span id="button-spinner" class="hidden">
+                        <span class="inline-flex items-center gap-2">
+                            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Sending...
+                        </span>
+                    </span>
                 </button>
 
                 <!-- Success Message -->
@@ -185,29 +195,46 @@ import MainLayout from '../layouts/MainLayout.astro';
     const errorMessage = document.getElementById('error-message');
     const errorText = document.getElementById('error-text');
     const successMessage = document.getElementById('success-message');
+    const submitButton = document.getElementById('submit-button') as HTMLButtonElement;
+    const buttonText = document.getElementById('button-text');
+    const buttonSpinner = document.getElementById('button-spinner');
 
-    if (form && errorMessage && errorText && successMessage) {
+    if (form && errorMessage && errorText && successMessage && submitButton && buttonText && buttonSpinner) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Hide previous messages
             errorMessage.classList.add('hidden');
             successMessage.classList.add('hidden');
+            
+            // Show loading state
+            submitButton.disabled = true;
+            buttonText.classList.add('hidden');
+            buttonSpinner.classList.remove('hidden');
             
             try {
                 const formData = new FormData(form);
                 const email = formData.get('email') as string;
 
-                try {
-                    const redirectTo = `${window.location.origin}/account/verify`;
-                    console.debug('Requesting magic link with redirectTo=', redirectTo);
-                    const res: any = await createMagicURLSession(email, redirectTo);
-                    successMessage.classList.remove('hidden');
-                    form.reset();
-                } catch (err: any) {
-                    throw err;
-                }
+                const redirectTo = `${window.location.origin}/account/verify`;
+                console.debug('Requesting magic link with redirectTo=', redirectTo);
+                
+                // Ensure minimum 500ms loading state for better UX
+                const [res] = await Promise.all([
+                    createMagicURLSession(email, redirectTo),
+                    new Promise(resolve => setTimeout(resolve, 500))
+                ]);
+                
+                successMessage.classList.remove('hidden');
+                form.reset();
             } catch (error) {
                 errorText.textContent = error instanceof Error ? error.message : 'Failed to send magic link. Please try again.';
                 errorMessage.classList.remove('hidden');
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonSpinner.classList.add('hidden');
             }
         });
     }
