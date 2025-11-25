@@ -1,0 +1,60 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Thank You">
+  <section style="background-color: #F6F7F6; padding: 4rem 1rem 6rem;">
+    <div class="max-w-2xl mx-auto text-center">
+      <!-- Success Icon -->
+      <div class="inline-flex w-20 h-20 rounded-full mb-6 items-center justify-center" style="background: rgba(34, 197, 94, 0.2); border: 2px solid rgba(34, 197, 94, 0.4);">
+        <svg class="w-10 h-10" style="color: #22C55E;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <h1 class="text-4xl font-black mb-4" style="color: #1C2434;">Thank You!</h1>
+      <p class="text-lg mb-8" style="color: #7E827E;">
+        We've received your feedback and really appreciate you taking the time to share it.
+      </p>
+
+      <!-- Action Cards -->
+      <div class="grid gap-4 sm:grid-cols-2 max-w-xl mx-auto mb-8">
+        <a 
+          href="/feedback/" 
+          class="bg-white rounded-lg p-6 border border-gray-100 shadow-lg hover:shadow-xl transition-all text-left group"
+        >
+          <div class="flex items-start">
+            <svg class="w-5 h-5 mr-3 mt-0.5" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Share More Feedback</h3>
+              <p class="text-sm" style="color: #7E827E;">Have another bug or idea?</p>
+            </div>
+          </div>
+        </a>
+
+        <a 
+          href="/" 
+          class="bg-white rounded-lg p-6 border border-gray-100 shadow-lg hover:shadow-xl transition-all text-left group"
+        >
+          <div class="flex items-start">
+            <svg class="w-5 h-5 mr-3 mt-0.5" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Back to Homepage</h3>
+              <p class="text-sm" style="color: #7E827E;">Continue exploring</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Additional Info -->
+      <p class="text-sm" style="color: #7E827E;">
+        We read every submission and look for patterns to help us prioritise what to fix and build next.
+        If we need more information, we'll reach out via email.
+      </p>
+    </div>
+  </section>
+</MainLayout>
