@@ -71,9 +71,25 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
 
     <div id={"lists-area-" + itemId} class="lists-area text-sm" style="color: #7E827E;">Loading lists…</div>
 
-    <form id={"create-form-" + itemId} class="mt-4 flex items-center gap-2">
+    <!-- New list button (shown when user has lists) -->
+    <button 
+      type="button"
+      id={"new-list-toggle-" + itemId}
+      class="hidden mt-4 w-full px-4 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700"
+      style="border: 2px dashed #E8EAE8; color: #7E827E; background: white;"
+      aria-expanded="false"
+      aria-controls={"create-form-" + itemId}
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>New list</span>
+    </button>
+
+    <!-- Create form (always visible when no lists, toggle-able when lists exist) -->
+    <form id={"create-form-" + itemId} class="mt-4 flex flex-col sm:flex-row sm:items-center gap-2">
       <input id={"new-title-" + itemId} placeholder="New list title" class="flex-1 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300" style="border: 2px solid #E8EAE8; color: #1C2434; font-size: 16px;" />
-      <button type="submit" class="px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434; color: white;">Create</button>
+      <button type="submit" class="w-full sm:w-auto px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434; color: white;">Create</button>
     </form>
 
     <div id={"msg-" + itemId} class="msg mt-2 text-sm" aria-live="polite"></div>
@@ -185,6 +201,7 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
     const actionsMsg = $(`#actions-msg-${itemIdStr}`);
     const createForm = $(`#create-form-${itemIdStr}`);
     const newTitle = $(`#new-title-${itemIdStr}`);
+    const newListToggle = $(`#new-list-toggle-${itemIdStr}`);
 
     console.log('SaveToList elements found:', { 
       btn: !!btn, 
@@ -328,10 +345,23 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
 
     function renderListCheckboxes() {
       if (!listsArea) return;
+      
+      // Empty state: show form, hide toggle button
       if (!lists || lists.length === 0) {
-        listsArea.innerHTML = '<div class="text-sm" style="color: #7E827E;">You have no lists yet. Create one below!</div>';
+        listsArea.innerHTML = '<div class="text-sm" style="color: #7E827E;">You have no lists yet. Create your first one below!</div>';
+        if (createForm) createForm.classList.remove('hidden');
+        if (newListToggle) newListToggle.classList.add('hidden');
         return;
       }
+      
+      // Has lists: show toggle button, hide form by default
+      if (newListToggle) {
+        newListToggle.classList.remove('hidden');
+      }
+      if (createForm && newListToggle?.getAttribute('aria-expanded') !== 'true') {
+        createForm.classList.add('hidden');
+      }
+      
       listsArea.innerHTML = '';
       const group = document.createElement('div');
       group.className = 'rounded-lg overflow-hidden';
@@ -480,6 +510,28 @@ const { itemType = 'project', itemId = '', variant = 'panel', mobileShowLabel = 
         } catch (err) {
           showMessage(err && err.message ? err.message : String(err), true);
           console.error(err);
+        }
+      });
+    }
+
+    // Toggle new list form visibility
+    if (newListToggle) {
+      newListToggle.addEventListener('click', () => {
+        const isExpanded = newListToggle.getAttribute('aria-expanded') === 'true';
+        if (isExpanded) {
+          // Collapse
+          newListToggle.setAttribute('aria-expanded', 'false');
+          if (createForm) createForm.classList.add('hidden');
+          if (newTitle) newTitle.value = '';
+          showMessage('');
+        } else {
+          // Expand
+          newListToggle.setAttribute('aria-expanded', 'true');
+          if (createForm) createForm.classList.remove('hidden');
+          if (newTitle) {
+            // Focus input after a brief delay for animation
+            setTimeout(() => newTitle.focus(), 100);
+          }
         }
       });
     }

@@ -6,6 +6,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
   title="Dashboard"
   headerVariant="transparent"
   headerTheme="dark"
+  transition:persist={false}
 >
   <!-- Early client-side heuristic: if no Supabase token, redirect fast to login (keeps site static) -->
   <script is:inline>
@@ -479,10 +480,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
       setCompleted,
     } from "../../lib/completed";
 
-    // Track if already initialized to prevent duplicate listeners
-    let dashboardInitialized = false;
-
-    // Initialize dashboard - wrapped in function to support view transitions
+    // Initialize dashboard
     const initDashboard = () => {
     // Check if user is logged in
     const checkAuth = async () => {
@@ -538,9 +536,9 @@ import MainLayout from "../../layouts/MainLayout.astro";
       }
     };
 
-    // Handle logout with confirmation (only attach once)
+    // Handle logout with confirmation
     const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn && !dashboardInitialized) {
+    if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         if (confirm("Are you sure you want to logout?")) {
           try {
@@ -1376,12 +1374,11 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
     const createListBtnDesktop = document.getElementById("createListBtnDesktop");
     
-    // Only attach event listeners once
-    if (!dashboardInitialized) {
-      if (createListBtn)
-        createListBtn.addEventListener("click", openNewListModal);
-      if (createListBtnDesktop)
-        createListBtnDesktop.addEventListener("click", openNewListModal);
+    // Attach event listeners
+    if (createListBtn)
+      createListBtn.addEventListener("click", openNewListModal);
+    if (createListBtnDesktop)
+      createListBtnDesktop.addEventListener("click", openNewListModal);
       if (newListOverlay)
         newListOverlay.addEventListener("click", closeNewListModal);
       if (newListCancelBtn)
@@ -1416,20 +1413,12 @@ import MainLayout from "../../layouts/MainLayout.astro";
       if (hideDoneChip) hideDoneChip.addEventListener("click", onToggleHideDone);
       if (hideDoneChipMobile)
         hideDoneChipMobile.addEventListener("click", onToggleHideDone);
-      
-      dashboardInitialized = true;
-    }
 
-    // Initial load (runs every time, including view transitions)
+    // Initial load
     loadAndRender();
     }; // end initDashboard
 
-    // Run on initial page load
+    // Run on page load
     initDashboard();
-
-    // Re-run on Astro view transitions
-    document.addEventListener('astro:page-load', () => {
-      initDashboard();
-    });
   </script>
 </MainLayout>

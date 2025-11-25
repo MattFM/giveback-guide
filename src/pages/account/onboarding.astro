@@ -6,6 +6,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
   title="Welcome"
   headerVariant="transparent"
   headerTheme="dark"
+  transition:persist={false}
 >
   <!-- Early client-side heuristic redirect if no Supabase auth token found -->
   <script is:inline>
