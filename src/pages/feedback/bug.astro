@@ -1,0 +1,131 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Report a Bug" headerVariant="transparent" headerTheme="dark">
+  <section style="background-color: #1C2434; padding: 6rem 1rem 3rem;">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold mb-4" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); color: white;">
+        BUG REPORT
+      </div>
+      <h1 class="text-4xl font-black text-white mb-4">Help Us Fix It</h1>
+      <p class="text-lg text-white/90 mb-6">
+        Thanks for taking the time to report this. Every bug you catch makes Giveback Guide better for everyone.
+      </p>
+      <a 
+        href="/feedback/" 
+        class="inline-flex items-center text-sm text-white/70 hover:text-white transition-colors"
+      >
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to feedback options
+      </a>
+    </div>
+  </section>
+
+  <section style="background-color: #F6F7F6; padding: 3rem 1rem;">
+    <div class="max-w-3xl mx-auto">
+      
+      <!-- Helpful Tips Card -->
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-6">
+        <h2 class="text-lg font-bold mb-3 flex items-center" style="color: #1C2434;">
+          <svg class="w-5 h-5 mr-2" style="color: #7353D4;" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          Helpful Tips
+        </h2>
+        <ul class="space-y-2 text-sm" style="color: #7E827E;">
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <span><strong>What happened:</strong> Describe what you were trying to do when you encountered the bug</span>
+          </li>
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <span><strong>Where it happened:</strong> Which page/feature were you using? (Include the URL if you can)</span>
+          </li>
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <span><strong>Screenshots help:</strong> A picture is worth a thousand words—attach one if possible</span>
+          </li>
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <span><strong>Device info:</strong> Are you on mobile/desktop? Which browser?</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tally Embed Container -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div id="tally-embed" class="min-h-[600px]">
+          <!-- Tally form will be embedded here -->
+          <div class="flex items-center justify-center py-20">
+            <div class="text-center">
+              <div class="animate-spin w-8 h-8 border-4 border-gray-200 border-t-primary-600 rounded-full mx-auto mb-4"></div>
+              <p class="text-sm" style="color: #7E827E;">Loading form...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder for Tally embed code -->
+      <script is:inline>
+        // TODO: Replace with your actual Tally embed code
+        // Example:
+        // Tally.loadEmbeds();
+        
+        console.log('Bug report form ready - add Tally embed code here');
+        
+        // Temporary message for development
+        setTimeout(() => {
+          const embedContainer = document.getElementById('tally-embed');
+          if (embedContainer) {
+            embedContainer.innerHTML = `
+              <div class="p-8 text-center">
+                <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background: rgba(239, 68, 68, 0.1);">
+                  <svg class="w-8 h-8" style="color: #EF4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Tally Form Embed</h3>
+                <p class="text-sm mb-4" style="color: #7E827E;">
+                  Replace the placeholder script with your Tally embed code
+                </p>
+                <code class="text-xs bg-gray-100 px-3 py-1 rounded" style="color: #7353D4;">
+                  &lt;script src="https://tally.so/widgets/embed.js"&gt;&lt;/script&gt;
+                </code>
+              </div>
+            `;
+          }
+        }, 500);
+      </script>
+
+      <!-- Alternative Contact -->
+      <div class="mt-6 text-center">
+        <p class="text-sm mb-3" style="color: #7E827E;">
+          Prefer email? No problem.
+        </p>
+        <a 
+          href="mailto:matt@giveback.guide?subject=Bug Report" 
+          class="inline-flex items-center text-sm font-semibold hover:underline"
+          style="color: #7353D4;"
+        >
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Send bug report via email instead
+        </a>
+      </div>
+
+    </div>
+  </section>
+</MainLayout>
+
+<style>
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>

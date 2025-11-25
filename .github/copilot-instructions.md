@@ -35,6 +35,13 @@
 - **Always explain**: Even when acting directly, briefly explain what you're doing and why
 - **Finishing up**: When a task feels complete and no more adjustments are being made, offer a brief commit message suggestion
 
+### UK English Required
+- **All user-facing text must use British English spelling and conventions**
+- Common differences: prioritise (not prioritize), organise (not organize), colour (not color), centre (not center), travelling (not traveling), behaviour (not behavior)
+- Applies to: Page content, UI labels, form text, error messages, tooltips, email copy
+- Code and technical terms remain in US English where standard (e.g., `color` in CSS)
+- When generating new content or editing existing text, always use UK spelling
+
 ### Accessibility First (WCAG Compliance Required)
 - **All features MUST meet WCAG 2.1 AA standards** (Level AAA where feasible)
 - If a request conflicts with accessibility requirements, **push back** and suggest accessible alternatives
