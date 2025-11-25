@@ -119,17 +119,34 @@ export const createMagicURLSession = async (email: string) => {
 
 export const updateMagicURLSession = async (userId?: string, secret?: string) => {
   try {
+    console.debug('[updateMagicURLSession] Starting session verification...', { userId: userId ? 'provided' : 'none', secret: secret ? 'provided' : 'none' });
+    
     // Supabase completes sessions from the redirect URL
     // v2: getSessionFromUrl; v1 fallback handled by getSession
     const auth: any = (getClient().auth as any);
+    
     if (typeof auth.getSessionFromUrl === 'function') {
       try {
+        console.debug('[updateMagicURLSession] Using getSessionFromUrl method');
         const res: any = await auth.getSessionFromUrl({ storeSession: true });
-        console.debug('supabase.getSessionFromUrl result', res);
-        if (res.error) throw res.error;
+        console.debug('[updateMagicURLSession] getSessionFromUrl result:', { 
+          hasError: !!res.error, 
+          hasSession: !!res.data?.session,
+          hasUser: !!res.data?.session?.user 
+        });
+        
+        if (res.error) {
+          console.error('[updateMagicURLSession] getSessionFromUrl returned error:', res.error);
+          throw res.error;
+        }
+        
+        if (res.data?.session?.user) {
+          console.debug('[updateMagicURLSession] Session successfully established for user:', res.data.session.user.email);
+        }
+        
         return res;
       } catch (err) {
-        console.error('getSessionFromUrl failed', err);
+        console.error('[updateMagicURLSession] getSessionFromUrl failed:', err);
         throw err;
       }
     }
@@ -137,17 +154,29 @@ export const updateMagicURLSession = async (userId?: string, secret?: string) =>
     // Older SDKs may expose getSession
     if (typeof auth.getSession === 'function') {
       try {
+        console.debug('[updateMagicURLSession] Using getSession method (fallback)');
         const res: any = await auth.getSession();
-        console.debug('supabase.getSession result', res);
+        console.debug('[updateMagicURLSession] getSession result:', { 
+          hasError: !!res.error, 
+          hasSession: !!res.data?.session,
+          hasUser: !!res.data?.session?.user 
+        });
+        
+        if (res.data?.session?.user) {
+          console.debug('[updateMagicURLSession] Session successfully established for user:', res.data.session.user.email);
+        }
+        
         return res;
       } catch (err) {
-        console.error('getSession failed', err);
+        console.error('[updateMagicURLSession] getSession failed:', err);
         throw err;
       }
     }
 
+    console.error('[updateMagicURLSession] No suitable session method available on Supabase client');
     throw new Error('Supabase SDK does not support completing magic-link sessions in this environment');
   } catch (e) {
+    console.error('[updateMagicURLSession] Unexpected error:', e);
     throw e;
   }
 };
@@ -159,17 +188,16 @@ export const getCurrentUser = async () => {
       let authToken = null;
       let tokenKey = null;
       
-      console.log('=== Debugging localStorage tokens ===');
-      console.log('localStorage length:', localStorage.length);
+      console.debug('[getCurrentUser] Checking localStorage for auth tokens...');
+      console.debug('[getCurrentUser] localStorage.length:', localStorage.length);
       
-      // Log all localStorage keys for debugging
+      // Log all localStorage keys for debugging (only in detailed mode)
+      const allKeys: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        console.log(`localStorage key ${i}:`, k);
-        if (k && k.includes('auth')) {
-          console.log(`  Value preview:`, localStorage.getItem(k)?.substring(0, 100) + '...');
-        }
+        if (k) allKeys.push(k);
       }
+      console.debug('[getCurrentUser] All keys:', allKeys);
       
       // Find the Supabase auth token
       if ("localStorage" in window) {
@@ -180,7 +208,7 @@ export const getCurrentUser = async () => {
             if (v && v !== "null" && v !== "undefined") {
               authToken = v;
               tokenKey = k;
-              console.log('Found matching auth token key:', k);
+              console.debug('[getCurrentUser] Found matching auth token key:', k);
               break;
             }
           }
@@ -189,22 +217,20 @@ export const getCurrentUser = async () => {
       
       if (authToken) {
         try {
-          console.log('Attempting to parse auth token...');
+          console.debug('[getCurrentUser] Attempting to parse auth token from key:', tokenKey);
           // Parse the actual Supabase session data
           const sessionData = JSON.parse(authToken);
-          console.log('Parsed session data structure:', Object.keys(sessionData));
-          console.log('Full session data:', sessionData);
+          console.debug('[getCurrentUser] Parsed session data structure keys:', Object.keys(sessionData));
           
           // Extract user from session data (Supabase format)
           const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
           if (user) {
-            console.log('Found real user:', { id: user.id, email: user.email });
+            console.debug('[getCurrentUser] Found user:', { id: user.id, email: user.email });
             
             // Extract name and preferences from user_metadata and add as direct properties
             const userName = user.user_metadata?.name || null;
             const userPrefs = user.user_metadata?.prefs || null;
-            console.log('User metadata name:', userName);
-            console.log('User metadata prefs:', userPrefs);
+            console.debug('[getCurrentUser] User metadata - name:', userName, 'prefs:', userPrefs ? Object.keys(userPrefs) : null);
             
             return {
               ...user,
@@ -212,25 +238,27 @@ export const getCurrentUser = async () => {
               prefs: userPrefs // Add prefs property for easier access
             };
           } else {
-            console.log('No user found in session data. Available keys:', Object.keys(sessionData));
+            console.warn('[getCurrentUser] No user found in session data. Available keys:', Object.keys(sessionData));
+            console.debug('[getCurrentUser] Full session data:', sessionData);
           }
         } catch (parseError) {
-          console.error('Failed to parse auth token:', parseError);
-          console.log('Raw token (first 200 chars):', authToken.substring(0, 200));
+          console.error('[getCurrentUser] Failed to parse auth token:', parseError);
+          console.debug('[getCurrentUser] Raw token preview:', authToken.substring(0, 200) + '...');
         }
       } else {
-        console.log('No matching auth token found');
+        console.warn('[getCurrentUser] No matching auth token found in localStorage');
       }
       
-      console.log('=== End localStorage debug ===');
       return null;
     }
     
     // Fallback to real Supabase auth if in a server environment
+    console.debug('[getCurrentUser] Not in browser context, using Supabase client directly');
     const u = await account.get();
+    console.debug('[getCurrentUser] Supabase client returned:', u ? { id: u.id, email: u.email } : null);
     return u;
   } catch (e) {
-    console.error('getCurrentUser error:', e);
+    console.error('[getCurrentUser] Unexpected error:', e);
     return null;
   }
 };

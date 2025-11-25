@@ -10,6 +10,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 >
   <!-- Early client-side heuristic redirect if no Supabase auth token found -->
   <script is:inline>
+    // More lenient early check - allow some time for session to settle after redirect
     try {
       const hasToken = (() => {
         if (typeof window === 'undefined' || !('localStorage' in window)) return false;
@@ -17,15 +18,41 @@ import MainLayout from '../../layouts/MainLayout.astro';
           const k = localStorage.key(i);
           if (k && /^sb-.*-auth-token$/.test(k)) {
             const v = localStorage.getItem(k);
-            if (v && v !== 'null' && v !== 'undefined') return true;
+            if (v && v !== 'null' && v !== 'undefined') {
+              console.debug('[Onboarding] Found auth token key:', k);
+              return true;
+            }
           }
         }
         return false;
       })();
+      
       if (!hasToken) {
-        window.location.replace('/login');
+        // Give it a moment - user might have just been redirected from verify
+        console.debug('[Onboarding] No auth token found on initial check, waiting 500ms before redirect...');
+        setTimeout(() => {
+          // Check one more time
+          let found = false;
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && /^sb-.*-auth-token$/.test(k)) {
+              const v = localStorage.getItem(k);
+              if (v && v !== 'null' && v !== 'undefined') {
+                found = true;
+                console.debug('[Onboarding] Found auth token on retry:', k);
+                break;
+              }
+            }
+          }
+          if (!found) {
+            console.warn('[Onboarding] Still no auth token after retry, redirecting to login');
+            window.location.replace('/login');
+          }
+        }, 500);
       }
-    } catch {}
+    } catch (e) {
+      console.error('[Onboarding] Early auth check error:', e);
+    }
   </script>
 
   <noscript>
@@ -287,41 +314,92 @@ import MainLayout from '../../layouts/MainLayout.astro';
     }
   };
 
+  // Retry helper with exponential backoff
+  async function getCurrentUserWithRetry(maxAttempts = 5, initialDelayMs = 300) {
+    console.debug('[Onboarding] Starting auth check with retry logic...');
+    
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        console.debug(`[Onboarding] Auth attempt ${attempt}/${maxAttempts}`);
+        const user = await getCurrentUser();
+        
+        if (user) {
+          console.debug('[Onboarding] Successfully retrieved user:', { id: user.id, email: user.email, hasName: !!user.name });
+          return user;
+        }
+        
+        console.debug(`[Onboarding] Attempt ${attempt} returned null user`);
+        
+        // If not the last attempt, wait before retrying with exponential backoff
+        if (attempt < maxAttempts) {
+          const delayMs = initialDelayMs * Math.pow(1.5, attempt - 1);
+          console.debug(`[Onboarding] Waiting ${delayMs}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+      } catch (error) {
+        console.error(`[Onboarding] Auth attempt ${attempt} error:`, error);
+        
+        // If not the last attempt, wait before retrying
+        if (attempt < maxAttempts) {
+          const delayMs = initialDelayMs * Math.pow(1.5, attempt - 1);
+          console.debug(`[Onboarding] Waiting ${delayMs}ms before retry after error...`);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+      }
+    }
+    
+    console.warn('[Onboarding] All auth attempts exhausted, returning null');
+    return null;
+  }
+
   // Ensure user is authenticated; if not, send back to login
   (async () => {
-    const user: any = await getCurrentUser().catch(() => null);
+    const user: any = await getCurrentUserWithRetry();
+    
     if (!user) {
-      window.location.href = '/login';
+      console.error('[Onboarding] Not authenticated after retries, redirecting to login');
+      showMessage('Authentication session not found. Redirecting to login...', true);
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
       return;
     }
 
-  // Diagnostics: log the user object we received client-side
-  console.debug('Onboarding loaded user:', user);
+    // Diagnostics: log the user object we received client-side
+    console.debug('[Onboarding] Successfully loaded user:', user);
 
-  // Prefill if name already present
-  if (user.name && firstName) (firstName as HTMLInputElement).value = user.name;
+    // Prefill if name already present
+    if (user.name && firstName) {
+      (firstName as HTMLInputElement).value = user.name;
+      console.debug('[Onboarding] Pre-filled name field');
+    }
 
-  // If user already has preferences set and name present, skip onboarding
-  const prefs = (user as any).prefs || (user as any).preferences || {};
-  console.log('Onboarding check - user name:', user.name);
-  console.log('Onboarding check - user prefs:', prefs);
-  
-  // Check if user has completed onboarding:
-  // 1. Has a name (basic profile info)
-  // 2. Has any preferences set (indicates they've been through onboarding flow)
-  const hasName = user.name && String(user.name).trim();
-  const hasPreferences = prefs && Object.keys(prefs).length > 0;
-  
-  if (hasName && hasPreferences) {
-    console.log('User has completed onboarding, redirecting to dashboard');
-    // Already onboarded
-    window.location.href = '/account/dashboard';
-    return;
-  }
-  
-  console.log('User needs onboarding - showing form');    // Reveal the guarded content once we know the user isn't being redirected
+    // If user already has preferences set and name present, skip onboarding
+    const prefs = (user as any).prefs || (user as any).preferences || {};
+    console.debug('[Onboarding] User profile check - name:', user.name, 'prefs keys:', Object.keys(prefs));
+    
+    // Check if user has completed onboarding:
+    // 1. Has a name (basic profile info)
+    // 2. Has any preferences set (indicates they've been through onboarding flow)
+    const hasName = user.name && String(user.name).trim();
+    const hasPreferences = prefs && Object.keys(prefs).length > 0;
+    
+    if (hasName && hasPreferences) {
+      console.debug('[Onboarding] User has completed onboarding, redirecting to dashboard');
+      showMessage('Welcome back! Redirecting to dashboard...', false);
+      setTimeout(() => {
+        window.location.href = '/account/dashboard';
+      }, 800);
+      return;
+    }
+    
+    console.debug('[Onboarding] User needs onboarding - showing form');
+    // Reveal the guarded content once we know the user isn't being redirected
     const guard = document.getElementById('onboardGuard');
-    if (guard) { guard.classList.remove('hidden'); guard.removeAttribute('aria-busy'); }
+    if (guard) { 
+      guard.classList.remove('hidden'); 
+      guard.removeAttribute('aria-busy'); 
+    }
   })();
 
   if (form) {

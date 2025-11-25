@@ -90,10 +90,13 @@ import MainLayout from '../../layouts/MainLayout.astro';
             // Show success state
             showSuccess();
 
-            // Redirect after brief pause
+            // Longer delay to ensure session is fully established before redirecting
+            // This prevents race conditions where onboarding checks auth before session is ready
+            console.debug('[Verify] Session established, waiting before redirect to allow localStorage to settle...');
             setTimeout(() => {
+                console.debug('[Verify] Redirecting to onboarding');
                 window.location.href = '/account/onboarding/';
-            }, 800);
+            }, 1200);
 
         } catch (error) {
             console.error('Magic link verification error:', error);
