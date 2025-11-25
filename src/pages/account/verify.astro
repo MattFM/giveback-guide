@@ -25,7 +25,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { updateMagicURLSession } from '../../lib/auth';
+    import { updateMagicURLSession, getCurrentUser } from '../../lib/auth';
 
     const showSuccess = () => {
         const statusDiv = document.getElementById('status');
@@ -40,7 +40,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                         </div>
                     </div>
                     <h2 class="text-2xl font-bold mb-2" style="color: #1C2434;">Verified!</h2>
-                    <p class="text-sm" style="color: #7E827E;">Taking you to your account...</p>
+                    <p class="text-sm" style="color: #7E827E;">Redirecting you...</p>
                 </div>
             `;
         }
@@ -87,16 +87,45 @@ import MainLayout from '../../layouts/MainLayout.astro';
             // Force a minimum delay of 1.5 seconds for better UX
             await new Promise(resolve => setTimeout(resolve, 1500));
 
+            // Wait a bit for session to settle in localStorage
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            console.debug('[Verify] Session established, checking if user needs onboarding...');
+
+            // Check if user has completed onboarding to route them correctly
+            let needsOnboarding = true;
+            try {
+                const user = await getCurrentUser();
+                console.debug('[Verify] Retrieved user:', user ? { id: user.id, email: user.email, hasName: !!user.name } : null);
+                
+                if (user) {
+                    const prefs = user.prefs || user.preferences || {};
+                    const hasName = user.name && String(user.name).trim();
+                    const hasPreferences = prefs && Object.keys(prefs).length > 0;
+                    
+                    console.debug('[Verify] User profile check - hasName:', hasName, 'hasPreferences:', hasPreferences);
+                    
+                    if (hasName && hasPreferences) {
+                        needsOnboarding = false;
+                        console.debug('[Verify] User has completed onboarding, will redirect to dashboard');
+                    } else {
+                        console.debug('[Verify] User needs onboarding');
+                    }
+                }
+            } catch (e) {
+                console.error('[Verify] Error checking user onboarding status:', e);
+                // Default to onboarding page on error
+            }
+
             // Show success state
             showSuccess();
 
-            // Longer delay to ensure session is fully established before redirecting
-            // This prevents race conditions where onboarding checks auth before session is ready
-            console.debug('[Verify] Session established, waiting before redirect to allow localStorage to settle...');
+            // Redirect to appropriate destination
             setTimeout(() => {
-                console.debug('[Verify] Redirecting to onboarding');
-                window.location.href = '/account/onboarding/';
-            }, 1200);
+                const destination = needsOnboarding ? '/account/onboarding/' : '/account/dashboard/';
+                console.debug('[Verify] Redirecting to:', destination);
+                window.location.href = destination;
+            }, 800);
 
         } catch (error) {
             console.error('Magic link verification error:', error);

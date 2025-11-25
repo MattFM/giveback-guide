@@ -10,7 +10,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
 >
   <!-- Early client-side heuristic redirect if no Supabase auth token found -->
   <script is:inline>
-    // More lenient early check - allow some time for session to settle after redirect
+    // Quick check for auth token - if missing, redirect immediately
+    // Verify page should have established session before routing here
     try {
       const hasToken = (() => {
         if (typeof window === 'undefined' || !('localStorage' in window)) return false;
@@ -19,7 +20,6 @@ import MainLayout from '../../layouts/MainLayout.astro';
           if (k && /^sb-.*-auth-token$/.test(k)) {
             const v = localStorage.getItem(k);
             if (v && v !== 'null' && v !== 'undefined') {
-              console.debug('[Onboarding] Found auth token key:', k);
               return true;
             }
           }
@@ -28,27 +28,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
       })();
       
       if (!hasToken) {
-        // Give it a moment - user might have just been redirected from verify
-        console.debug('[Onboarding] No auth token found on initial check, waiting 500ms before redirect...');
-        setTimeout(() => {
-          // Check one more time
-          let found = false;
-          for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k && /^sb-.*-auth-token$/.test(k)) {
-              const v = localStorage.getItem(k);
-              if (v && v !== 'null' && v !== 'undefined') {
-                found = true;
-                console.debug('[Onboarding] Found auth token on retry:', k);
-                break;
-              }
-            }
-          }
-          if (!found) {
-            console.warn('[Onboarding] Still no auth token after retry, redirecting to login');
-            window.location.replace('/login');
-          }
-        }, 500);
+        console.warn('[Onboarding] No auth token found, redirecting to login');
+        window.location.replace('/login');
       }
     } catch (e) {
       console.error('[Onboarding] Early auth check error:', e);
@@ -61,6 +42,22 @@ import MainLayout from '../../layouts/MainLayout.astro';
     </div>
   </noscript>
 
+  <!-- Loading State: Show while verifying authentication -->
+  <div id="loadingState" class="min-h-screen flex items-center justify-center" style="background-color: #1C2434;">
+    <div class="text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: rgba(169, 143, 250, 0.1);">
+        <svg class="animate-spin w-8 h-8" style="color: #A98FFA;" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+      <p class="text-lg font-medium" style="color: #FFFFFF;">Verifying your account...</p>
+    </div>
+  </div>
+
+  <!-- Page Guard: Keep everything hidden until we verify user needs onboarding -->
+  <div id="pageGuard" class="hidden">
+  
   <!-- Hero Section with Dark Background -->
   <section style="background-color: #1C2434; padding: 6rem 1rem 0;">
     <div class="max-w-3xl mx-auto text-center pb-12">
@@ -82,7 +79,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
   <!-- Form Section -->
   <section style="background: linear-gradient(to bottom, #1C2434 0%, #F6F7F6 20%);">
-    <div id="onboardGuard" aria-busy="true" class="hidden max-w-xl mx-auto px-4 pb-24">
+    <div id="onboardGuard" aria-busy="true" class="max-w-xl mx-auto px-4 pb-24">
       <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-12 border border-gray-200">
         <form id="onboardForm" class="space-y-8">
           <!-- First Name -->
@@ -158,6 +155,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
       </div>
     </div>
   </section>
+  
+  </div><!-- end pageGuard -->
 </MainLayout>
 
 <style>
@@ -314,91 +313,48 @@ import MainLayout from '../../layouts/MainLayout.astro';
     }
   };
 
-  // Retry helper with exponential backoff
-  async function getCurrentUserWithRetry(maxAttempts = 5, initialDelayMs = 300) {
-    console.debug('[Onboarding] Starting auth check with retry logic...');
-    
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        console.debug(`[Onboarding] Auth attempt ${attempt}/${maxAttempts}`);
-        const user = await getCurrentUser();
-        
-        if (user) {
-          console.debug('[Onboarding] Successfully retrieved user:', { id: user.id, email: user.email, hasName: !!user.name });
-          return user;
-        }
-        
-        console.debug(`[Onboarding] Attempt ${attempt} returned null user`);
-        
-        // If not the last attempt, wait before retrying with exponential backoff
-        if (attempt < maxAttempts) {
-          const delayMs = initialDelayMs * Math.pow(1.5, attempt - 1);
-          console.debug(`[Onboarding] Waiting ${delayMs}ms before retry...`);
-          await new Promise(resolve => setTimeout(resolve, delayMs));
-        }
-      } catch (error) {
-        console.error(`[Onboarding] Auth attempt ${attempt} error:`, error);
-        
-        // If not the last attempt, wait before retrying
-        if (attempt < maxAttempts) {
-          const delayMs = initialDelayMs * Math.pow(1.5, attempt - 1);
-          console.debug(`[Onboarding] Waiting ${delayMs}ms before retry after error...`);
-          await new Promise(resolve => setTimeout(resolve, delayMs));
-        }
-      }
-    }
-    
-    console.warn('[Onboarding] All auth attempts exhausted, returning null');
-    return null;
-  }
-
-  // Ensure user is authenticated; if not, send back to login
+  // Simplified: Verify page now routes correctly, so we just need to verify auth and show form
   (async () => {
-    const user: any = await getCurrentUserWithRetry();
+    console.debug('[Onboarding] Loading user for onboarding form...');
+    
+    // Simple check with one retry (user should already be authenticated from verify page)
+    let user: any = await getCurrentUser().catch(() => null);
     
     if (!user) {
-      console.error('[Onboarding] Not authenticated after retries, redirecting to login');
-      showMessage('Authentication session not found. Redirecting to login...', true);
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      console.debug('[Onboarding] Initial auth check failed, retrying once...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      user = await getCurrentUser().catch(() => null);
+    }
+    
+    if (!user) {
+      console.error('[Onboarding] Not authenticated, redirecting to login');
+      window.location.replace('/login');
       return;
     }
 
-    // Diagnostics: log the user object we received client-side
-    console.debug('[Onboarding] Successfully loaded user:', user);
+    console.debug('[Onboarding] User authenticated:', { id: user.id, email: user.email });
 
     // Prefill if name already present
     if (user.name && firstName) {
       (firstName as HTMLInputElement).value = user.name;
       console.debug('[Onboarding] Pre-filled name field');
     }
-
-    // If user already has preferences set and name present, skip onboarding
-    const prefs = (user as any).prefs || (user as any).preferences || {};
-    console.debug('[Onboarding] User profile check - name:', user.name, 'prefs keys:', Object.keys(prefs));
     
-    // Check if user has completed onboarding:
-    // 1. Has a name (basic profile info)
-    // 2. Has any preferences set (indicates they've been through onboarding flow)
-    const hasName = user.name && String(user.name).trim();
-    const hasPreferences = prefs && Object.keys(prefs).length > 0;
-    
-    if (hasName && hasPreferences) {
-      console.debug('[Onboarding] User has completed onboarding, redirecting to dashboard');
-      showMessage('Welcome back! Redirecting to dashboard...', false);
-      setTimeout(() => {
-        window.location.href = '/account/dashboard';
-      }, 800);
-      return;
+    // Hide loading state and reveal the onboarding form
+    console.debug('[Onboarding] Showing onboarding form');
+    const loadingState = document.getElementById('loadingState');
+    if (loadingState) {
+      loadingState.classList.add('hidden');
     }
     
-    console.debug('[Onboarding] User needs onboarding - showing form');
-    // Reveal the guarded content once we know the user isn't being redirected
-    const guard = document.getElementById('onboardGuard');
-    if (guard) { 
-      guard.classList.remove('hidden'); 
-      guard.removeAttribute('aria-busy'); 
+    const pageGuard = document.getElementById('pageGuard');
+    if (pageGuard) {
+      pageGuard.classList.remove('hidden');
+    }
+    
+    const formGuard = document.getElementById('onboardGuard');
+    if (formGuard) { 
+      formGuard.removeAttribute('aria-busy'); 
     }
   })();
 
