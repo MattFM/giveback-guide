@@ -56,76 +56,16 @@ import MainLayout from "../../layouts/MainLayout.astro";
       </div>
 
       <!-- Tally Embed Container -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-        <div id="tally-embed" class="min-h-[600px]">
-          <!-- Tally form will be embedded here -->
-          <div class="flex items-center justify-center py-20">
-            <div class="text-center">
-              <div class="animate-spin w-8 h-8 border-4 border-gray-200 border-t-primary-600 rounded-full mx-auto mb-4"></div>
-              <p class="text-sm" style="color: #7E827E;">Loading form...</p>
-            </div>
-          </div>
-        </div>
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden p-6">
+        <iframe data-tally-src="https://tally.so/embed/vGXGK4?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="1572" frameborder="0" marginheight="0" marginwidth="0" title="Feedback - Feature Request"></iframe>
       </div>
 
-      <!-- Placeholder for Tally embed code -->
       <script is:inline>
-        // TODO: Replace with your actual Tally embed code
-        // Example:
-        // Tally.loadEmbeds();
-        
-        console.log('Feature request form ready - add Tally embed code here');
-        
-        // Temporary message for development
-        setTimeout(() => {
-          const embedContainer = document.getElementById('tally-embed');
-          if (embedContainer) {
-            embedContainer.innerHTML = `
-              <div class="p-8 text-center">
-                <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background: rgba(115, 83, 212, 0.1);">
-                  <svg class="w-8 h-8" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2" style="color: #1C2434;">Tally Form Embed</h3>
-                <p class="text-sm mb-4" style="color: #7E827E;">
-                  Replace the placeholder script with your Tally embed code
-                </p>
-                <code class="text-xs bg-gray-100 px-3 py-1 rounded" style="color: #7353D4;">
-                  &lt;script src="https://tally.so/widgets/embed.js"&gt;&lt;/script&gt;
-                </code>
-              </div>
-            `;
-          }
-        }, 500);
+        var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
       </script>
 
-      <!-- Alternative Contact -->
-      <div class="mt-6 text-center">
-        <p class="text-sm mb-3" style="color: #7E827E;">
-          Prefer email? No problem.
-        </p>
-        <a 
-          href="mailto:matt@giveback.guide?subject=Feature Request" 
-          class="inline-flex items-center text-sm font-semibold hover:underline"
-          style="color: #7353D4;"
-        >
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          Send feature request via email instead
-        </a>
-      </div>
 
     </div>
   </section>
 </MainLayout>
-
-<style>
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  .animate-spin {
-    animation: spin 1s linear infinite;
-  }
 </style>
