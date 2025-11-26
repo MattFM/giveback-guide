@@ -1549,8 +1549,12 @@ import { SITE_TITLE } from "../consts";
     }
   }
 
-  // Run on initial load and after View Transitions
-  document.addEventListener("astro:page-load", initSearch);
+  // Run on page load (View Transitions are disabled globally)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSearch);
+  } else {
+    initSearch();
+  }
 </script>
 
 <style>
