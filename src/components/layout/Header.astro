@@ -227,109 +227,90 @@ const mobileButtonClasses = theme === 'dark'
 
         <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
         <script is:inline>
-          // Define functions in global scope so they persist across page transitions
-          if (!window.headerAuthCheck) {
-            window.headerAuthCheck = {
-              initialized: false,
-              
-              setVisible: function(el, visible) {
-                if (!el) return;
-                el.style.display = visible ? "inline-flex" : "none";
-                el.setAttribute("aria-hidden", visible ? "false" : "true");
-              },
-              
-              getCurrentUserReliable: function() {
-                try {
-                  let authToken = null;
-                  
-                  // Find the Supabase auth token
-                  if (typeof window !== "undefined" && "localStorage" in window) {
-                    for (let i = 0; i < localStorage.length; i++) {
-                      const k = localStorage.key(i);
-                      if (k && /^sb-.*-auth-token$/.test(k)) {
-                        const v = localStorage.getItem(k);
-                        if (v && v !== "null" && v !== "undefined") {
-                          authToken = v;
-                          break;
-                        }
+          (function() {
+            function setVisible(el, visible) {
+              if (!el) return;
+              el.style.display = visible ? "inline-flex" : "none";
+              el.setAttribute("aria-hidden", visible ? "false" : "true");
+            }
+            
+            function getCurrentUser() {
+              try {
+                let authToken = null;
+                
+                // Find the Supabase auth token
+                if (typeof window !== "undefined" && "localStorage" in window) {
+                  for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && /^sb-.*-auth-token$/.test(k)) {
+                      const v = localStorage.getItem(k);
+                      if (v && v !== "null" && v !== "undefined") {
+                        authToken = v;
+                        break;
                       }
                     }
                   }
-                  
-                  if (authToken) {
-                    try {
-                      // Parse the actual Supabase session data
-                      const sessionData = JSON.parse(authToken);
-                      // Extract user from session data (Supabase format)
-                      const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
-                      return user || null;
-                    } catch (parseError) {
-                      console.error('Header: Failed to parse auth token:', parseError);
-                    }
-                  }
-                  
-                  return null;
-                } catch {
-                  return null;
                 }
-              },
-              
-              updateButtons: function() {
-                try {
-                  const dash = document.getElementById("header-dashboard-link");
-                  const join = document.getElementById("header-join-link");
-                  
-                  if (!dash || !join) {
-                    console.log('Header: Buttons not found in DOM yet');
-                    return;
+                
+                if (authToken) {
+                  try {
+                    // Parse the actual Supabase session data
+                    const sessionData = JSON.parse(authToken);
+                    // Extract user from session data (Supabase format)
+                    const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
+                    return user || null;
+                  } catch (parseError) {
+                    console.error('Header: Failed to parse auth token:', parseError);
                   }
-                  
-                  const user = this.getCurrentUserReliable();
-                  const loggedIn = !!user;
-                  console.log('Header auth check:', { hasUser: loggedIn, userId: user?.id, timestamp: Date.now() });
-                  
-                  this.setVisible(dash, loggedIn);
-                  this.setVisible(join, !loggedIn);
-                } catch (error) {
-                  console.error('Header auth check failed:', error);
-                  // On error, show join button (safer default)
-                  const dash = document.getElementById("header-dashboard-link");
-                  const join = document.getElementById("header-join-link");
-                  this.setVisible(dash, false);
-                  this.setVisible(join, true);
                 }
-              },
-              
-              init: function() {
-                if (this.initialized) {
-                  console.log('Header: Already initialized, just updating buttons');
-                  this.updateButtons();
+                
+                return null;
+              } catch {
+                return null;
+              }
+            }
+            
+            function updateButtons() {
+              try {
+                const dash = document.getElementById("header-dashboard-link");
+                const join = document.getElementById("header-join-link");
+                
+                if (!dash || !join) {
+                  console.log('Header: Buttons not found in DOM yet');
                   return;
                 }
                 
-                console.log('Header: Initializing auth check');
-                this.initialized = true;
+                const user = getCurrentUser();
+                const loggedIn = !!user;
+                console.log('Header auth check:', { hasUser: loggedIn, userId: user?.id, timestamp: Date.now() });
                 
-                // Initial check
-                this.updateButtons();
-                
-                // React to auth changes from other tabs/windows
-                window.addEventListener("storage", (e) => {
-                  const k = (e && e.key) || "";
-                  if (
-                    /^sb-.*-auth-token$/.test(k) ||
-                    k.indexOf("supabase.auth.token") !== -1
-                  ) {
-                    console.log('Header: Storage event detected, updating buttons');
-                    this.updateButtons();
-                  }
-                });
+                setVisible(dash, loggedIn);
+                setVisible(join, !loggedIn);
+              } catch (error) {
+                console.error('Header auth check failed:', error);
+                // On error, show join button (safer default)
+                const dash = document.getElementById("header-dashboard-link");
+                const join = document.getElementById("header-join-link");
+                setVisible(dash, false);
+                setVisible(join, true);
               }
-            };
-          }
-          
-          // Run immediately
-          window.headerAuthCheck.init();
+            }
+            
+            // Initial check
+            updateButtons();
+            
+            // React to auth changes from other tabs/windows
+            window.addEventListener("storage", (e) => {
+              const k = (e && e.key) || "";
+              if (
+                /^sb-.*-auth-token$/.test(k) ||
+                k.indexOf("supabase.auth.token") !== -1
+              ) {
+                console.log('Header: Storage event detected, updating buttons');
+                updateButtons();
+              }
+            });
+          })();
         </script>
 
         <!-- Mobile Menu Toggle -->
@@ -582,11 +563,8 @@ const mobileButtonClasses = theme === 'dark'
 </div>
 
 <script>
-  // Detect OS once (persists across navigations)
+  // Detect OS for keyboard shortcut display
   const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-  
-  // Store keyboard handler so we can manage it
-  let keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   function initSearchModal() {
     const searchModal = document.getElementById("search-modal");
@@ -650,13 +628,8 @@ const mobileButtonClasses = theme === 'dark'
       });
     }
 
-    // Remove old keyboard handler if it exists
-    if (keydownHandler) {
-      document.removeEventListener("keydown", keydownHandler);
-    }
-
-    // Create and store new keyboard handler
-    keydownHandler = (e: KeyboardEvent) => {
+    // Handle keyboard shortcuts
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
       // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
       if (
         (isMac && e.metaKey && e.key === "k") ||
@@ -675,9 +648,7 @@ const mobileButtonClasses = theme === 'dark'
       ) {
         hideModal();
       }
-    };
-
-    document.addEventListener("keydown", keydownHandler);
+    });
 
     // Handle form submission
     if (modalSearchForm) {
@@ -702,26 +673,12 @@ const mobileButtonClasses = theme === 'dark'
     });
   }
 
-  // Run on initial load and after View Transitions
-  document.addEventListener("astro:page-load", initSearchModal);
-</script>
-
-<script>
-  // Handle auth button visibility on View Transitions
-  document.addEventListener("astro:page-load", () => {
-    if ((window as any).headerAuthCheck) {
-      console.log('Header: astro:page-load event, updating buttons');
-      (window as any).headerAuthCheck.updateButtons();
-    }
-  });
-  
-  // Also run immediately on script load
-  document.addEventListener("astro:after-swap", () => {
-    if ((window as any).headerAuthCheck) {
-      console.log('Header: astro:after-swap event, updating buttons');
-      (window as any).headerAuthCheck.updateButtons();
-    }
-  });
+  // Run on page load (View Transitions are disabled globally)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSearchModal);
+  } else {
+    initSearchModal();
+  }
 </script>
 
 <style>
