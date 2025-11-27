@@ -13,6 +13,7 @@ import StayMetadata from "../components/content/StayMetadata.astro";
 import VerificationBox from "../components/content/VerificationBox.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+import StockPhotoNotice from "../components/content/StockPhotoNotice.astro";
 
 type Props = CollectionEntry<"stays">["data"];
 
@@ -291,6 +292,13 @@ if (images.length === 0) {
             </article>
           </div>
         </section>
+
+        <!-- Stock Photo Notice -->
+        {properties.sStockPhoto && (
+          <section class="pt-3 pb-3 px-4">
+            <StockPhotoNotice />
+          </section>
+        )}
 
         <!-- Verification Section -->
         <section class="pt-3 pb-3 px-4">

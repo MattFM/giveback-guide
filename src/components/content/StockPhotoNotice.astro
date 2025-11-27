@@ -1,0 +1,33 @@
+---
+/*
+  StockPhotoNotice Component - Displays notice when stock photos are used
+  
+  Subtle informational box shown when accommodation providers haven't provided photos
+  
+  Props:
+    - None (component is only rendered when needed)
+    
+  Usage:
+    {properties.sStockPhoto && <StockPhotoNotice />}
+*/
+
+// Material Symbols (Rounded) - Image icon
+const imageIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm40-80h480L570-480 450-320l-90-120-120 160Zm-40 80v-560 560Z"/></svg>`;
+---
+
+<div class="bg-amber-50 border border-amber-200 rounded-lg p-5 dark:bg-amber-900/10 dark:border-amber-800/30">
+  <!-- Icon and Heading -->
+  <div class="flex items-start gap-3">
+    <span class="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" aria-hidden="true">
+      <Fragment set:html={imageIcon} />
+    </span>
+    <div class="flex-1">
+      <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-2">
+        Stock photo in use
+      </h3>
+      <p class="text-sm text-gray-700 dark:text-gray-400">
+        We're currently using stock imagery to represent this stay whilst we seek permission to use the accommodation provider's photos.
+      </p>
+    </div>
+  </div>
+</div>

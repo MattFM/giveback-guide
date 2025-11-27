@@ -311,6 +311,7 @@ const posts = defineCollection({
 		  sImageURL3: transformedPropertySchema.url,
 		  sPublished: transformedPropertySchema.date,
 		  sReview: transformedPropertySchema.rich_text,
+		  sStockPhoto: transformedPropertySchema.checkbox,
 		}),
 	  }),
   });
