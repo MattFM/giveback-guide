@@ -1,6 +1,7 @@
 ---
 import BaseHead from "../components/layout/BaseHead.astro";
 import Header from "../components/layout/Header.astro";
+import Announcement from "../components/features/popups/Announcement.astro";
 import Footer from "../components/layout/Footer.astro";
 import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
 
@@ -27,8 +28,53 @@ const {
     <BaseHead title={title} description={description} image={image} />
   </head>
   <body>
-    <Header variant={headerVariant} theme={headerTheme} />
+  <Announcement />
+  <Header variant={headerVariant} theme={headerTheme} />
     <slot />
     <Footer />
   </body>
 </html>
+
+  <script is:inline>
+    (function () {
+      // Adjust header top offset when announcement is present and header is absolutely positioned
+      function adjustHeaderTop() {
+        try {
+          var ann = document.getElementById('site-announcement');
+          var hdr = document.querySelector('header[role="banner"]');
+          if (!hdr) return;
+
+          var computed = window.getComputedStyle(hdr);
+          var isAbsolute = computed.position === 'absolute' || hdr.className.indexOf('absolute') !== -1;
+          if (ann && isAbsolute) {
+            var h = Math.ceil(ann.getBoundingClientRect().height);
+            hdr.style.top = h + 'px';
+          } else {
+            hdr.style.top = '';
+          }
+        } catch (e) {
+          // silent
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', adjustHeaderTop);
+      } else {
+        adjustHeaderTop();
+      }
+
+      window.addEventListener('resize', function () {
+        // debounce
+        if (window.__adjustHeaderTopTimeout) clearTimeout(window.__adjustHeaderTopTimeout);
+        window.__adjustHeaderTopTimeout = setTimeout(function () {
+          adjustHeaderTop();
+        }, 120);
+      });
+
+      // Observe DOM changes so removal/dismissal of announcement updates header
+      var observer = new MutationObserver(function () {
+        adjustHeaderTop();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    })();
+  </script>

@@ -1,14 +1,167 @@
-<div id="sticky-banner" tabindex="-1" class="top-0 start-0 z-50 flex justify-between w-full p-4 border-b border-gray-200 bg-alabaster dark:bg-gray-700 dark:border-gray-600">
-  <div class="flex items-center mx-auto">
-      <p class="flex items-center text-sm font-normal text-black dark:text-gray-400">
-          <span class="inline-flex p-1 me-3 bg-gbgpink rounded-full dark:bg-gray-600 w-6 h-6 items-center justify-center shrink-0">
-              <svg class="w-3 h-3 text-black dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
-                  <path d="M15 1.943v12.114a1 1 0 0 1-1.581.814L8 11V5l5.419-3.871A1 1 0 0 1 15 1.943ZM7 4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2v5a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V4ZM4 17v-5h1v5H4ZM16 5.183v5.634a2.984 2.984 0 0 0 0-5.634Z"/>
-              </svg>
-              <span class="sr-only">Light bulb</span>
-          </span>
-          <span>We're LIVE on Product Hunt! <a href="https://www.producthunt.com/products/giveback-guide" target="_blank" class="inline font-medium text-black underline dark:text-blue-500 hover:no-underline">Show your support!</a></span>
-      </p>
-  </div>
+---
+// Accessible announcement bar with dismiss behaviour
+// Persist dismissal in localStorage for 14 days
+---
+
+<div
+    id="site-announcement"
+    role="region"
+    aria-label="Site announcement"
+    class="w-full relative"
+    style="background: #A98FFA; border-bottom: 1px solid rgba(0,0,0,0.06); padding-top: env(safe-area-inset-top); margin-top: 0.5rem;"
+>
+        <div class="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3">
+            <div class="flex items-center gap-3 w-full">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/10 dark:bg-gray-600 shrink-0">
+                <svg class="w-4 h-4" style="color: #1C2434" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
+                    <path d="M15 1.943v12.114a1 1 0 0 1-1.581.814L8 11V5l5.419-3.871A1 1 0 0 1 15 1.943ZM7 4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2v5a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V4ZM4 17v-5h1v5H4ZM16 5.183v5.634a2.984 2.984 0 0 0 0-5.634Z"/>
+                </svg>
+                <span class="sr-only">Announcement</span>
+            </span>
+                        <p class="text-sm font-normal leading-snug flex-1 min-w-0" style="color: #1C2434;">
+                            Get early access to your new dashboard!
+                        </p>
+
+                        <div class="flex-shrink-0">
+                            <a href="/login/" class="inline-block text-sm font-semibold px-3 py-1 rounded" style="background: #1C2434; color: #ffffff;" data-analytics="announcement-cta">Join for free</a>
+                        </div>
+        </div>
+
+                    <div class="flex items-center ms-4">
+                <button
+                id="announcement-close"
+                aria-label="Dismiss announcement"
+                            class="p-2 rounded focus:outline-none focus:ring-2 focus:ring-offset-2"
+                            style="color: #1C2434; cursor: pointer;"
+            >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script is:inline>
+        (function () {
+            const STORAGE_KEY = 'announcement_dismissed_until';
+            const DISMISS_DAYS = 14; // hide for 14 days
+
+            function nowPlusDays(days) {
+                const d = new Date();
+                d.setDate(d.getDate() + days);
+                return d.getTime();
+            }
+
+            // Detect Supabase auth token in localStorage (same logic as Header)
+            function getCurrentUser() {
+                try {
+                    let authToken = null;
+                    if (typeof window !== 'undefined' && 'localStorage' in window) {
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const k = localStorage.key(i);
+                            if (k && /^sb-.*-auth-token$/.test(k)) {
+                                const v = localStorage.getItem(k);
+                                if (v && v !== 'null' && v !== 'undefined') {
+                                    authToken = v;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (authToken) {
+                        try {
+                            const sessionData = JSON.parse(authToken);
+                            const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
+                            return user || null;
+                        } catch (e) {
+                            return null;
+                        }
+                    }
+
+                    return null;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function isDismissed() {
+                try {
+                    const v = localStorage.getItem(STORAGE_KEY);
+                    if (!v) return false;
+                    const ts = parseInt(v, 10);
+                    if (Number.isNaN(ts)) return false;
+                    return Date.now() < ts;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            function dismiss() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, String(nowPlusDays(DISMISS_DAYS)));
+                } catch (e) {
+                    // ignore
+                }
+                hideBanner();
+            }
+
+            function hideBanner() {
+                const el = document.getElementById('site-announcement');
+                if (!el) return;
+                // prefer reduced motion
+                const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (!prefersReduced) {
+                    el.style.transition = 'transform 220ms ease, opacity 200ms ease';
+                    el.style.transform = 'translateY(-8px)';
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 240);
+                } else {
+                    el.remove();
+                }
+            }
+
+            // Initial show/hide
+            if (typeof window !== 'undefined') {
+                // If the user is logged in, don't show the announcement
+                try {
+                    const user = getCurrentUser();
+                    if (user) {
+                        const existing = document.getElementById('site-announcement');
+                        if (existing) existing.remove();
+                        return;
+                    }
+                } catch (e) {
+                    // ignore and continue
+                }
+
+                if (isDismissed()) {
+                    // already dismissed
+                    const existing = document.getElementById('site-announcement');
+                    if (existing) existing.remove();
+                    return;
+                }
+
+                // Close button
+                const btn = document.getElementById('announcement-close');
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        dismiss();
+                    });
+                }
+
+                // Escape key to close
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const el = document.getElementById('site-announcement');
+                        if (el) dismiss();
+                    }
+                });
+
+                // Ensure banner doesn't steal focus but is skip-friendly
+                // No extra focus management required for this simple banner
+            }
+        })();
+    </script>
 </div>
 
