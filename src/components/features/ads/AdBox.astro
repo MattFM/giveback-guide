@@ -1,20 +1,23 @@
 ---
 import { Image } from 'astro:assets';
-import AdAvatar from '../../../assets/favicon.png';
+import AdAvatar from '../../../assets/ads/getyourguide-avatar.png';
 
 // Editable content variables
-const heading = "Advertise on Giveback Guide";
-const tagline = "Reach our growing audience of conscious travellers";
-const description = "Showcase your sustainable business or impactful project to our growing engaged audience who value authenticity, positive change and good business practices.";
-const ctaText = "Learn More & Enquire";
-const ctaUrl = "/about/advertising";
+const heading = "Download the GetYourGuide App";
+const tagline = "Discover more than 75,000 tours and activities worldwide";
+const description = "Download the GetYourGuide app to discover and book unforgettable travel experiences anywhere in the world. Save 5% on your first booking with code GIVEBACKGUIDE5 (valid only for new app installations).";
+const ctaText = "Download now for free";
+const ctaUrl = "https://gyg.me/givebackguide-app";
 const sponsoredLabel = "Sponsored";
 
 // Editable style variables
-const gradientBorderColors = "linear-gradient(135deg, #10b981 0%, #0d9488 100%)"; // Teal to emerald
-const buttonGradient = "from-teal-600 to-emerald-600"; // Tailwind classes
-const buttonGradientHover = "from-teal-700 to-emerald-700"; // Tailwind classes
-const accentColor = "text-teal-600 dark:text-teal-400"; // Tailwind classes
+// Use GetYourGuide brand orange as the border/button colour (hex: #ff5533).
+// The container uses a layered background (white on top, coloured layer behind)
+// so `gradientBorderColors` must be a valid background-image value (use a 1-stop gradient).
+const gradientBorderColors = "linear-gradient(135deg,#ff5533 0%,#ff5533 100%)"; // Solid-looking gradient for border
+const buttonGradient = "from-[#ff5533] to-[#ff5533]"; // Solid brand colour as gradient fallback
+const buttonGradientHover = "from-[#e64b2c] to-[#e64b2c]"; // Slightly darker on hover
+const accentColor = "text-[#ff5533] dark:text-[#ffb29b]"; // Brand accent for light/dark
 ---
 
 <div class="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 overflow-hidden dark:from-gray-800 dark:to-gray-900 border-2 border-transparent bg-clip-padding" style={`background-image: linear-gradient(white, white), ${gradientBorderColors}; background-origin: border-box; background-clip: padding-box, border-box; --tw-gradient-from: rgb(249 250 251); --tw-gradient-to: rgb(243 244 246);`}>
@@ -22,11 +25,8 @@ const accentColor = "text-teal-600 dark:text-teal-400"; // Tailwind classes
   <div class="absolute inset-0 opacity-5 dark:opacity-10" style="background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0); background-size: 20px 20px;"></div>
   
   <div class="relative">
-    <!-- Sponsored label with icon -->
+    <!-- Sponsored label -->
     <div class="flex items-center gap-1.5 mb-3">
-      <svg xmlns="http://www.w3.org/2000/svg" height="14px" viewBox="0 -960 960 960" width="14px" fill="currentColor" class={accentColor}>
-        <path d="M720-440v-80h160v80H720Zm48 280-128-96 48-64 128 96-48 64Zm-80-480-48-64 128-96 48 64-128 96ZM200-200v-160h-80v-80l80-200h400l80 200v80h-80v160h-80v-160H280v160h-80Zm80-240h320-320Zm0 0h320l-40-100H320l-40 100Z"/>
-      </svg>
       <aside class={`text-xs uppercase font-semibold tracking-wide ${accentColor}`}>
         {sponsoredLabel}
       </aside>
@@ -38,7 +38,7 @@ const accentColor = "text-teal-600 dark:text-teal-400"; // Tailwind classes
         <Image 
           src={AdAvatar} 
           alt="Giveback Guide Avatar" 
-          class="w-10 h-10 rounded-lg object-cover ring-2 ring-teal-500/20 dark:ring-teal-400/30"
+          class="w-10 h-10 rounded-lg object-cover ring-2 ring-[#ff5533]/20 dark:ring-[#ff5533]/30"
         />
       </div>
       <div class="flex-1">
@@ -59,7 +59,7 @@ const accentColor = "text-teal-600 dark:text-teal-400"; // Tailwind classes
     <!-- Enhanced CTA button -->
     <a
       href={ctaUrl}
-      class={`group inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r ${buttonGradient} rounded-lg hover:${buttonGradientHover} focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5`}
+      class={`group inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r ${buttonGradient} rounded-lg hover:${buttonGradientHover} focus:ring-4 focus:outline-none focus:ring-[#ffb29b] dark:focus:ring-[#993e2a] transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5`}
       aria-label={`Learn more about ${heading.toLowerCase()}`}
     >
       <span>{ctaText}</span>
@@ -85,8 +85,9 @@ const accentColor = "text-teal-600 dark:text-teal-400"; // Tailwind classes
   /* Dark mode gradient border fix */
   @media (prefers-color-scheme: dark) {
     [style*="background-clip: padding-box, border-box"] {
-      --tw-gradient-from: rgb(31 41 55);
-      --tw-gradient-to: rgb(17 24 39);
+        /* Dark-mode fallback for border background-clip: use brand-based darker tone */
+        --tw-gradient-from: rgb(255 85 51);
+        --tw-gradient-to: rgb(153 62 42);
     }
   }
 </style>
