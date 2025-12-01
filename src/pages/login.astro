@@ -92,6 +92,12 @@ import MainLayout from '../layouts/MainLayout.astro';
                         placeholder="your@email.com"
                     >
                 </div>
+
+                <!-- Honeypot: invisible to users, catches naive bots that fill all inputs -->
+                <div style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
+                    <label for="hp_name">Leave this field empty</label>
+                    <input type="text" id="hp_name" name="hp_name" autocomplete="off" tabindex="-1" />
+                </div>
                 
                 <button 
                     type="submit" 
@@ -198,33 +204,48 @@ import MainLayout from '../layouts/MainLayout.astro';
     const submitButton = document.getElementById('submit-button') as HTMLButtonElement;
     const buttonText = document.getElementById('button-text');
     const buttonSpinner = document.getElementById('button-spinner');
+    const honeypot = document.getElementById('hp_name') as HTMLInputElement | null;
 
     if (form && errorMessage && errorText && successMessage && submitButton && buttonText && buttonSpinner) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             // Hide previous messages
             errorMessage.classList.add('hidden');
             successMessage.classList.add('hidden');
-            
+
+            // Honeypot check: if it's filled, likely a bot — silently drop the request
+            try {
+                if (honeypot && honeypot.value && honeypot.value.trim() !== '') {
+                    console.warn('Honeypot triggered — dropping submission');
+                    // Show a success message to avoid revealing the trap to bots
+                    successMessage.classList.remove('hidden');
+                    form.reset();
+                    return;
+                }
+            } catch (hpErr) {
+                // If honeypot check fails for some reason, continue to normal flow
+                console.debug('Honeypot check failed', hpErr);
+            }
+
             // Show loading state
             submitButton.disabled = true;
             buttonText.classList.add('hidden');
             buttonSpinner.classList.remove('hidden');
-            
+
             try {
                 const formData = new FormData(form);
                 const email = formData.get('email') as string;
 
                 const redirectTo = `${window.location.origin}/account/verify`;
                 console.debug('Requesting magic link with redirectTo=', redirectTo);
-                
+
                 // Ensure minimum 500ms loading state for better UX
                 const [res] = await Promise.all([
                     createMagicURLSession(email, redirectTo),
                     new Promise(resolve => setTimeout(resolve, 500))
                 ]);
-                
+
                 successMessage.classList.remove('hidden');
                 form.reset();
             } catch (error) {
