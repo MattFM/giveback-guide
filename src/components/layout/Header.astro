@@ -200,10 +200,12 @@ const mobileButtonClasses = theme === 'dark'
         </a>
         <a
           id="header-join-link"
-          href="/join"
+          href="/login/"
           class="cursor-pointer text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           style="display:none;"
           aria-hidden="true"
+          aria-label="Join / Log in"
+          title="Join / Log in"
         >
           <svg
             class="w-6 h-6 me-2"
@@ -221,8 +223,7 @@ const mobileButtonClasses = theme === 'dark'
               d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
             ></path>
           </svg>
-          <span class="block lg:hidden">Join</span>
-          <span class="hidden lg:block">Join our community</span>
+          <span>Join / Log in</span>
         </a>
 
         <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->

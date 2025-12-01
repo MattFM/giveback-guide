@@ -72,14 +72,20 @@ import MainLayout from '../layouts/MainLayout.astro';
                 <!-- Login Card -->
                 <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold mb-2" style="color: #1C2434;">Get Started</h2>
-                <p class="text-sm" style="color: #7E827E;">
+                <h2 class="text-2xl font-bold mb-2 flex items-center" style="color: #1C2434;">
+                    <span class="leading-tight">Get Started</span>
+                    <span class="ml-3 inline-flex items-center h-6 leading-none rounded px-2 text-xs font-semibold bg-yellow-100 text-yellow-800" role="note" aria-hidden="false" aria-label="Early access">Early access</span>
+                </h2>
+                <p class="text-sm mb-2" style="color: #7E827E;">
                     Enter your email to sign in or create a new account. We'll then send you a magic link. No password required.
+                </p>
+                <p id="early-access-note" class="text-sm font-bold" style="color: #7E827E;">
+                    Our dashboard is still in development. By signing up, you’re enrolling for early access and to help us test and improve the experience.
                 </p>
             </div>
 
             <!-- Magic URL form -->
-            <form id="magicURLForm" class="space-y-6">
+            <form id="magicURLForm" class="space-y-6" aria-describedby="early-access-note">
                 <div>
                     <label for="email" class="block mb-2 text-sm font-semibold" style="color: #1C2434;">Email address</label>
                     <input 
@@ -118,7 +124,7 @@ import MainLayout from '../layouts/MainLayout.astro';
                 </button>
 
                 <!-- Success Message -->
-                <div id="success-message" class="p-4 rounded-lg hidden" style="background-color: #F0FDF4; border: 1px solid #86EFAC;">
+                <div id="success-message" role="status" aria-live="polite" class="p-4 rounded-lg hidden" style="background-color: #F0FDF4; border: 1px solid #86EFAC;">
                     <div class="flex items-start gap-3">
                         <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color: #16A34A;" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -126,6 +132,7 @@ import MainLayout from '../layouts/MainLayout.astro';
                         <div>
                             <div class="text-sm font-semibold mb-1" style="color: #16A34A;">Magic link sent!</div>
                             <div class="text-xs" style="color: #15803D;">Check your email and click the link to continue. The link expires in 1 hour.</div>
+                            <p class="text-xs mt-2" style="color: #15803D;">You’re enrolled for early access to the dashboard — we’ll be in touch with feature details.</p>
                         </div>
                     </div>
                 </div>
