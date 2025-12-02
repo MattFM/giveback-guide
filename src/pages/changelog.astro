@@ -5,6 +5,16 @@ import { SITE_TITLE } from "../consts";
 // Changelog entries - add new entries at the top
 const changelog = [
   {
+    date: "2025-12-02",
+    category: "feature",
+    title: "Save Projects and Stays to Your New Dashboard",
+    items: [
+      "Create a free account to get access to your dashboard",
+      "Save projects and stays you're interested in to custom save lists",
+      "Mark projects you've engaged in as 'Visited'"
+    ]
+  },
+  {
     date: "2025-11-04",
     category: "feature",
     title: "Introducing the Changelog",
@@ -107,13 +117,13 @@ const categoryConfig = {
   }
 };
 
-// Format date
+// Format date (UK style)
 function formatDate(dateString: string) {
   const date = new Date(dateString + 'T00:00:00');
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  return date.toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   });
 }
 ---
