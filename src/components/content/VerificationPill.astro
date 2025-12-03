@@ -1,0 +1,36 @@
+---
+interface Props {
+  status?: any;
+  // optional extra classes
+  class?: string;
+}
+
+const { status, class: extraClass = "" } = Astro.props as Props;
+
+// Extract a human-readable label from different possible Notion shapes
+function extractStatus(s: any): string | null {
+  if (s === null || s === undefined || s === false) return null;
+  if (Array.isArray(s)) return s[0] ?? null;
+  if (typeof s === 'object') {
+    // Notion rollups/selects sometimes come as objects
+    return (s.name ?? s.title ?? s.value ?? String(s)) as string;
+  }
+  if (typeof s === 'boolean') return s ? 'Verified' : null;
+  return String(s);
+}
+
+const label = extractStatus(status);
+---
+
+{label && (
+  <span
+    class={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-800 bg-green-100 rounded-full border border-green-200 shadow-sm ${extraClass}`}
+    role="status"
+    aria-label={`Verification status: ${label}`}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor" aria-hidden="true">
+      <path d="m346-60-76-130-151-31 17-147-96-112 96-111-17-147 151-31 76-131 134 62 134-62 77 131 150 31-17 147 96 111-96 112 17 147-150 31-77 130-134-62-134 62Zm91-287 227-225-45-41-182 180-95-99-46 45 141 140Z"/>
+    </svg>
+    <span class="text-xs font-semibold">{label}</span>
+  </span>
+)}
