@@ -224,7 +224,6 @@ const posts = defineCollection({
 							}),
 		  sCountry: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  sLocale: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
-		  sCategory: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
 		  // Relation properties (actual relations to other databases)
 		  sTypes: propertySchema.relation.optional(),
 		  sImpacts: propertySchema.relation.optional(),
