@@ -20,7 +20,6 @@
     "astro": "^5.10.0",
     "astro-pagefind": "^1.8.3",
     "axios": "^1.10.0",
-    "flowbite": "^3.1.2",
     "fs-extra": "^11.3.0",
     "supabase": "^2.39.2",
     "tailwind-scrollbar-hide": "^4.0.0",
@@ -30,7 +29,6 @@
   "devDependencies": {
     "@chlorinec-pkgs/notion-astro-loader": "^1.1.0-0",
     "@tailwindcss/typography": "^0.5.19",
-    "flowbite-typography": "^1.0.5",
     "wrangler": "^4.30.0"
   }
 }
