@@ -14,11 +14,6 @@
     --color-primary-700: #1d4ed8;
     --color-primary-800: #1e40af;
     --color-primary-900: #1e3a8a;
-
-    --color-gbgblue: #295483;
-    --color-gbgpink: #f1e8fb;
-    --color-gbgyellow: #ffe8b5;
-    --color-gbgteal: #b7e5e5;
     
     --font-sans: 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-body: 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -54,24 +49,24 @@ body.dark {
  */
 
 /* Custom link colors for content prose - use dark purple accent */
-.prose a {
+.prose a:not(.not-prose) {
     color: #7353D4; /* Darker purple for links */
     text-decoration: underline;
     text-decoration-color: rgba(115, 83, 212, 0.3);
     text-underline-offset: 2px;
 }
 
-.prose a:hover {
+.prose a:not(.not-prose):hover {
     color: #5a3fb8; /* Even darker on hover */
     text-decoration-color: rgba(115, 83, 212, 0.6);
 }
 
-.dark .prose a {
+.dark .prose a:not(.not-prose) {
     color: #A98FFA; /* Tropical Indigo for dark mode */
     text-decoration-color: rgba(169, 143, 250, 0.3);
 }
 
-.dark .prose a:hover {
+.dark .prose a:not(.not-prose):hover {
     color: #c4b0fc; /* Lighter on hover in dark mode */
     text-decoration-color: rgba(169, 143, 250, 0.6);
 }
