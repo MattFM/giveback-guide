@@ -2,32 +2,19 @@
 import { getCollection } from "astro:content";
 import MainLayout from "../../layouts/MainLayout.astro";
 import type { GetStaticPathsOptions } from "astro";
-import PostCard from "../../components/content/PostCard.astro";
+import BlogPostCard from "../../components/content/BlogPostCard.astro";
 import BlogTagsDropdown from "../../components/ui/Dropdown/BlogTagsDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
 
-// Helper function to parse dates in dd/mm/yyyy format
-function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split('/');
-  return new Date(`${year}-${month}-${day}`);
-}
-
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  const entries = await getCollection("posts");
+  // Get MDX blog posts
+  const blogPosts = await getCollection("blog");
 
-  // Sort projects by pPublished date (descending order)
-  const sortedEntries = entries.sort((a, b) => {
-    const dateA = a.data.properties.bPublished?.start 
-      ? (typeof a.data.properties.bPublished.start === 'string' 
-          ? parseDate(a.data.properties.bPublished.start) 
-          : a.data.properties.bPublished.start) 
-      : new Date(0);
-    const dateB = b.data.properties.bPublished?.start 
-      ? (typeof b.data.properties.bPublished.start === 'string' 
-          ? parseDate(b.data.properties.bPublished.start) 
-          : b.data.properties.bPublished.start) 
-      : new Date(0);
-    return dateB.getTime() - dateA.getTime(); // Most recent first
+  // Sort by published date (descending order - most recent first)
+  const sortedEntries = blogPosts.sort((a, b) => {
+    const dateA = new Date(a.data.published).getTime();
+    const dateB = new Date(b.data.published).getTime();
+    return dateB - dateA;
   });
 
   return paginate(sortedEntries, {
@@ -66,7 +53,7 @@ const { page } = Astro.props;
       <div
         class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0"
       >
-        {page.data.map((post) => <PostCard post={post} />)}
+        {page.data.map((post) => <BlogPostCard post={post} />)}
       </div>
     </div>
   </section>

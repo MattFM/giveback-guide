@@ -1,0 +1,54 @@
+---
+import ResponsiveImage from '../ui/Image/ResponsiveImage.astro';
+import BaseCard from '../ui/BaseCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, slug, coverImage, tags, description } = post.data;
+---
+
+<BaseCard>
+  <div class="relative">
+    <a href={`/blog/${slug}/`}>
+      {coverImage ? (
+        <ResponsiveImage
+          class="w-full rounded-lg h-64 mb-3 object-cover"
+          src={coverImage}
+          alt={title}
+          preset="card"
+          fallbackWidth={600}
+          transitionName={`post-${slug}`}
+        />
+      ) : (
+        <div class="w-full rounded-lg h-64 mb-3 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+          <span class="text-gray-400 dark:text-gray-500">No image</span>
+        </div>
+      )}
+    </a>
+  </div>
+  <div class="mb-2">
+    {tags.map((tag: string) => (
+      <span
+        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5"
+      >
+        <a href={`/blog/${tag.toLowerCase().replace(/\s+/g, "-")}/`}>
+          {tag}
+        </a>
+      </span>
+    ))}
+  </div>
+  <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white">
+    <a href={`/blog/${slug}/`} style={`view-transition-name: post-title-${slug}`}>
+      {title}
+    </a>
+  </h2>
+  {description && (
+    <p class="mb-3 font-light text-gray-500 dark:text-gray-400 line-clamp-3">
+      {description}
+    </p>
+  )}
+</BaseCard>

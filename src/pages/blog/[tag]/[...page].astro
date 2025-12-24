@@ -3,60 +3,36 @@
 import { getCollection } from "astro:content";
 import MainLayout from "../../../layouts/MainLayout.astro";
 import type { GetStaticPathsOptions } from "astro";
-import PostCard from "../../../components/content/PostCard.astro";
+import BlogPostCard from "../../../components/content/BlogPostCard.astro";
 import BlogTagsDropdown from "../../../components/ui/Dropdown/BlogTagsDropdown.astro";
 
-// Helper function to parse dates in dd/mm/yyyy format
-function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split('/');
-  return new Date(`${year}-${month}-${day}`);
-}
-
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  // Fetch all posts
-  const posts = await getCollection("posts");
+  // Fetch all blog posts from MDX collection
+  const posts = await getCollection("blog");
 
   // Extract unique tags from all posts
   const tags = new Set(
-    posts.flatMap((post) =>
-      Array.isArray(post.data.properties.bTags)
-        ? post.data.properties.bTags
-        : [post.data.properties.bTags as string]
-    )
+    posts.flatMap((post) => post.data.tags)
   );
 
   // Generate paginated paths for each tag
   const paths = [];
   for (const tag of tags) {
     const filteredPosts = posts.filter((post) =>
-      Array.isArray(post.data.properties.bTags)
-        ? post.data.properties.bTags.some(
-            (c) => c.toLowerCase().replace(/\s+/g, "-") === tag.toLowerCase().replace(/\s+/g, "-")
-          )
-        : typeof post.data.properties.bTags === "string" &&
-          (post.data.properties.bTags as string).toLowerCase().replace(/\s+/g, "-") ===
-          tag.toLowerCase().replace(/\s+/g, "-")
+      post.data.tags.some(
+        (t) => t.toLowerCase().replace(/\s+/g, "-") === tag.toLowerCase().replace(/\s+/g, "-")
+      )
     );
 
-    // Sort filtered posts by date (descending order)
+    // Sort filtered posts by published date (descending order - most recent first)
     const sortedPosts = filteredPosts.sort((a, b) => {
-      const dateA = a.data.properties.bPublished?.start 
-        ? (typeof a.data.properties.bPublished.start === 'string' 
-            ? parseDate(a.data.properties.bPublished.start) 
-            : a.data.properties.bPublished.start) 
-        : new Date(0);
-      const dateB = b.data.properties.bPublished?.start 
-        ? (typeof b.data.properties.bPublished.start === 'string' 
-            ? parseDate(b.data.properties.bPublished.start) 
-            : b.data.properties.bPublished.start) 
-        : new Date(0);
-      return dateB.getTime() - dateA.getTime(); // Most recent first
+      return b.data.published.getTime() - a.data.published.getTime();
     });
 
     const paginatedPaths = paginate(sortedPosts, {
-      pageSize: 9, // Number of projects per page
+      pageSize: 9, // Number of posts per page
       params: { tag: tag.toLowerCase().replace(/\s+/g, "-") },
-      props: { tag }, // Pass the country as a prop
+      props: { tag }, // Pass the tag as a prop
     });
 
     paths.push(...paginatedPaths);
@@ -65,13 +41,13 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   return paths;
 }
 
-const { tag } = Astro.params; // Get the current country from the URL
+const { tag } = Astro.params; // Get the current tag from the URL
 const { page } = Astro.props; // Get the paginated data
 
-// Convert the country slug back to a readable format
+// Convert the tag slug back to a readable format
 const readableTag = tag
   .split("-")
-  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
   .join(" ");
 ---
 
@@ -102,7 +78,7 @@ const readableTag = tag
         class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0"
       >
         {page.data.map((post) => (
-          <PostCard post={post} />
+          <BlogPostCard post={post} />
         ))}
       </div>
     </div>

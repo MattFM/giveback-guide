@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 import { notionLoader, richTextToPlainText } from '@chlorinec-pkgs/notion-astro-loader';
 import { notionPageSchema, propertySchema, transformedPropertySchema } from '@chlorinec-pkgs/notion-astro-loader/schemas';
 
@@ -11,33 +12,21 @@ function getEnvVar(name: string): string {
 	}
 }
 
-const posts = defineCollection({
-	loader: notionLoader({
-		auth: getEnvVar('NOTION_TOKEN'),
-    database_id: getEnvVar('BLOG_NOTION_DATABASE_ID'),
-	  // Optional: tell loader where to store downloaded aws images, relative to 'src' directory
-	  // Default value is 'assets/images/notion'
-	  // imageSavePath: 'assets/images/notion',
-	  // Use Notion sorting and filtering with the same options like notionhq client
-	  filter: {
-		property: 'Status',
-		select: { "equals": "Published" },
-	  },
+// MDX Blog Collection (content managed in codebase)
+const blog = defineCollection({
+	loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
+	schema: z.object({
+		title: z.string(),
+		description: z.string(),
+		slug: z.string(),
+		published: z.coerce.date(),
+		lastUpdated: z.coerce.date(),
+		tags: z.array(z.string()).default([]),
+		coverImage: z.string().url().optional(),
 	}),
-	schema: notionPageSchema({
-		properties: z.object({
-		  bTitle: transformedPropertySchema.title,
-		  bTags: transformedPropertySchema.multi_select.transform((value) => Array.isArray(value) ? value : [value]),
-		  bSlug: transformedPropertySchema.rich_text,
-		  bCoverImage: transformedPropertySchema.url,
-		  bPublished: transformedPropertySchema.date,
-		  bLastUpdated: transformedPropertySchema.date,
-		  bDescription: transformedPropertySchema.rich_text,
-		}),
-	  }),
-  });
+});
 
-  const projects = defineCollection({
+const projects = defineCollection({
 	loader: notionLoader({
 		auth: getEnvVar('NOTION_TOKEN'),
     database_id: getEnvVar('PROJECTS_NOTION_DATABASE_ID'),
@@ -315,4 +304,4 @@ const posts = defineCollection({
 	  }),
   });
 
-export const collections = { posts, projects, stays };
+export const collections = { blog, projects, stays };

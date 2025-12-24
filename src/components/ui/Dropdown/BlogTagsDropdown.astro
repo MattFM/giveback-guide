@@ -7,14 +7,11 @@ const currentTagPromise = (async () => {
   const pathSegments = Astro.url.pathname.split("/");
   const potentialTag = pathSegments[2];
 
-  const posts = await getCollection("posts");
+  const posts = await getCollection("blog");
   const validTags = posts.reduce((acc: Set<string>, post) => {
-    const tags = Array.isArray(post.data.properties.bTags)
-      ? post.data.properties.bTags.map((c) =>
-          c.toLowerCase().replace(/\s+/g, "-")
-        )
-      : [String(post.data.properties.bTags).toLowerCase().replace(/\s+/g, "-")];
-    tags.forEach((tag) => acc.add(tag));
+    post.data.tags.forEach((tag) => {
+      acc.add(tag.toLowerCase().replace(/\s+/g, "-"));
+    });
     return acc;
   }, new Set<string>());
 
@@ -22,15 +19,11 @@ const currentTagPromise = (async () => {
 })();
 const currentTag = await currentTagPromise;
 
-const posts = await getCollection("posts");
+const posts = await getCollection("blog");
 
 // Count the number of posts for each tag
 const tagCounts = posts.reduce((acc: Record<string, number>, post) => {
-  const tags = Array.isArray(post.data.properties.bTags)
-    ? post.data.properties.bTags
-    : [post.data.properties.bTags];
-
-  tags.forEach((tag) => {
+  post.data.tags.forEach((tag) => {
     if (tag) {
       acc[tag] = (acc[tag] || 0) + 1;
     }

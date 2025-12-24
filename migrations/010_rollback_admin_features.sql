@@ -2,24 +2,24 @@
 -- This removes all admin panel infrastructure and restores the simple static site state
 
 -- ============================================================================
+-- Remove any functions/triggers created by admin migrations FIRST
+-- ============================================================================
+
+-- Drop profile update trigger (from migration 008) - must drop before table
+DROP TRIGGER IF EXISTS on_profile_updated ON public.user_profiles;
+DROP FUNCTION IF EXISTS public.handle_updated_at() CASCADE;
+
+-- Drop profile auto-creation trigger (from migration 004) - must drop before table
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
+
+-- ============================================================================
 -- Drop tables created in migration 004
 -- ============================================================================
 
 DROP TABLE IF EXISTS public.user_badges CASCADE;
 DROP TABLE IF EXISTS public.user_roles CASCADE;
 DROP TABLE IF EXISTS public.user_profiles CASCADE;
-
--- ============================================================================
--- Remove any functions/triggers created by admin migrations
--- ============================================================================
-
--- Drop profile auto-creation trigger (from migration 004)
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
-
--- Drop profile update trigger (from migration 008)
-DROP TRIGGER IF EXISTS on_profile_updated ON public.user_profiles;
-DROP FUNCTION IF EXISTS public.handle_updated_at() CASCADE;
 
 -- ============================================================================
 -- Restore RLS policies to pre-admin state

@@ -7,7 +7,9 @@
     "build": "node --no-deprecation ./node_modules/.bin/astro build",
     "preview": "wrangler dev",
     "deploy": "npm run build && wrangler deploy",
-    "astro": "astro"
+    "astro": "astro",
+    "blog:convert": "node scripts/convert-notion-to-mdx.js",
+    "blog:validate": "node scripts/validate-blog-posts.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@chlorinec-pkgs/notion-astro-loader": "^1.1.0-0",
+    "@tailwindcss/typography": "^0.5.19",
     "flowbite-typography": "^1.0.5",
     "wrangler": "^4.30.0"
   }

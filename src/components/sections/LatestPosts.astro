@@ -1,47 +1,24 @@
 ---
-// filepath: /Users/matthewmorelli/Documents/Dev/giveback-guide/src/components/LatestProjects.astro
-
 import { getCollection } from "astro:content";
-import PostCard from "../content/PostCard.astro";
+import BlogPostCard from "../content/BlogPostCard.astro";
 import BlogTagsDropdown from "../ui/Dropdown/BlogTagsDropdown.astro";
 
-// Props: limit specifies the number of projects to display
+// Props: limit specifies the number of posts to display
 interface Props {
   limit: number;
 }
 
 const { limit } = Astro.props;
 
-// Helper function to parse dates in dd/mm/yyyy format
-function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split('/');
-  return new Date(`${year}-${month}-${day}`);
-}
+// Fetch blog posts from the MDX collection
+const entries = await getCollection("blog");
 
-// Fetch projects from the content collection
-const entries = await getCollection("posts");
-
-// Sort projects by pPublished date (descending order)
-const sortedEntries = entries.map((entry) => ({
-  ...entry,
-  data: {
-    ...entry.data,
-    properties: {
-      ...entry.data.properties,
-      bCoverImage: entry.data.properties.bCoverImage || "", // Ensure pImageURL is a string
-    },
-  },
-})).sort((a, b) => {
-  const dateA = a.data.properties.bPublished
-    ? a.data.properties.bPublished.start
-    : new Date(0); // Fallback to epoch if date is missing
-  const dateB = b.data.properties.bPublished
-    ? b.data.properties.bPublished.start
-    : new Date(0); // Fallback to epoch if date is missing
-  return dateB.getTime() - dateA.getTime(); // Most recent first
+// Sort posts by published date (descending order - most recent first)
+const sortedEntries = entries.sort((a, b) => {
+  return b.data.published.getTime() - a.data.published.getTime();
 });
 
-// Limit the number of projects based on the limit prop
+// Limit the number of posts based on the limit prop
 const limitedEntries = sortedEntries.slice(0, limit);
 ---
 
@@ -96,7 +73,7 @@ const limitedEntries = sortedEntries.slice(0, limit);
       >
         {limitedEntries.map((post) => (
           <div class="w-[70%] sm:w-[50%] md:w-auto flex-shrink-0 md:flex-shrink">
-            <PostCard post={post} />
+            <BlogPostCard post={post} />
           </div>
         ))}
       </div>

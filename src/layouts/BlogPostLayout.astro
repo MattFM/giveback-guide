@@ -1,0 +1,158 @@
+---
+import type { CollectionEntry } from "astro:content";
+import MainLayout from "./MainLayout.astro";
+import AdBox from "../components/features/ads/AdBox.astro";
+import SupportBox from "../components/sections/SupportBox.astro";
+import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
+import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
+import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+
+type Props = CollectionEntry<"blog">["data"];
+
+const { title, description, coverImage, published, lastUpdated, tags } = Astro.props;
+
+// Format the date
+const formattedDate = new Date(published).toLocaleDateString("en-GB", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+
+const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+---
+<MainLayout title={title} description={description} image={coverImage}>
+  <div class="bg-white dark:bg-gray-900">
+    <div
+      class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"
+    >
+      <!-- Main column -->
+      <main class="w-full">
+        <!-- Breadcrumbs -->
+        <section class="pt-6 px-4">
+          <Breadcrumbs 
+            crumbs={[
+              { label: "Home", href: "/" },
+              { label: "Blog", href: "/blog/" },
+              { label: title.length > 30 ? `${title.slice(0, 30)}...` : title }
+            ]}
+          />
+        </section>
+
+        <!-- Featured Image -->
+        {coverImage && (
+          <section class="py-6 px-4">
+            <ResponsiveImage
+              data-pagefind-meta="image[src], image_alt[alt]"
+              class="w-full drop-shadow-xl rounded-lg"
+              src={coverImage}
+              alt={title}
+              fetchpriority="high"
+              loading="eager"
+              preset="hero"
+            />
+          </section>
+        )}
+
+          <!-- Title and Info -->
+          <section class="py-6 px-4">
+            <p data-pagefind-meta="categories">
+            {
+              tags.map((tag: string) => (
+                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 mt-4 mb-2 mr-2">
+                  <a
+                    href={`/blog/${tag.toLowerCase().replace(/\s+/g, "-")}/`}
+                  >
+                    {tag}
+                  </a>
+                </span>
+              ))
+            }
+          </p>
+          <h1
+            class="mb-4 mt-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+            data-pagefind-meta="title"
+          >
+            {title}
+          </h1>
+          <ul class="space-y-4 text-left text-gray-500 dark:text-gray-400">
+            <li class="flex items-center space-x-3 rtl:space-x-reverse">
+              <svg
+                class="w-6 h-6 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z"
+                ></path>
+              </svg>
+              <span>Published: <time datetime={published.toISOString()}>{formattedDate}</time></span>
+            </li>
+            {published.toISOString() !== lastUpdated.toISOString() && (
+              <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                <svg
+                  class="w-6 h-6 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
+                  ></path>
+                </svg>
+                <span>Last updated: <time datetime={lastUpdated.toISOString()}>{formattedUpdatedDate}</time></span>
+              </li>
+            )}
+          </ul>
+        </section>
+
+        <!-- Blog Content -->
+        <article
+          class="prose prose-lg dark:prose-invert max-w-none px-4 py-6"
+          data-pagefind-body
+        >
+          <slot />
+        </article>
+
+        <!-- Support Box -->
+        <section class="px-4 py-6">
+          <SupportBox />
+        </section>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="w-full px-4 lg:px-0">
+        <!-- Ad Box - positioned to align with cover image -->
+        <div class="lg:pt-[72px] sticky top-6">
+          <AdBox />
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Subscribe Drawer -->
+  <SubscribeDrawer />
+</MainLayout>
+
+<style>
+  @import "tailwindcss";
+  @plugin "@tailwindcss/typography";
+</style>
