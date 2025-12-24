@@ -75,6 +75,10 @@
 - Uses Astro's glob loader to collect `.mdx` files at build time
 - **Automatic image optimization**: Standard markdown images (`![alt](url)`) are automatically converted to `ResponsiveImage` components via remark plugin (`src/utils/remark-responsive-images.mjs`)
 - **Caption syntax**: Use hyphen separator in alt text: `![Alt - Caption](url)` automatically wraps in `<figure>` with `<figcaption>`
+- **Global MDX Components**: Components are available in all MDX files without imports via `src/mdx-components.ts`
+  - Currently available: `ResponsiveImage`, `AdBox`
+  - To add/remove components globally, edit `src/mdx-components.ts`
+  - No need to import these in individual blog posts
 - Schema: `title`, `description`, `slug`, `published`, `lastUpdated`, `tags[]`, `coverImage` (optional)
 - Routes: `/blog/[slug]/` for individual posts, `/blog/[...page]/` for listing, `/blog/[tag]/[...page]/` for filtered by tag
 
@@ -226,6 +230,7 @@ npm run build      # Build static site for testing (outputs to dist/)
 - **Completion tracking**: `src/lib/completed.ts` (mark items as done)
 - **Image utils**: `src/utils/cloudinary.ts` (responsive image generation)
 - **Remark plugin**: `src/utils/remark-responsive-images.mjs` (markdown image transformation)
+- **Global MDX components**: `src/mdx-components.ts` (centralised component imports for all MDX files)
 - **Site config**: `astro.config.mjs` (MDX, sitemap, Pagefind)
 - **Deployment**: `wrangler.jsonc` (Cloudflare Workers settings)
 

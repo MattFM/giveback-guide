@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import { components } from '../../mdx-components.ts';
 
 export async function getStaticPaths() {
 	const blogPosts = await getCollection('blog');
@@ -17,5 +18,5 @@ const { Content } = await render(post);
 ---
 
 <BlogPostLayout {...post.data}>
-	<Content />
+	<Content components={components} />
 </BlogPostLayout>

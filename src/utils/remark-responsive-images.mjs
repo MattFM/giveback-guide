@@ -7,14 +7,13 @@ import { visit } from 'unist-util-visit';
  * Example:
  * ![Alt text](url) -> <ResponsiveImage src="url" alt="Alt text" preset="hero" />
  * ![Alt text - Caption](url) -> <figure><ResponsiveImage ... /><figcaption>Caption</figcaption></figure>
+ * 
+ * Note: ResponsiveImage component is provided globally via mdx-components.ts,
+ * so no import statement is needed.
  */
 export default function remarkResponsiveImages() {
   return (tree, file) => {
-    const imports = new Set();
-    let hasImages = false;
-
     visit(tree, 'image', (node, index, parent) => {
-      hasImages = true;
       
       // Split alt text into alt and caption if " - " separator exists
       const altText = node.alt || '';
@@ -72,34 +71,5 @@ export default function remarkResponsiveImages() {
         parent.children[index] = imageComponent;
       }
     });
-
-    // Add import statement at the top if images were found
-    if (hasImages) {
-      tree.children.unshift({
-        type: 'mdxjsEsm',
-        value: "import ResponsiveImage from '../../components/ui/Image/ResponsiveImage.astro';",
-        data: {
-          estree: {
-            type: 'Program',
-            body: [
-              {
-                type: 'ImportDeclaration',
-                specifiers: [
-                  {
-                    type: 'ImportDefaultSpecifier',
-                    local: { type: 'Identifier', name: 'ResponsiveImage' }
-                  }
-                ],
-                source: {
-                  type: 'Literal',
-                  value: '../../components/ui/Image/ResponsiveImage.astro'
-                }
-              }
-            ],
-            sourceType: 'module'
-          }
-        }
-      });
-    }
   };
 }
