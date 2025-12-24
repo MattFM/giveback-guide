@@ -30,8 +30,12 @@
 
 import ResponsiveImage from './components/ui/Image/ResponsiveImage.astro';
 import AdBox from './components/features/ads/AdBox.astro';
+import ProjectEmbed from './components/content/ProjectEmbed.astro';
+import StayEmbed from './components/content/StayEmbed.astro';
 
 export const components = {
   ResponsiveImage,
   AdBox,
+  ProjectEmbed,
+  StayEmbed,
 };
