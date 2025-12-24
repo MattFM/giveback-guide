@@ -16,11 +16,12 @@
 
 ### Tech Stack
 - **Frontend**: Astro 5 (SSG) with TailwindCSS 4, static-first approach
-- **Content**: Notion databases loaded at build time (posts, projects, stays)
+- **Content**: MDX blog posts in codebase, Notion databases for projects/stays loaded at build time
 - **Backend**: Supabase for auth, user lists, and completion tracking
 - **Deployment**: Cloudflare Workers via GitHub Actions
 - **Search**: Pagefind for fast client-side search
-- **Images**: Cloudinary with responsive optimization
+- **Images**: Cloudinary with responsive optimization, automatic markdown image conversion
+- **Typography**: @tailwindcss/typography plugin for prose styling
 
 ## Core Principles
 
@@ -68,10 +69,19 @@
 
 ## Architecture & Data Flow
 
-### Content Management (Notion-Powered)
-- **Content lives in Notion**: All blog posts, projects, and stays are managed in Notion databases
+### Blog Content Management (MDX in Codebase)
+- **Blog posts are MDX files** in `src/content/blog/` directory
+- Content is managed directly in the codebase (not Notion)
+- Uses Astro's glob loader to collect `.mdx` files at build time
+- **Automatic image optimization**: Standard markdown images (`![alt](url)`) are automatically converted to `ResponsiveImage` components via remark plugin (`src/utils/remark-responsive-images.mjs`)
+- **Caption syntax**: Use hyphen separator in alt text: `![Alt - Caption](url)` automatically wraps in `<figure>` with `<figcaption>`
+- Schema: `title`, `description`, `slug`, `published`, `lastUpdated`, `tags[]`, `coverImage` (optional)
+- Routes: `/blog/[slug]/` for individual posts, `/blog/[...page]/` for listing, `/blog/[tag]/[...page]/` for filtered by tag
+
+### Projects & Stays Content Management (Notion-Powered)
+- **Content lives in Notion**: Projects and stays are managed in Notion databases
 - Content is loaded at **build time** via `@chlorinec-pkgs/notion-astro-loader` in `src/content.config.ts`
-- Three collections: `posts`, `projects`, `stays` with strict schema validation
+- Two collections: `projects`, `stays` with strict schema validation
 - Each collection filters for `Status = "Published"` in Notion
 - **Critical**: Custom ID fields (`pID`, `sID`) use Notion's `unique_id` property with `{prefix, number}` format (e.g., `PRO-777`, `STY-123`)
 
@@ -98,19 +108,23 @@ export async function getStaticPaths() {
 ### Image Optimization
 - **Cloudinary** for responsive images via `src/utils/cloudinary.ts`
 - Use `ResponsiveImage.astro` component with preset configurations (`RESPONSIVE_PRESETS.card`, `.hero`, etc.)
-- Automatically generates `srcset` with multiple widths and `f_auto` (format optimization)
+- Automatically generates `srcset` with multiple widths and `f_auto` (format optimization: JXL/AVIF/WebP/JPEG)
 - Can disable transformations globally via `CLOUDINARY_CONFIG.enableTransformations = false`
+- **Remark plugin for blog images**: Standard markdown images are automatically converted to `ResponsiveImage` components
+  - Write: `![Alt text](https://cloudinary-url.jpg)`
+  - Becomes: `<ResponsiveImage src="url" alt="Alt text" preset="hero" />`
+  - Captions: Use hyphen separator `![Alt - Caption text](url)` to wrap in `<figure>` with `<figcaption>`
 
 ## Component Architecture
 
 ### Component Organization
 ```
 src/components/
-├── content/        # Content display cards (PostCard, ProjectCard, StayCard)
+├── content/        # Content display cards (BlogPostCard, ProjectCard, StayCard)
 ├── features/       # Feature-specific (save/, ads/, popups/)
 ├── layout/         # Site structure (Header, Footer, NavigationDrawer)
 ├── sections/       # Homepage sections (HomeHero, LatestPosts)
-├── ui/             # Reusable UI (Button, InfiniteScroll, Dropdown/, Image/)
+├── ui/             # Reusable UI (Button, InfiniteScroll, Pagination, Dropdown/, Image/)
 └── utility/        # Non-visual (Analytics, TestListsClient)
 ```
 
@@ -121,15 +135,16 @@ src/components/
 - Two formatting modes: simple (`"Brighton, UK"`) vs. complex (`"in X & Y in A & B"`)
 - Location pills link to `/projects/{country}/{locale}` routes
 
-**Card Components** (PostCard, ProjectCard, StayCard):
-- All use `ResponsiveImage` with `preset="card"`
+**Card Components** (BlogPostCard, ProjectCard, StayCard):
+- All use `ResponsiveImage` with `preset="card"` for thumbnails
 - Consistent structure: image → metadata pills → title → description
 - Project/Stay cards include save/done actions (client-side)
+- Blog cards link to `/blog/{slug}/`
 
 **Dropdowns** (`src/components/ui/Dropdown/`):
 - Filter by country/locale/category/tags
 - Each dropdown fetches full collection at build time and extracts unique values
-- Example: `ProjectCountryDropdown.astro` → `getCollection('projects')` → extract all `pCountry` values
+- Example: `BlogTagsDropdown.astro` → `getCollection('blog')` → extract all tags
 
 ## Development Workflows
 
@@ -164,10 +179,10 @@ npm run build      # Build static site for testing (outputs to dist/)
 ## Project-Specific Conventions
 
 ### Naming Prefixes
-- Blog: `b` prefix (`bTitle`, `bTags`, `bSlug`)
-- Projects: `p` prefix (`pTitle`, `pCountry`, `pSlug`)
-- Stays: `s` prefix (`sTitle`, `sCountry`, `sSlug`)
-- **Why?** Distinguishes properties from different Notion databases with identical field names
+- Blog: Standard property names (`title`, `tags`, `slug`) - MDX frontmatter, not Notion
+- Projects: `p` prefix (`pTitle`, `pCountry`, `pSlug`) - from Notion database
+- Stays: `s` prefix (`sTitle`, `sCountry`, `sSlug`) - from Notion database
+- **Why?** Prefixes distinguish properties from different Notion databases with identical field names; blog uses standard names because it's MDX, not Notion
 
 ### URL Patterns
 - Blog: `/blog/[slug]` and `/blog/[tag]/[page]`
@@ -210,6 +225,7 @@ npm run build      # Build static site for testing (outputs to dist/)
 - **Lists logic**: `src/lib/lists.ts` (CRUD for saved lists)
 - **Completion tracking**: `src/lib/completed.ts` (mark items as done)
 - **Image utils**: `src/utils/cloudinary.ts` (responsive image generation)
+- **Remark plugin**: `src/utils/remark-responsive-images.mjs` (markdown image transformation)
 - **Site config**: `astro.config.mjs` (MDX, sitemap, Pagefind)
 - **Deployment**: `wrangler.jsonc` (Cloudflare Workers settings)
 
@@ -219,7 +235,6 @@ Required for development and deployment:
 
 **Notion (Content Management)**:
 - `NOTION_TOKEN` - Notion integration token for API access
-- `BLOG_NOTION_DATABASE_ID` - Database ID for blog posts
 - `PROJECTS_NOTION_DATABASE_ID` - Database ID for projects
 - `STAYS_NOTION_DATABASE_ID` - Database ID for stays
 
@@ -254,5 +269,6 @@ Required for development and deployment:
 - **UI changes**: Components are mostly in `src/components/`; layouts in `src/layouts/`
 - **Database changes**: Create new migration in `migrations/` with sequential numbering
 - **New features**: Follow existing patterns (e.g., new dropdown → copy `ProjectCountryDropdown.astro`)
+- **Blog posts**: Add new MDX files to `src/content/blog/`, images auto-convert via remark plugin
 - **Debugging auth**: Check browser localStorage for `sb-*-auth-token` keys
 - **Accessibility check**: Before completing any UI change, verify keyboard navigation, ARIA attributes, and screen reader compatibility
