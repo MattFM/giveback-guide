@@ -1,0 +1,149 @@
+---
+import type { CollectionEntry } from "astro:content";
+import MainLayout from "./MainLayout.astro";
+import AdBox from "../components/features/ads/AdBox.astro";
+import SupportBox from "../components/sections/SupportBox.astro";
+import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
+import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
+import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+
+type Props = CollectionEntry<"posts">["data"];
+
+const { properties } = Astro.props;
+const title = properties.bTitle || "Default Title";
+const description = properties.bDescription || "";
+const image = properties.bCoverImage || "//giveback-guide-placeholder.jpg";
+
+// Format the date
+const formattedDate = (() => {
+  if (!properties.bLastUpdated) {
+    return "Unknown Date"; // Fallback value if bLastUpdated is null
+  }
+  const [year, month, day] = properties.bLastUpdated.start
+    .toISOString()
+    .split("T")[0]
+    .split("-"); // Convert to ISO string and split the date
+  const date = new Date(`${year}-${month}-${day}`); // Create a Date object
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long", // Full month name
+    year: "numeric",
+  });
+})();
+---
+<MainLayout title={title} description={description} image={image}>
+  <div class="bg-white dark:bg-gray-900">
+    <div
+      class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"
+    >
+      <!-- Main column -->
+      <main class="w-full">
+        <!-- Breadcrumbs -->
+        <section class="pt-6 px-4">
+          <Breadcrumbs 
+            crumbs={[
+              { label: "Home", href: "/" },
+              { label: "Blog", href: "/blog/" },
+              { label: properties.bTitle.length > 30 ? `${properties.bTitle.slice(0, 30)}...` : properties.bTitle }
+            ]}
+          />
+        </section>
+
+        <!-- Featured Image -->
+        <section class="py-6 px-4">
+              <ResponsiveImage
+                data-pagefind-meta="image[src], image_alt[alt]"
+                class="w-full drop-shadow-xl rounded-lg"
+                src={properties.bCoverImage ?? "/default-image.jpg"}
+                alt={properties.bTitle}
+                fetchpriority="high"
+                loading="eager"
+                preset="hero"
+                transitionName={`post-${properties.bSlug}`}
+              />
+        </section>
+
+          <!-- Title and Info -->
+          <section class="py-6 px-4">
+            <p data-pagefind-meta="categories">
+            {
+              Array.isArray(properties.bTags)
+                ? properties.bTags.map((tag: string) => (
+                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 mt-4 mb-2">
+                      <a
+                        href={`/blog/${tag.toLowerCase().replace(/\s+/g, "-")}`}
+                      >
+                        {tag}
+                      </a>
+                    </span>
+                  ))
+                : properties.bTags
+            }
+          </p>
+          <h1
+            class="mb-4 mt-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+            data-pagefind-meta="title"
+            style={`view-transition-name: post-title-${properties.bSlug}`}
+          >
+            {properties.bTitle}
+          </h1>
+          <ul class="space-y-4 text-left text-gray-500 dark:text-gray-400">
+            <li class="flex items-center space-x-3 rtl:space-x-reverse">
+              <svg
+                class="w-6 h-6 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z"
+                ></path>
+              </svg>
+              <span
+                >Last updated: <span
+                  class="font-medium text-gray-900 dark:text-white"
+                  >{formattedDate}</span
+                ></span
+              >
+            </li>
+          </ul>
+          </section>
+
+          <!-- AdBox (mobile only) -->
+          <section class="py-6 px-4 md:hidden">
+            <div class="mx-auto w-full max-w-2xl">
+              <AdBox />
+            </div>
+          </section>
+
+          <!-- Content Section -->
+          <section class="py-6 px-4">
+            <article
+              class="prose prose-sm sm:prose-base lg:prose-lg max-w-none prose-teal dark:prose-invert"
+              data-pagefind-body
+              data-pagefind-filter="type:post"
+            >
+              <slot />
+            </article>
+          </section>
+
+          <SupportBox />
+
+          </main>
+
+        <!-- Aside column (desktop only) -->
+        <aside class="hidden lg:block pt-16">
+          <div class="sticky top-24 mb-10 pb-24">
+            <AdBox />
+          </div>
+      </aside>
+    </div>
+  </div>
+</MainLayout>

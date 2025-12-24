@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -52,25 +53,25 @@ body.dark {
  * Tier 3 (Flow Content): No special styling - natural flow
  */
 
-/* Custom link colors for content format - use dark purple accent */
-.format a {
+/* Custom link colors for content prose - use dark purple accent */
+.prose a {
     color: #7353D4; /* Darker purple for links */
     text-decoration: underline;
     text-decoration-color: rgba(115, 83, 212, 0.3);
     text-underline-offset: 2px;
 }
 
-.format a:hover {
+.prose a:hover {
     color: #5a3fb8; /* Even darker on hover */
     text-decoration-color: rgba(115, 83, 212, 0.6);
 }
 
-.dark .format a {
+.dark .prose a {
     color: #A98FFA; /* Tropical Indigo for dark mode */
     text-decoration-color: rgba(169, 143, 250, 0.3);
 }
 
-.dark .format a:hover {
+.dark .prose a:hover {
     color: #c4b0fc; /* Lighter on hover in dark mode */
     text-decoration-color: rgba(169, 143, 250, 0.6);
 }
