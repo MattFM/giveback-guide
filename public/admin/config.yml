@@ -1,0 +1,119 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+backend:
+  name: github
+  repo: MattFM/giveback-guide
+  branch: main
+  base_url: https://api.netlify.com  # Netlify's OAuth service
+  auth_endpoint: auth
+
+# Optional: Uncomment below to disable automatic deployments
+# skip_ci: true
+
+# Media files (images, documents, etc.)
+media_folder: "public/images/blog"
+public_folder: "/images/blog"
+
+# Media library configuration - Cloudinary integration
+media_libraries:
+  cloudinary:
+    config:
+      cloud_name: dnxl7wsnx
+      api_key: 839393337544111
+    output_filename_only: false
+    # This ensures full Cloudinary URLs are stored
+    folder: Blog
+  # Fallback to default repository storage if needed
+  default:
+    config:
+      max_file_size: 5242880 # 5MB limit
+      slugify_filename: true
+
+# Collections
+collections:
+  - name: blog
+    label: Blog Posts
+    label_singular: Blog Post
+    folder: src/content/blog
+    create: true
+    slug: "{{slug}}"
+    extension: mdx
+    format: frontmatter
+
+    # Sort options
+    sortable_fields: ['published', 'lastUpdated', 'title']
+    sort: 'published:desc'  # Default sort: newest first
+    
+    # Enable editing in the rich text editor
+    editor:
+      preview: true
+    
+    # Fields for blog posts
+    fields:
+      - label: Title
+        name: title
+        widget: string
+        required: true
+        hint: "The main title of your blog post"
+      
+      - label: Description
+        name: description
+        widget: text
+        required: true
+        hint: "A brief summary for SEO and social sharing (150-160 characters recommended)"
+      
+      - label: Slug
+        name: slug
+        widget: string
+        required: true
+        hint: "URL-friendly version of the title (e.g., 'my-blog-post')"
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', "Must be lowercase letters, numbers, and hyphens only"]
+      
+      - label: Published Date
+        name: published
+        widget: datetime
+        required: true
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        hint: "When this post was first published"
+      
+      - label: Last Updated
+        name: lastUpdated
+        widget: datetime
+        required: true
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        hint: "When this post was last modified"
+      
+      - label: Tags
+        name: tags
+        widget: select
+        multiple: true
+        options:
+          - "Announcements"
+          - "Travel Advice"
+          - "Travel Guides"
+        required: false
+        hint: "Select relevant tags for categorisation"
+      
+      - label: Cover Image
+        name: coverImage
+        widget: image
+        required: false
+        hint: "Main image for the blog post (stored in Cloudinary)"
+        media_library:
+          config:
+            folder: Blog
+      
+      - label: Body
+        name: body
+        widget: markdown
+        required: true
+        hint: |
+          Main content of your blog post.
+        editor_components:
+          - image
+          - code-block
+        media_library:
+          config:
+            folder: Blog
