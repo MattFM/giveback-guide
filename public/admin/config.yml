@@ -4,9 +4,7 @@ backend:
   name: github
   repo: MattFM/giveback-guide
   branch: main
-  base_url: https://api.netlify.com  # Netlify's OAuth service
-  auth_endpoint: auth
-  site_id: fcab09a7-3d87-4d40-8580-d879d6164c47
+  base_url: https://sveltia-cms-auth.matt-c4f.workers.dev/
 
 # Optional: Uncomment below to disable automatic deployments
 # skip_ci: true
