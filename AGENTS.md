@@ -6,7 +6,6 @@
 # Development
 npm run dev              # Start Astro dev server (runs continuously)
 npm run build            # Build for production (uses --no-deprecation flag)
-npm run preview          # Preview production build locally (for testing only)
 
 # Content Management
 npm run blog:convert     # Convert Notion to MDX (utility script)
