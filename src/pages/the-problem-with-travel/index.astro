@@ -2,179 +2,346 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 ---
 
-<MainLayout title="The Problem with Travel (and how to fix it)">
-  <main>
-    <!-- Hero Section -->
-    <section style="background-color: #1C2434; padding: 4rem 1rem;">
-      <div class="max-w-4xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full" style="background: rgba(169, 143, 250, 0.12); border: 1px solid rgba(169, 143, 250, 0.25);">
-          <span class="text-sm font-semibold" style="color: #C4B3FC;">Newsletter</span>
-        </div>
-        
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6" style="color: #FFFFFF;">
-          The Problem with Travel<br>
-          <span style="color: #A98FFA;">(and how to fix it)</span>
+<MainLayout 
+  title="The Problem With Travel (And How To Fix It)"
+  description="A monthly newsletter exploring what isn't working in travel and what people around the world are doing to change it."
+>
+  <main class="bg-white">
+    <!-- Section 1: Hero -->
+    <section class="py-20 lg:py-32 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6" style="color: #1C2434;">
+          The Problem With Travel<br>
+          <span style="color: #7353D4;">(And How To Fix It)</span>
         </h1>
         
-        <p class="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-8" style="color: #D1D4D1;">
-          <!-- Copy to be provided by client -->
-          [Publication description to be added here]
+        <p class="text-xl sm:text-2xl leading-relaxed mb-4" style="color: #4A504A;">
+          A monthly newsletter exploring what isn't working in travel and what people around the world are doing to change it.
         </p>
+        
+        <p class="text-sm mb-8" style="color: #7E827E;">
+          Join readers from all over the world rethinking how they travel
+        </p>
+        
+        <form id="hero-subscribe-form" class="max-w-lg mx-auto flex flex-col md:flex-row gap-4">
+          <div class="relative flex-1">
+            <input 
+              id="hero-email" 
+              type="email" 
+              required
+              placeholder="Enter your email"
+              class="w-full py-4 px-6 text-lg border-2 rounded-full bg-white focus:outline-none focus:ring-4 text-center md:text-left"
+              style="border-color: #E8EAE8; color: #1C2434; --tw-ring-color: rgba(169, 143, 250, 0.3);"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            id="hero-submit-btn"
+            class="py-4 px-8 text-lg font-semibold text-white rounded-full transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+            style="background-color: #A98FFA;"
+          >
+            Subscribe Free
+          </button>
+        </form>
+        
+        <p class="mt-4 text-sm" style="color: #7E827E;">
+          One edition per month. No spam. Unsubscribe anytime.
+        </p>
+        
+        <div id="hero-message" class="mt-4 text-center text-sm hidden"></div>
       </div>
     </section>
 
-    <!-- Subscription Form Section -->
-    <section style="background: linear-gradient(to bottom, #1C2434 0%, #F6F7F6 30%); padding: 0 1rem 4rem;">
-      <div class="max-w-xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-12 border border-gray-200">
-          <h2 class="text-2xl font-black mb-4 text-center" style="color: #1C2434;">
-            Subscribe for free
-          </h2>
-          <p class="text-center mb-6" style="color: #7E827E;">
-            Join thousands of readers rethinking how we travel
-          </p>
-          
-          <form id="publication-subscribe-form" class="space-y-4">
-            <div>
-              <label for="subscriber-email" class="block text-sm font-semibold mb-2" style="color: #1C2434;">
-                Email address
-              </label>
-              <input 
-                id="subscriber-email" 
-                type="email" 
-                required
-                placeholder="you@example.com"
-                class="w-full px-4 py-3.5 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
-                style="border: 2px solid #E8EAE8; background: #FFFFFF;"
-              />
-            </div>
+    <!-- Section 2: What to Expect -->
+    <section class="py-16 lg:py-24 px-4 sm:px-6 lg:px-8" style="background-color: #F9F9F9;">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-8 lg:gap-16">
+          <!-- Left: H2 + Text -->
+          <div class="pr-0 lg:pr-8">
+            <h2 class="text-3xl sm:text-4xl font-black mb-6" style="color: #1C2434;">
+              What to Expect
+            </h2>
             
-            <div>
-              <label for="subscriber-name" class="block text-sm font-semibold mb-2" style="color: #1C2434;">
-                First name (optional)
-              </label>
-              <input 
-                id="subscriber-name" 
-                type="text" 
-                placeholder="Your name"
-                class="w-full px-4 py-3.5 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
-                style="border: 2px solid #E8EAE8; background: #FFFFFF;"
-              />
+            <div class="space-y-4">
+              <p class="text-lg leading-relaxed" style="color: #4A504A;">
+                Travel is supposed to broaden horizons and support livelihoods. Often, it does.
+              </p>
+              <p class="text-lg leading-relaxed" style="color: #4A504A;">
+                But modern tourism also displaces communities, exploits wildlife, concentrates profits, and hides its true costs behind convenience.
+              </p>
+              <p class="text-lg leading-relaxed" style="color: #4A504A;">
+                Most travellers aren't acting in bad faith. They're making choices within a system that hides the real consequences of their decisions.
+              </p>
+              <p class="text-lg leading-relaxed" style="color: #4A504A;">
+                This newsletter exists to show a more complete picture and to ask how we do things differently.
+              </p>
             </div>
-            
-            <button 
-              type="submit" 
-              id="subscribe-submit-btn"
-              class="w-full py-4 px-6 text-base font-semibold text-white rounded-lg transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              style="background-color: #1C2434;"
-            >
-              <span class="inline-flex items-center justify-center gap-2">
-                Subscribe
-              </span>
-            </button>
-          </form>
+          </div>
           
-          <div id="subscribe-message" class="mt-4 text-center text-sm hidden"></div>
+          <!-- Right: Bullets -->
+          <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style="background-color: #A98FFA;">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">One focused deep dive per month</h3>
+              <p style="color: #4A504A;">A detailed exploration of a problem affecting modern travel.</p>
+            </div>
+          </div>
           
-          <p class="mt-6 text-xs text-center" style="color: #7E827E;">
-            We respect your privacy. Unsubscribe at any time.
-            <a href="/privacy" class="underline hover:no-underline" style="color: #1C2434;">Privacy Policy</a>
-          </p>
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style="background-color: #A98FFA;">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Expert insights</h3>
+              <p style="color: #4A504A;">Perspectives from people helping to build regenerative tourism right now.</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style="background-color: #A98FFA;">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Practical guidance</h3>
+              <p style="color: #4A504A;">Concrete actions you can adopt on your next trip</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style="background-color: #A98FFA;">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Industry signals that matter</h3>
+              <p style="color: #4A504A;">Trends and developments affecting how we travel</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style="background-color: #A98FFA;">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Real examples of regenerative travel</h3>
+              <p style="color: #4A504A;">Hand-picked experiences and accommodation from the Giveback Guide database</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style="background-color: #A98FFA;">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold mb-1" style="color: #1C2434;">Unanswered questions</h3>
+              <p style="color: #4A504A;">Opportunities for you to join the ongoing conversation</p>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- What to Expect Section -->
-    <section style="background-color: #F6F7F6; padding: 4rem 1rem;">
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-black mb-8 text-center" style="color: #1C2434;">
-          What to expect
+  <!-- Section 3: Who It's For -->
+    <section class="py-16 lg:py-24 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-black mb-12 text-center" style="color: #1C2434;">
+          Who This Is For
         </h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background-color: rgba(169, 143, 250, 0.1);">
-              <svg class="w-6 h-6" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background-color: rgba(169, 143, 250, 0.15);">
+              <svg class="w-8 h-8" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-semibold mb-2" style="color: #1C2434;">[Feature 1]</h3>
-            <p style="color: #7E827E;">[Description to be added]</p>
+            <h3 class="text-xl font-bold mb-3" style="color: #1C2434;">The Conscious Traveller</h3>
+            <p style="color: #4A504A;">
+              You care about impact and want your travel choices to matter.
+            </p>
           </div>
           
-          <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background-color: rgba(169, 143, 250, 0.1);">
-              <svg class="w-6 h-6" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          <div class="text-center">
+            <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background-color: rgba(169, 143, 250, 0.15);">
+              <svg class="w-8 h-8" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-semibold mb-2" style="color: #1C2434;">[Feature 2]</h3>
-            <p style="color: #7E827E;">[Description to be added]</p>
+            <h3 class="text-xl font-bold mb-3" style="color: #1C2434;">The Skeptic</h3>
+            <p style="color: #4A504A;">
+              You feel uneasy about modern tourism and unsatisfied with surface-level "eco" claims.
+            </p>
           </div>
           
-          <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background-color: rgba(169, 143, 250, 0.1);">
-              <svg class="w-6 h-6" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div class="text-center">
+            <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background-color: rgba(169, 143, 250, 0.15);">
+              <svg class="w-8 h-8" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-semibold mb-2" style="color: #1C2434;">[Feature 3]</h3>
-            <p style="color: #7E827E;">[Description to be added]</p>
+            <h3 class="text-xl font-bold mb-3" style="color: #1C2434;">The Curious Learner</h3>
+            <p style="color: #4A504A;">
+              You don't need to be an expert. You're open to learning with us.
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Archive Link Section -->
-    <section style="background-color: #FFFFFF; padding: 4rem 1rem;">
-      <div class="max-w-2xl mx-auto text-center">
-        <h2 class="text-2xl font-black mb-4" style="color: #1C2434;">
-          Previous issues
+    <!-- Section 4: FAQ -->
+    <section class="py-16 lg:py-24 px-4 sm:px-6 lg:px-8" style="background-color: #F9F9F9;">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-black mb-12 text-center" style="color: #1C2434;">
+          Frequently Asked Questions
         </h2>
-        <p class="mb-6" style="color: #7E827E;">
-          Browse our archive of past essays and ideas
+        
+        <div class="space-y-8">
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">Is it free? Can I unsubscribe?</h3>
+            <p style="color: #4A504A;">
+              Subscribing is completely free. You can unsubscribe at any time by clicking the link at the bottom of every email.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">How is this different from other travel newsletters?</h3>
+            <p style="color: #4A504A;">
+              Many travel newsletters focus on inspiration and send deals, destination guides, or vague "sustainable travel tips." This newsletter asks harder questions: What's actually broken? Who's fixing it? And what would better travel really look like?
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">How long does it take to read?</h3>
+            <p style="color: #4A504A;">
+              Usually around 10 minutes. We write each edition so that it's thorough, but finishable.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">Is this only for hardcore activists?</h3>
+            <p style="color: #4A504A;">
+              No. If you're any kind of traveller and curious about the impact of your travels, you're the right reader. Just bring your curiosity.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">Will this make me feel guilty about travelling?</h3>
+            <p style="color: #4A504A;">
+              Absolutely not. This isn't about shaming. It's about understanding the systems that enable travel and finding better ways to implement them.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">What topics do you cover?</h3>
+            <p style="color: #4A504A;">
+              Anything that affects how travel shapes places and communities: overtourism, wildlife exploitation, community displacement and greenwashing will all be mentioned.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">Is this related to Giveback Guide?</h3>
+            <p style="color: #4A504A;">
+              Yes. This newsletter is part of <a href="https://giveback.guide" class="underline hover:no-underline" style="color: #7353D4;">Giveback Guide</a>, a platform connecting travellers with experiences that create meaningful impact. The newsletter explores the ideas and the platform helps you act on them.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Final CTA -->
+    <section class="py-16 lg:py-24 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-black mb-4" style="color: #1C2434;">
+          Ready to rethink how you travel?
+        </h2>
+        
+        <p class="text-lg mb-8" style="color: #4A504A;">
+          Join the conversation.
         </p>
-        <a 
-          href="https://beehiiv.com" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-lg transition-all duration-300 hover:shadow-lg"
-          style="background-color: #1C2434; color: white;"
-        >
-          View archive
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-        </a>
+        
+        <form id="final-subscribe-form" class="max-w-lg mx-auto flex flex-col md:flex-row gap-4">
+          <div class="relative flex-1">
+            <input 
+              id="final-email" 
+              type="email" 
+              required
+              placeholder="Enter your email"
+              class="w-full py-4 px-6 text-lg border-2 rounded-full bg-white focus:outline-none focus:ring-4 text-center md:text-left"
+              style="border-color: #E8EAE8; color: #1C2434; --tw-ring-color: rgba(169, 143, 250, 0.3);"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            id="final-submit-btn"
+            class="py-4 px-8 text-lg font-semibold text-white rounded-full transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+            style="background-color: #A98FFA;"
+          >
+            Subscribe Free
+          </button>
+        </form>
+        
+        <p class="mt-4 text-sm" style="color: #7E827E;">
+          One edition per month. No spam. Unsubscribe anytime.
+        </p>
+        
+        <div id="final-message" class="mt-4 text-center text-sm hidden"></div>
       </div>
     </section>
   </main>
 
   <script>
     const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
-    const form = document.getElementById('publication-subscribe-form');
-    const submitBtn = document.getElementById('subscribe-submit-btn');
-    const messageEl = document.getElementById('subscribe-message');
+    
+    // Form 1: Hero section
+    const heroForm = document.getElementById('hero-subscribe-form') as HTMLFormElement | null;
+    const heroSubmitBtn = document.getElementById('hero-submit-btn') as HTMLButtonElement | null;
+    const heroMessage = document.getElementById('hero-message') as HTMLDivElement | null;
+    
+    // Form 2: Final CTA section
+    const finalForm = document.getElementById('final-subscribe-form') as HTMLFormElement | null;
+    const finalSubmitBtn = document.getElementById('final-submit-btn') as HTMLButtonElement | null;
+    const finalMessage = document.getElementById('final-message') as HTMLDivElement | null;
 
-    function showMessage(text: string, isError: boolean = false) {
-      if (!messageEl) return;
-      messageEl.textContent = text;
-      messageEl.classList.remove('hidden');
-      messageEl.style.color = isError ? '#EF4444' : '#10B981';
+    function showMessage(element: HTMLDivElement | null, text: string, isError: boolean = false) {
+      if (!element) return;
+      element.textContent = text;
+      element.classList.remove('hidden');
+      element.style.color = isError ? '#EF4444' : '#10B981';
     }
 
-    if (form) {
+    function handleFormSubmit(
+      form: HTMLFormElement | null, 
+      submitBtn: HTMLButtonElement | null, 
+      messageEl: HTMLDivElement | null, 
+      emailInputId: string
+    ) {
+      if (!form || !submitBtn || !messageEl) return;
+      
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const emailInput = document.getElementById('subscriber-email') as HTMLInputElement;
-        const nameInput = document.getElementById('subscriber-name') as HTMLInputElement;
-        
+        const emailInput = document.getElementById(emailInputId) as HTMLInputElement | null;
         const email = emailInput?.value;
-        const name = nameInput?.value;
 
         if (!email) {
-          showMessage('Please enter your email address', true);
+          showMessage(messageEl, 'Please enter your email address', true);
           return;
         }
 
@@ -190,7 +357,6 @@ import MainLayout from "../../layouts/MainLayout.astro";
             },
             body: JSON.stringify({
               email: email,
-              name: name,
               source: 'publication-landing-page',
             }),
           });
@@ -199,21 +365,25 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
           if (data.success) {
             if (data.alreadySubscribed) {
-              showMessage('You are already subscribed to The Problem with Travel!', false);
+              showMessage(messageEl, 'You are already subscribed to The Problem with Travel!', false);
             } else {
-              showMessage('Successfully subscribed! Check your inbox for a confirmation email.', false);
+              showMessage(messageEl, 'Thanks! Please check your email now to confirm your subscription.', false);
               form.reset();
             }
           } else {
-            showMessage(data.error || 'Subscription failed. Please try again.', true);
+              showMessage(messageEl, data.error || 'Subscription failed. Please try again.', true);
           }
         } catch (error) {
-          showMessage('Network error. Please try again.', true);
+          showMessage(messageEl, 'Network error. Please try again.', true);
         }
 
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Subscribe';
+        submitBtn.textContent = 'Subscribe Free';
       });
     }
+
+    // Initialize both forms
+    handleFormSubmit(heroForm, heroSubmitBtn, heroMessage, 'hero-email');
+    handleFormSubmit(finalForm, finalSubmitBtn, finalMessage, 'final-email');
   </script>
 </MainLayout>

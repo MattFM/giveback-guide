@@ -8,6 +8,7 @@
  * - BEEHIIV_API_KEY: Your Beehiiv API key
  * - BEEHIIV_PUBLICATION_ID: Your Beehiiv publication ID
  * - CORS_ORIGIN: Allowed origin for CORS (e.g., https://giveback.guide)
+ * - ALLOW_LOCALHOST: Set to 'true' to allow requests from localhost:4321 (for testing)
  */
 
 const BEEHIIV_API_BASE = 'https://api.beehiiv.com/v2';
@@ -89,7 +90,17 @@ async function createSubscriber(email, metadata = {}, apiKey, publicationId) {
 // Main request handler
 export default {
   async fetch(request, env, ctx) {
-    const origin = env.CORS_ORIGIN || request.headers.get('Origin') || '*';
+    // Determine allowed origins based on environment
+    const allowedOrigins = [env.CORS_ORIGIN || 'https://giveback.guide'];
+    
+    // Allow localhost for testing if ALLOW_LOCALHOST is set to 'true'
+    if (env.ALLOW_LOCALHOST === 'true') {
+      allowedOrigins.push('http://localhost:4321', 'http://127.0.0.1:4321');
+    }
+    
+    const requestOrigin = request.headers.get('Origin');
+    // Use request origin if it's in allowed list, otherwise use first allowed origin
+    const origin = allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0];
 
     // Handle preflight requests
     if (request.method === 'OPTIONS') {

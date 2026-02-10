@@ -14,10 +14,10 @@ npm run astro            # Direct Astro CLI access
 ```
 
 **Testing**: No formal test suite. Use manual testing:
-- `npm run dev` for development testing
-- `npm run build` for production build validation
+- `npm run dev` for development testing (runs continuously - **build verification not required**)
 - Test auth flows via `/login` and `/account/dashboard`
 - Browser console testing for client-side features
+- **Note**: User runs dev mode continuously; build verification is unnecessary as Astro dev server updates in real-time
 
 ## Code Style Guidelines
 
