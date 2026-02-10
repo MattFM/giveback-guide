@@ -17,13 +17,9 @@ const today = new Date();
         <!-- Newsletter CTA -->
         <div class="mt-4">
           <p class="text-sm font-semibold mb-3" style="color: #1C2434;">
-            Stay updated with the latest projects
+            Subscribe to The Problem with Travel (and how to fix it)
           </p>
-          <form
-            action="https://subscribe-api.matt-c4f.workers.dev/"
-            method="POST"
-            class="w-full"
-          >
+          <form id="footer-subscribe-form" class="w-full">
             <div class="flex gap-2">
               <div class="relative flex-1">
                 <label for="footer-email" class="sr-only">Email address</label>
@@ -36,15 +32,8 @@ const today = new Date();
                   name="email"
                   required
                 />
-                <input
-                  type="checkbox"
-                  name="consent"
-                  style="display:none"
-                  tabindex="-1"
-                  autocomplete="off"
-                />
               </div>
-              <Button type="submit" variant="primary" size="sm">
+              <Button type="submit" variant="primary" size="sm" id="footer-subscribe-btn">
                 Subscribe
               </Button>
             </div>
@@ -56,8 +45,60 @@ const today = new Date();
                 >Privacy Policy</a
               >
             </p>
+            <p id="footer-subscribe-message" class="mt-2 text-xs hidden" style="color: #1C2434;"></p>
           </form>
         </div>
+
+        <script>
+          const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
+          const footerForm = document.getElementById('footer-subscribe-form');
+          const footerMessage = document.getElementById('footer-subscribe-message');
+          const footerBtn = document.getElementById('footer-subscribe-btn');
+
+          if (footerForm) {
+            footerForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const email = document.getElementById('footer-email').value;
+
+              footerBtn.disabled = true;
+              footerBtn.textContent = 'Subscribing...';
+              footerMessage.classList.add('hidden');
+
+              try {
+                const response = await fetch(WORKER_URL, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    email: email,
+                    source: 'footer',
+                  }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                  footerMessage.textContent = data.alreadySubscribed 
+                    ? 'You are already subscribed!'
+                    : 'Successfully subscribed to The Problem with Travel!';
+                  footerMessage.style.color = '#10B981';
+                  document.getElementById('footer-email').value = '';
+                } else {
+                  footerMessage.textContent = data.error || 'Subscription failed. Please try again.';
+                  footerMessage.style.color = '#EF4444';
+                }
+              } catch (error) {
+                footerMessage.textContent = 'Network error. Please try again.';
+                footerMessage.style.color = '#EF4444';
+              }
+
+              footerMessage.classList.remove('hidden');
+              footerBtn.disabled = false;
+              footerBtn.textContent = 'Subscribe';
+            });
+          }
+        </script>
       </div>
       <div class="grid grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16 sm:grid-cols-3">
         <div>

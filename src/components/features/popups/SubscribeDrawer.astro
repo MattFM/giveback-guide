@@ -11,12 +11,12 @@
       id="newsletter-heading"
       class="mb-2 text-2xl text-left sm:text-center tracking-tight font-extrabold text-gray-900 dark:text-white"
     >
-      Join the Giveback Guide community
+      The Problem with Travel (and how to fix it)
     </h2>
     <p
       class="mx-auto mb-4 max-w-2xl text-left sm:text-center text-md font-light text-gray-500 dark:text-gray-400"
     >
-      Sign-up to our newsletter and stay up to date with the latest projects and news
+      Subscribe for thoughtful essays on reimagining how we travel and practical ideas for positive change
     </p>
     <form id="subscribe-form" class="w-100%">
       <div
@@ -164,29 +164,41 @@ if (confirmationCloseLink) {
   });
 }
 
-    // AJAX form submission for Formspark using Axios
+    // AJAX form submission for Beehiiv via Worker
+    const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
     const form = document.getElementById('subscribe-form');
     const confirmation = document.getElementById('subscribe-confirmation');
     const errorMsg = document.getElementById('subscribe-error');
     const content = document.getElementById('subscribe-content');
+    
     if (form) {
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
         confirmation.classList.add('hidden');
         errorMsg.classList.add('hidden');
         const email = form.email.value;
+        
         try {
-          await axios.post('https://submit-form.com/ssXXxSXFq', {
-            email: email
-          }, {
+          const response = await fetch(WORKER_URL, {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+              email: email,
+              source: 'popup',
+            }),
           });
-          form.reset();
-          content.classList.add('hidden');
-          confirmation.classList.remove('hidden');
+
+          const data = await response.json();
+
+          if (data.success) {
+            form.reset();
+            content.classList.add('hidden');
+            confirmation.classList.remove('hidden');
+          } else {
+            errorMsg.classList.remove('hidden');
+          }
         } catch (error) {
           errorMsg.classList.remove('hidden');
         }

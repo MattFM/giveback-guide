@@ -1,0 +1,219 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="The Problem with Travel (and how to fix it)">
+  <main>
+    <!-- Hero Section -->
+    <section style="background-color: #1C2434; padding: 4rem 1rem;">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full" style="background: rgba(169, 143, 250, 0.12); border: 1px solid rgba(169, 143, 250, 0.25);">
+          <span class="text-sm font-semibold" style="color: #C4B3FC;">Newsletter</span>
+        </div>
+        
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6" style="color: #FFFFFF;">
+          The Problem with Travel<br>
+          <span style="color: #A98FFA;">(and how to fix it)</span>
+        </h1>
+        
+        <p class="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-8" style="color: #D1D4D1;">
+          <!-- Copy to be provided by client -->
+          [Publication description to be added here]
+        </p>
+      </div>
+    </section>
+
+    <!-- Subscription Form Section -->
+    <section style="background: linear-gradient(to bottom, #1C2434 0%, #F6F7F6 30%); padding: 0 1rem 4rem;">
+      <div class="max-w-xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-12 border border-gray-200">
+          <h2 class="text-2xl font-black mb-4 text-center" style="color: #1C2434;">
+            Subscribe for free
+          </h2>
+          <p class="text-center mb-6" style="color: #7E827E;">
+            Join thousands of readers rethinking how we travel
+          </p>
+          
+          <form id="publication-subscribe-form" class="space-y-4">
+            <div>
+              <label for="subscriber-email" class="block text-sm font-semibold mb-2" style="color: #1C2434;">
+                Email address
+              </label>
+              <input 
+                id="subscriber-email" 
+                type="email" 
+                required
+                placeholder="you@example.com"
+                class="w-full px-4 py-3.5 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                style="border: 2px solid #E8EAE8; background: #FFFFFF;"
+              />
+            </div>
+            
+            <div>
+              <label for="subscriber-name" class="block text-sm font-semibold mb-2" style="color: #1C2434;">
+                First name (optional)
+              </label>
+              <input 
+                id="subscriber-name" 
+                type="text" 
+                placeholder="Your name"
+                class="w-full px-4 py-3.5 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                style="border: 2px solid #E8EAE8; background: #FFFFFF;"
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              id="subscribe-submit-btn"
+              class="w-full py-4 px-6 text-base font-semibold text-white rounded-lg transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              style="background-color: #1C2434;"
+            >
+              <span class="inline-flex items-center justify-center gap-2">
+                Subscribe
+              </span>
+            </button>
+          </form>
+          
+          <div id="subscribe-message" class="mt-4 text-center text-sm hidden"></div>
+          
+          <p class="mt-6 text-xs text-center" style="color: #7E827E;">
+            We respect your privacy. Unsubscribe at any time.
+            <a href="/privacy" class="underline hover:no-underline" style="color: #1C2434;">Privacy Policy</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- What to Expect Section -->
+    <section style="background-color: #F6F7F6; padding: 4rem 1rem;">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-black mb-8 text-center" style="color: #1C2434;">
+          What to expect
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background-color: rgba(169, 143, 250, 0.1);">
+              <svg class="w-6 h-6" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold mb-2" style="color: #1C2434;">[Feature 1]</h3>
+            <p style="color: #7E827E;">[Description to be added]</p>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background-color: rgba(169, 143, 250, 0.1);">
+              <svg class="w-6 h-6" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold mb-2" style="color: #1C2434;">[Feature 2]</h3>
+            <p style="color: #7E827E;">[Description to be added]</p>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background-color: rgba(169, 143, 250, 0.1);">
+              <svg class="w-6 h-6" style="color: #A98FFA;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold mb-2" style="color: #1C2434;">[Feature 3]</h3>
+            <p style="color: #7E827E;">[Description to be added]</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Archive Link Section -->
+    <section style="background-color: #FFFFFF; padding: 4rem 1rem;">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-2xl font-black mb-4" style="color: #1C2434;">
+          Previous issues
+        </h2>
+        <p class="mb-6" style="color: #7E827E;">
+          Browse our archive of past essays and ideas
+        </p>
+        <a 
+          href="https://beehiiv.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-lg transition-all duration-300 hover:shadow-lg"
+          style="background-color: #1C2434; color: white;"
+        >
+          View archive
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
+    const form = document.getElementById('publication-subscribe-form');
+    const submitBtn = document.getElementById('subscribe-submit-btn');
+    const messageEl = document.getElementById('subscribe-message');
+
+    function showMessage(text: string, isError: boolean = false) {
+      if (!messageEl) return;
+      messageEl.textContent = text;
+      messageEl.classList.remove('hidden');
+      messageEl.style.color = isError ? '#EF4444' : '#10B981';
+    }
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const emailInput = document.getElementById('subscriber-email') as HTMLInputElement;
+        const nameInput = document.getElementById('subscriber-name') as HTMLInputElement;
+        
+        const email = emailInput?.value;
+        const name = nameInput?.value;
+
+        if (!email) {
+          showMessage('Please enter your email address', true);
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Subscribing...';
+        messageEl.classList.add('hidden');
+
+        try {
+          const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: email,
+              name: name,
+              source: 'publication-landing-page',
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            if (data.alreadySubscribed) {
+              showMessage('You are already subscribed to The Problem with Travel!', false);
+            } else {
+              showMessage('Successfully subscribed! Check your inbox for a confirmation email.', false);
+              form.reset();
+            }
+          } else {
+            showMessage(data.error || 'Subscription failed. Please try again.', true);
+          }
+        } catch (error) {
+          showMessage('Network error. Please try again.', true);
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Subscribe';
+      });
+    }
+  </script>
+</MainLayout>

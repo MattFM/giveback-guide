@@ -109,10 +109,10 @@ import MainLayout from '../../layouts/MainLayout.astro';
             />
             <div class="flex-1">
               <label for="newsletter" class="block text-base font-medium cursor-pointer" style="color: #1C2434;">
-                Keep me updated
+                Subscribe to The Problem with Travel
               </label>
               <p class="text-sm mt-1" style="color: #7E827E;">
-                Get monthly inspiration, new projects, and travel tips delivered to your inbox.
+                Receive thoughtful essays on reimagining how we travel and practical ideas for positive change.
               </p>
             </div>
           </div>
@@ -200,9 +200,9 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </style>
 
 <script>
-  import { account, getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/auth';
+  import { getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/auth';
 
-  const WORKER_URL = 'https://spring-block-2fcc.matt-c4f.workers.dev';
+  const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
 
   const form = document.getElementById('onboardForm') as HTMLFormElement | null;
   const firstName = document.getElementById('firstName') as HTMLInputElement | null;
@@ -220,29 +220,24 @@ import MainLayout from '../../layouts/MainLayout.astro';
     formMessage.classList.toggle('text-green-600', !isError);
   };
 
-  // Call MailerLite worker (same pattern as profile page)
-  async function callMailerLite(action: 'subscribe' | 'unsubscribe', subscriberId: string | undefined = undefined, email: string | undefined = undefined, name: string | undefined = undefined) {
-  const acc = await account();
-  const jwtResp: any = await acc.createJWT();
-  const jwt = jwtResp?.jwt;
-  if (!jwt) throw new Error('Failed to create auth JWT');
-
-    const bodyObj: any = { action };
-    if (email) bodyObj.email = String(email).toLowerCase().trim();
+  // Subscribe to Beehiiv newsletter via Worker
+  async function subscribeToNewsletter(email: string, name: string | undefined) {
+    const bodyObj: any = { 
+      email: String(email).toLowerCase().trim(),
+      source: 'onboarding'
+    };
     if (name) bodyObj.name = String(name).trim();
-    if (subscriberId) bodyObj.subscriberId = subscriberId;
 
     const resp = await fetch(WORKER_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + jwt
       },
       body: JSON.stringify(bodyObj)
     });
 
-    const text = await resp.text();
-    try { return { httpStatus: resp.status, ok: resp.ok, raw: JSON.parse(text) }; } catch (e) { return { httpStatus: resp.status, ok: resp.ok, raw: text }; }
+    const data = await resp.json();
+    return { ok: resp.ok && data.success, data };
   }
 
   const saveProfileAndMaybeSubscribe = async (nameVal: string, subscribe: boolean) => {
@@ -258,24 +253,20 @@ import MainLayout from '../../layouts/MainLayout.astro';
         const email = user?.email as string | undefined;
 
         if (!email) {
-          showMessage('Saved, but we could not subscribe you because your email was not available client-side. You can subscribe later in your profile.', true);
+          showMessage('Saved, but we could not subscribe you because your email was not available. You can subscribe via the newsletter page.', true);
         } else {
           try {
-            const result: any = await callMailerLite('subscribe', undefined, email, nameVal);
-            if (!result || !result.ok) {
-              console.error('MailerLite subscribe failed', result);
-              showMessage('Saved, but newsletter subscription failed. You can update this later in your profile.', true);
+            const result = await subscribeToNewsletter(email, nameVal);
+            if (!result.ok) {
+              console.error('Newsletter subscription failed', result.data);
+              showMessage('Saved, but newsletter subscription failed. You can subscribe later via the newsletter page.', true);
             } else {
-              const raw = result.raw || {};
-              const sid = raw?.subscriberId || raw?.subscriber || raw?.data?.id || raw?.id || null;
-              if (sid) {
-                try { await updateAccountPreference('ml_subscriber_id', sid); } catch (e) { console.error('Failed to persist ml id', e); }
-              }
-              showMessage('Subscribed to the newsletter. Redirecting...', false);
+              const alreadySubscribed = result.data?.alreadySubscribed;
+              showMessage(alreadySubscribed ? 'You were already subscribed to The Problem with Travel. Redirecting...' : 'Subscribed to The Problem with Travel. Redirecting...', false);
             }
           } catch (e: any) {
-            console.error('MailerLite subscribe failed', e);
-            showMessage('Saved, but newsletter subscription failed. You can update this later in your profile.', true);
+            console.error('Newsletter subscription failed', e);
+            showMessage('Saved, but newsletter subscription failed. You can subscribe later via the newsletter page.', true);
           }
         }
       }

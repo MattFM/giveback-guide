@@ -55,15 +55,6 @@ import MainLayout from '../../layouts/MainLayout.astro';
                     <div id="profileArea" style="color: #7E827E;">Loading...</div>
                 </section>
 
-                <!-- Newsletter section (separate from the profile form) -->
-                <section id="newsletterSection" class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100">
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">Newsletter</h2>
-                        <p class="text-base" style="color: #7E827E;">Manage your subscription preferences</p>
-                    </div>
-                    <div id="newsletterArea"><!-- populated by JS --></div>
-                </section>
-
                 <!-- Danger section -->
                 <section id="dangerSection" class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border-2" style="border-color: #FEE2E2;">
                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -112,7 +103,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-    import { account, getCurrentUser, updateAccountName, deleteAccount, updateAccountPreference } from '../../lib/auth';
+    import { getCurrentUser, updateAccountName, deleteAccount } from '../../lib/auth';
 
     // Toast helpers
     const ensureToastContainer = () => {
@@ -149,36 +140,6 @@ import MainLayout from '../../layouts/MainLayout.astro';
         // Auto remove after 6s
         setTimeout(() => toast.remove(), 6000);
     };
-
-    // Worker URL
-    const WORKER_URL = 'https://spring-block-2fcc.matt-c4f.workers.dev';
-
-    async function callMailerLite(action: 'subscribe' | 'unsubscribe', subscriberId = undefined, email = undefined, name = undefined) {
-        const acc = await account();
-        const jwtResp = await acc.createJWT();
-        const jwt = jwtResp?.jwt;
-        if (!jwt) throw new Error('Failed to create auth JWT');
-
-        const bodyObj: any = { action };
-        if (email) bodyObj.email = String(email).toLowerCase().trim();
-        if (name) bodyObj.name = String(name).trim();
-        if (subscriberId) bodyObj.subscriberId = subscriberId;
-
-        const resp = await fetch(WORKER_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + jwt
-            },
-            body: JSON.stringify(bodyObj)
-        });
-
-        const text = await resp.text();
-        let json = null;
-        try { json = JSON.parse(text); } catch (e) { json = text; }
-
-        return { httpStatus: resp.status, ok: resp.ok, raw: json };
-    }
 
     // renderProfile: builds the DOM and wires handlers
     const renderProfile = (user: any) => {
@@ -248,118 +209,6 @@ import MainLayout from '../../layouts/MainLayout.astro';
                     }
                 }
             });
-        }
-
-        // Newsletter UI
-        const existingNewsletter = document.getElementById('newsletterArea');
-        let newsletterArea = existingNewsletter;
-        if (!newsletterArea) {
-            const newsletterWrapper = document.createElement('div');
-            newsletterWrapper.className = 'mt-6';
-            newsletterWrapper.innerHTML = `
-                <p class="text-sm text-gray-500">Newsletter</p>
-                <div id="newsletterArea" class="mt-2"></div>
-            `;
-            profileArea.appendChild(newsletterWrapper);
-            newsletterArea = document.getElementById('newsletterArea');
-        }
-
-        const renderNewsletter = (prefs: any) => {
-            if (!newsletterArea) return;
-            const subscribed = !!(prefs && prefs.newsletter === true);
-            if (subscribed) {
-                newsletterArea.innerHTML = `
-                    <div class="flex items-center justify-between p-4 rounded-lg" style="background-color: #F6F7F6; border: 1px solid #E8EAE8;">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5" style="color: #10B981;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                            <div>
-                                <div class="text-sm font-semibold" style="color: #1C2434;">Subscribed</div>
-                                <div class="text-xs" style="color: #7E827E;">You're receiving our newsletter</div>
-                            </div>
-                        </div>
-                        <button id="unsubscribeBtn" class="px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300" style="color: #EF4444; background: white; border: 1px solid #E8EAE8;">Unsubscribe</button>
-                    </div>
-                `;
-            } else {
-                newsletterArea.innerHTML = `
-                    <div class="flex items-center justify-between p-4 rounded-lg" style="background-color: #F6F7F6; border: 1px solid #E8EAE8;">
-                        <div>
-                            <div class="text-sm font-semibold mb-1" style="color: #1C2434;">Not subscribed</div>
-                            <div class="text-xs" style="color: #7E827E;">Get updates about new projects and stays</div>
-                        </div>
-                        <button id="subscribeBtn" class="px-4 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434; color: white;">Subscribe</button>
-                    </div>
-                `;
-            }
-
-            const subscribeBtn = document.getElementById('subscribeBtn');
-            const unsubscribeBtn = document.getElementById('unsubscribeBtn');
-
-            if (subscribeBtn) {
-                subscribeBtn.addEventListener('click', async () => {
-                    try {
-                        const emailVal = (emailInput && emailInput.value) ? emailInput.value : (user && user.email) ? user.email : null;
-                        const nameVal = (nameInput && nameInput.value) ? nameInput.value : (user && user.name) ? user.name : null;
-                        const result = await callMailerLite('subscribe', undefined, emailVal, nameVal);
-
-                        const raw = result?.raw || {};
-                        const emailErrors = raw?.errors?.email || null;
-                        const unsubscribedBlocked = result?.httpStatus === 422 || (Array.isArray(emailErrors) && emailErrors.some((s: any) => /unsubscribed/i.test(String(s))));
-
-                        if (unsubscribedBlocked) {
-                            showToast('error', "To resubscribe, you'll need to contact us directly via the contact page.");
-                            console.warn('MailerLite blocked re-subscribe:', raw);
-                            return;
-                        }
-
-                        const sid = raw?.subscriberId || raw?.subscriber || raw?.data?.id || raw?.id || null;
-                        if (sid) {
-                            try { await updateAccountPreference('ml_subscriber_id', sid); } catch (e) { console.error('Failed to persist ml id', e); }
-                        }
-                        await updateAccountPreference('newsletter', true);
-                        showToast('success', 'Subscribed to newsletter');
-                        renderNewsletter({ newsletter: true });
-                    } catch (err) {
-                        console.error('Subscribe failed', err);
-                        showToast('error', ((err as any) && ((err as any).message || (err as any).toString())) || 'Failed to subscribe');
-                    }
-                });
-            }
-
-            if (unsubscribeBtn) {
-                unsubscribeBtn.addEventListener('click', async () => {
-                    try {
-                        // Best-effort: try reading prefs from the current user object
-                        let subscriberId = null;
-                        try {
-                            const userObj = await getCurrentUser();
-                            const p = userObj && ((userObj as any).prefs || (userObj as any).preferences || {});
-                            subscriberId = p && (p.ml_subscriber_id || p.mlSubscriberId || null);
-                        } catch (e) {
-                            // ignore
-                        }
-
-                        const emailVal = (emailInput && emailInput.value) ? emailInput.value : (user && user.email) ? user.email : null;
-                        const result = await callMailerLite('unsubscribe', subscriberId, emailVal);
-                        await updateAccountPreference('newsletter', false);
-                        showToast('success', 'Unsubscribed from newsletter');
-                        renderNewsletter({ newsletter: false });
-                    } catch (err) {
-                        console.error('Unsubscribe failed', err);
-                        showToast('error', ((err as any) && ((err as any).message || (err as any).toString())) || 'Failed to unsubscribe');
-                    }
-                });
-            }
-        };
-
-        // Initialize newsletter area from user prefs
-        try {
-            const prefs = (user && user.prefs) ? user.prefs : (user && user.preferences) ? user.preferences : (user && user.$id ? user : null);
-            renderNewsletter(prefs || {});
-        } catch (err) {
-            renderNewsletter({});
         }
 
         // Modal wiring for deletion confirmation
