@@ -41,7 +41,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
             class="py-4 px-8 text-lg font-semibold text-white rounded-full transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
             style="background-color: #A98FFA;"
           >
-            Subscribe Free
+            Subscribe
           </button>
         </form>
         
@@ -293,7 +293,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
             class="py-4 px-8 text-lg font-semibold text-white rounded-full transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
             style="background-color: #A98FFA;"
           >
-            Subscribe Free
+            Subscribe
           </button>
         </form>
         
@@ -365,9 +365,9 @@ import MainLayout from "../../layouts/MainLayout.astro";
 
           if (data.success) {
             if (data.alreadySubscribed) {
-              showMessage(messageEl, 'You are already subscribed to The Problem with Travel!', false);
+              showMessage(messageEl, 'You are already subscribed! Whoop whoop!', false);
             } else {
-              showMessage(messageEl, 'Thanks! Please check your email now to confirm your subscription.', false);
+              showMessage(messageEl, 'Thanks! Now, please check your email to confirm your subscription.', false);
               form.reset();
             }
           } else {
@@ -378,7 +378,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
         }
 
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Subscribe Free';
+        submitBtn.textContent = 'Subscribe';
       });
     }
 
