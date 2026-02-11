@@ -72,7 +72,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
         Welcome to <span class="gradient-highlight">Giveback Guide</span>
       </h1>
       <p class="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style="color: #D1D4D1;">
-        Just a few quick questions to personalize your experience and help you discover the perfect ways to make a difference.
+        Just a few quick questions to personalize your experience.
       </p>
     </div>
   </section>
@@ -100,21 +100,32 @@ import MainLayout from '../../layouts/MainLayout.astro';
 
           <!-- Newsletter Opt-in -->
           <div class="flex items-start gap-4 p-4 rounded-lg" style="background: #F6F7F6; border: 1px solid #E8EAE8;">
-            <input 
-              id="newsletter" 
-              name="newsletter" 
-              type="checkbox" 
+            <input
+              id="newsletter"
+              name="newsletter"
+              type="checkbox"
               class="w-5 h-5 mt-0.5 rounded cursor-pointer"
               style="accent-color: #A98FFA;"
             />
             <div class="flex-1">
               <label for="newsletter" class="block text-base font-medium cursor-pointer" style="color: #1C2434;">
-                Subscribe to The Problem with Travel
+                Subscribe to our newsletter
               </label>
-              <p class="text-sm mt-1" style="color: #7E827E;">
-                Receive thoughtful essays on reimagining how we travel and practical ideas for positive change.
-              </p>
+              <div class="text-sm mt-2" style="color: #7E827E;">
+                <p class="mt-1">The Problem With Travel (And How To Fix It) is a monthly newsletter about reimagining how we travel.</p>
+                <p class="mt-2">Each edition contains:</p>
+                <ul class="mt-1 ml-4 list-disc">
+                  <li>A detailed exploration of a problem affecting modern travel</li>
+                  <li>Insights from people helping to build regenerative tourism right now</li>
+                  <li>News and updates about Giveback Guide</li>
+                </ul>
+              </div>
             </div>
+          </div>
+
+          <!-- Newsletter Confirmation Message -->
+          <div id="newsletterConfirmMsg" class="hidden p-3 rounded-lg text-sm" style="background: rgba(169, 143, 250, 0.1); border: 1px solid rgba(169, 143, 250, 0.25); color: #7353D4;">
+            Awesome! You'll receive a separate email from us to confirm your subscription.
           </div>
 
           <!-- Terms Consent -->
@@ -211,6 +222,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
   const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
   // skip button removed from UI
   const formMessage = document.getElementById('formMessage') as HTMLElement | null;
+  const newsletterConfirmMsg = document.getElementById('newsletterConfirmMsg') as HTMLElement | null;
 
   const showMessage = (msg: string, isError = false) => {
     if (!formMessage) return;
@@ -374,6 +386,14 @@ import MainLayout from '../../layouts/MainLayout.astro';
         submitBtn.disabled = false;
         submitBtn.textContent = 'Continue';
       }
+    });
+  }
+
+  // Newsletter checkbox toggle - show confirmation message
+  if (newsletter && newsletterConfirmMsg) {
+    newsletter.addEventListener('change', (e) => {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      newsletterConfirmMsg.classList.toggle('hidden', !isChecked);
     });
   }
 
