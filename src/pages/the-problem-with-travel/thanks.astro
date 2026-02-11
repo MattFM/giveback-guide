@@ -1,0 +1,40 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout 
+  title="Thanks for Subscribing"
+  description="Your subscription to The Problem With Travel newsletter has been confirmed."
+>
+  <main class="bg-white">
+    <section class="py-20 lg:py-32 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mx-auto text-center">
+        <!-- Success Icon -->
+        <div 
+          class="inline-flex w-20 h-20 rounded-full mb-8 items-center justify-center"
+          style="background-color: rgba(169, 143, 250, 0.2);"
+        >
+          <svg class="w-10 h-10" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl font-black mb-6" style="color: #1C2434;">
+          Thanks for Subscribing!
+        </h1>
+
+        <p class="text-xl leading-relaxed mb-8" style="color: #4A504A;">
+          Your subscription to <span class="font-semibold">The Problem With Travel</span> has been confirmed. You will receive the next edition in your inbox soon.
+        </p>
+
+        <a 
+          href="/" 
+          class="inline-block py-4 px-8 text-lg font-semibold text-white rounded-full transition-all duration-300 hover:shadow-lg"
+          style="background-color: #A98FFA;"
+        >
+          Explore Giveback Guide
+        </a>
+      </div>
+    </section>
+  </main>
+</MainLayout>
