@@ -4,6 +4,7 @@ import Header from "../components/layout/Header.astro";
 import Announcement from "../components/features/popups/Announcement.astro";
 import Footer from "../components/layout/Footer.astro";
 import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
+import NewsletterModal from "../components/features/popups/NewsletterModal.astro";
 
 interface Props {
   title?: string; // Accept the title prop
@@ -32,6 +33,7 @@ const {
   <Header variant={headerVariant} theme={headerTheme} />
     <slot />
     <Footer />
+    <NewsletterModal />
   </body>
 </html>
 

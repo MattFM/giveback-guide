@@ -1,0 +1,465 @@
+---
+// Newsletter subscription modal popup for The Problem With Travel
+// Triggered at 60% scroll depth, persists for 60 days after dismissal
+// Only shown to logged-out users (Supabase auth detection)
+---
+
+<div
+  id="newsletter-modal-backdrop"
+  class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+  aria-hidden="true"
+>
+  <div
+    id="newsletter-modal"
+    class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg mx-4 rounded-2xl bg-white p-8 shadow-2xl"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="newsletter-modal-heading"
+    tabindex="-1"
+  >
+    <!-- Close button -->
+    <button
+      id="newsletter-modal-close"
+      type="button"
+      aria-label="Close newsletter signup"
+      class="absolute right-4 top-4 p-2 rounded-full transition-colors duration-200 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-300"
+    >
+      <svg class="w-5 h-5" style="color: #7E827E;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <!-- Content container -->
+    <div id="newsletter-modal-content">
+      <!-- Icon -->
+      <div class="mb-6 flex justify-center">
+        <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background-color: #F1E8FB;">
+          <svg class="w-8 h-8" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <h2
+        id="newsletter-modal-heading"
+        class="text-2xl sm:text-3xl font-bold text-center mb-4"
+        style="color: #1C2434;"
+      >
+        Subscribe to The Problem With Travel (And How To Fix It)
+      </h2>
+
+      <!-- Description -->
+      <p
+        class="text-center mb-6 text-base"
+        style="color: #4A504A;"
+      >
+        A monthly newsletter exploring what isn't working in travel and what people around the world are doing to change it.
+      </p>
+
+      <!-- Form -->
+      <form id="newsletter-modal-form" class="space-y-4">
+        <div>
+          <label for="modal-email" class="sr-only">Email address</label>
+          <input
+            id="modal-email"
+            type="email"
+            name="email"
+            required
+            placeholder="Enter your email"
+            class="w-full px-4 py-3 rounded-xl border-2 bg-white focus:outline-none focus:ring-2 transition-all duration-300"
+            style="border-color: #E8EAE8; color: #1C2434; --tw-ring-color: rgba(169, 143, 250, 0.5); font-size: 16px;"
+          />
+          <input
+            type="checkbox"
+            name="consent"
+            style="display:none"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="modal-submit-btn"
+          class="w-full py-3 px-6 rounded-xl font-semibold text-white transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          style="background-color: #A98FFA;"
+        >
+          Subscribe
+        </button>
+      </form>
+
+      <!-- Learn More link -->
+      <p class="mt-4 text-center text-sm" style="color: #7E827E;">
+        Want to know more? <a href="/the-problem-with-travel/" class="font-medium hover:underline" style="color: #7353D4;">Learn about The Problem With Travel</a>
+      </p>
+
+      <!-- Privacy policy -->
+      <p class="mt-3 text-center text-xs" style="color: #9CA3AF;">
+        We won't share your details. Unsubscribe anytime. <a href="/privacy/" class="underline hover:no-underline" style="color: #7E827E;">Read our Privacy Policy</a>.
+      </p>
+    </div>
+
+    <!-- Success state -->
+    <div id="newsletter-modal-success" class="hidden text-center">
+      <div class="mb-6 flex justify-center">
+        <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background-color: #F1E8FB;">
+          <svg class="w-8 h-8" style="color: #7353D4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+      </div>
+      <h3 class="text-xl font-bold mb-3" style="color: #1C2434;">Thank you for subscribing!</h3>
+      <p class="mb-4" style="color: #4A504A;">
+        Please check your inbox for a confirmation email.
+      </p>
+      <button
+        id="newsletter-modal-success-close"
+        class="py-2 px-6 rounded-lg font-medium text-white transition-all duration-300 hover:shadow-md"
+        style="background-color: #A98FFA;"
+      >
+        Close
+      </button>
+    </div>
+
+    <!-- Error state -->
+    <div id="newsletter-modal-error" class="hidden text-center">
+      <div class="mb-4 flex justify-center">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: #FEE2E2;">
+          <svg class="w-6 h-6" style="color: #DC2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="text-red-600 font-medium mb-4">Sorry, there was a problem subscribing. Please try again.</p>
+      <button
+        id="newsletter-modal-retry"
+        class="py-2 px-6 rounded-lg font-medium border-2 transition-all duration-300"
+        style="border-color: #E8EAE8; color: #1C2434;"
+      >
+        Try again
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const STORAGE_KEY = 'newsletter_modal_dismissed_until';
+    const DISMISS_DAYS = 60;
+    const SCROLL_THRESHOLD = 0.6; // 60% scroll depth
+    let hasTriggered = false;
+
+    // Check if user is logged in (same logic as Announcement.astro)
+    function getCurrentUser() {
+      try {
+        if (typeof window === 'undefined' || !('localStorage' in window)) return null;
+        
+        let authToken = null;
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && /^sb-.*-auth-token$/.test(k)) {
+            const v = localStorage.getItem(k);
+            if (v && v !== 'null' && v !== 'undefined') {
+              authToken = v;
+              break;
+            }
+          }
+        }
+
+        if (authToken) {
+          try {
+            const sessionData = JSON.parse(authToken);
+            const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
+            return user || null;
+          } catch (e) {
+            return null;
+          }
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // Check if dismissed
+    function isDismissed() {
+      try {
+        const v = localStorage.getItem(STORAGE_KEY);
+        if (!v) return false;
+        const ts = parseInt(v, 10);
+        if (Number.isNaN(ts)) return false;
+        return Date.now() < ts;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Set dismissal flag only (without hiding modal)
+    function setDismissalFlag() {
+      try {
+        const d = new Date();
+        d.setDate(d.getDate() + DISMISS_DAYS);
+        localStorage.setItem(STORAGE_KEY, String(d.getTime()));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    // Set dismissal and hide modal
+    function dismissModal() {
+      setDismissalFlag();
+      hideModal();
+    }
+
+    // Hide modal with animation
+    function hideModal() {
+      const backdrop = document.getElementById('newsletter-modal-backdrop');
+      const modal = document.getElementById('newsletter-modal');
+      if (!backdrop || !modal) return;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      
+      if (!prefersReduced) {
+        backdrop.style.opacity = '0';
+        modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+          backdrop.classList.add('hidden');
+          backdrop.style.opacity = '';
+          modal.style.transform = '';
+          modal.style.opacity = '';
+        }, 300);
+      } else {
+        backdrop.classList.add('hidden');
+      }
+
+      // Return focus to previously focused element
+      if (previouslyFocused) {
+        previouslyFocused.focus();
+      }
+    }
+
+    // Show modal with animation
+    function showModal() {
+      const backdrop = document.getElementById('newsletter-modal-backdrop');
+      const modal = document.getElementById('newsletter-modal');
+      if (!backdrop || !modal) return;
+
+      backdrop.classList.remove('hidden');
+      
+      // Store currently focused element
+      previouslyFocused = document.activeElement;
+      
+      // Focus the modal for accessibility
+      setTimeout(() => {
+        modal.focus();
+      }, 100);
+    }
+
+    // Scroll handler
+    function handleScroll() {
+      if (hasTriggered) return;
+      
+      const scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      
+      if (scrollPercent >= SCROLL_THRESHOLD) {
+        hasTriggered = true;
+        
+        // Check user state
+        if (getCurrentUser()) {
+          // User is logged in, don't show
+          return;
+        }
+        
+        if (isDismissed()) {
+          // Already dismissed recently
+          return;
+        }
+        
+        showModal();
+      }
+    }
+
+    // Throttled scroll listener
+    let scrollTimeout;
+    function throttledScroll() {
+      if (scrollTimeout) return;
+      scrollTimeout = setTimeout(() => {
+        scrollTimeout = null;
+        handleScroll();
+      }, 100);
+    }
+
+    // Form submission
+    const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
+    
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      const form = document.getElementById('newsletter-modal-form');
+      const content = document.getElementById('newsletter-modal-content');
+      const success = document.getElementById('newsletter-modal-success');
+      const error = document.getElementById('newsletter-modal-error');
+      const submitBtn = document.getElementById('modal-submit-btn');
+      
+      if (!form) return;
+      
+      const email = form.email.value;
+      
+      // Disable button
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Subscribing...';
+      }
+      
+      // Hide previous states
+      if (success) success.classList.add('hidden');
+      if (error) error.classList.add('hidden');
+      
+      fetch(WORKER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          source: 'modal-popup',
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          form.reset();
+          if (content) content.classList.add('hidden');
+          if (success) success.classList.remove('hidden');
+          
+          // Set 60-day flag so they don't see the popup again
+          setDismissalFlag();
+          
+          // Focus the success close button
+          const successCloseBtn = document.getElementById('newsletter-modal-success-close');
+          if (successCloseBtn) {
+            setTimeout(() => successCloseBtn.focus(), 100);
+          }
+        } else {
+          throw new Error(data.error || 'Subscription failed');
+        }
+      })
+      .catch(() => {
+        if (content) content.classList.add('hidden');
+        if (error) error.classList.remove('hidden');
+        
+        // Focus the retry button
+        const retryBtn = document.getElementById('newsletter-modal-retry');
+        if (retryBtn) {
+          setTimeout(() => retryBtn.focus(), 100);
+        }
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Subscribe';
+        }
+      });
+    }
+
+    // Retry handler
+    function handleRetry() {
+      const content = document.getElementById('newsletter-modal-content');
+      const error = document.getElementById('newsletter-modal-error');
+      
+      if (error) error.classList.add('hidden');
+      if (content) content.classList.remove('hidden');
+      
+      // Focus the email input
+      const emailInput = document.getElementById('modal-email');
+      if (emailInput) {
+        setTimeout(() => emailInput.focus(), 100);
+      }
+    }
+
+    // Store reference to previously focused element
+    let previouslyFocused = null;
+
+    // Initialize
+    if (typeof window !== 'undefined') {
+      // Check if we should show at all
+      if (getCurrentUser() || isDismissed()) {
+        return;
+      }
+      
+      // Attach scroll listener
+      window.addEventListener('scroll', throttledScroll, { passive: true });
+      
+      // Also check immediately in case page is already scrolled
+      handleScroll();
+      
+      // Close button
+      const closeBtn = document.getElementById('newsletter-modal-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', dismissModal);
+      }
+      
+      // Close on backdrop click
+      const backdrop = document.getElementById('newsletter-modal-backdrop');
+      if (backdrop) {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) {
+            dismissModal();
+          }
+        });
+      }
+      
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const modalBackdrop = document.getElementById('newsletter-modal-backdrop');
+          if (modalBackdrop && !modalBackdrop.classList.contains('hidden')) {
+            dismissModal();
+          }
+        }
+      });
+      
+      // Form submission
+      const form = document.getElementById('newsletter-modal-form');
+      if (form) {
+        form.addEventListener('submit', handleSubmit);
+      }
+      
+      // Success close button
+      const successCloseBtn = document.getElementById('newsletter-modal-success-close');
+      if (successCloseBtn) {
+        successCloseBtn.addEventListener('click', dismissModal);
+      }
+      
+      // Retry button
+      const retryBtn = document.getElementById('newsletter-modal-retry');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', handleRetry);
+      }
+      
+      // Trap focus within modal when open
+      const modal = document.getElementById('newsletter-modal');
+      if (modal) {
+        modal.addEventListener('keydown', (e) => {
+          if (e.key !== 'Tab') return;
+          
+          const focusableElements = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        });
+      }
+    }
+  })();
+</script>
