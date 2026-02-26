@@ -1,34 +1,55 @@
 ---
-import Button from '../ui/Button.astro';
+import Button from "../ui/Button.astro";
 ---
 
 <!-- Single variant: Tier 2 style with border -->
-<div class="bg-gray-50 border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700">
-  <div class="flex items-center gap-3 mb-3">
-    <!-- Material Symbols: favorite (rounded) -->
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" class="text-red-500 dark:text-red-400">
-      <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
-    </svg>
-    <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-0">
-      Help keep this platform free
-    </h3>
-  </div>
-  
-  <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-    Every coffee helps us add more verified projects and keep Giveback Guide free for everyone.
-  </p>
-  
-  <Button
-    href="https://buymeacoffee.com/giveback.guide"
-    variant="primary"
-    fullWidth={true}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Buy Us a Coffee
-    <!-- Material Symbols: open_in_new (rounded) -->
-    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor" class="ml-2">
-      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/>
-    </svg>
-  </Button>
+<div
+    class="bg-gray-50 border border-gray-200 rounded-lg p-6 dark:bg-gray-800 dark:border-gray-700"
+>
+    <div class="flex items-center gap-3 mb-3">
+        <!-- Material Symbols: favorite (rounded) -->
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="currentColor"
+            class="text-red-500 dark:text-red-400"
+        >
+            <path
+                d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
+            ></path>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-0">
+            Help keep this platform free
+        </h3>
+    </div>
+
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Every coffee helps us add more verified projects and keeps Giveback
+        Guide free for everyone.
+    </p>
+
+    <Button
+        href="https://buymeacoffee.com/giveback.guide"
+        variant="primary"
+        fullWidth={true}
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        Buy Us a Coffee
+        <!-- Material Symbols: open_in_new (rounded) -->
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="20px"
+            viewBox="0 -960 960 960"
+            width="20px"
+            fill="currentColor"
+            class="ml-2"
+        >
+            <path
+                d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
+            ></path>
+        </svg>
+    </Button>
 </div>
