@@ -4,7 +4,6 @@ import MainLayout from "./MainLayout.astro";
 import AdBox from "../components/features/ads/AdBox.astro";
 import StayCard from "../components/content/StayCard.astro";
 import { getCollection } from "astro:content";
-import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import SaveToList from "../components/features/save/SaveToList.astro";
 import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
@@ -19,406 +18,541 @@ type Props = CollectionEntry<"stays">["data"];
 
 const { properties } = Astro.props;
 const title =
-  (properties.sTitle || "Default Title") + " - Stays on Giveback Guide";
+    (properties.sTitle || "Default Title") + " - Stays on Giveback Guide";
 const image = properties.sImageURL1 || "/giveback-guide-placeholder.jpg"; // Fallback image
 
 // Format pLocale as a comma-separated string
 const localeString = Array.isArray(properties.sLocale)
-  ? properties.sLocale.join(", ")
-  : properties.sLocale || "";
+    ? properties.sLocale.join(", ")
+    : properties.sLocale || "";
 
 // Generate the description
 const description = `Give back to the local community in ${localeString} by engaging with ${properties.sName} on your next trip.`;
 
 const allStays = await getCollection("stays");
-const actionId = String((properties as any).sID ?? (properties as any).sSlug ?? '').trim();
+const actionId = String(
+    (properties as any).sID ?? (properties as any).sSlug ?? "",
+).trim();
 
 // Filter related projects
 const relatedProjects = allStays
-  .filter((stay) => {
-    // Exclude the current project
-    if (stay.data.properties.sTitle === properties.sTitle) return false;
+    .filter((stay) => {
+        // Exclude the current project
+        if (stay.data.properties.sTitle === properties.sTitle) return false;
 
-    // Match by locale first
-    if (
-      Array.isArray(stay.data.properties.sLocale) &&
-      Array.isArray(properties.sLocale) &&
-      stay.data.properties.sLocale.some((stay) =>
-        properties.sLocale.includes(stay)
-      )
-    ) {
-      return true;
-    }
+        // Match by locale first
+        if (
+            Array.isArray(stay.data.properties.sLocale) &&
+            Array.isArray(properties.sLocale) &&
+            stay.data.properties.sLocale.some((stay) =>
+                properties.sLocale.includes(stay),
+            )
+        ) {
+            return true;
+        }
 
-    // Match by country if no locale match
-    if (
-      Array.isArray(stay.data.properties.sCountry) &&
-      Array.isArray(properties.sCountry) &&
-      stay.data.properties.sCountry.some((stay) =>
-        properties.sCountry.includes(stay)
-      )
-    ) {
-      return true;
-    }
+        // Match by country if no locale match
+        if (
+            Array.isArray(stay.data.properties.sCountry) &&
+            Array.isArray(properties.sCountry) &&
+            stay.data.properties.sCountry.some((stay) =>
+                properties.sCountry.includes(stay),
+            )
+        ) {
+            return true;
+        }
 
-    return false;
-  })
-  .slice(0, 3); // Limit to 3 projects
+        return false;
+    })
+    .slice(0, 3); // Limit to 3 projects
 
 // Split facilities into two columns
 let facilitiesLeft: string[] = [];
 let facilitiesRight: string[] = [];
 if (
-  Array.isArray(properties.sFacilities) &&
-  properties.sFacilities.length > 0
+    Array.isArray(properties.sFacilities) &&
+    properties.sFacilities.length > 0
 ) {
-  const mid = Math.ceil(properties.sFacilities.length / 2);
-  facilitiesLeft = properties.sFacilities.slice(0, mid);
-  facilitiesRight = properties.sFacilities.slice(mid);
+    const mid = Math.ceil(properties.sFacilities.length / 2);
+    facilitiesLeft = properties.sFacilities.slice(0, mid);
+    facilitiesRight = properties.sFacilities.slice(mid);
 }
 
 const fallbackImage = "/giveback-guide-placeholder.jpg";
 const images = [
-  properties.sImageURL1,
-  properties.sImageURL2,
-  properties.sImageURL3,
+    properties.sImageURL1,
+    properties.sImageURL2,
+    properties.sImageURL3,
 ].filter((img): img is string => Boolean(img)); // Remove undefined/null and type guard
 
 // Ensure we always have at least one image
 if (images.length === 0) {
-  images.push(fallbackImage);
+    images.push(fallbackImage);
 }
 ---
 
 <MainLayout title={title} description={description} image={image}>
-  <div class="bg-white dark:bg-gray-900">
-    <div
-      class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"
-    >
-      <!-- Main column -->
-      <main class="w-full">
-        <!-- Breadcrumbs -->
-        <section class="pt-6 px-4">
-          <Breadcrumbs 
-            crumbs={[
-              { label: "Home", href: "/" },
-              { label: "Stays", href: "/stays/" },
-              { label: properties.sName }
-            ]}
-          />
-        </section>
-
-        <!-- Featured Image -->
-        <section class="py-6 px-4">
-          <ResponsiveImage
-            data-pagefind-meta="image[src], image_alt[alt]"
-            class="w-full drop-shadow-xl rounded-lg"
-            src={images[0]}
-            alt={properties.sName}
-            fetchpriority="high"
-            loading="eager"
-            preset="hero"
-            transitionName={`stay-${properties.sSlug}`}
-          />
-        </section>
-
-        <!-- Title and Metadata -->
-        <section class="py-6 px-4">
-          <StayMetadata 
-            stayName={properties.sName}
-            types={properties.sType}
-            locales={properties.sLocale}
-            countries={properties.sCountry}
-            verificationStatus={properties.sVerify}
-            isFree={false}
-          >
-            <h1
-              class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-              data-pagefind-meta="title"
-              style={`view-transition-name: stay-title-${properties.sSlug}`}
-            >
-              {properties.sTitle}
-            </h1>
-          </StayMetadata>
-        </section>
-
-        <!-- Action Bar (mobile/tablet only) -->
-        {actionId && (
-          <section class="py-6 px-4 lg:hidden">
-            <ActionBar 
-              itemType="stay"
-              itemId={actionId}
-              primaryLabel="Official Website"
-              primaryUrl={properties.sURL}
-              primaryIcon="external"
-              getInvolvedHeading="Reserve your stay"
-              getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
-              moreOptions={[
-                ...(properties.sBookingURL ? [{ label: "Booking.com", url: properties.sBookingURL, icon: "calendar" }] : []),
-                ...(properties.sHotelsURL ? [{ label: "Hotels.com", url: properties.sHotelsURL, icon: "calendar" }] : []),
-                ...(properties.sAgodaURL ? [{ label: "Agoda", url: properties.sAgodaURL, icon: "calendar" }] : []),
-                ...(properties.sOtherURL ? [{ label: "Alternative Booking", url: properties.sOtherURL, icon: "calendar" }] : []),
-                ...(properties.sMapsURL ? [{ label: "View on Map", url: properties.sMapsURL, icon: "map" }] : [])
-              ].filter(Boolean)}
-            />
-          </section>
-        )}
-
-        <!-- Impact Areas Section -->
-        {
-          properties.sImpactsNames && properties.sImpactsNames.length > 0 && (
-            <section class="py-6 px-4">
-              <div class="flex items-center justify-between gap-4 mb-4">
-                <div class="flex-1">
-                  <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-                    Impact Areas
-                  </h2>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    This stay has a positive impact in the following areas.
-                  </p>
-                </div>
-                <a 
-                  href="/about/impacts" 
-                  class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 flex-shrink-0"
-                >
-                  Learn more
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {
-                  properties.sImpactsNames.map((areaName: string) => (
-                    <ImpactAreaCard
-                      name={areaName}
-                      mode="compact"
-                      displayMode="icon"
-                      showBackground={true}
-                      iconSize={200}
-                      iconOpacity={0.04}
+    <div class="bg-white dark:bg-gray-900">
+        <div
+            class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"
+        >
+            <!-- Main column -->
+            <main class="w-full">
+                <!-- Breadcrumbs -->
+                <section class="pt-6 px-4">
+                    <Breadcrumbs
+                        crumbs={[
+                            { label: "Home", href: "/" },
+                            { label: "Stays", href: "/stays/" },
+                            { label: properties.sName },
+                        ]}
                     />
-                  ))
+                </section>
+
+                <!-- Featured Image -->
+                <section class="py-6 px-4">
+                    <ResponsiveImage
+                        data-pagefind-meta="image[src], image_alt[alt]"
+                        class="w-full drop-shadow-xl rounded-lg"
+                        src={images[0]}
+                        alt={properties.sName}
+                        fetchpriority="high"
+                        loading="eager"
+                        preset="hero"
+                        transitionName={`stay-${properties.sSlug}`}
+                    />
+                </section>
+
+                <!-- Title and Metadata -->
+                <section class="py-6 px-4">
+                    <StayMetadata
+                        stayName={properties.sName}
+                        types={properties.sType}
+                        locales={properties.sLocale}
+                        countries={properties.sCountry}
+                        verificationStatus={properties.sVerify}
+                        isFree={false}
+                    >
+                        <h1
+                            class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+                            data-pagefind-meta="title"
+                            style={`view-transition-name: stay-title-${properties.sSlug}`}
+                        >
+                            {properties.sTitle}
+                        </h1>
+                    </StayMetadata>
+                </section>
+
+                <!-- Action Bar (mobile/tablet only) -->
+                {
+                    actionId && (
+                        <section class="py-6 px-4 lg:hidden">
+                            <ActionBar
+                                itemType="stay"
+                                itemId={actionId}
+                                primaryLabel="Official Website"
+                                primaryUrl={properties.sURL}
+                                primaryIcon="external"
+                                getInvolvedHeading="Reserve your stay"
+                                getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+                                moreOptions={[
+                                    ...(properties.sBookingURL
+                                        ? [
+                                              {
+                                                  label: "Booking.com",
+                                                  url: properties.sBookingURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sHotelsURL
+                                        ? [
+                                              {
+                                                  label: "Hotels.com",
+                                                  url: properties.sHotelsURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sAgodaURL
+                                        ? [
+                                              {
+                                                  label: "Agoda",
+                                                  url: properties.sAgodaURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sOtherURL
+                                        ? [
+                                              {
+                                                  label: "Alternative Booking",
+                                                  url: properties.sOtherURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sMapsURL
+                                        ? [
+                                              {
+                                                  label: "View on Map",
+                                                  url: properties.sMapsURL,
+                                                  icon: "map",
+                                              },
+                                          ]
+                                        : []),
+                                ].filter(Boolean)}
+                            />
+                        </section>
+                    )
                 }
-              </div>
-            </section>
-          )
-        }
 
-        <!-- Ad Box (in-content placement after Impact Areas) -->
-        <section class="py-6 px-4">
-          <AdBox />
-        </section>
+                <!-- Impact Areas Section -->
+                {
+                    properties.sImpactsNames &&
+                        properties.sImpactsNames.length > 0 && (
+                            <section class="py-6 px-4">
+                                <div class="flex items-center justify-between gap-4 mb-4">
+                                    <div class="flex-1">
+                                        <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
+                                            Impact Areas
+                                        </h2>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            This stay has a positive impact in
+                                            the following areas.
+                                        </p>
+                                    </div>
+                                    <a
+                                        href="/about/impacts"
+                                        class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 flex-shrink-0"
+                                    >
+                                        Learn more
+                                        <svg
+                                            class="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {properties.sImpactsNames.map(
+                                        (areaName: string) => (
+                                            <ImpactAreaCard
+                                                name={areaName}
+                                                mode="compact"
+                                                displayMode="icon"
+                                                showBackground={true}
+                                                iconSize={200}
+                                                iconOpacity={0.04}
+                                            />
+                                        ),
+                                    )}
+                                </div>
+                            </section>
+                        )
+                }
 
-        <!-- Facilities and Amenities Section -->
-        <section class="pt-6 pb-3 px-4">
-          <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
-            <h2
-              class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-            >
-              Facilities and amenities
-            </h2>
-            
-            {
-              facilitiesLeft.length > 0 || facilitiesRight.length > 0 ? (
-                <div class="flex flex-wrap gap-2">
-                  {facilitiesLeft.map((facility) => (
-                    <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor" class="text-green-600 dark:text-green-400">
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
-                      </svg>
-                      {facility}
-                    </span>
-                  ))}
-                  {facilitiesRight.map((facility) => (
-                    <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor" class="text-green-600 dark:text-green-400">
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
-                      </svg>
-                      {facility}
-                    </span>
-                  ))}
+                <!-- Ad Box (in-content placement after Impact Areas) -->
+                <section class="py-6 px-4">
+                    <AdBox />
+                </section>
+
+                <!-- Facilities and Amenities Section -->
+                <section class="pt-6 pb-3 px-4">
+                    <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
+                        <h2
+                            class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            Facilities and amenities
+                        </h2>
+
+                        {
+                            facilitiesLeft.length > 0 ||
+                            facilitiesRight.length > 0 ? (
+                                <div class="flex flex-wrap gap-2">
+                                    {facilitiesLeft.map((facility) => (
+                                        <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                height="16px"
+                                                viewBox="0 -960 960 960"
+                                                width="16px"
+                                                fill="currentColor"
+                                                class="text-green-600 dark:text-green-400"
+                                            >
+                                                <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+                                            </svg>
+                                            {facility}
+                                        </span>
+                                    ))}
+                                    {facilitiesRight.map((facility) => (
+                                        <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                height="16px"
+                                                viewBox="0 -960 960 960"
+                                                width="16px"
+                                                fill="currentColor"
+                                                class="text-green-600 dark:text-green-400"
+                                            >
+                                                <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+                                            </svg>
+                                            {facility}
+                                        </span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p class="text-gray-500 dark:text-gray-400">
+                                    Facilities information is currently
+                                    unavailable
+                                </p>
+                            )
+                        }
+                    </div>
+                </section>
+                <!-- About Section -->
+                <section class="pt-6 pb-3 px-4">
+                    <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
+                        <h2
+                            class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            About this stay
+                        </h2>
+                        <article
+                            class="prose prose-sm sm:prose-base lg:prose-lg max-w-none prose-teal dark:prose-invert"
+                            data-pagefind-body
+                            data-pagefind-filter="type:stay"
+                        >
+                            <slot />
+                            <!-- Hidden searchable metadata for improved search indexing -->
+                            <div
+                                style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;"
+                                aria-hidden="true"
+                            >
+                                {
+                                    properties.sName && (
+                                        <span data-pagefind-meta="organiser">
+                                            {properties.sName}
+                                        </span>
+                                    )
+                                }
+                                {
+                                    properties.sCountry && (
+                                        <span data-pagefind-meta="countries">
+                                            {Array.isArray(properties.sCountry)
+                                                ? properties.sCountry.join(", ")
+                                                : properties.sCountry}
+                                        </span>
+                                    )
+                                }
+                                {
+                                    properties.sLocale && (
+                                        <span data-pagefind-meta="locale">
+                                            {Array.isArray(properties.sLocale)
+                                                ? properties.sLocale.join(", ")
+                                                : properties.sLocale}
+                                        </span>
+                                    )
+                                }
+                                {
+                                    properties.sImpactsNames && (
+                                        <span data-pagefind-meta="impactAreas">
+                                            {Array.isArray(
+                                                properties.sImpactsNames,
+                                            )
+                                                ? properties.sImpactsNames.join(
+                                                      ", ",
+                                                  )
+                                                : properties.sImpactsNames}
+                                        </span>
+                                    )
+                                }
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Stock Photo Notice -->
+                {
+                    properties.sStockPhoto && (
+                        <section class="pt-3 pb-3 px-4">
+                            <StockPhotoNotice />
+                        </section>
+                    )
+                }
+
+                <!-- Verification Section -->
+                <section class="pt-3 pb-3 px-4">
+                    <VerificationBox
+                        verificationStatus={properties.sVerify}
+                        testimonial={properties.sReview}
+                    />
+                </section>
+
+                <!-- Support CTA (mobile/tablet only) -->
+                <section class="pt-3 pb-6 px-4 lg:hidden">
+                    <SupportCTA />
+                </section>
+
+                <!-- Verify/Report Buttons -->
+                <section class="pt-6 pb-8 px-4">
+                    <div class="flex justify-center items-center gap-3">
+                        <a
+                            href="/verify"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 22 22"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
+                                ></path>
+                            </svg>
+                            Verify this stay
+                        </a>
+                        <a
+                            href="/report"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 22 22"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                ></path>
+                            </svg>
+                            Report a problem
+                        </a>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Aside column (desktop only) -->
+            <aside class="hidden lg:block pt-16">
+                <div class="sticky top-24 space-y-6 pb-24">
+                    <!-- Action Bar (sticky in sidebar) -->
+                    {
+                        actionId && (
+                            <ActionBar
+                                itemType="stay"
+                                itemId={actionId}
+                                primaryLabel="Official Website"
+                                primaryUrl={properties.sURL}
+                                primaryIcon="external"
+                                getInvolvedHeading="Reserve your stay"
+                                getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+                                moreOptions={[
+                                    ...(properties.sBookingURL
+                                        ? [
+                                              {
+                                                  label: "Booking.com",
+                                                  url: properties.sBookingURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sHotelsURL
+                                        ? [
+                                              {
+                                                  label: "Hotels.com",
+                                                  url: properties.sHotelsURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sAgodaURL
+                                        ? [
+                                              {
+                                                  label: "Agoda",
+                                                  url: properties.sAgodaURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sOtherURL
+                                        ? [
+                                              {
+                                                  label: "Alternative Booking",
+                                                  url: properties.sOtherURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.sMapsURL
+                                        ? [
+                                              {
+                                                  label: "View on Map",
+                                                  url: properties.sMapsURL,
+                                                  icon: "map",
+                                              },
+                                          ]
+                                        : []),
+                                ].filter(Boolean)}
+                            />
+                        )
+                    }
+
+                    <!-- Support CTA (desktop only) -->
+                    <SupportCTA />
                 </div>
-              ) : (
-                <p class="text-gray-500 dark:text-gray-400">
-                  Facilities information is currently unavailable
-                </p>
-              )
-            }
-          </div>
-        </section>        <!-- About Section -->
-        <section class="pt-6 pb-3 px-4">
-          <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
-            <h2
-              class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-            >
-              About this stay
-            </h2>
-            <article
-              class="prose prose-sm sm:prose-base lg:prose-lg max-w-none prose-teal dark:prose-invert"
-              data-pagefind-body
-              data-pagefind-filter="type:stay"
-            >
-              <slot />
-              <!-- Hidden searchable metadata for improved search indexing -->
-              <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
-                {properties.sName && (
-                  <span data-pagefind-meta="organiser">
-                    {properties.sName}
-                  </span>
-                )}
-                {properties.sCountry && (
-                  <span data-pagefind-meta="countries">
-                    {Array.isArray(properties.sCountry) 
-                      ? properties.sCountry.join(", ") 
-                      : properties.sCountry}
-                  </span>
-                )}
-                {properties.sLocale && (
-                  <span data-pagefind-meta="locale">
-                    {Array.isArray(properties.sLocale) 
-                      ? properties.sLocale.join(", ") 
-                      : properties.sLocale}
-                  </span>
-                )}
-                {properties.sImpactsNames && (
-                  <span data-pagefind-meta="impactAreas">
-                    {Array.isArray(properties.sImpactsNames) 
-                      ? properties.sImpactsNames.join(", ") 
-                      : properties.sImpactsNames}
-                  </span>
-                )}
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <!-- Stock Photo Notice -->
-        {properties.sStockPhoto && (
-          <section class="pt-3 pb-3 px-4">
-            <StockPhotoNotice />
-          </section>
-        )}
-
-        <!-- Verification Section -->
-        <section class="pt-3 pb-3 px-4">
-          <VerificationBox 
-            verificationStatus={properties.sVerify}
-            testimonial={properties.sReview}
-          />
-        </section>
-
-        <!-- Support CTA (mobile/tablet only) -->
-        <section class="pt-3 pb-6 px-4 lg:hidden">
-          <SupportCTA />
-        </section>
-
-        <!-- Verify/Report Buttons -->
-        <section class="pt-6 pb-8 px-4">
-          <div class="flex justify-center items-center gap-3">
-            <a 
-              href="/verify"
-              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-            >
-              <svg
-                class="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 22"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                ></path>
-              </svg>
-              Verify this stay
-            </a>
-            <a 
-              href="/report"
-              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-            >
-              <svg
-                class="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 22 22"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                ></path>
-              </svg>
-              Report a problem
-            </a>
-          </div>
-        </section>
-      </main>
-
-      <!-- Aside column (desktop only) -->
-      <aside class="hidden lg:block pt-16">
-        <div class="sticky top-24 space-y-6 pb-24">
-          <!-- Action Bar (sticky in sidebar) -->
-          {actionId && (
-            <ActionBar 
-              itemType="stay"
-              itemId={actionId}
-              primaryLabel="Official Website"
-              primaryUrl={properties.sURL}
-              primaryIcon="external"
-              getInvolvedHeading="Reserve your stay"
-              getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
-              moreOptions={[
-                ...(properties.sBookingURL ? [{ label: "Booking.com", url: properties.sBookingURL, icon: "calendar" }] : []),
-                ...(properties.sHotelsURL ? [{ label: "Hotels.com", url: properties.sHotelsURL, icon: "calendar" }] : []),
-                ...(properties.sAgodaURL ? [{ label: "Agoda", url: properties.sAgodaURL, icon: "calendar" }] : []),
-                ...(properties.sOtherURL ? [{ label: "Alternative Booking", url: properties.sOtherURL, icon: "calendar" }] : []),
-                ...(properties.sMapsURL ? [{ label: "View on Map", url: properties.sMapsURL, icon: "map" }] : [])
-              ].filter(Boolean)}
-            />
-          )}
-          
-          <!-- Support CTA (desktop only) -->
-          <SupportCTA />
+            </aside>
         </div>
-      </aside>
     </div>
-  </div>
-  <!-- Related Projects -->
-        <section class="py-10 px-4 bg-gray-50 dark:bg-gray-900">
-          <div class="mx-auto w-full max-w-screen-xl">
+    <!-- Related Projects -->
+    <section class="py-10 px-4 bg-gray-50 dark:bg-gray-900">
+        <div class="mx-auto w-full max-w-screen-xl">
             <h2
-              class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
-              You might also like...
+                You might also like...
             </h2>
             <div
-              class="space-y-8 md:grid md:grid-cols-3 md:gap-12 md:space-y-0"
+                class="space-y-8 md:grid md:grid-cols-3 md:gap-12 md:space-y-0"
             >
-              {
-                relatedProjects.length > 0 ? (
-                  relatedProjects.map((stay) => <StayCard stay={stay as any} />)
-                ) : (
-                  <p class="text-gray-500 dark:text-gray-400">
-                    There are no related stays at the moment. If you know of a
-                    stay that would look awesome here,{" "}
-                    <a class="text-black underline" href="/submit">
-                      please let us know!
-                    </a>
-                  </p>
-                )
-              }
+                {
+                    relatedProjects.length > 0 ? (
+                        relatedProjects.map((stay) => (
+                            <StayCard stay={stay as any} />
+                        ))
+                    ) : (
+                        <p class="text-gray-500 dark:text-gray-400">
+                            There are no related stays at the moment. If you
+                            know of a stay that would look awesome here,{" "}
+                            <a class="text-black underline" href="/submit">
+                                please let us know!
+                            </a>
+                        </p>
+                    )
+                }
             </div>
-          </div>
-        </section>
+        </div>
+    </section>
 
-<script is:inline type="text/javascript" src="https://s.skimresources.com/js/85974X1773969.skimlinks.js"></script>
-
+    <script
+        is:inline
+        type="text/javascript"
+        src="https://s.skimresources.com/js/85974X1773969.skimlinks.js"
+    ></script>
 </MainLayout>
-
-

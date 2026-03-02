@@ -6,7 +6,6 @@ import ProjectCard from "../components/content/ProjectCard.astro";
 import { getCollection } from "astro:content";
 import SupportBox from "../components/sections/SupportBox.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
-import SubscribeDrawer from "../components/features/popups/SubscribeDrawer.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import SaveToList from "../components/features/save/SaveToList.astro";
 import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
@@ -22,322 +21,389 @@ type Props = CollectionEntry<"projects">["data"];
 
 const { properties } = Astro.props;
 const title =
-  (properties.pTitle || "Default Title") + " - Projects on Giveback Guide";
+    (properties.pTitle || "Default Title") + " - Projects on Giveback Guide";
 const image = properties.pImageURL || "/giveback-guide-placeholder.jpg"; // Fallback image
 
 // Format pLocale as a comma-separated string
 const localeString = Array.isArray(properties.pLocale)
-  ? properties.pLocale.join(", ")
-  : properties.pLocale || "";
+    ? properties.pLocale.join(", ")
+    : properties.pLocale || "";
 
 // Generate the description
 const description = `Give back to the local community in ${localeString} by engaging with ${properties.pOrganiser} on your next trip.`;
 
 const allProjects = await getCollection("projects");
-const actionId = String((properties as any).pID ?? (properties as any).pSlug ?? '').trim();
+const actionId = String(
+    (properties as any).pID ?? (properties as any).pSlug ?? "",
+).trim();
 
 // Filter related projects
 const relatedProjects = allProjects
-  .filter((project) => {
-    // Exclude the current project
-    if (project.data.properties.pTitle === properties.pTitle) return false;
+    .filter((project) => {
+        // Exclude the current project
+        if (project.data.properties.pTitle === properties.pTitle) return false;
 
-    // Match by locale first
-    if (
-      Array.isArray(project.data.properties.pLocale) &&
-      Array.isArray(properties.pLocale) &&
-      project.data.properties.pLocale.some((locale) =>
-        properties.pLocale.includes(locale)
-      )
-    ) {
-      return true;
-    }
+        // Match by locale first
+        if (
+            Array.isArray(project.data.properties.pLocale) &&
+            Array.isArray(properties.pLocale) &&
+            project.data.properties.pLocale.some((locale) =>
+                properties.pLocale.includes(locale),
+            )
+        ) {
+            return true;
+        }
 
-    // Match by country if no locale match
-    if (
-      Array.isArray(project.data.properties.pCountry) &&
-      Array.isArray(properties.pCountry) &&
-      project.data.properties.pCountry.some((country) =>
-        properties.pCountry.includes(country)
-      )
-    ) {
-      return true;
-    }
+        // Match by country if no locale match
+        if (
+            Array.isArray(project.data.properties.pCountry) &&
+            Array.isArray(properties.pCountry) &&
+            project.data.properties.pCountry.some((country) =>
+                properties.pCountry.includes(country),
+            )
+        ) {
+            return true;
+        }
 
-    return false;
-  })
-  .slice(0, 3); // Limit to 3 projects
+        return false;
+    })
+    .slice(0, 3); // Limit to 3 projects
 ---
 
 <MainLayout title={title} description={description} image={image}>
-  <div>
-    <div
-      class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"
-    >
-      <!-- Main column -->
-      <main class="w-full">
-        <!-- Breadcrumbs -->
-        <section class="pt-6 px-4">
-          <Breadcrumbs 
-            crumbs={[
-              { label: "Home", href: "/" },
-              { label: "Projects", href: "/projects/" },
-              { label: properties.pOrganiser }
-            ]}
-          />
-        </section>
-
-        <!-- Featured Image -->
-        <section class="py-6 px-4">
-          <ResponsiveImage
-            data-pagefind-meta="image[src], image_alt[alt]"
-            class="w-full drop-shadow-xl rounded-lg"
-            src={properties.pImageURL ?? "/default-image.jpg"}
-            alt={properties.pOrganiser}
-            fetchpriority="high"
-            loading="eager"
-            preset="hero"
-            transitionName={`project-${properties.pSlug}`}
-          />
-        </section>
-
-        <!-- Title and Info (now below gallery, full width) -->
-        <section class="py-6 px-4">
-          <ProjectMetadata 
-            operator={properties.pOrganiser}
-            types={properties.pTypesNames}
-            locales={properties.pLocale}
-            countries={properties.pCountry}
-            verificationStatus={properties.pVerify}
-            isFree={!!properties.pFree}
-          >
-            <h1
-              class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-              data-pagefind-meta="title"
-              style={`view-transition-name: project-title-${properties.pSlug}`}
-            >
-              {properties.pTitle}
-            </h1>
-          </ProjectMetadata>
-        </section>
-
-        <!-- Action Bar -->
-        {actionId && (
-          <section class="py-6 px-4 lg:hidden">
-            <ActionBar 
-              itemType="project"
-              itemId={actionId}
-              primaryLabel="Visit Website"
-              primaryUrl={properties.pURL}
-              primaryIcon="external"
-              getInvolvedText={properties.pGetInvolved}
-              moreOptions={[
-                ...(properties.pGYGURL ? [{ label: "Book on GetYourGuide", url: properties.pGYGURL, icon: "calendar" }] : []),
-                ...(properties.pMapsURL ? [{ label: "View on Map", url: properties.pMapsURL, icon: "map" }] : [])
-              ].filter(Boolean)}
-            />
-          </section>
-        )}
-
-        <!-- Impact Areas Section -->
-        {
-          properties.pImpactsNames && properties.pImpactsNames.length > 0 && (
-            <section class="py-6 px-4">
-              <div class="flex items-center justify-between gap-4 mb-4">
-                <div class="flex-1">
-                  <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-                    Impact Areas
-                  </h2>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    This project has a positive impact in the following areas.
-                  </p>
-                </div>
-                <a 
-                  href="/about/impacts" 
-                  class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 flex-shrink-0"
-                >
-                  Learn more
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {
-                  properties.pImpactsNames.map((areaName: string) => (
-                    <ImpactAreaCard
-                      name={areaName}
-                      mode="compact"
-                      displayMode="icon"
-                      showBackground={true}
-                      iconSize={200}
-                      iconOpacity={0.04}
-                    />
-                  ))
-                }
-              </div>
-            </section>
-          )
-        }
-
-        <!-- About Section -->
-        <section class="pt-6 pb-3 px-4">
-          <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
-            <h2
-              class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-            >
-              About this project
-            </h2>
-            <article
-              class="prose prose-sm sm:prose-base lg:prose-lg max-w-none prose-teal dark:prose-invert"
-              data-pagefind-body
-              data-pagefind-filter="type:project"
-            >
-              <slot />
-              <!-- Hidden searchable metadata for improved search indexing -->
-              <div style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
-                {properties.pOrganiser && (
-                  <span data-pagefind-meta="organiser">
-                    {properties.pOrganiser}
-                  </span>
-                )}
-                {properties.pCountry && (
-                  <span data-pagefind-meta="countries">
-                    {Array.isArray(properties.pCountry) 
-                      ? properties.pCountry.join(", ") 
-                      : properties.pCountry}
-                  </span>
-                )}
-                {properties.pLocale && (
-                  <span data-pagefind-meta="locale">
-                    {Array.isArray(properties.pLocale) 
-                      ? properties.pLocale.join(", ") 
-                      : properties.pLocale}
-                  </span>
-                )}
-                {properties.pImpactsNames && (
-                  <span data-pagefind-meta="impactAreas">
-                    {Array.isArray(properties.pImpactsNames) 
-                      ? properties.pImpactsNames.join(", ") 
-                      : properties.pImpactsNames}
-                  </span>
-                )}
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <!-- Verification Section -->
-        <section class="pt-3 pb-3 px-4">
-          <VerificationBox 
-            verificationStatus={properties.pVerify}
-            testimonial={properties.pReview}
-          />
-        </section>
-
-        <!-- Support CTA (mobile/tablet only) -->
-        <section class="pt-3 pb-6 px-4 lg:hidden">
-          <SupportCTA />
-        </section>
-
-        <!-- Verify/Report Buttons -->
-        <section class="pt-6 pb-8 px-4">
-          <div class="flex justify-center items-center gap-3">
-            <a 
-              href="/verify"
-              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-            >
-              <svg
-                class="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 22"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
-                ></path>
-              </svg>
-              Verify this project
-            </a>
-            <a 
-              href="/report"
-              class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-            >
-              <svg
-                class="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 22 22"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                ></path>
-              </svg>
-              Report a problem
-            </a>
-          </div>
-        </section>
-      </main>
-
-    <!-- Aside column (desktop only) -->
-      <aside class="hidden lg:block pt-16">
-        <div class="sticky top-24 space-y-6 pb-24">
-          <!-- Action Bar (sticky in sidebar) -->
-          {actionId && (
-            <ActionBar 
-              itemType="project"
-              itemId={actionId}
-              primaryLabel="Visit Website"
-              primaryUrl={properties.pURL}
-              primaryIcon="external"
-              getInvolvedText={properties.pGetInvolved}
-              moreOptions={[
-                ...(properties.pGYGURL ? [{ label: "Book on GetYourGuide", url: properties.pGYGURL, icon: "calendar" }] : []),
-                ...(properties.pMapsURL ? [{ label: "View on Map", url: properties.pMapsURL, icon: "map" }] : [])
-              ].filter(Boolean)}
-            />
-          )}
-          
-          <!-- Support CTA (desktop only) -->
-          <SupportCTA />
-        </div>
-      </aside>
-    </div>
-    <!-- Related Projects -->
-    <section class="py-10 px-4 bg-gray-50 dark:bg-gray-900">
-      <div class="mx-auto w-full max-w-screen-xl">
-        <h2
-          class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+    <div>
+        <div
+            class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"
         >
-          You might also like...
-        </h2>
-        <div class="space-y-8 md:grid md:grid-cols-3 md:gap-12 md:space-y-0">
-          {
-            relatedProjects.length > 0 ? (
-              relatedProjects.map((project) => (
-                <ProjectCard project={project} />
-              ))
-            ) : (
-              <p class="text-gray-500 dark:text-gray-400">
-                There are no related projects at the moment. If you know of a project
-                that would look awesome here,{" "}
-                <a class="text-black underline" href="/submit">
-                  please let us know!
-                </a>
-              </p>
-            )
-          }
-        </div>
-      </div>
-    </section>
-  </div>
+            <!-- Main column -->
+            <main class="w-full">
+                <!-- Breadcrumbs -->
+                <section class="pt-6 px-4">
+                    <Breadcrumbs
+                        crumbs={[
+                            { label: "Home", href: "/" },
+                            { label: "Projects", href: "/projects/" },
+                            { label: properties.pOrganiser },
+                        ]}
+                    />
+                </section>
 
+                <!-- Featured Image -->
+                <section class="py-6 px-4">
+                    <ResponsiveImage
+                        data-pagefind-meta="image[src], image_alt[alt]"
+                        class="w-full drop-shadow-xl rounded-lg"
+                        src={properties.pImageURL ?? "/default-image.jpg"}
+                        alt={properties.pOrganiser}
+                        fetchpriority="high"
+                        loading="eager"
+                        preset="hero"
+                        transitionName={`project-${properties.pSlug}`}
+                    />
+                </section>
+
+                <!-- Title and Info (now below gallery, full width) -->
+                <section class="py-6 px-4">
+                    <ProjectMetadata
+                        operator={properties.pOrganiser}
+                        types={properties.pTypesNames}
+                        locales={properties.pLocale}
+                        countries={properties.pCountry}
+                        verificationStatus={properties.pVerify}
+                        isFree={!!properties.pFree}
+                    >
+                        <h1
+                            class="mb-0 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+                            data-pagefind-meta="title"
+                            style={`view-transition-name: project-title-${properties.pSlug}`}
+                        >
+                            {properties.pTitle}
+                        </h1>
+                    </ProjectMetadata>
+                </section>
+
+                <!-- Action Bar -->
+                {
+                    actionId && (
+                        <section class="py-6 px-4 lg:hidden">
+                            <ActionBar
+                                itemType="project"
+                                itemId={actionId}
+                                primaryLabel="Visit Website"
+                                primaryUrl={properties.pURL}
+                                primaryIcon="external"
+                                getInvolvedText={properties.pGetInvolved}
+                                moreOptions={[
+                                    ...(properties.pGYGURL
+                                        ? [
+                                              {
+                                                  label: "Book on GetYourGuide",
+                                                  url: properties.pGYGURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.pMapsURL
+                                        ? [
+                                              {
+                                                  label: "View on Map",
+                                                  url: properties.pMapsURL,
+                                                  icon: "map",
+                                              },
+                                          ]
+                                        : []),
+                                ].filter(Boolean)}
+                            />
+                        </section>
+                    )
+                }
+
+                <!-- Impact Areas Section -->
+                {
+                    properties.pImpactsNames &&
+                        properties.pImpactsNames.length > 0 && (
+                            <section class="py-6 px-4">
+                                <div class="flex items-center justify-between gap-4 mb-4">
+                                    <div class="flex-1">
+                                        <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
+                                            Impact Areas
+                                        </h2>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            This project has a positive impact
+                                            in the following areas.
+                                        </p>
+                                    </div>
+                                    <a
+                                        href="/about/impacts"
+                                        class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 flex-shrink-0"
+                                    >
+                                        Learn more
+                                        <svg
+                                            class="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {properties.pImpactsNames.map(
+                                        (areaName: string) => (
+                                            <ImpactAreaCard
+                                                name={areaName}
+                                                mode="compact"
+                                                displayMode="icon"
+                                                showBackground={true}
+                                                iconSize={200}
+                                                iconOpacity={0.04}
+                                            />
+                                        ),
+                                    )}
+                                </div>
+                            </section>
+                        )
+                }
+
+                <!-- About Section -->
+                <section class="pt-6 pb-3 px-4">
+                    <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
+                        <h2
+                            class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            About this project
+                        </h2>
+                        <article
+                            class="prose prose-sm sm:prose-base lg:prose-lg max-w-none prose-teal dark:prose-invert"
+                            data-pagefind-body
+                            data-pagefind-filter="type:project"
+                        >
+                            <slot />
+                            <!-- Hidden searchable metadata for improved search indexing -->
+                            <div
+                                style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;"
+                                aria-hidden="true"
+                            >
+                                {
+                                    properties.pOrganiser && (
+                                        <span data-pagefind-meta="organiser">
+                                            {properties.pOrganiser}
+                                        </span>
+                                    )
+                                }
+                                {
+                                    properties.pCountry && (
+                                        <span data-pagefind-meta="countries">
+                                            {Array.isArray(properties.pCountry)
+                                                ? properties.pCountry.join(", ")
+                                                : properties.pCountry}
+                                        </span>
+                                    )
+                                }
+                                {
+                                    properties.pLocale && (
+                                        <span data-pagefind-meta="locale">
+                                            {Array.isArray(properties.pLocale)
+                                                ? properties.pLocale.join(", ")
+                                                : properties.pLocale}
+                                        </span>
+                                    )
+                                }
+                                {
+                                    properties.pImpactsNames && (
+                                        <span data-pagefind-meta="impactAreas">
+                                            {Array.isArray(
+                                                properties.pImpactsNames,
+                                            )
+                                                ? properties.pImpactsNames.join(
+                                                      ", ",
+                                                  )
+                                                : properties.pImpactsNames}
+                                        </span>
+                                    )
+                                }
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Verification Section -->
+                <section class="pt-3 pb-3 px-4">
+                    <VerificationBox
+                        verificationStatus={properties.pVerify}
+                        testimonial={properties.pReview}
+                    />
+                </section>
+
+                <!-- Support CTA (mobile/tablet only) -->
+                <section class="pt-3 pb-6 px-4 lg:hidden">
+                    <SupportCTA />
+                </section>
+
+                <!-- Verify/Report Buttons -->
+                <section class="pt-6 pb-8 px-4">
+                    <div class="flex justify-center items-center gap-3">
+                        <a
+                            href="/verify"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 22 22"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z"
+                                ></path>
+                            </svg>
+                            Verify this project
+                        </a>
+                        <a
+                            href="/report"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 22 22"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                ></path>
+                            </svg>
+                            Report a problem
+                        </a>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Aside column (desktop only) -->
+            <aside class="hidden lg:block pt-16">
+                <div class="sticky top-24 space-y-6 pb-24">
+                    <!-- Action Bar (sticky in sidebar) -->
+                    {
+                        actionId && (
+                            <ActionBar
+                                itemType="project"
+                                itemId={actionId}
+                                primaryLabel="Visit Website"
+                                primaryUrl={properties.pURL}
+                                primaryIcon="external"
+                                getInvolvedText={properties.pGetInvolved}
+                                moreOptions={[
+                                    ...(properties.pGYGURL
+                                        ? [
+                                              {
+                                                  label: "Book on GetYourGuide",
+                                                  url: properties.pGYGURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.pMapsURL
+                                        ? [
+                                              {
+                                                  label: "View on Map",
+                                                  url: properties.pMapsURL,
+                                                  icon: "map",
+                                              },
+                                          ]
+                                        : []),
+                                ].filter(Boolean)}
+                            />
+                        )
+                    }
+
+                    <!-- Support CTA (desktop only) -->
+                    <SupportCTA />
+                </div>
+            </aside>
+        </div>
+        <!-- Related Projects -->
+        <section class="py-10 px-4 bg-gray-50 dark:bg-gray-900">
+            <div class="mx-auto w-full max-w-screen-xl">
+                <h2
+                    class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                >
+                    You might also like...
+                </h2>
+                <div
+                    class="space-y-8 md:grid md:grid-cols-3 md:gap-12 md:space-y-0"
+                >
+                    {
+                        relatedProjects.length > 0 ? (
+                            relatedProjects.map((project) => (
+                                <ProjectCard project={project} />
+                            ))
+                        ) : (
+                            <p class="text-gray-500 dark:text-gray-400">
+                                There are no related projects at the moment. If
+                                you know of a project that would look awesome
+                                here,{" "}
+                                <a class="text-black underline" href="/submit">
+                                    please let us know!
+                                </a>
+                            </p>
+                        )
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
 </MainLayout>
