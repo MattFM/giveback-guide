@@ -24,30 +24,22 @@ const currentCountry = await currentCountryPromise;
 
 const projects = await getCollection("projects");
 
-// Count the number of projects for each country
-const countryCounts = projects.reduce((acc: Record<string, number>, project) => {
-  const countries = Array.isArray(project.data.properties.pCountry)
-    ? project.data.properties.pCountry
-    : [project.data.properties.pCountry];
-
-  countries.forEach((country) => {
-    if (country) {
-      acc[country] = (acc[country] || 0) + 1;
-    }
-  });
-
-  return acc;
-}, {});
-
 // Extract unique countries and sort alphabetically
-const uniqueCountries = Object.keys(countryCounts).sort();
+const uniqueCountries = [
+  ...new Set(
+    projects.flatMap((project) =>
+      Array.isArray(project.data.properties.pCountry)
+        ? project.data.properties.pCountry
+        : [project.data.properties.pCountry]
+    )
+  ),
+].sort();
 
 // Transform to items array for BaseSelectDropdown
 const items = uniqueCountries.map((country) => {
   const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
   return {
     name: country,
-    count: countryCounts[country],
     slug: countrySlug,
     url: `/projects/${countrySlug}`,
   };

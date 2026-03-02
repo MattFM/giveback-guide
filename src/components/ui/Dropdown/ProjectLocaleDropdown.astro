@@ -19,38 +19,22 @@ const filteredProjects = projects.filter((project) => {
   return countries.includes(currentCountry);
 });
 
-// Count the number of projects for each locale within the current country
-const localeCounts = filteredProjects.reduce((acc: Record<string, number>, project) => {
-  const countries = Array.isArray(project.data.properties.pCountry)
-    ? project.data.properties.pCountry.map((c) =>
-        c.toLowerCase().replace(/\s+/g, "-")
-      )
-    : [String(project.data.properties.pCountry).toLowerCase().replace(/\s+/g, "-")];
-
-  const locales = Array.isArray(project.data.properties.pLocale)
-    ? project.data.properties.pLocale
-    : [project.data.properties.pLocale];
-
-  if (countries.includes(currentCountry)) {
-    locales.forEach((locale) => {
-      if (locale) {
-        acc[locale] = (acc[locale] || 0) + 1;
-      }
-    });
-  }
-
-  return acc;
-}, {});
-
-// Extract unique locales and sort alphabetically
-const uniqueLocales = Object.keys(localeCounts).sort();
+// Extract unique locales within the current country and sort alphabetically
+const uniqueLocales = [
+  ...new Set(
+    filteredProjects.flatMap((project) =>
+      Array.isArray(project.data.properties.pLocale)
+        ? project.data.properties.pLocale
+        : [project.data.properties.pLocale]
+    )
+  ),
+].sort();
 
 // Transform to items array for BaseSelectDropdown
 const items = uniqueLocales.map((locale) => {
   const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
   return {
     name: locale,
-    count: localeCounts[locale],
     slug: localeSlug,
     url: `/projects/${currentCountry}/${localeSlug}`,
   };

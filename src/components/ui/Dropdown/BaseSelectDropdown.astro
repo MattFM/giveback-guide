@@ -3,7 +3,7 @@
 // Handles all the common logic for country/locale/tag filtering
 
 interface Props {
-  items: { name: string; count: number; slug: string; url: string }[];
+  items: { name: string; slug: string; url: string }[];
   currentItem?: string | null;
   placeholder: string;
   id?: string;
@@ -32,7 +32,7 @@ const {
       {
         items.map((item) => (
           <option value={item.url} selected={currentItem === item.slug}>
-            {item.name} ({item.count})
+            {item.name}
           </option>
         ))
       }

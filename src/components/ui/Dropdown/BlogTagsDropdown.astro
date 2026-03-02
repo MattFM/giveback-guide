@@ -21,26 +21,16 @@ const currentTag = await currentTagPromise;
 
 const posts = await getCollection("blog");
 
-// Count the number of posts for each tag
-const tagCounts = posts.reduce((acc: Record<string, number>, post) => {
-  post.data.tags.forEach((tag) => {
-    if (tag) {
-      acc[tag] = (acc[tag] || 0) + 1;
-    }
-  });
-
-  return acc;
-}, {});
-
 // Extract unique tags and sort alphabetically
-const uniqueTags = Object.keys(tagCounts).sort();
+const uniqueTags = [
+  ...new Set(posts.flatMap((post) => post.data.tags)),
+].sort();
 
 // Transform to items array for BaseSelectDropdown
 const items = uniqueTags.map((tag) => {
   const tagSlug = tag.toLowerCase().replace(/\s+/g, "-");
   return {
     name: tag,
-    count: tagCounts[tag],
     slug: tagSlug,
     url: `/blog/${tagSlug}`,
   };

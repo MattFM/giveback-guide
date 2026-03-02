@@ -19,38 +19,22 @@ const filteredStays = stays.filter((stay) => {
   return countries.includes(currentCountry);
 });
 
-// Count the number of stays for each locale within the current country
-const localeCounts = filteredStays.reduce((acc: Record<string, number>, stay) => {
-  const countries = Array.isArray(stay.data.properties.sCountry)
-    ? stay.data.properties.sCountry.map((c) =>
-        c.toLowerCase().replace(/\s+/g, "-")
-      )
-    : [String(stay.data.properties.sCountry).toLowerCase().replace(/\s+/g, "-")];
-
-  const locales = Array.isArray(stay.data.properties.sLocale)
-    ? stay.data.properties.sLocale
-    : [stay.data.properties.sLocale];
-
-  if (countries.includes(currentCountry)) {
-    locales.forEach((locale) => {
-      if (locale) {
-        acc[locale] = (acc[locale] || 0) + 1;
-      }
-    });
-  }
-
-  return acc;
-}, {});
-
-// Extract unique locales and sort alphabetically
-const uniqueLocales = Object.keys(localeCounts).sort();
+// Extract unique locales within the current country and sort alphabetically
+const uniqueLocales = [
+  ...new Set(
+    filteredStays.flatMap((stay) =>
+      Array.isArray(stay.data.properties.sLocale)
+        ? stay.data.properties.sLocale
+        : [stay.data.properties.sLocale]
+    )
+  ),
+].sort();
 
 // Transform to items array for BaseSelectDropdown
 const items = uniqueLocales.map((locale) => {
   const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
   return {
     name: locale,
-    count: localeCounts[locale],
     slug: localeSlug,
     url: `/stays/${currentCountry}/${localeSlug}`,
   };
