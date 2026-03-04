@@ -14,12 +14,17 @@ import Button from '../ui/Button.astro';
     - primaryLabel: string (e.g., "Visit Website", "View on Map")
     - primaryUrl: string (required)
     - primaryIcon: 'external' | 'map' | 'calendar' (optional)
+    - primaryHeading: string (optional, heading above primary button)
+    - primaryText: string (optional, text below primary heading)
     
     More Options (array of booking/action links):
     - moreOptions: array of { label, url, icon? }
+    - bookingHeading: string (optional, heading above booking buttons)
+    - bookingText: string (optional, text below booking heading)
     
     Get Involved:
-    - getInvolvedText: string (optional, custom description for how to get involved)
+    - getInvolvedHeading: string (optional, custom heading)
+    - getInvolvedText: string (optional, custom description)
     
   Usage:
     <ActionBar 
@@ -28,9 +33,14 @@ import Button from '../ui/Button.astro';
       primaryLabel="Visit Website"
       primaryUrl="https://example.com"
       primaryIcon="external"
-      getInvolvedText="Contact the organization to volunteer..."
+      primaryHeading="Find out more and book"
+      primaryText="Visit the official website..."
+      bookingHeading="Book your place"
+      bookingText="Reserve your stay with..."
+      getInvolvedHeading="Get Involved"
+      getInvolvedText="Contact the organization..."
       moreOptions={[
-        { label: "Book on GetYourGuide", url: "https://...", icon: "calendar" }
+        { label: "GetYourGuide", url: "https://...", icon: "calendar" }
       ]}
     />
 */
@@ -43,7 +53,11 @@ const {
   primaryIcon = 'external',
   moreOptions = [],
   getInvolvedText,
-  getInvolvedHeading
+  getInvolvedHeading,
+  primaryHeading,
+  primaryText,
+  bookingHeading,
+  bookingText
 } = Astro.props;
 
 const hasMoreOptions = moreOptions && moreOptions.length > 0;
@@ -59,6 +73,18 @@ const displayGetInvolvedHeading = getInvolvedHeading && getInvolvedHeading.trim(
   ? getInvolvedHeading
   : defaultGetInvolvedHeading;
 
+// Check if Get Involved section should be shown (only if props are explicitly provided)
+const showGetInvolved = (getInvolvedHeading && getInvolvedHeading.trim() !== "") || 
+                        (getInvolvedText && getInvolvedText.trim() !== "");
+
+// Check if primary section heading/text are provided
+const hasPrimaryHeading = primaryHeading && primaryHeading.trim() !== "";
+const hasPrimaryText = primaryText && primaryText.trim() !== "";
+
+// Check if booking section heading/text are provided
+const hasBookingHeading = bookingHeading && bookingHeading.trim() !== "";
+const hasBookingText = bookingText && bookingText.trim() !== "";
+
 // Separate booking buttons (calendar icon) from other options
 const bookingButtons = moreOptions.filter((opt: any) => opt.icon === 'calendar');
 const mapButton = moreOptions.find((opt: any) => opt.icon === 'map');
@@ -66,7 +92,7 @@ const mapButton = moreOptions.find((opt: any) => opt.icon === 'map');
 // Material Symbols icons (rounded style, inline SVG)
 const icons: Record<string, string> = {
   external: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>`,
-  map: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m600-120-240-84-186 72q-20 8-37-4.5T120-170v-560q0-13 7.5-23t20.5-15l212-72 240 84 186-72q20-8 37 4.5t17 33.5v560q0 13-7.5 23T812-192l-212 72Zm-40-98v-468l-160-56v468l160 56Zm80 0 120-40v-474l-120 46v468Zm-440-10 120-46v-468l-120 40v474Zm440-458v468-468Zm-320-56v468-468Z"/></svg>`,
+  map: `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
   calendar: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Z"/></svg>`,
   chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>`
 };
@@ -84,11 +110,35 @@ const icons: Record<string, string> = {
       mobileFullWidth={true}
     />
 
+    <!-- Get Involved Heading & Description (only shown when explicitly provided) -->
+    {showGetInvolved && (
+      <div class="pt-2">
+        <h3 class="text-base font-semibold text-white mb-1">{displayGetInvolvedHeading}</h3>
+        <p class="text-sm text-gray-300 leading-relaxed">
+          {displayGetInvolvedText}
+        </p>
+      </div>
+    )}
+
     <!-- Primary Action Buttons Row -->
-    <div class="flex gap-3">
-      <!-- Primary Action Button (70% - Purple Accent) -->
+    <div class="flex flex-col gap-3">
+      <!-- Primary Heading & Description (if provided) -->
+      {(hasPrimaryHeading || hasPrimaryText) && (
+        <div class="pt-2">
+          {hasPrimaryHeading && (
+            <h3 class="text-base font-semibold text-white mb-1">{primaryHeading}</h3>
+          )}
+          {hasPrimaryText && (
+            <p class="text-sm text-gray-300 leading-relaxed">
+              {primaryText}
+            </p>
+          )}
+        </div>
+      )}
+
+      <!-- Primary Action Button (Full Width - Purple Accent) -->
       {primaryUrl && (
-        <div class="flex-[7]">
+        <div class="w-full">
           <Button 
             href={primaryUrl}
             variant="accent"
@@ -103,82 +153,53 @@ const icons: Record<string, string> = {
         </div>
       )}
 
-      <!-- Map Button (30% - Secondary) -->
+      <!-- Map Button (Circular Icon-Only) -->
       {mapButton && (
-        <div class="flex-[3]">
-          <Button 
+        <div class="self-start">
+          <a 
             href={mapButton.url}
-            variant="secondary"
-            size="md"
-            fullWidth={true}
             target="_blank"
             rel="noopener noreferrer"
+            class="rounded-full w-10 h-10 flex items-center justify-center bg-white/10 border border-white/30 text-white hover:bg-white/20 transition-all duration-200"
           >
             <Fragment set:html={icons.map} />
-            <span class="hidden sm:inline">Map</span>
-          </Button>
+          </a>
         </div>
       )}
     </div>
 
-    <!-- Booking Platform Buttons (50/50 split rows on desktop, 100% on mobile) -->
+    <!-- Booking Platform Buttons (2x2 Grid Layout) -->
     {bookingButtons.length > 0 && (
       <>
-        {bookingButtons.map((button: any, index: number) => {
-          // Check if this button should start a new row (even index)
-          const isStartOfRow = index % 2 === 0;
-          const nextButton = bookingButtons[index + 1];
-          const isLastOddButton = index === bookingButtons.length - 1 && bookingButtons.length % 2 === 1;
-          
-          if (isStartOfRow) {
-            return (
-              <div class="flex flex-col sm:flex-row gap-3">
-                <div class="flex-1 min-w-0">
-                  <Button 
-                    href={button.url}
-                    variant="secondary"
-                    size="md"
-                    fullWidth={true}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style="background-color: rgba(169, 143, 250, 0.15); border: 1px solid rgba(169, 143, 250, 0.3); color: #F6F7F6;"
-                  >
-                    <Fragment set:html={icons.calendar} />
-                    <span>{button.label}</span>
-                  </Button>
-                </div>
-                {nextButton ? (
-                  <div class="flex-1 min-w-0">
-                    <Button 
-                      href={nextButton.url}
-                      variant="secondary"
-                      size="md"
-                      fullWidth={true}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style="background-color: rgba(169, 143, 250, 0.15); border: 1px solid rgba(169, 143, 250, 0.3); color: #F6F7F6;"
-                    >
-                      <Fragment set:html={icons.calendar} />
-                      <span>{nextButton.label}</span>
-                    </Button>
-                  </div>
-                ) : null}
-              </div>
-            );
-          }
-          // Skip odd-indexed buttons as they're already rendered with their pair
-          return null;
-        })}
+        {(hasBookingHeading || hasBookingText) && (
+          <div class="pt-2">
+            {hasBookingHeading && (
+              <h3 class="text-base font-semibold text-white mb-1">{bookingHeading}</h3>
+            )}
+            {hasBookingText && (
+              <p class="text-sm text-gray-300 leading-relaxed">
+                {bookingText}
+              </p>
+            )}
+          </div>
+        )}
+        <div class="grid grid-cols-2 gap-3">
+          {bookingButtons.map((button: any) => (
+            <Button 
+              href={button.url}
+              variant="secondary"
+              size="md"
+              fullWidth={true}
+              target="_blank"
+              rel="noopener noreferrer"
+              style="background-color: rgba(169, 143, 250, 0.15); border: 1px solid rgba(169, 143, 250, 0.3); color: #F6F7F6;"
+            >
+              <span>{button.label}</span>
+            </Button>
+          ))}
+        </div>
       </>
     )}
-
-    <!-- Get Involved Heading & Description -->
-    <div class="pt-2">
-      <h3 class="text-base font-semibold text-white mb-1">{displayGetInvolvedHeading}</h3>
-      <p class="text-sm text-gray-300 leading-relaxed">
-        {displayGetInvolvedText}
-      </p>
-    </div>
   </div>
 </div>
 

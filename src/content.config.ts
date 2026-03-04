@@ -152,6 +152,8 @@ const projects = defineCollection({
 		  pFree: transformedPropertySchema.checkbox,
 		  pURL: transformedPropertySchema.url,
 		  pGYGURL: transformedPropertySchema.url,
+		  pViatorURL: transformedPropertySchema.url,
+		  pKlookURL: transformedPropertySchema.url,
 		  pMapsURL: transformedPropertySchema.url,
 		  pVerify: transformedPropertySchema.select,
 		  pImageURL: transformedPropertySchema.url,

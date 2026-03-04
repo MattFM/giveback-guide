@@ -16,6 +16,7 @@ import ProjectMetadata from "../components/content/ProjectMetadata.astro";
 import VerificationBox from "../components/content/VerificationBox.astro";
 import GetInvolvedBox from "../components/content/GetInvolvedBox.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -132,13 +133,37 @@ const relatedProjects = allProjects
                                 primaryLabel="Visit Website"
                                 primaryUrl={properties.pURL}
                                 primaryIcon="external"
-                                getInvolvedText={properties.pGetInvolved}
+                                getInvolvedHeading="Get Involved"
+                                getInvolvedText={
+                                    properties.pGetInvolved ||
+                                    "Visit their website to learn more about this project and discover ways you can contribute or participate."
+                                }
+                                bookingHeading="Book your place"
+                                bookingText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
                                 moreOptions={[
                                     ...(properties.pGYGURL
                                         ? [
                                               {
-                                                  label: "Book on GetYourGuide",
+                                                  label: "GetYourGuide",
                                                   url: properties.pGYGURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.pViatorURL
+                                        ? [
+                                              {
+                                                  label: "Viator",
+                                                  url: properties.pViatorURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.pKlookURL
+                                        ? [
+                                              {
+                                                  label: "Klook",
+                                                  url: properties.pKlookURL,
                                                   icon: "calendar",
                                               },
                                           ]
@@ -345,13 +370,37 @@ const relatedProjects = allProjects
                                 primaryLabel="Visit Website"
                                 primaryUrl={properties.pURL}
                                 primaryIcon="external"
-                                getInvolvedText={properties.pGetInvolved}
+                                getInvolvedHeading="Get Involved"
+                                getInvolvedText={
+                                    properties.pGetInvolved ||
+                                    "Visit their website to learn more about this project and discover ways you can contribute or participate."
+                                }
+                                bookingHeading="Book your place"
+                                bookingText="When you book through these links, we may earn a small commission at no extra cost to you, helping us to keep this platform free for everyone."
                                 moreOptions={[
                                     ...(properties.pGYGURL
                                         ? [
                                               {
-                                                  label: "Book on GetYourGuide",
+                                                  label: "GetYourGuide",
                                                   url: properties.pGYGURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.pViatorURL
+                                        ? [
+                                              {
+                                                  label: "Viator",
+                                                  url: properties.pViatorURL,
+                                                  icon: "calendar",
+                                              },
+                                          ]
+                                        : []),
+                                    ...(properties.pKlookURL
+                                        ? [
+                                              {
+                                                  label: "Klook",
+                                                  url: properties.pKlookURL,
                                                   icon: "calendar",
                                               },
                                           ]
@@ -406,4 +455,5 @@ const relatedProjects = allProjects
             </div>
         </section>
     </div>
+    <SkimlinksScript />
 </MainLayout>

@@ -1,13 +1,14 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import MainLayout from "./MainLayout.astro";
-import AdBox from "../components/features/ads/AdBox.astro";
-import StayCard from "../components/content/StayCard.astro";
 import { getCollection } from "astro:content";
+import MainLayout from "./MainLayout.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
-import SaveToList from "../components/features/save/SaveToList.astro";
-import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
+import StayCard from "../components/content/StayCard.astro";
+import AdBox from "../components/features/ads/AdBox.astro";
 import ActionBar from "../components/content/ActionBar.astro";
+import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
+import SupportBox from "../components/sections/SupportBox.astro";
+import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 import StayMetadata from "../components/content/StayMetadata.astro";
 import VerificationBox from "../components/content/VerificationBox.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
@@ -153,8 +154,10 @@ if (images.length === 0) {
                                 primaryLabel="Official Website"
                                 primaryUrl={properties.sURL}
                                 primaryIcon="external"
-                                getInvolvedHeading="Reserve your stay"
-                                getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+                                primaryHeading="Find out more and book"
+                                primaryText="Visit the official website for more information and to book your stay."
+                                bookingHeading="Other booking platforms"
+                                bookingText="We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
                                 moreOptions={[
                                     ...(properties.sBookingURL
                                         ? [
@@ -461,8 +464,10 @@ if (images.length === 0) {
                                 primaryLabel="Official Website"
                                 primaryUrl={properties.sURL}
                                 primaryIcon="external"
-                                getInvolvedHeading="Reserve your stay"
-                                getInvolvedText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+                                primaryHeading="Find out more and book"
+                                primaryText="Visit the official website for more information and to book your stay."
+                                bookingHeading="Other booking platforms"
+                                bookingText="When you book through these links, we may earn a small commission at no extra cost to you, helping us to keep this platform free for everyone."
                                 moreOptions={[
                                     ...(properties.sBookingURL
                                         ? [
@@ -550,9 +555,5 @@ if (images.length === 0) {
         </div>
     </section>
 
-    <script
-        is:inline
-        type="text/javascript"
-        src="https://s.skimresources.com/js/85974X1773969.skimlinks.js"
-    ></script>
+    <SkimlinksScript />
 </MainLayout>
