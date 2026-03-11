@@ -12,12 +12,12 @@
     "blog:validate": "node scripts/validate-blog-posts.js"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
-    "@astrojs/rss": "^4.0.15",
-    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/rss": "^4.0.17",
+    "@astrojs/sitemap": "^3.7.1",
     "@supabase/supabase-js": "^2.93.3",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.17.0",
+    "astro": "^6.0.2",
     "astro-embed": "^0.12.0",
     "astro-pagefind": "^1.8.5",
     "axios": "^1.13.4",
