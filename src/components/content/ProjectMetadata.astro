@@ -31,6 +31,9 @@ const {
   isFree = false
 } = Astro.props;
 
+import { getAliasAcknowledgment } from '../../data/country-aliases';
+import VerificationPill from './VerificationPill.astro';
+
 // Helper function to format array with ampersands
 function formatWithAmpersand(items: string[]): (string | { text: string; isPill: boolean })[] {
   if (items.length === 0) return [];
@@ -62,7 +65,6 @@ const hasMetadata = operator || types.length > 0 || locales.length > 0 || countr
 
 // Determine if we should use simple comma format for locations (single locale + single country)
 const useSimpleLocationFormat = locales.length === 1 && countries.length === 1;
-import VerificationPill from './VerificationPill.astro';
 ---
 
 <!-- Status Badges (Verified & Free) - Render above where this component is placed -->
@@ -161,4 +163,18 @@ import VerificationPill from './VerificationPill.astro';
       </>
     )}.
   </p>
+)}
+
+{/* Alias acknowledgment - shows italicised line for countries with indigenous/endonym names */}
+{countries.length > 0 && (
+  <div class="mt-2 space-y-1">
+    {countries.map(country => {
+      const acknowledgment = getAliasAcknowledgment(country);
+      return acknowledgment ? (
+        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+          {acknowledgment}.
+        </p>
+      ) : null;
+    })}
+  </div>
 )}

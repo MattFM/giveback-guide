@@ -14,6 +14,7 @@ import VerificationBox from "../components/content/VerificationBox.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import StockPhotoNotice from "../components/content/StockPhotoNotice.astro";
+import { getAllSearchTerms } from "../data/country-aliases";
 
 type Props = CollectionEntry<"stays">["data"];
 
@@ -351,8 +352,8 @@ if (images.length === 0) {
                                     properties.sCountry && (
                                         <span data-pagefind-meta="countries">
                                             {Array.isArray(properties.sCountry)
-                                                ? properties.sCountry.join(", ")
-                                                : properties.sCountry}
+                                                ? properties.sCountry.flatMap(c => getAllSearchTerms(c)).join(", ")
+                                                : getAllSearchTerms(properties.sCountry).join(", ")}
                                         </span>
                                     )
                                 }

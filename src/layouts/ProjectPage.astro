@@ -17,6 +17,7 @@ import VerificationBox from "../components/content/VerificationBox.astro";
 import GetInvolvedBox from "../components/content/GetInvolvedBox.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
+import { getAllSearchTerms } from "../data/country-aliases";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -266,8 +267,8 @@ const relatedProjects = allProjects
                                     properties.pCountry && (
                                         <span data-pagefind-meta="countries">
                                             {Array.isArray(properties.pCountry)
-                                                ? properties.pCountry.join(", ")
-                                                : properties.pCountry}
+                                                ? properties.pCountry.flatMap(c => getAllSearchTerms(c)).join(", ")
+                                                : getAllSearchTerms(properties.pCountry).join(", ")}
                                         </span>
                                     )
                                 }
