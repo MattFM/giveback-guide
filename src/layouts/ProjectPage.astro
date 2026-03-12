@@ -128,58 +128,59 @@ const relatedProjects = allProjects
                 {
                     actionId && (
                         <section class="py-6 px-4 lg:hidden">
-                            <ActionBar
-                                itemType="project"
-                                itemId={actionId}
-                                primaryLabel="Visit Website"
-                                primaryUrl={properties.pURL}
-                                primaryIcon="external"
-                                getInvolvedHeading="Get Involved"
-                                getInvolvedText={
-                                    properties.pGetInvolved ||
-                                    "Visit their website to learn more about this project and discover ways you can contribute or participate."
-                                }
-                                bookingHeading="Book your place"
-                                bookingText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
-                                moreOptions={[
-                                    ...(properties.pGYGURL
-                                        ? [
-                                              {
-                                                  label: "GetYourGuide",
-                                                  url: properties.pGYGURL,
-                                                  icon: "calendar",
-                                              },
-                                          ]
-                                        : []),
-                                    ...(properties.pViatorURL
-                                        ? [
-                                              {
-                                                  label: "Viator",
-                                                  url: properties.pViatorURL,
-                                                  icon: "calendar",
-                                              },
-                                          ]
-                                        : []),
-                                    ...(properties.pKlookURL
-                                        ? [
-                                              {
-                                                  label: "Klook",
-                                                  url: properties.pKlookURL,
-                                                  icon: "calendar",
-                                              },
-                                          ]
-                                        : []),
-                                    ...(properties.pMapsURL
-                                        ? [
-                                              {
-                                                  label: "View on Map",
-                                                  url: properties.pMapsURL,
-                                                  icon: "map",
-                                              },
-                                          ]
-                                        : []),
-                                ].filter(Boolean)}
-                            />
+                        <ActionBar
+                            itemType="project"
+                            itemId={actionId}
+                            primaryLabel="Visit Website"
+                            primaryUrl={properties.pURL}
+                            primaryIcon="external"
+                            instagramUrl={properties.pInstagramURL}
+                            getInvolvedHeading="Get Involved"
+                            getInvolvedText={
+                                properties.pGetInvolved ||
+                                "Visit their website to learn more about this project and discover ways you can contribute or participate."
+                            }
+                            bookingHeading="Book your place"
+                            bookingText="Reserve your stay with our trusted booking platforms. We may earn a small commission at no extra cost to you, helping us keep this platform free for everyone."
+                            moreOptions={[
+                                ...(properties.pGYGURL
+                                    ? [
+                                          {
+                                              label: "GetYourGuide",
+                                              url: properties.pGYGURL,
+                                              icon: "calendar",
+                                          },
+                                      ]
+                                    : []),
+                                ...(properties.pViatorURL
+                                    ? [
+                                          {
+                                              label: "Viator",
+                                              url: properties.pViatorURL,
+                                              icon: "calendar",
+                                          },
+                                      ]
+                                    : []),
+                                ...(properties.pKlookURL
+                                    ? [
+                                          {
+                                              label: "Klook",
+                                              url: properties.pKlookURL,
+                                              icon: "calendar",
+                                          },
+                                      ]
+                                    : []),
+                                ...(properties.pMapsURL
+                                    ? [
+                                          {
+                                              label: "View on Map",
+                                              url: properties.pMapsURL,
+                                              icon: "map",
+                                          },
+                                      ]
+                                    : []),
+                            ].filter(Boolean)}
+                        />
                         </section>
                     )
                 }
@@ -371,6 +372,7 @@ const relatedProjects = allProjects
                                 primaryLabel="Visit Website"
                                 primaryUrl={properties.pURL}
                                 primaryIcon="external"
+                                instagramUrl={properties.pInstagramURL}
                                 getInvolvedHeading="Get Involved"
                                 getInvolvedText={
                                     properties.pGetInvolved ||
