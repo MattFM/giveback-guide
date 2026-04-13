@@ -1220,9 +1220,15 @@ import { SITE_TITLE } from "../consts";
           })
         );
 
-        // Filter out null results and store
-        allResults = processedResults.filter(result => result !== null);
-        console.log('Processed results:', allResults.length);
+        // Filter out null results and docs results, then store
+        allResults = processedResults.filter(result => {
+          if (result === null) return false;
+          // Exclude docs pages from main search
+          if (result.data.url && result.data.url.includes('/docs/')) return false;
+          if (result.data.filters && result.data.filters.type && result.data.filters.type[0] === 'doc') return false;
+          return true;
+        });
+        console.log('Processed results (excluding docs):', allResults.length);
         
         // Update result counts
         updateResultCounts();

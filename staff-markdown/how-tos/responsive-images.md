@@ -1,12 +1,13 @@
----
-layout: ../../../layouts/DocsLayout.astro
-title: Responsive Images
-description: Guide for implementing responsive images with Cloudinary
----
+> **Internal Documentation** | Implementation Guide
+> 
+> **Topic:** Responsive Images  
+> **Last Updated:** [Internal Staff Docs]
 
 # Responsive Images with Cloudinary
 
 This implementation provides responsive images using Cloudinary's URL transformation features without requiring Astro to process images or manual URL entry in Notion.
+
+---
 
 ## How It Works
 
@@ -14,6 +15,8 @@ This implementation provides responsive images using Cloudinary's URL transforma
 2. **Automatic Srcsets**: Generates multiple image sizes for different screen sizes
 3. **Smart Sizing**: Maintains aspect ratios and provides fallbacks
 4. **No Manual Work**: Uses your existing single Cloudinary URL from Notion
+
+---
 
 ## Usage
 
@@ -115,12 +118,18 @@ import ResponsiveImage from '../components/ResponsiveImage.astro';
 />
 ```
 
+---
+
 ## Available Presets
 
-- **`hero`**: Full-width featured images (640px → 1600px)
-- **`card`**: Grid card images (300px → 600px)
-- **`thumbnail`**: Small preview images (150px → 300px)
-- **`avatar`**: Profile/avatar images (64px → 200px)
+| Preset | Description | Size Range |
+|--------|-------------|------------|
+| `hero` | Full-width featured images | 640px → 1600px |
+| `card` | Grid card images | 300px → 600px |
+| `thumbnail` | Small preview images | 150px → 300px |
+| `avatar` | Profile/avatar images | 64px → 200px |
+
+---
 
 ## Generated Output
 
@@ -146,6 +155,8 @@ The system generates:
 />
 ```
 
+---
+
 ## Performance Benefits
 
 - **Bandwidth Savings**: Smaller images for mobile devices
@@ -155,34 +166,48 @@ The system generates:
 - **Modern Formats**: Automatic WebP/AVIF support via Cloudinary
 - **Lazy Loading**: Built-in lazy loading support
 
+---
+
 ## Configuration Options
 
-- **`quality`**: Image quality (1-100, default: 85)
-- **`format`**: Image format options:
-  - `'auto'` (default): Cloudinary automatically serves WebP/AVIF based on browser support
-  - `'webp'`: Force WebP format
-  - `'avif'`: Force AVIF format (newest, best compression)
-  - `'jpg'`/`'png'`: Force specific formats
-- **`maintainAspectRatio`**: Keep original 1200x800 aspect ratio
-- **`loading`**: 'lazy' or 'eager' loading
-- **`fetchpriority`**: 'high', 'low', or 'auto' for LCP optimization
-- **`showSkeleton`**: Enable/disable skeleton loading animation (default: true)
+| Option | Description | Default |
+|--------|-------------|---------|
+| `quality` | Image quality (1-100) | 85 |
+| `format` | Image format (`'auto'`, `'webp'`, `'avif'`, `'jpg'`, `'png'`) | `'auto'` |
+| `maintainAspectRatio` | Keep original 1200x800 aspect ratio | true |
+| `loading` | `'lazy'` or `'eager'` loading | `'lazy'` |
+| `fetchpriority` | `'high'`, `'low'`, or `'auto'` for LCP optimization | `'auto'` |
+| `showSkeleton` | Enable/disable skeleton loading animation | true |
+
+### Format Options
+
+- `'auto'` (default): Cloudinary automatically serves WebP/AVIF based on browser support
+- `'webp'`: Force WebP format
+- `'avif'`: Force AVIF format (newest, best compression)
+- `'jpg'`/`'png'`: Force specific formats
+
+---
 
 ## Modern Image Formats
 
-The implementation automatically serves modern image formats (WebP/AVIF) through Cloudinary's `f_auto` parameter:
+The implementation automatically serves modern image formats (WebP/AVIF) through Cloudinary's `f_auto` parameter.
 
 ### Format Selection (with `format="auto"`)
-- **AVIF**: Newest browsers (Chrome 85+, Firefox 93+) - Best compression
-- **WebP**: Modern browsers (Chrome, Firefox, Safari 14+, Edge) - Good compression  
-- **JPEG**: Fallback for older browsers
+
+| Format | Browser Support | Compression |
+|--------|-----------------|-------------|
+| **AVIF** | Chrome 85+, Firefox 93+ | Best compression |
+| **WebP** | Chrome, Firefox, Safari 14+, Edge | Good compression |
+| **JPEG** | All browsers | Fallback format |
 
 ### Browser Support Examples
+
 - Chrome/Edge/Firefox (recent): Gets AVIF or WebP (~30-50% smaller files)
 - Safari (recent): Gets WebP (~25-35% smaller files)
 - Older browsers: Gets original JPEG format
 
 ### Custom Format Options
+
 ```astro
 <!-- Let Cloudinary choose best format (recommended) -->
 <ResponsiveImage src={url} preset="hero" format="auto" />
@@ -193,6 +218,8 @@ The implementation automatically serves modern image formats (WebP/AVIF) through
 <!-- Force AVIF (best compression, newer browsers only) -->
 <ResponsiveImage src={url} preset="hero" format="avif" />
 ```
+
+---
 
 ## Disabling Transformations
 
@@ -232,6 +259,8 @@ When transformations are disabled:
 - ✅ No Cloudinary transformation credits consumed
 - ✅ No build errors or broken images
 - ❌ No performance benefits from responsive sizing
+
+---
 
 ## Loading Animations
 
@@ -305,15 +334,24 @@ The skeleton inherits the same border radius and positioning as your main compon
 
 **Note**: The `class` attribute is applied to both the skeleton and the final image, ensuring consistent styling throughout the loading process.
 
+---
+
 ## Files
 
-- `src/utils/cloudinary.ts` - Core utilities and presets
-- `src/components/ResponsiveImage.astro` - Reusable component
-- Updated components: `ProjectPage.astro`, `ProjectCard.astro`, `PostLayout.astro`, `PostCard.astro`, `StayPage.astro`, `StayCard.astro`
+| File | Purpose |
+|------|---------|
+| `src/utils/cloudinary.ts` | Core utilities and presets |
+| `src/components/ResponsiveImage.astro` | Reusable component |
+| `src/layouts/ProjectPage.astro` | Updated with ResponsiveImage |
+| `src/components/ProjectCard.astro` | Updated with ResponsiveImage |
+| `src/layouts/PostLayout.astro` | Updated with ResponsiveImage |
+| `src/components/PostCard.astro` | Updated with ResponsiveImage |
+| `src/layouts/StayPage.astro` | Updated with ResponsiveImage |
+| `src/components/StayCard.astro` | Updated with ResponsiveImage |
+
+---
 
 ## Reverting to Previous Implementation
-
-If you need to undo the responsive images implementation and return to your previous setup, follow these steps:
 
 ### Quick Revert (Keep Files, Disable Features)
 
@@ -322,7 +360,7 @@ The fastest way is to disable transformations while keeping all files intact:
 1. **Disable Cloudinary transformations** in `src/utils/cloudinary.ts`:
    ```typescript
    export const CLOUDINARY_CONFIG = {
-     enableTransformations: false,  // ← Set to false
+     enableTransformations: false,
      enableResponsiveImages: true,
      enableFormatOptimization: true,
      enableQualityOptimization: true,
@@ -352,6 +390,7 @@ The fastest way is to disable transformations while keeping all files intact:
 If you want to completely remove all responsive image files:
 
 #### 1. Delete Created Files
+
 ```bash
 # Remove responsive image utilities
 rm src/utils/cloudinary.ts
@@ -366,8 +405,6 @@ rm skeleton-loading-test.html
 ```
 
 #### 2. Revert Component Files
-
-Update these files to restore original `<img>` tags:
 
 **Files to revert:**
 - `src/layouts/ProjectPage.astro`
@@ -450,7 +487,7 @@ You can also selectively disable features:
 export const CLOUDINARY_CONFIG = {
   enableTransformations: true,
   enableResponsiveImages: true,
-  enableFormatOptimization: false,  // ← Disable WebP/AVIF
+  enableFormatOptimization: false,
   enableQualityOptimization: true,
 };
 
@@ -459,7 +496,7 @@ export const CLOUDINARY_CONFIG = {
   src={cloudinaryUrl}
   alt="Description"
   preset="hero"
-  showSkeleton={false}  // ← Disable skeleton
+  showSkeleton={false}
 />
 ```
 

@@ -1,22 +1,22 @@
----
-layout: ../../../layouts/DocsLayout.astro
-title: Ford Foundation Design System Analysis
-description: Design patterns and components observed from fordfoundation.org for potential inspiration
----
+> **Internal Documentation** | Design Research
+> 
+> **Topic:** Design System Analysis  
+> **Reference:** fordfoundation.org  
+> **Last Updated:** November 11, 2025
 
 # Ford Foundation Design System Analysis
 
-**Reference document** - Design patterns and components observed from fordfoundation.org  
-**Last updated:** November 11, 2025  
+**Reference:** Design patterns and components observed from fordfoundation.org  
 **Purpose:** Reference for potential design inspiration and component ideas for Giveback Guide
 
 ---
 
 ## Overview
 
-The Ford Foundation website employs a clean, professional design system that balances bold visual elements with excellent readability and accessibility. The design prioritizes content hierarchy, uses generous whitespace, and maintains a strong focus on social justice messaging through its visual language.
+The Ford Foundation website employs a clean, professional design system that balances bold visual elements with excellent readability and accessibility. The design prioritises content hierarchy, uses generous whitespace, and maintains a strong focus on social justice messaging through its visual language.
 
 ### Design Philosophy
+
 - **Mission-first**: Every design decision reinforces their social justice mission
 - **Accessible**: Clear contrast, readable typography, semantic structure
 - **Bold yet restrained**: Strong hero elements with clean content areas
@@ -28,6 +28,7 @@ The Ford Foundation website employs a clean, professional design system that bal
 ## Color Palette
 
 ### Primary Colors
+
 Based on observed elements throughout the site:
 
 **Deep Teal/Blue-Green**: Primary brand color used for headers, accents, and interactive elements
@@ -106,7 +107,7 @@ Based on observed elements throughout the site:
 ### Font Characteristics
 
 - **Sans-serif throughout**: Modern, clean, accessible
-- **Likely a web-optimized system font or custom font**:
+- **Likely a web-optimised system font or custom font**:
   - Possible fonts: Inter, Proxima Nova, Helvetica Neue, or custom
   - Excellent legibility at all sizes
   - Strong geometric forms
@@ -127,7 +128,7 @@ Based on observed elements throughout the site:
 
 **Content Width**:
 - Maximum content width appears to be ~1200-1400px
-- Centered with generous side margins
+- Centred with generous side margins
 - Responsive breakpoints for mobile/tablet/desktop
 
 **Column System**:
@@ -153,7 +154,7 @@ Based on observed elements throughout the site:
 2. **Contained content sections**: Max-width containers with breathing room
 3. **Card grids**: 2-3 column grids for content cards
 4. **Alternating layouts**: Image-left/text-right alternates with text-left/image-right
-5. **Full-width color blocks**: Occasional colored background sections for emphasis
+5. **Full-width color blocks**: Occasional coloured background sections for emphasis
 
 ---
 
@@ -163,7 +164,7 @@ Based on observed elements throughout the site:
 
 **Header**:
 - Fixed or sticky navigation bar
-- Logo on left, main nav links in center/right
+- Logo on left, main nav links in centre/right
 - Search toggle, possibly mobile menu toggle
 - Clean horizontal layout
 - Likely includes mega-menu dropdowns for complex navigation
@@ -172,7 +173,7 @@ Based on observed elements throughout the site:
 - Multi-column layout (4-5 columns)
 - Newsletter signup form
 - Social media links
-- Quick links organized by category
+- Quick links organised by category
 - Contact information
 - Copyright and legal links
 
@@ -188,7 +189,7 @@ Based on observed elements throughout the site:
 **Section Heroes**:
 - Smaller than homepage hero
 - Full-width image backgrounds
-- Centered or left-aligned text
+- Centred or left-aligned text
 - Mission-driven headlines
 
 ### Cards
@@ -287,8 +288,8 @@ Based on observed elements throughout the site:
 ### Hover States
 
 1. **Cards**: Subtle lift (shadow increase), slight scale on image
-2. **Buttons**: Color darkens or lightens
-3. **Links**: Underline appears, color may slightly shift
+2. **Buttons**: Colour darkens or lightens
+3. **Links**: Underline appears, colour may slightly shift
 4. **Images**: Subtle zoom or overlay fade
 
 ### Transitions
@@ -310,7 +311,7 @@ Based on observed elements throughout the site:
 ### Storytelling Approach
 
 1. **Bold headlines**: Mission-driven, action-oriented language
-2. **Human-centered imagery**: Photos of real people, communities
+2. **Human-centred imagery**: Photos of real people, communities
 3. **Interconnected messaging**: Frequent references to how topics relate
 4. **Data + narrative**: Statistics paired with human stories
 5. **Clear CTAs**: Every section guides to next action
@@ -342,24 +343,26 @@ Based on observed elements throughout the site:
 Based on observed patterns:
 
 1. **Semantic HTML**: Proper heading hierarchy, landmarks
-2. **Color contrast**: Strong contrast ratios throughout
+2. **Colour contrast**: Strong contrast ratios throughout
 3. **Focus indicators**: Visible focus states on interactive elements
 4. **Alt text**: Images have descriptive alt text
 5. **Keyboard navigation**: All interactive elements accessible via keyboard
 6. **ARIA labels**: Likely used where needed for screen readers
 7. **Responsive text**: Text scales appropriately at all sizes
-8. **No color-only information**: Information not conveyed by color alone
+8. **No colour-only information**: Information not conveyed by colour alone
 
 ---
 
-## Responsive Behavior
+## Responsive Behaviour
 
 ### Breakpoints (Estimated)
 
-- **Mobile**: < 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: 1024px - 1440px
-- **Large Desktop**: > 1440px
+| Breakpoint | Size |
+|------------|------|
+| Mobile | < 768px |
+| Tablet | 768px - 1024px |
+| Desktop | 1024px - 1440px |
+| Large Desktop | > 1440px |
 
 ### Mobile Adaptations
 
@@ -402,7 +405,7 @@ Based on observed patterns:
 ### Directional Arrows
 
 - Graphic element showing progression
-- Often colorful, pointing right
+- Often colourful, pointing right
 - Used in section headers and illustrations
 
 ### Collage-Style Layouts
@@ -423,20 +426,20 @@ Based on observed patterns:
 2. **Card hover effects**: More pronounced hover states on project/stay cards
 3. **Category/tag presentation**: Ford's clean pill-style tags are very readable
 4. **Whitespace**: More generous spacing between sections
-5. **Color blocking**: Occasional full-width colored sections for variety
+5. **Colour blocking**: Occasional full-width coloured sections for variety
 6. **Mission-first headlines**: Bolder, more action-oriented language
 7. **Collage imagery**: Could work well for impact stories or multiple projects
 
 **What Wouldn't Work**:
 
 1. **Corporate aesthetic**: Ford's design is more formal than Giveback's friendly vibe
-2. **Limited color palette**: GBG benefits from more colorful, vibrant approach
+2. **Limited colour palette**: GBG benefits from more colourful, vibrant approach
 3. **Heavy institutional feel**: GBG should feel more grassroots and accessible
 
 ### Implementation Ideas
 
 1. **Enhanced card component**: Add Ford-style hover lift and image zoom
-2. **Section dividers**: Full-width colored sections between major content areas
+2. **Section dividers**: Full-width coloured sections between major content areas
 3. **Improved type hierarchy**: Larger headlines for more impact
 4. **Newsletter signup**: Horizontal multi-field design like Ford's
 5. **About sections**: Two-column image+text layouts for storytelling
@@ -448,7 +451,7 @@ Based on observed patterns:
 
 ### Performance
 
-- Images optimized and responsive
+- Images optimised and responsive
 - Lazy loading implemented
 - Minimal JavaScript for core experience
 - Progressive enhancement approach
@@ -466,9 +469,9 @@ Based on observed patterns:
 Before borrowing from this design system, consider:
 
 1. **Brand alignment**: Does Ford's more corporate/institutional aesthetic fit Giveback Guide's friendly, grassroots vibe?
-2. **Color palette**: Should we adopt similar color relationships (teal + orange) or maintain GBG's existing palette?
+2. **Colour palette**: Should we adopt similar colour relationships (teal + orange) or maintain GBG's existing palette?
 3. **Typography scale**: How much larger should our headlines be?
-4. **Spacing system**: Should we standardize spacing to match Ford's rhythm?
+4. **Spacing system**: Should we standardise spacing to match Ford's rhythm?
 5. **Component complexity**: Which components provide the most value for the effort?
 6. **Accessibility parity**: Are we already meeting the same accessibility standards?
 
@@ -476,8 +479,8 @@ Before borrowing from this design system, consider:
 
 ## Resources & References
 
-- **Website**: [https://www.fordfoundation.org](https://www.fordfoundation.org)
-- **Key Pages Analyzed**:
+- **Website**: https://www.fordfoundation.org
+- **Key Pages Analysed**:
   - Homepage
   - /work/challenging-inequality/
   - /about/
@@ -491,7 +494,7 @@ Before borrowing from this design system, consider:
 To implement ideas from this design system:
 
 1. **Audit current GBG components** against Ford's patterns
-2. **Prioritize changes** by impact and effort
+2. **Prioritise changes** by impact and effort
 3. **Create component variants** for testing
 4. **A/B test** changes with users if possible
 5. **Document decisions** and maintain design system consistency
@@ -500,4 +503,6 @@ To implement ideas from this design system:
 
 ## Version History
 
-- **v1.0** (Nov 11, 2025): Initial analysis created based on Ford Foundation website review
+| Version | Date | Notes |
+|---------|------|-------|
+| v1.0 | Nov 11, 2025 | Initial analysis created based on Ford Foundation website review |

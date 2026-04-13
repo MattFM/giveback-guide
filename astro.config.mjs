@@ -16,7 +16,7 @@ export default defineConfig({
       remarkPlugins: [remarkResponsiveImages],
     }), 
     sitemap({
-      filter: (page) => !page.includes('/docs/')
+      filter: (page) => !page.includes('/docs/'),
     }), 
     pagefind()
   ],

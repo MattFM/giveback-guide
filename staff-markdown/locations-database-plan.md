@@ -1,25 +1,31 @@
----
-layout: ../../layouts/DocsLayout.astro
-title: Locations Database Implementation Plan
-description: Architecture plan for restructuring location data using a centralized Locations database shared between Projects and Stays collections
----
+> **Internal Documentation** | Architecture Planning
+> 
+> **Topic:** Database Restructure  
+> **Date:** 12 November 2025  
+> **Status:** Planning Phase
 
 # Locations Database Implementation Plan
 
 **Date:** 12 November 2025  
 **Status:** Planning Phase
 
+---
+
 ## Overview
 
 Restructure location data to use a centralized Locations database in Notion, shared between Projects and Stays collections. This enables:
+
 - Perfect city-region pairing
 - Consistent location naming across collections
 - Foundation for future mapping features
 - Clean URL generation without location mismatches
 
+---
+
 ## Architecture Decision: Hybrid Coordinate Approach
 
 ### Location Coordinates
+
 **City/region-level coordinates** → Stored in Locations database
 - Used for: Location overview pages, region maps, general positioning
 - Example: Brighton city center, East Sussex centroid
@@ -28,6 +34,8 @@ Restructure location data to use a centralized Locations database in Notion, sha
 - Used for: Individual project pins on maps
 - Example: Specific sanctuary address within Brighton
 - Prevents multiple projects showing as single pin in cities like London
+
+---
 
 ## Notion Database Structure
 
@@ -89,19 +97,9 @@ Longitude: 14.2406
 Type: Region
 Slug: gozo
 Status: Published
+```
 
 ---
-
-Name: "London, Greater London, England"
-City: London
-Region: Greater London
-Country: England
-Latitude: 51.5074
-Longitude: -0.1278
-Type: City
-Slug: london
-Status: Published
-```
 
 ### 2. Projects Database (Updated)
 
@@ -113,14 +111,14 @@ Status: Published
 | **pLatitude** | Number | Specific project location | NEW |
 | **pLongitude** | Number | Specific project location | NEW |
 | ~~pLocale~~ | ~~Multi-select~~ | ~~Combined city/region~~ | REMOVE |
-| ~~pCity~~ | ~~Multi-select~~ | ~~Cities~~ | DON'T CREATE |
-| ~~pRegion~~ | ~~Multi-select~~ | ~~Regions~~ | DON'T CREATE |
 
 **Why project-specific coordinates:**
 - Each project has unique address/GPS location
 - Prevents overlapping pins in dense cities
 - Enables precise "Navigate Here" functionality
 - Can still fall back to location coordinates if not set
+
+---
 
 ### 3. Stays Database (Updated)
 
@@ -132,6 +130,8 @@ Status: Published
 | **sLatitude** | Number | Specific stay location | NEW |
 | **sLongitude** | Number | Specific stay location | NEW |
 | ~~sLocale~~ | ~~Multi-select~~ | ~~Combined city/region~~ | REMOVE |
+
+---
 
 ## Display Logic
 
@@ -147,6 +147,8 @@ const displayLocation = locations
 // Result: "Brighton & London"
 // or: "Gozo & Azores" (regions only)
 ```
+
+---
 
 ### Project/Stay Pages (ProjectMetadata, StayMetadata)
 
@@ -173,9 +175,12 @@ Org is a [Type] in [Brighton], [England].
 ```
 
 ### Clickable Pills Link To:
+
 - **City pills** → `/projects/{country}/{city-slug}`
 - **Region pills** → `/projects/{country}/areas/{region-slug}`
 - **Country pills** → `/projects/{country}`
+
+---
 
 ## URL Structure
 
@@ -212,16 +217,20 @@ locations
   });
 ```
 
+---
+
 ## Mapping Features (Future)
 
 ### Location Overview Pages
+
 Show map with pins for all projects in that location:
+
 ```typescript
 <Map
   center={[location.latitude, location.longitude]}
   zoom={12}
   markers={projects.map(p => ({
-    lat: p.pLatitude || location.latitude,  // Project-specific or location default
+    lat: p.pLatitude || location.latitude,
     lng: p.pLongitude || location.longitude,
     title: p.pTitle,
     url: `/projects/${p.pSlug}`
@@ -230,7 +239,9 @@ Show map with pins for all projects in that location:
 ```
 
 ### Individual Project Pages
+
 Show single pin at project's exact location:
+
 ```typescript
 <Map
   center={[project.pLatitude, project.pLongitude]}
@@ -244,7 +255,9 @@ Show single pin at project's exact location:
 ```
 
 ### All Projects Map
+
 Show all projects across all locations:
+
 ```typescript
 <Map
   markers={projects
@@ -258,6 +271,8 @@ Show all projects across all locations:
   }
 />
 ```
+
+---
 
 ## Implementation Steps
 
@@ -273,7 +288,7 @@ Show all projects across all locations:
 2. Export existing `sLocale` values from Stays
 3. Create unique list of all locations
 4. Create entry for each location in new database
-5. Categorize each as "City" or "Region"
+5. Categorise each as "City" or "Region"
 6. Add coordinates (see geocoding section below)
 
 **Step 1.3: Add Relations in Projects/Stays**
@@ -283,9 +298,12 @@ Show all projects across all locations:
 4. Add `pLatitude` and `pLongitude` number fields to Projects
 5. Add `sLatitude` and `sLongitude` number fields to Stays
 
+---
+
 ### Phase 2: Update Astro Configuration
 
 **Step 2.1: Add Locations Collection** (`content.config.ts`)
+
 ```typescript
 const locations = defineCollection({
   loader: notionLoader({
@@ -312,6 +330,7 @@ const locations = defineCollection({
 ```
 
 **Step 2.2: Update Projects/Stays Schemas**
+
 ```typescript
 // In projects schema:
 pLocations: propertySchema.relation.optional(),
@@ -325,12 +344,14 @@ sLongitude: transformedPropertySchema.number.optional(),
 ```
 
 **Step 2.3: Add Environment Variable**
+
 ```bash
 # .env
 LOCATIONS_NOTION_DATABASE_ID=your-database-id-here
 ```
 
 **Step 2.4: Create Location Enrichment Helper** (`src/lib/locations.ts`)
+
 ```typescript
 import { getEntry } from 'astro:content';
 
@@ -372,9 +393,12 @@ export function getRegions(locations: any[]) {
 }
 ```
 
+---
+
 ### Phase 3: Update Components
 
 **Step 3.1: Update ProjectCard.astro**
+
 ```astro
 ---
 import { enrichLocations, getDisplayLocation } from '@/lib/locations';
@@ -389,12 +413,13 @@ const displayLocation = getDisplayLocation(locations);
 ```
 
 **Step 3.2: Update ProjectMetadata.astro**
+
 ```astro
 ---
 interface Props {
   operator?: string;
   types?: string[];
-  locations?: any[];  // Enriched location data
+  locations?: any[];
   countries?: string[];
   verificationStatus?: boolean;
   isFree?: boolean;
@@ -413,11 +438,15 @@ const countries = [...new Set(locations.map(loc => loc.lCountry))];
 ```
 
 **Step 3.3: Update StayCard.astro and StayMetadata.astro**
+
 (Similar changes to project components)
+
+---
 
 ### Phase 4: Update Routes
 
 **Step 4.1: City Routes** (`src/pages/projects/[country]/[city]/[...page].astro`)
+
 ```typescript
 export async function getStaticPaths() {
   const locations = await getCollection('locations');
@@ -460,10 +489,13 @@ export async function getStaticPaths() {
 ```
 
 **Step 4.2: Region Routes** (`src/pages/projects/[country]/areas/[region]/[...page].astro`)
+
 (Similar to city routes, but filter by `lType === 'Region'`)
 
 **Step 4.3: Remove Old Locale Routes**
 - Delete: `src/pages/projects/[country]/[locale]/[...page].astro`
+
+---
 
 ### Phase 5: Update Dropdowns
 
@@ -471,6 +503,7 @@ export async function getStaticPaths() {
 (No change - still works the same)
 
 **Step 5.2: Create City Dropdown** (`src/components/ui/Dropdown/ProjectCityDropdown.astro`)
+
 ```typescript
 const locations = await getCollection('locations');
 const cities = locations
@@ -479,6 +512,7 @@ const cities = locations
 ```
 
 **Step 5.3: Create Region Dropdown** (`src/components/ui/Dropdown/ProjectRegionDropdown.astro`)
+
 ```typescript
 const locations = await getCollection('locations');
 const regions = locations
@@ -486,9 +520,12 @@ const regions = locations
   .sort((a, b) => a.data.properties.lRegion.localeCompare(b.data.properties.lRegion));
 ```
 
+---
+
 ### Phase 6: Testing & Migration
 
 **Step 6.1: Test Build**
+
 ```bash
 npm run build
 ```
@@ -499,10 +536,13 @@ npm run build
 - Verify no broken links in metadata pills
 
 **Step 6.3: Remove Old Fields**
+
 Once verified working:
 - Remove `pLocale` from Projects database in Notion
 - Remove `sLocale` from Stays database in Notion
 - Clean up any old locale-based route files
+
+---
 
 ## Notion Setup Instructions
 
@@ -531,6 +571,8 @@ Once verified working:
 - For coordinates, use Google Maps (right-click location → see lat/lng)
 - For slug, use lowercase, hyphenated version of city/region name
 
+---
+
 ### Using Notion AI to Populate Data
 
 **Prompt for Notion AI (in table view):**
@@ -552,6 +594,7 @@ Here are the locations to add:
 ```
 
 **Example location list to paste:**
+
 ```
 Brighton, East Sussex, England
 London, Greater London, England
@@ -560,7 +603,9 @@ Azores, Portugal
 Edinburgh, Scotland
 ```
 
-**Note:** Notion AI may not always have accurate coordinates. Verify critical locations manually using Google Maps.
+> **Note:** Notion AI may not always have accurate coordinates. Verify critical locations manually using Google Maps.
+
+---
 
 ### Geocoding Tips
 
@@ -578,6 +623,8 @@ Edinburgh, Scotland
 3. Right-click on the pin
 4. Select "What's here?"
 5. Copy coordinates from bottom panel
+
+---
 
 ## Migration Checklist
 
@@ -613,45 +660,46 @@ Edinburgh, Scotland
 - [ ] Delete old locale route files
 - [ ] Update .github/copilot-instructions.md
 
+---
+
 ## Benefits Summary
 
-✅ **Perfect city-region pairing** - No more location mismatches  
-✅ **Shared location data** - Single source of truth across Projects and Stays  
-✅ **Precise mapping** - Project-specific coordinates prevent overlapping pins  
-✅ **Clean URLs** - `/projects/england/brighton` and `/projects/england/areas/east-sussex`  
-✅ **SEO-friendly** - Each location gets dedicated, semantic URL  
-✅ **Future-proof** - Foundation for mapping, distance calculations, regional filtering  
-✅ **Maintainable** - Update location once, affects all content  
-✅ **Flexible** - Supports cities, regions, city-only, region-only, and multi-location projects
+| Benefit | Description |
+|---------|-------------|
+| ✅ **Perfect city-region pairing** | No more location mismatches |
+| ✅ **Shared location data** | Single source of truth across Projects and Stays |
+| ✅ **Precise mapping** | Project-specific coordinates prevent overlapping pins |
+| ✅ **Clean URLs** | `/projects/england/brighton` and `/projects/england/areas/east-sussex` |
+| ✅ **SEO-friendly** | Each location gets dedicated, semantic URL |
+| ✅ **Future-proof** | Foundation for mapping, distance calculations, regional filtering |
+| ✅ **Maintainable** | Update location once, affects all content |
+| ✅ **Flexible** | Supports cities, regions, city-only, region-only, and multi-location projects |
+
+---
 
 ## Related Files
 
-- `src/content.config.ts` - Schema definitions
-- `src/lib/locations.ts` - Location helper functions (to be created)
-- `src/components/content/ProjectCard.astro` - Card display
-- `src/components/content/ProjectMetadata.astro` - Metadata pills
-- `src/components/content/StayCard.astro` - Stay card display
-- `src/components/content/StayMetadata.astro` - Stay metadata
-- `src/pages/projects/[country]/[city]/[...page].astro` - City routes (to be created)
-- `src/pages/projects/[country]/areas/[region]/[...page].astro` - Region routes (to be created)
-- `.github/copilot-instructions.md` - Update location references
+| File | Purpose |
+|------|---------|
+| `src/content.config.ts` | Schema definitions |
+| `src/lib/locations.ts` | Location helper functions (to be created) |
+| `src/components/content/ProjectCard.astro` | Card display |
+| `src/components/content/ProjectMetadata.astro` | Metadata pills |
+| `src/components/content/StayCard.astro` | Stay card display |
+| `src/components/content/StayMetadata.astro` | Stay metadata |
+| `src/pages/projects/[country]/[city]/[...page].astro` | City routes (to be created) |
+| `src/pages/projects/[country]/areas/[region]/[...page].astro` | Region routes (to be created) |
+| `.github/copilot-instructions.md` | Update location references |
+
+---
 
 ## Questions & Decisions Log
 
-**Q: Should regions appear in URL path?**  
-A: Yes, using `/areas/` prefix to distinguish from cities and prevent namespace collisions.
-
-**Q: Where should coordinates be stored?**  
-A: Hybrid approach - location-level coords in Locations DB for overview maps, project-specific coords in Projects DB for precise pins.
-
-**Q: Can Locations DB be shared between Projects and Stays?**  
-A: Yes, both use relations to the same Locations database.
-
-**Q: How to handle region-only projects (no specific city)?**  
-A: Locations DB supports both - entries can have only Region field populated, Type set to "Region".
-
-**Q: What if a project has multiple locations across different regions?**  
-A: Project links to multiple Location entries via relation. Display shows all cities/regions separated. Each generates appropriate route.
-
-**Q: How to display locations in metadata?**  
-A: Format: "in [City1] & [City2] in [Region1] & [Region2], [Country]" - makes clear which locations are present without assuming pairing.
+| Question | Answer |
+|----------|--------|
+| **Should regions appear in URL path?** | Yes, using `/areas/` prefix to distinguish from cities and prevent namespace collisions. |
+| **Where should coordinates be stored?** | Hybrid approach - location-level coords in Locations DB for overview maps, project-specific coords in Projects DB for precise pins. |
+| **Can Locations DB be shared between Projects and Stays?** | Yes, both use relations to the same Locations database. |
+| **How to handle region-only projects (no specific city)?** | Locations DB supports both - entries can have only Region field populated, Type set to "Region". |
+| **What if a project has multiple locations across different regions?** | Project links to multiple Location entries via relation. Display shows all cities/regions separated. Each generates appropriate route. |
+| **How to display locations in metadata?** | Format: "in [City1] & [City2] in [Region1] & [Region2], [Country]" - makes clear which locations are present without assuming pairing. |

@@ -1,8 +1,7 @@
----
-layout: ../../../layouts/DocsLayout.astro
-title: Integrated Header System
-description: Complete guide for implementing and troubleshooting integrated/transparent headers
----
+> **Internal Documentation** | Development Guide
+> 
+> **Topic:** Header System Implementation  
+> **Last Updated:** [Internal Staff Docs]
 
 # Integrated Header System
 
@@ -17,6 +16,8 @@ The integrated header system allows your site's main navigation to sit on top of
 - **Theme Support**: Light (dark text) and dark (white text) themes
 - **Responsive**: Works across all screen sizes
 - **Non-Breaking**: Completely opt-in, existing pages unchanged
+
+---
 
 ## Usage
 
@@ -62,61 +63,54 @@ import Hero from "../components/sections/Hero.astro";
 </MainLayout>
 ```
 
+---
+
 ## MainLayout Props
 
 ### `headerVariant`
-- **Type**: `'default' | 'transparent'`
-- **Default**: `'default'`
-- **Description**: Controls header display mode
+
+| Property | Value |
+|----------|-------|
+| **Type** | `'default' \| 'transparent'` |
+| **Default** | `'default'` |
+| **Description** | Controls header display mode |
 
 ### `headerTheme`
-- **Type**: `'light' | 'dark'`
-- **Default**: `'light'`
-- **Description**: Controls text/icon colors
-  - `'light'`: Dark text on light background (default)
-  - `'dark'`: White text on dark background
+
+| Property | Value |
+|----------|-------|
+| **Type** | `'light' \| 'dark'` |
+| **Default** | `'light'` |
+| **Description** | Controls text/icon colors |
+
+- `'light'`: Dark text on light background (default)
+- `'dark'`: White text on dark background
+
+---
 
 ## Hero Component Props
 
-### `title` (required)
-- **Type**: `string`
-- **Description**: Main heading text
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `title` | `string` | ✅ | - | Main heading text |
+| `description` | `string` | - | - | Subtitle/description text |
+| `background` | `'color' \| 'image' \| 'gradient'` | - | `'color'` | Background type |
+| `backgroundValue` | `string` | - | `'var(--color-neutral-950)'` | CSS value for background |
+| `theme` | `'light' \| 'dark'` | - | `'dark'` | Text color theme |
+| `size` | `'small' \| 'medium' \| 'large'` | - | `'medium'` | Hero section height |
+| `align` | `'left' \| 'center'` | - | `'left'` | Content alignment |
 
-### `description`
-- **Type**: `string`
-- **Optional**: Yes
-- **Description**: Subtitle/description text
+**Size Options:**
+- `small`: 40vh minimum
+- `medium`: 60vh minimum
+- `large`: 80vh minimum
 
-### `background`
-- **Type**: `'color' | 'image' | 'gradient'`
-- **Default**: `'color'`
-- **Description**: Background type
+**Background Value Examples:**
+- For `color`: Any CSS color value
+- For `image`: Image URL
+- For `gradient`: CSS gradient string
 
-### `backgroundValue`
-- **Type**: `string`
-- **Default**: `'var(--color-neutral-950)'`
-- **Description**: CSS value for background
-  - For `color`: Any CSS color value
-  - For `image`: Image URL
-  - For `gradient`: CSS gradient string
-
-### `theme`
-- **Type**: `'light' | 'dark'`
-- **Default**: `'dark'`
-- **Description**: Text color theme
-
-### `size`
-- **Type**: `'small' | 'medium' | 'large'`
-- **Default**: `'medium'`
-- **Description**: Hero section height
-  - `small`: 40vh minimum
-  - `medium`: 60vh minimum
-  - `large`: 80vh minimum
-
-### `align`
-- **Type**: `'left' | 'center'`
-- **Default**: `'left'`
-- **Description**: Content alignment
+---
 
 ## Examples
 
@@ -210,6 +204,8 @@ import Hero from "../components/sections/Hero.astro";
 </Hero>
 ```
 
+---
+
 ## How It Works
 
 ### Header Positioning Strategy
@@ -237,34 +233,45 @@ When using `headerVariant="transparent"`, the header automatically:
 | CTA Buttons | Black bg | White bg | Black bg |
 | Mobile Menu | Gray | White | Gray |
 
+---
+
 ## Available Color Variables
 
 Use these in your `backgroundValue` prop:
 
 ### Neutrals
+
 - `var(--color-neutral-50)` through `var(--color-neutral-950)`
 
 ### Brand Colors
+
 - **Purple**: `var(--color-brand-50)` through `var(--color-brand-800)`
 - **Sage**: `var(--color-sage-50)` through `var(--color-sage-800)`
 - **Terracotta**: `var(--color-terracotta-50)` through `var(--color-terracotta-800)`
 
 ### Custom Giveback Guide Colors
-- `var(--color-gbgblue)`: #295483
-- `var(--color-gbgpink)`: #f1e8fb
-- `var(--color-gbgyellow)`: #ffe8b5
-- `var(--color-gbgteal)`: #b7e5e5
+
+| Variable | Hex Value |
+|----------|-----------|
+| `--color-gbgblue` | #295483 |
+| `--color-gbgpink` | #f1e8fb |
+| `--color-gbgyellow` | #ffe8b5 |
+| `--color-gbgteal` | #b7e5e5 |
+
+---
 
 ## Implementation Details
 
 ### Files Modified
 
 #### 1. `/src/layouts/MainLayout.astro`
+
 Added props:
 - `headerVariant?: 'default' | 'transparent'`
 - `headerTheme?: 'light' | 'dark'`
 
 #### 2. `/src/components/layout/Header.astro`
+
 Enhanced with:
 - Variant system (default/transparent)
 - Theme system (light/dark)
@@ -274,6 +281,7 @@ Enhanced with:
 - Inline SVG logo for theme color control
 
 #### 3. `/src/components/sections/Hero.astro`
+
 A reusable hero component with:
 - Support for color, image, or gradient backgrounds
 - Light and dark theme variants
@@ -283,7 +291,10 @@ A reusable hero component with:
 - Responsive design
 
 #### 4. `/src/styles/global.css`
+
 Added utility classes for proper spacing with fixed headers
+
+---
 
 ## Best Practices
 
@@ -317,26 +328,36 @@ Added utility classes for proper spacing with fixed headers
 - Works with Astro view transitions
 - Inline SVG adds ~3KB but eliminates HTTP request
 
+---
+
 ## Troubleshooting
 
 ### Header overlaps content
+
 Make sure your first content section doesn't have excessive negative margin. The Hero component handles spacing automatically.
 
 ### Colors don't match
+
 Ensure you're using the correct theme prop on both MainLayout and Hero components.
 
 ### Header doesn't transition
+
 Check that you've set `headerVariant="transparent"` on MainLayout.
 
 ### Mobile menu issues
+
 The header remains responsive. Test at different breakpoints.
 
 ### Logo not changing color
+
 Logo uses inline SVG with CSS `fill: currentColor` property. Check that parent elements aren't overriding the color.
+
+---
 
 ## Testing Checklist
 
 ### Mobile (< 1024px)
+
 - [ ] Header is transparent on pages with `headerVariant="transparent"`
 - [ ] Header sticks to top when scrolling
 - [ ] Logo changes to white on dark theme
@@ -346,6 +367,7 @@ Logo uses inline SVG with CSS `fill: currentColor` property. Check that parent e
 - [ ] When scrolled, header gets semi-transparent background
 
 ### Desktop (≥ 1024px)
+
 - [ ] Header is not sticky (flows with content)
 - [ ] Header is transparent on pages with `headerVariant="transparent"`
 - [ ] Logo changes to white on dark theme
@@ -354,11 +376,14 @@ Logo uses inline SVG with CSS `fill: currentColor` property. Check that parent e
 - [ ] When scrolled on dark theme, colors revert to light theme
 
 ### Both Sizes
+
 - [ ] Logo color matches theme
 - [ ] Text is always readable (proper contrast)
 - [ ] Smooth transitions between states
 - [ ] No layout shift when scrolling
 - [ ] Default pages (without transparent prop) unchanged
+
+---
 
 ## Browser Compatibility
 
@@ -368,13 +393,17 @@ Logo uses inline SVG with CSS `fill: currentColor` property. Check that parent e
 - ✅ iOS Safari
 - ✅ Chrome Mobile
 
+---
+
 ## Migration Path
 
 ### Phase 1: Test on Design System Page
+
 - Already implemented on `/design-system`
 - Review and iterate on the design
 
 ### Phase 2: Add to High-Impact Pages
+
 Consider adding to:
 - Homepage (`/`)
 - About page (`/about`)
@@ -382,39 +411,50 @@ Consider adding to:
 - Project category pages
 
 ### Phase 3: Evaluate Content Pages
+
 Decide which individual project/stay pages benefit from integrated headers
 
 ### Phase 4: Document Best Practices
+
 Based on real usage, document when to use transparent vs. default headers
+
+---
 
 ## Key Implementation Notes
 
-### 🎨 **Opt-In Design**
+### 🎨 Opt-In Design
+
 - **Default behavior unchanged**: Existing pages work exactly as before
 - **No breaking changes**: All pages use solid white header unless you opt-in
 - **Gradual rollout**: Implement page by page
 
-### 🎭 **Theme System**
+### 🎭 Theme System
+
 - **Light theme**: Dark text/icons on light background (default)
 - **Dark theme**: White text/icons on dark background
 - **Auto-adjust**: Dark theme transitions to light on scroll for readability
 
-### 📱 **Responsive**
+### 📱 Responsive
+
 - Works on all screen sizes
 - Mobile-optimized spacing
 - Touch-friendly interactions
 
-### ⚡ **Performance**
+### ⚡ Performance
+
 - Minimal CSS and JavaScript
 - No layout shifts
 - Smooth 60fps transitions
 - Passive scroll listeners
 
-### ♿ **Accessible**
+### ♿ Accessible
+
 - Proper ARIA labels maintained
 - Focus indicators visible on all backgrounds
 - Keyboard navigation works
 - Screen reader compatible
+
+---
 
 ## Future Enhancements
 
@@ -425,6 +465,8 @@ Potential additions (not yet implemented):
 - Parallax scrolling effects
 - Video backgrounds
 - Multiple hero layouts (split, full-bleed, etc.)
+
+---
 
 ## Questions or Issues?
 

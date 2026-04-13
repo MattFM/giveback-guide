@@ -1,111 +1,246 @@
 ---
-import MainLayout from '../../layouts/MainLayout.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<MainLayout 
-  title="Internal Documentation - Giveback Guide"
-  description="Internal documentation and examples (not indexed)"
+<DocsLayout 
+  title="Documentation"
+  description="Learn about Giveback Guide's mission, policies, and how to use the platform"
+  sidebar={true}
+  toc={false}
 >
-  <!-- Warning Banner -->
-  <div class="bg-yellow-50 border-b border-yellow-200 py-3">
-    <div class="max-w-screen-xl mx-auto px-4 lg:px-6">
-      <p class="text-sm text-yellow-800 flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+  <div class="docs-landing" data-pagefind-body data-pagefind-filter="type:doc">
+    <p class="intro">
+      Welcome to the Giveback Guide documentation. Here you'll find everything you need to know 
+      about our mission, how we verify projects and stays, and how to make the most of the platform.
+    </p>
+
+    <div class="sections-grid">
+      <!-- About Section -->
+      <a href="/docs/about/mission-charter/" class="section-card">
+        <div class="card-icon about-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+        </div>
+        <h2>About</h2>
+        <p>Our mission, charter, and what Giveback Guide stands for</p>
+        <ul>
+          <li>Mission & Charter</li>
+          <li>What is Giveback Guide</li>
+          <li>Our values and approach</li>
+        </ul>
+      </a>
+
+      <!-- Policies Section -->
+      <a href="/docs/policies/animal-welfare/" class="section-card">
+        <div class="card-icon policies-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <h2>Policies</h2>
+        <p>How we verify projects and our commitment to ethical standards</p>
+        <ul>
+          <li>Animal Welfare Policy</li>
+          <li>Verification Process</li>
+          <li>Ethical Guidelines</li>
+        </ul>
+      </a>
+
+      <!-- Getting Started Section -->
+      <a href="/docs/getting-started/finding-projects/" class="section-card">
+        <div class="card-icon getting-started-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/>
+            <path d="M3 3v9h9"/>
+          </svg>
+        </div>
+        <h2>Getting Started</h2>
+        <p>Learn how to find projects and book sustainable stays</p>
+        <ul>
+          <li>Finding Projects</li>
+          <li>Booking Stays</li>
+          <li>Search and filters</li>
+        </ul>
+      </a>
+
+      <!-- For Organisers Section -->
+      <a href="/docs/for-organisers/how-to-be-listed/" class="section-card">
+        <div class="card-icon organisers-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h2>For Organisers</h2>
+        <p>Information for project organisers and stay hosts</p>
+        <ul>
+          <li>How to be Listed</li>
+          <li>Requirements and criteria</li>
+          <li>Application process</li>
+        </ul>
+      </a>
+    </div>
+
+    <div class="search-section">
+      <h2>Search Documentation</h2>
+      <p>Looking for something specific? Use our documentation search.</p>
+      <a href="/docs/search/" class="search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
         </svg>
-        <strong class="font-semibold">Internal Documentation:</strong>
-        <span class="ml-1">This section is hidden from search engines and sitemaps.</span>
-      </p>
+        Search Docs
+      </a>
     </div>
   </div>
 
-  <main class="max-w-screen-xl mx-auto px-4 lg:px-6 py-12">
-    <h1 class="text-4xl font-bold mb-8">Internal Documentation</h1>
-    
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      <!-- How-To Guides -->
-      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-        <h2 class="text-2xl font-bold mb-4 text-blue-600">How-To Guides</h2>
-        <p class="text-sm text-gray-600 mb-3">Implementation guides and component documentation</p>
-        <ul class="space-y-2">
-          <li>
-            <a href="/docs/how-tos/integrated-header/" class="text-blue-600 hover:underline">
-              📐 Integrated Header System
-            </a>
-          </li>
-          <li>
-            <a href="/docs/how-tos/navigation-drawer/" class="text-blue-600 hover:underline">
-              🗂️ Navigation Drawer
-            </a>
-          </li>
-          <li>
-            <a href="/docs/how-tos/responsive-images/" class="text-blue-600 hover:underline">
-              🖼️ Responsive Images
-            </a>
-          </li>
-        </ul>
-      </div>
+  <style>
+    .docs-landing {
+      max-width: 900px;
+    }
 
-      <!-- Examples -->
-      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-        <h2 class="text-2xl font-bold mb-4 text-purple-600">Examples</h2>
-        <p class="text-sm text-gray-600 mb-3">Live interactive demonstrations</p>
-        <ul class="space-y-2">
-          <li>
-            <a href="/docs/examples/design-system/" class="text-blue-600 hover:underline">
-              🎨 Design System
-            </a>
-          </li>
-          <li>
-            <a href="/docs/examples/hero-examples/" class="text-blue-600 hover:underline">
-              🌟 Hero Examples
-            </a>
-          </li>
-        </ul>
-      </div>
+    .intro {
+      font-size: 1.125rem;
+      color: #4b5563;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
 
-      <!-- Research -->
-      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-        <h2 class="text-2xl font-bold mb-4 text-green-600">Research</h2>
-        <p class="text-sm text-gray-600 mb-3">User research and feedback collection</p>
-        <ul class="space-y-2">
-          <li>
-            <a href="/docs/research/layout-design-survey/" class="text-blue-600 hover:underline">
-              📋 User Experience Survey
-            </a>
-          </li>
-          <li>
-            <a href="/docs/research/ford-foundation-design-system/" class="text-blue-600 hover:underline">
-              🎨 Ford Foundation Design System Analysis
-            </a>
-          </li>
-        </ul>
-      </div>
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
 
-      <!-- Planning -->
-      <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-        <h2 class="text-2xl font-bold mb-4 text-orange-600">Planning</h2>
-        <p class="text-sm text-gray-600 mb-3">Architecture plans and implementation roadmaps</p>
-        <ul class="space-y-2">
-          <li>
-            <a href="/docs/locations-database-plan/" class="text-blue-600 hover:underline">
-              📍 Locations Database Implementation
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    @media (min-width: 640px) {
+      .sections-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
 
-    <div class="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold mb-2">📝 Note</h3>
-      <p class="text-gray-700">
-        This documentation section is excluded from:
-      </p>
-      <ul class="list-disc list-inside mt-2 text-gray-600">
-        <li>Search engine indexing (<code>robots.txt</code>)</li>
-        <li>XML sitemap (<code>astro.config.mjs</code>)</li>
-        <li>Public navigation (no links from main site)</li>
-      </ul>
-    </div>
-  </main>
-</MainLayout>
+    .section-card {
+      display: block;
+      padding: 1.5rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      color: inherit;
+    }
+
+    .section-card:hover {
+      border-color: #7c3aed;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .about-icon {
+      background: #ede9fe;
+      color: #7c3aed;
+    }
+
+    .policies-icon {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .getting-started-icon {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .organisers-icon {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .section-card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .section-card > p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin: 0 0 1rem 0;
+      line-height: 1.5;
+    }
+
+    .section-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .section-card li {
+      font-size: 0.875rem;
+      color: #6b7280;
+      padding: 0.25rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .section-card li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #9ca3af;
+    }
+
+    .search-section {
+      background: #f9fafb;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .search-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .search-section p {
+      color: #6b7280;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .search-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #7c3aed;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .search-button:hover {
+      background: #6d28d9;
+    }
+  </style>
+</DocsLayout>

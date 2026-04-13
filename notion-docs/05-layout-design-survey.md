@@ -1,14 +1,11 @@
----
-layout: ../../../layouts/DocsLayout.astro
-title: Layout Design Survey
-description: User research survey for Project and Stay page redesign
----
-
 # Giveback Guide: Page Layout & Design Survey
 
-**Version:** 1.0  
-**Last Updated:** October 21, 2025  
-**Purpose:** Understanding user priorities and preferences when discovering volunteer projects and sustainable stays online.
+> **Internal Documentation** | User Research
+> **Version:** 1.0  
+> **Last Updated:** October 21, 2025  
+> **Purpose:** Understanding user priorities and preferences when discovering volunteer projects and sustainable stays online.
+
+---
 
 ## Survey Methodology Notes
 
@@ -22,31 +19,38 @@ description: User research survey for Project and Stay page redesign
 ## Section 1: What Matters Most (2 mins)
 
 ### Q1: Decision Factors
+
 When considering a volunteer project or sustainable accommodation, what information is MOST important to you?
 
 **Instructions:** Rank 1-7, where 1 = most important
 
-- ___ Location/destination
-- ___ Environmental/social impact
-- ___ Price/cost
-- ___ Trust signals (reviews, verification, certifications)
-- ___ Organization/host reputation  
-- ___ Availability and booking process
-- ___ Detailed descriptions and photos
+- [ ] Location/destination
+- [ ] Environmental/social impact
+- [ ] Price/cost
+- [ ] Trust signals (reviews, verification, certifications)
+- [ ] Organisation/host reputation  
+- [ ] Availability and booking process
+- [ ] Detailed descriptions and photos
+
+---
 
 ### Q2: First Glance
+
 Imagine you've just opened a page about a volunteer project. What's the FIRST piece of information you'd want to see?
 
 - [ ] Where it is (location)
 - [ ] What impact it makes (environment, education, etc.)
-- [ ] Who runs it (organization name)
+- [ ] Who runs it (organisation name)
 - [ ] How to book/get involved
 - [ ] Photos of the project
 - [ ] Price or if it's free
 - [ ] Trust badges or verification
 - [ ] Other: _______
 
+---
+
 ### Q3: Impact Information
+
 How important is it to see what positive change your participation creates (e.g., "supports wildlife conservation" or "funds local education")?
 
 - [ ] Very important - I want this highlighted prominently
@@ -59,6 +63,7 @@ How important is it to see what positive change your participation creates (e.g.
 ## Section 2: Booking & Taking Action (2 mins)
 
 ### Q4: Multiple Booking Options
+
 If a stay or experience has multiple booking platforms (like Booking.com, Airbnb, etc.), how do you prefer to see them?
 
 - [ ] Show all options at once, even if it takes up space
@@ -67,7 +72,10 @@ If a stay or experience has multiple booking platforms (like Booking.com, Airbnb
 - [ ] Just give me the direct website link
 - [ ] No strong preference
 
+---
+
 ### Q5: Mobile Booking
+
 On your phone, when you decide you want to book or get involved, which would you prefer?
 
 - [ ] A button that stays at the bottom of my screen as I scroll
@@ -76,34 +84,41 @@ On your phone, when you decide you want to book or get involved, which would you
 - [ ] A bar at the top that stays visible
 - [ ] I mostly browse on desktop, not mobile
 
+---
+
 ### Q6: Call-to-Action Priority
+
 When viewing a volunteer project page, which action feels most natural to you?
 
 - [ ] "Visit Website" to learn more on their site
 - [ ] "Book Experience" directly through a platform
-- [ ] "Save for Later" to my favorites
+- [ ] "Save for Later" to my favourites
 - [ ] "View on Map" to see location context
-- [ ] Contact or message the organizer
+- [ ] Contact or message the organiser
 
 ---
 
 ## Section 3: Trust & Verification (1-2 mins)
 
 ### Q7: Trust Signals
+
 What makes you trust that a volunteer project or sustainable stay is legitimate and worthwhile?
 
 **Instructions:** Select all that apply
 
 - [ ] Verification badge or certification
 - [ ] Reviews from other travelers/volunteers
-- [ ] Detailed information about the organization
+- [ ] Detailed information about the organisation
 - [ ] Photos and visual documentation
 - [ ] Professional website/booking platform presence
 - [ ] Clear pricing and policies
 - [ ] Social media presence
 - [ ] Other: _______
 
+---
+
 ### Q8: Verification Display
+
 If a project has been verified by Giveback Guide, how should this be shown?
 
 - [ ] Very prominently - badges, colors, make it obvious throughout
@@ -117,6 +132,7 @@ If a project has been verified by Giveback Guide, how should this be shown?
 ## Section 4: Content & Reading (1-2 mins)
 
 ### Q9: Information Density
+
 When browsing project or stay pages online, you typically:
 
 - [ ] Read everything thoroughly before deciding
@@ -125,7 +141,10 @@ When browsing project or stay pages online, you typically:
 - [ ] Jump straight to pricing and booking info
 - [ ] Check location and trust signals, skip most text
 
+---
+
 ### Q10: Location Information
+
 How do you prefer to see location details (e.g., "Ubud, Bali, Indonesia")?
 
 - [ ] As clickable tags/pills that let me find similar projects
@@ -134,12 +153,15 @@ How do you prefer to see location details (e.g., "Ubud, Bali, Indonesia")?
 - [ ] Multiple ways - tags AND map AND text
 - [ ] Just text is fine
 
+---
+
 ### Q11: Visual Design
-When information is grouped in boxes or colored sections, what does that signal to you?
+
+When information is grouped in boxes or coloured sections, what does that signal to you?
 
 - [ ] Important information I should pay attention to
 - [ ] Something I can click or interact with
-- [ ] Just visual organization, doesn't mean much
+- [ ] Just visual organisation, doesn't mean much
 - [ ] Premium or featured content
 - [ ] It depends on the design
 - [ ] I don't really notice boxes vs. plain text
@@ -149,16 +171,23 @@ When information is grouped in boxes or colored sections, what does that signal 
 ## Section 5: Your Experience (Open-ended, optional)
 
 ### Q12: Frustrations
+
 Have you ever struggled to find important information on a volunteer/travel website? What was missing or hard to find?
 
 [Open text field]
 
+---
+
 ### Q13: Ideal Layout
+
 If you could design the perfect page for discovering volunteer projects or sustainable stays, what would it look like? What would you see first, second, third?
 
 [Open text field]
 
+---
+
 ### Q14: Missing Features
+
 Is there anything you wish travel/volunteer websites showed that they typically don't?
 
 [Open text field]
@@ -167,21 +196,24 @@ Is there anything you wish travel/volunteer websites showed that they typically 
 
 ## Participant Info (Optional)
 
-**How often do you travel or volunteer?**
+### How often do you travel or volunteer?
+
 - [ ] Multiple times per year
 - [ ] Once a year
 - [ ] Every few years
 - [ ] Rarely
 - [ ] Planning my first trip
 
-**Age range:**
+### Age range:
+
 - [ ] 18-24
 - [ ] 25-34
 - [ ] 35-44
 - [ ] 45-54
 - [ ] 55+
 
-**Primary device for browsing:**
+### Primary device for browsing:
+
 - [ ] Desktop/laptop
 - [ ] Mobile phone
 - [ ] Tablet
@@ -192,20 +224,26 @@ Is there anything you wish travel/volunteer websites showed that they typically 
 ## Implementation Notes
 
 ### Survey Tools
+
 Consider using:
-- Typeform (best UX, visual)
-- Google Forms (free, simple)
-- SurveyMonkey (analytics)
-- Tally (privacy-focused)
+
+| Tool | Pros | Cons |
+|------|------|------|
+| **Typeform** | Best UX, visual | Paid for advanced features |
+| **Google Forms** | Free, simple | Limited design options |
+| **SurveyMonkey** | Good analytics | Expensive for full features |
+| **Tally** | Privacy-focused | Newer, less established |
 
 ### Distribution Channels
+
 - Email newsletter to existing community
 - Social media (Instagram, TikTok)
 - On-site popup for active users
-- Partner organizations
+- Partner organisations
 - Reddit travel communities
 
 ### Analysis Goals
+
 - Identify top 3 priorities for page hierarchy
 - Determine action bar design (unified vs. variable)
 - Validate verification placement and prominence
@@ -215,7 +253,8 @@ Consider using:
 ### Follow-up Questions (Future Versions)
 
 **Add these as you iterate:**
-- [ ] Question about search behavior
+
+- [ ] Question about search behaviour
 - [ ] Question about filtering preferences
 - [ ] Question about comparison features
 - [ ] Question about saving/list management
@@ -226,13 +265,15 @@ Consider using:
 
 ## Version History
 
-- **v1.0** (Oct 21, 2025): Initial survey created based on layout redesign discussion
-- **v1.1** (TBD): Add questions based on initial results
-- **v2.0** (TBD): Post-redesign validation survey
+| Version | Date | Notes |
+|---------|------|-------|
+| v1.0 | Oct 21, 2025 | Initial survey created based on layout redesign discussion |
+| v1.1 | TBD | Add questions based on initial results |
+| v2.0 | TBD | Post-redesign validation survey |
 
 ---
 
 ## Related Documents
 
-- [Project & Stay Page Layout Decisions](./project-stay-layout-decisions.md)
-- [Page Layout Mock-up](./page-layout-mockup.md)
+- Project & Stay Page Layout Decisions
+- Page Layout Mock-up
