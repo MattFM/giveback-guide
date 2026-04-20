@@ -442,7 +442,7 @@ import { SITE_TITLE } from "../consts";
   const CANONICAL_COUNTRIES = new Set([
     "New Zealand", "Canada", "Scotland", "Wales", "Australia", 
     "United Kingdom", "UK", "England", "Northern Ireland",
-    "USA", "United States",
+    "USA", "United States", "Türkiye",
     // Add other countries as needed - this filters out aliases from display
   ]);
 
@@ -1479,8 +1479,8 @@ import { SITE_TITLE } from "../consts";
       if (contentTypeSlug === 'projects' && countries) {
         // Filter to only show canonical country names (not aliases)
         const allCountries = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
-        // Take only canonical country names (filter out aliases like Aotearoa, Alba, etc.)
-        const countryArray = allCountries.filter((c: string) => CANONICAL_COUNTRIES.has(c) || !['Aotearoa', 'Alba', 'Cymru', 'Turtle Island', 'Kanata'].includes(c));
+        // Take only canonical country names (filter out aliases like Aotearoa, Alba, Turkey, etc.)
+        const countryArray = allCountries.filter((c: string) => CANONICAL_COUNTRIES.has(c) || !['Aotearoa', 'Alba', 'Cymru', 'Turtle Island', 'Kanata', 'Turkey'].includes(c));
         const localeArray = locale ? locale.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
         
         if (countryArray.length > 0) {
@@ -1498,8 +1498,8 @@ import { SITE_TITLE } from "../consts";
       } else if (contentTypeSlug === 'stays' && countries) {
         // Filter to only show canonical country names (not aliases)
         const allCountries = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
-        // Take only canonical country names (filter out aliases like Aotearoa, Alba, etc.)
-        const countryArray = allCountries.filter((c: string) => CANONICAL_COUNTRIES.has(c) || !['Aotearoa', 'Alba', 'Cymru', 'Turtle Island', 'Kanata'].includes(c));
+        // Take only canonical country names (filter out aliases like Aotearoa, Alba, Turkey, etc.)
+        const countryArray = allCountries.filter((c: string) => CANONICAL_COUNTRIES.has(c) || !['Aotearoa', 'Alba', 'Cymru', 'Turtle Island', 'Kanata', 'Turkey'].includes(c));
         const localeArray = locale ? locale.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
         
         if (countryArray.length > 0) {

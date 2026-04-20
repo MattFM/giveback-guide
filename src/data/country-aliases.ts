@@ -26,6 +26,10 @@ export const COUNTRY_ALIASES: Record<string, {
   "Wales": {
     english: "Wales",
     aliases: [{ name: "Cymru", type: "endonym" }]
+  },
+  "Türkiye": {
+    english: "Türkiye",
+    aliases: [{ name: "Turkey", type: "historic" }]
   }
 };
 
