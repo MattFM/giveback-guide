@@ -189,7 +189,7 @@ const projects = defineCollection({
 
           return [];
         }),
-      pOrganiser: transformedPropertySchema.rich_text,
+      pName: transformedPropertySchema.rich_text,
       pSlug: transformedPropertySchema.rich_text,
       pFree: transformedPropertySchema.checkbox,
       pURL: transformedPropertySchema.url,

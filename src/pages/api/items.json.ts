@@ -43,7 +43,7 @@ export async function GET() {
       type: 'project',
       id,
       altIds: pID && slug ? [pID, slug].filter((v) => v !== id) : [],
-      title: props.pOrganiser || props.pTitle || slug,
+      title: props.pName || props.pTitle || slug,
       slug,
       url: `/projects/${slug}`,
       image: props.pImageURL || null,

@@ -11,7 +11,6 @@ import SaveToList from "../components/features/save/SaveToList.astro";
 import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
 import { enrichImpactAreas } from "../utils/impactAreas";
 import ActionBar from "../components/content/ActionBar.astro";
-import MetadataPills from "../components/content/MetadataPills.astro";
 import ProjectMetadata from "../components/content/ProjectMetadata.astro";
 import VerificationBox from "../components/content/VerificationBox.astro";
 import GetInvolvedBox from "../components/content/GetInvolvedBox.astro";
@@ -32,7 +31,7 @@ const localeString = Array.isArray(properties.pLocale)
     : properties.pLocale || "";
 
 // Generate the description
-const description = `Give back to the local community in ${localeString} by engaging with ${properties.pOrganiser} on your next trip.`;
+const description = `Give back to the local community in ${localeString} by engaging with ${properties.pName} on your next trip.`;
 
 const allProjects = await getCollection("projects");
 const actionId = String(
@@ -85,7 +84,7 @@ const relatedProjects = allProjects
                         crumbs={[
                             { label: "Home", href: "/" },
                             { label: "Projects", href: "/projects/" },
-                            { label: properties.pOrganiser },
+                            { label: properties.pName },
                         ]}
                     />
                 </section>
@@ -96,7 +95,7 @@ const relatedProjects = allProjects
                         data-pagefind-meta="image[src], image_alt[alt]"
                         class="w-full drop-shadow-xl rounded-lg"
                         src={properties.pImageURL ?? "/default-image.jpg"}
-                        alt={properties.pOrganiser}
+                        alt={properties.pName}
                         fetchpriority="high"
                         loading="eager"
                         preset="hero"
@@ -107,7 +106,7 @@ const relatedProjects = allProjects
                 <!-- Title and Info (now below gallery, full width) -->
                 <section class="py-6 px-4">
                     <ProjectMetadata
-                        operator={properties.pOrganiser}
+                        operator={properties.pName}
                         types={properties.pTypesNames}
                         locales={properties.pLocale}
                         countries={properties.pCountry}
@@ -258,9 +257,9 @@ const relatedProjects = allProjects
                                 aria-hidden="true"
                             >
                                 {
-                                    properties.pOrganiser && (
-                                        <span data-pagefind-meta="organiser">
-                                            {properties.pOrganiser}
+                                    properties.pName && (
+                                        <span data-pagefind-meta="name">
+                                            {properties.pName}
                                         </span>
                                     )
                                 }
