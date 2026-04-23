@@ -101,7 +101,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
     <script>
         // Search functionality using Pagefind
-        let pagefind;
+        let pagefind: any;
         let currentQuery = "";
 
         async function initPagefind() {
@@ -136,15 +136,21 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
             }
         }
 
-        function showStatus(message) {
+        function showStatus(message: string) {
             const statusEl = document.getElementById("status-message");
             const resultsEl = document.getElementById("search-results");
             const noResultsEl = document.getElementById("no-results");
 
-            statusEl.textContent = message;
-            statusEl.classList.remove("hidden");
-            resultsEl.innerHTML = "";
-            noResultsEl.classList.add("hidden");
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.classList.remove("hidden");
+            }
+            if (resultsEl) {
+                resultsEl.innerHTML = "";
+            }
+            if (noResultsEl) {
+                noResultsEl.classList.add("hidden");
+            }
         }
 
         function showNoResults() {
@@ -152,27 +158,44 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
             const resultsEl = document.getElementById("search-results");
             const noResultsEl = document.getElementById("no-results");
 
-            statusEl.classList.add("hidden");
-            resultsEl.innerHTML = "";
-            noResultsEl.classList.remove("hidden");
+            if (statusEl) {
+                statusEl.classList.add("hidden");
+            }
+            if (resultsEl) {
+                resultsEl.innerHTML = "";
+            }
+            if (noResultsEl) {
+                noResultsEl.classList.remove("hidden");
+            }
         }
 
-        function displayResults(results) {
+        interface SearchResult {
+            url: string;
+            title: string;
+            excerpt: string;
+        }
+
+        function displayResults(results: SearchResult[]) {
             const statusEl = document.getElementById("status-message");
             const resultsEl = document.getElementById("search-results");
             const noResultsEl = document.getElementById("no-results");
 
-            statusEl.classList.add("hidden");
-            noResultsEl.classList.add("hidden");
+            if (statusEl) {
+                statusEl.classList.add("hidden");
+            }
+            if (noResultsEl) {
+                noResultsEl.classList.add("hidden");
+            }
 
             if (results.length === 0) {
                 showNoResults();
                 return;
             }
 
-            resultsEl.innerHTML = results
-                .map(
-                    (result) => `
+            if (resultsEl) {
+                resultsEl.innerHTML = results
+                    .map(
+                        (result) => `
         <article class="result-item">
           <h3 class="result-title">
             <a href="${result.url}">${result.title}</a>
@@ -183,11 +206,12 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
           </div>
         </article>
       `,
-                )
-                .join("");
+                    )
+                    .join("");
+            }
         }
 
-        async function performSearch(query) {
+        async function performSearch(query: string) {
             if (!pagefind || !query.trim()) {
                 showStatus(
                     "Enter a search term to find documentation articles.",
@@ -221,8 +245,17 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
                 }
 
                 // Process results
+                interface PagefindResult {
+                    data: () => Promise<{
+                        url: string;
+                        meta?: { title?: string };
+                        title?: string;
+                        excerpt?: string;
+                    }>;
+                }
+
                 const processedResults = await Promise.all(
-                    search.results.map(async (result) => {
+                    search.results.map(async (result: PagefindResult) => {
                         const data = await result.data();
                         console.log("Result:", data.url, data.meta?.title);
                         return {
@@ -247,11 +280,12 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         const initialQuery = urlParams.get("q");
         
         // Input handling - set up immediately
-        const searchInput = document.getElementById("search-input");
+        const searchInput = document.getElementById("search-input") as HTMLInputElement | null;
         const clearButton = document.getElementById("clear-search");
 
         searchInput?.addEventListener("input", (e) => {
-            const value = e.target.value;
+            const target = e.target as HTMLInputElement;
+            const value = target.value;
             if (value.length > 0) {
                 clearButton?.classList.remove("hidden");
             } else {
@@ -263,8 +297,9 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         });
 
         searchInput?.addEventListener("keydown", (e) => {
+            const target = e.target as HTMLInputElement;
             if (e.key === "Enter") {
-                currentQuery = e.target.value;
+                currentQuery = target.value;
                 performSearch(currentQuery);
             }
         });
@@ -282,7 +317,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         
         // Initialize Pagefind, then run initial search if query exists
         initPagefind().then((initialized) => {
-            if (initialized && initialQuery) {
+            if (initialized && initialQuery && searchInput) {
                 searchInput.value = initialQuery;
                 clearButton?.classList.remove("hidden");
                 currentQuery = initialQuery;

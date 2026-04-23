@@ -12,12 +12,6 @@ interface Props {
 
 const { limit } = Astro.props;
 
-// Helper function to parse dates in dd/mm/yyyy format
-function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split("/");
-  return new Date(`${year}-${month}-${day}`);
-}
-
 // Fetch projects from the content collection
 const entries = await getCollection("projects");
 
@@ -35,12 +29,8 @@ const sortedEntries = entries
     },
   }))
   .sort((a, b) => {
-    const dateA = a.data.properties.pPublished
-      ? a.data.properties.pPublished.start
-      : new Date(0); // Fallback to epoch if date is missing
-    const dateB = b.data.properties.pPublished
-      ? b.data.properties.pPublished.start
-      : new Date(0); // Fallback to epoch if date is missing
+    const dateA = a.data.properties.pPublished || new Date(0); // Fallback to epoch if date is missing
+    const dateB = b.data.properties.pPublished || new Date(0); // Fallback to epoch if date is missing
     return dateB.getTime() - dateA.getTime(); // Most recent first
   });
 

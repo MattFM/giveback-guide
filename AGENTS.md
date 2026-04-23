@@ -4,17 +4,17 @@
 
 ```bash
 # Development
-npm run dev              # Start Astro dev server (runs continuously)
-npm run build            # Build for production (uses --no-deprecation flag)
+pnpm run dev              # Start Astro dev server (runs continuously)
+pnpm run build            # Build for production (uses --no-deprecation flag)
 
 # Content Management
-npm run blog:convert     # Convert Notion to MDX (utility script)
-npm run blog:validate    # Validate MDX blog posts
-npm run astro            # Direct Astro CLI access
+pnpm run blog:convert     # Convert Notion to MDX (utility script)
+pnpm run blog:validate    # Validate MDX blog posts
+pnpm run astro            # Direct Astro CLI access
 ```
 
 **Testing**: No formal test suite. Use manual testing:
-- `npm run dev` for development testing (runs continuously - **build verification not required**)
+- `pnpm run dev` for development testing (runs continuously - **build verification not required**)
 - Test auth flows via `/login` and `/account/dashboard`
 - Browser console testing for client-side features
 - **Note**: User runs dev mode continuously; build verification is unnecessary as Astro dev server updates in real-time
@@ -125,6 +125,51 @@ export async function getStaticPaths() {
 - Follow existing patterns in codebase for consistency
 - Use Astro's island architecture for interactive components
 
+### TypeScript Strict Mode Compliance (Client-Side Scripts)
+When writing JavaScript in `<script>` tags within `.astro` files, the project uses strict TypeScript configuration (`astro/tsconfigs/strict` with `strictNullChecks: true`). This enforces additional type safety requirements:
+
+1. **Always type function parameters** - Prevent implicit `any`:
+   ```typescript
+   // Bad: function showStatus(message) { ... }
+   // Good: function showStatus(message: string) { ... }
+   ```
+
+2. **Type variables without inference** - Declare types for variables that can't be inferred:
+   ```typescript
+   // Bad: let pagefind;
+   // Good: let pagefind: any;  // or better, define a proper interface
+   ```
+
+3. **Use proper DOM element types** - `document.getElementById()` returns `HTMLElement | null`, cast to specific types when needed:
+   ```typescript
+   // Bad: const input = document.getElementById("search-input");
+   // Good: const input = document.getElementById("search-input") as HTMLInputElement | null;
+   ```
+
+4. **Handle null checks explicitly** - Elements may not exist:
+   ```typescript
+   // Bad: statusEl.textContent = message;
+   // Good: if (statusEl) { statusEl.textContent = message; }
+   ```
+
+5. **Type event targets properly** - Event targets need explicit casting:
+   ```typescript
+   // Bad: searchInput?.addEventListener("input", (e) => { const value = e.target.value; });
+   // Good: searchInput?.addEventListener("input", (e) => { 
+   //   const target = e.target as HTMLInputElement; 
+   //   const value = target.value; 
+   // });
+   ```
+
+6. **Define interfaces for complex objects** - Use interfaces for data structures:
+   ```typescript
+   interface SearchResult {
+       url: string;
+       title: string;
+       excerpt: string;
+   }
+   ```
+
 ### Environment Variables
 - `NOTION_TOKEN` - Notion integration token
 - `PROJECTS_NOTION_DATABASE_ID` - Projects database ID
@@ -135,7 +180,7 @@ export async function getStaticPaths() {
 ## Key Development Notes
 
 - **Dev server runs continuously** - don't prompt to start unless needed
-- Content changes require rebuild (`npm run build`)
+- Content changes require rebuild (`pnpm run build`)
 - Database migrations are manual via Supabase dashboard
 - Deployments: Manual VSCode plugin trigger → GitHub Action → Cloudflare Workers
 - Trust code over `/docs` directory for current implementation
