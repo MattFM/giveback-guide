@@ -102,7 +102,7 @@ Business logic and integrations:
 - `index.astro` - Homepage
 - `search.astro` & `_search.astro` - Search functionality
 - `404.astro` - Error page
-- `beta.astro`, `concierge.astro`, `contact.astro` - Feature pages
+- `beta.astro`, `contact.astro` - Feature pages
 - `privacy.astro`, `terms.astro` - Legal pages
 - `report.astro`, `submit.astro`, `support.astro` - User actions
 - `sustainability.astro`, `why.astro` - Content pages

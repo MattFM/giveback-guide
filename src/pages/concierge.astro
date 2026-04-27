@@ -6,8 +6,30 @@ import { SITE_TITLE } from "../consts";
 <MainLayout title={`${SITE_TITLE} Concierge`}>
   <section class="bg-white dark:bg-gray-900">
     <div
-      class="text-gray-500 sm:text-lg dark:text-gray-400 gap-8 py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6"
+      class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6"
     >
+      <div class="mx-auto max-w-screen-sm text-center">
+        <h1
+          class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+        >
+          Concierge
+        </h1>
+        <p class="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
+          The Concierge service is no longer available.
+        </p>
+        <a
+          href="/"
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-transparent rounded-lg hover:bg-black focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+        >
+          Return to homepage
+          <svg class="w-4 h-4 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</MainLayout>
       <div class="mt-4 md:mt-0">
         <h1
           class="mb-4 mt-2 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
