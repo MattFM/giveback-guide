@@ -6,27 +6,13 @@ import StayCard from "../../components/content/StayCard.astro";
 import StayCountryDropdown from "../../components/ui/Dropdown/StayCountryDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
 
-// Helper function to parse dates in dd/mm/yyyy format
-function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split('/');
-  return new Date(`${year}-${month}-${day}`);
-}
-
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const entries = await getCollection("stays");
 
-  // Sort projects by sPublished date (descending order)
+  // Sort stays by sPublished date (descending order)
   const sortedEntries = entries.sort((a, b) => {
-    const dateA = a.data.properties.sPublished?.start 
-      ? (typeof a.data.properties.sPublished.start === 'string' 
-          ? parseDate(a.data.properties.sPublished.start) 
-          : a.data.properties.sPublished.start) 
-      : new Date(0);
-    const dateB = b.data.properties.sPublished?.start 
-      ? (typeof b.data.properties.sPublished.start === 'string' 
-          ? parseDate(b.data.properties.sPublished.start) 
-          : b.data.properties.sPublished.start) 
-      : new Date(0);
+    const dateA = a.data.properties.sPublished || new Date(0);
+    const dateB = b.data.properties.sPublished || new Date(0);
     return dateB.getTime() - dateA.getTime(); // Most recent first
   });
 

@@ -59,7 +59,14 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         );
       });
 
-      const localePaginatedPaths = paginate(localeProjects, {
+      // Sort projects by pPublished date (descending order)
+      const sortedLocaleProjects = localeProjects.sort((a, b) => {
+        const dateA = a.data.properties.pPublished || new Date(0);
+        const dateB = b.data.properties.pPublished || new Date(0);
+        return dateB.getTime() - dateA.getTime(); // Most recent first
+      });
+
+      const localePaginatedPaths = paginate(sortedLocaleProjects, {
         pageSize: 9, // Number of projects per page
         params: { country, locale },
         props: { country, locale }, // Pass country and locale as props

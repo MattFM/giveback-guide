@@ -6,27 +6,13 @@ import ProjectCard from "../../components/content/ProjectCard.astro";
 import ProjectCountryDropdown from "../../components/ui/Dropdown/ProjectCountryDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
 
-// Helper function to parse dates in dd/mm/yyyy format
-function parseDate(dateStr: string): Date {
-  const [day, month, year] = dateStr.split('/');
-  return new Date(`${year}-${month}-${day}`);
-}
-
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const entries = await getCollection("projects");
 
   // Sort projects by pPublished date (descending order)
   const sortedEntries = entries.sort((a, b) => {
-    const dateA = a.data.properties.pPublished?.start 
-      ? (typeof a.data.properties.pPublished.start === 'string' 
-          ? parseDate(a.data.properties.pPublished.start) 
-          : a.data.properties.pPublished.start) 
-      : new Date(0);
-    const dateB = b.data.properties.pPublished?.start 
-      ? (typeof b.data.properties.pPublished.start === 'string' 
-          ? parseDate(b.data.properties.pPublished.start) 
-          : b.data.properties.pPublished.start) 
-      : new Date(0);
+    const dateA = a.data.properties.pPublished || new Date(0);
+    const dateB = b.data.properties.pPublished || new Date(0);
     return dateB.getTime() - dateA.getTime(); // Most recent first
   });
 

@@ -34,7 +34,14 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
       return projectCountries.includes(country);
     });
 
-    return paginate(countryProjects, {
+    // Sort projects by pPublished date (descending order)
+    const sortedCountryProjects = countryProjects.sort((a, b) => {
+      const dateA = a.data.properties.pPublished || new Date(0);
+      const dateB = b.data.properties.pPublished || new Date(0);
+      return dateB.getTime() - dateA.getTime(); // Most recent first
+    });
+
+    return paginate(sortedCountryProjects, {
       pageSize: 9, // Number of projects per page
       params: { country },
       props: { country }, // Pass country as a prop
