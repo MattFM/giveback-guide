@@ -1,196 +1,185 @@
 ---
 import { SITE_TITLE } from "../consts";
-import MainLayout from "../layouts/MainLayout.astro";
+import GenericPage from "../layouts/GenericPage.astro";
 ---
 
-<MainLayout title="Sustainability at Giveback">
-  <main>
-    <section class="bg-white dark:bg-gray-900">
-      <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-        <h2
-          class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white"
+<GenericPage
+    title="Sustainability at Giveback"
+    headerTitle="Sustainability"
+    subtitle="We've declared a climate emergency"
+>
+    <p>
+        As part of our commitment to sustainability,&nbsp;<strong
+            >we&rsquo;ve declared a climate emergency</strong
+        >.&nbsp;
+    </p>
+    <p>
+        To help focus our efforts, {SITE_TITLE} is a signatory of the&nbsp;<a
+            href="https://www.oneplanetnetwork.org/programmes/sustainable-tourism/glasgow-declaration"
+            target="_blank"
+            rel="noreferrer noopener"
+            >Glasgow Declaration on Climate Action in Tourism</a
+        >&nbsp;(co-drafted by Tourism Declares, UNWTO, UNEP, Travel Foundation
+        and VisitScotland).
+    </p>
+    <h2>Our Climate Declaration</h2>
+    <p>
+        <strong>We declare</strong>&nbsp;our shared commitment to unite all
+        stakeholders in transforming tourism to deliver effective climate
+        action.
+    </p>
+    <p>
+        <strong>We support</strong>&nbsp;the global commitment to halve
+        emissions by 2030 and reach Net Zero as soon as possible before 2050.
+    </p>
+    <p>
+        <strong>We will consistently align</strong>&nbsp;our actions with the
+        latest scientific recommendations, so as to ensure our approach remains
+        consistent with a rise of no more than 1.5&deg;C above pre-industrial
+        levels by 2100.
+    </p>
+    <p><strong>As a signatory, we commit to</strong>:</p>
+    <ol>
+        <li>Deliver a climate action plan within 12 month of signing.</li>
+        <li>
+            Report publicly both progress against interim and long-term targets,
+            as well as the actions being taken, at least annually.
+        </li>
+        <li>
+            Align our plan with five shared pathways (measure, decarbonise,
+            regenerate, collaborate, finance) to ensure climate action is
+            consistent across all of tourism.
+        </li>
+        <li>
+            Share information on activities connected to Tourism Declares and/or
+            the Glasgow Declaration among contacts and networks.
+        </li>
+        <li>
+            Work in a collaborative and constructive spirit with other members
+            of Tourism Declares and/or signatories of the Glasgow Declaration.
+        </li>
+    </ol>
+    <h2>Our Climate Action Plan</h2>
+    <p>
+        As part of our membership of these two organisations, we have created a
+        Climate Action Plan. Our plan has two key aims; to reduce our own impact
+        on the planet and, to help our community to reduce their impacts too.
+    </p>
+    <h3><strong>Our working and operating practices</strong></h3>
+    <ul>
+        <li>
+            Our home office is powered by 100% renewable energy. We will ensure
+            that this continues, even if this means we end up paying more on our
+            energy bills.
+        </li>
+        <li>
+            We aim to keep our computer equipment in good working order and aim
+            to keep them in use until their power becomes a hindrance in our
+            work. When we do eventually replace our equipment, we will ensure it
+            either reconditioned and goes to a good home, or we will ensure it
+            is correctly recycled.
+        </li>
+        <li>
+            Our website is currently hosted on a server that is powered by 100%
+            renewable energy.
+        </li>
+        <li>
+            1% of any revenue generated via Stripe will be donated to carbon
+            removal projects.
+        </li>
+    </ul>
+    <h3><strong>Our travel activity</strong></h3>
+    <ul>
+        <li>
+            We are committed to limiting our flight activity as much as
+            possible. In the first instance, we will always seek to travel
+            overland and via public transport. If price and practicality becomes
+            a problem, we will then reconsider our travel plans.
+        </li>
+        <li>
+            Regardless of whether or not we have flown to our destination, we
+            will seek to personally engage with environmental and conservation
+            activity in the destinations we visit.
+        </li>
+        <li>
+            As much as possible, we will seek to avoid staying in Airbnbs and
+            holiday lets in city centres, instead prioritising hotels and
+            hostels with eco-friendly credentials.
+        </li>
+        <li>
+            Through our engagement in tree planting projects, we intend to
+            offset 100% of the carbon emissions from both our travels and our
+            personal lives.
+        </li>
+    </ul>
+    <h3><strong>Our interactions and partnerships</strong></h3>
+    <ul>
+        <li>
+            We commit to only engaging with organisations and companies who have
+            clear sustainability credentials. We are aware of greenwashing and
+            how to spot it and we will always seek first or third-party clarity
+            on sustainability claims.
+        </li>
+        <li>
+            We will prioritise interactions and partnerships with organisations
+            and companies who have signed-up to the Glasgow Declaration and/or
+            Tourism Declares.
+        </li>
+    </ul>
+    <h3><strong>Our content</strong></h3>
+    <p>
+        This section relates primarily to the content <a
+            href="https://blog.giveback.guide/">on our blog</a
+        >, but can also apply to the content in our app.
+    </p>
+    <ul>
+        <li>
+            We will prioritise publishing information on overland public
+            transport options before information on flights.
+        </li>
+        <li>
+            We will continue to promote less-explored places to help combat
+            overtourism.
+        </li>
+        <li>
+            We commit to helping our readers understand the importance of taking
+            personal responsibility when it comes to sustainability. We will aim
+            to demonstrate how taking easy steps in our personal lives and
+            taking smart decisions in our travels can have a domino effect. Once
+            we start making demands and becoming activists, companies will
+            listen.
+        </li>
+        <li>
+            We will prioritise the promotion of sustainable tours and activities
+            and we will particularly focus on promoting conservation and
+            environmental activities.
+        </li>
+        <li>
+            We will only promote cafes and restaurants who are either fully
+            vegan or who serves a wide selection of vegan dishes.&nbsp;
+        </li>
+        <li>
+            We will remove references to meat eating that we published before we
+            switched to veganism.
+        </li>
+        <li>
+            We will share our work on social media and via our newsletter to
+            help spread the word on sustainable travel and how/why it&rsquo;s
+            good for us all.
+        </li>
+    </ul>
+    <p>
+        <em
+            >Our climate action plan is fluid, meaning we may adjust or add
+            elements at any time. We want to be transparent, so if we ever do
+            make changes to the plan, we&rsquo;ll publish the details of the
+            changes on this page.&nbsp;</em
         >
-          Sustainability
-        </h2>
-        <div class="prose max-w-none dark:prose-invert">
-          <p>&nbsp;</p>
-          <p>
-            As part of our commitment to sustainability,&nbsp;<strong
-              >we&rsquo;ve declared a climate emergency</strong
-            >.&nbsp;
-          </p>
-          <p>
-            To help focus our efforts, {SITE_TITLE} is a signatory of the&nbsp;<a
-              href="https://www.oneplanetnetwork.org/programmes/sustainable-tourism/glasgow-declaration"
-              target="_blank"
-              rel="noreferrer noopener"
-              >Glasgow Declaration on Climate Action in Tourism</a
-            >&nbsp;(co-drafted by Tourism Declares, UNWTO, UNEP, Travel
-            Foundation and VisitScotland).
-          </p>
-          <h2>Our Climate Declaration</h2>
-          <p>
-            <strong>We declare</strong>&nbsp;our shared commitment to unite all
-            stakeholders in transforming tourism to deliver effective climate
-            action.
-          </p>
-          <p>
-            <strong>We support</strong>&nbsp;the global commitment to halve
-            emissions by 2030 and reach Net Zero as soon as possible before
-            2050.
-          </p>
-          <p>
-            <strong>We will consistently align</strong>&nbsp;our actions with
-            the latest scientific recommendations, so as to ensure our approach
-            remains consistent with a rise of no more than 1.5&deg;C above
-            pre-industrial levels by 2100.
-          </p>
-          <p><strong>As a signatory, we commit to</strong>:</p>
-          <ol>
-            <li>Deliver a climate action plan within 12 month of signing.</li>
-            <li>
-              Report publicly both progress against interim and long-term
-              targets, as well as the actions being taken, at least annually.
-            </li>
-            <li>
-              Align our plan with five shared pathways (measure, decarbonise,
-              regenerate, collaborate, finance) to ensure climate action is
-              consistent across all of tourism.
-            </li>
-            <li>
-              Share information on activities connected to Tourism Declares
-              and/or the Glasgow Declaration among contacts and networks.
-            </li>
-            <li>
-              Work in a collaborative and constructive spirit with other members
-              of Tourism Declares and/or signatories of the Glasgow Declaration.
-            </li>
-          </ol>
-          <h2>Our Climate Action Plan</h2>
-          <p>
-            As part of our membership of these two organisations, we have
-            created a Climate Action Plan. Our plan has two key aims; to reduce
-            our own impact on the planet and, to help our community to reduce
-            their impacts too.
-          </p>
-          <h3><strong>Our working and operating practices</strong></h3>
-          <ul>
-            <li>
-              Our home office is powered by 100% renewable energy. We will
-              ensure that this continues, even if this means we end up paying
-              more on our energy bills.
-            </li>
-            <li>
-              We aim to keep our computer equipment in good working order and
-              aim to keep them in use until their power becomes a hindrance in
-              our work. When we do eventually replace our equipment, we will
-              ensure it either reconditioned and goes to a good home, or we will
-              ensure it is correctly recycled.
-            </li>
-            <li>
-              Our website is currently hosted on a server that is powered by
-              100% renewable energy.
-            </li>
-            <li>
-              1% of any revenue generated via Stripe will be donated to carbon
-              removal projects.
-            </li>
-          </ul>
-          <h3><strong>Our travel activity</strong></h3>
-          <ul>
-            <li>
-              We are committed to limiting our flight activity as much as
-              possible. In the first instance, we will always seek to travel
-              overland and via public transport. If price and practicality
-              becomes a problem, we will then reconsider our travel plans.
-            </li>
-            <li>
-              Regardless of whether or not we have flown to our destination, we
-              will seek to personally engage with environmental and conservation
-              activity in the destinations we visit.
-            </li>
-            <li>
-              As much as possible, we will seek to avoid staying in Airbnbs and
-              holiday lets in city centres, instead prioritising hotels and
-              hostels with eco-friendly credentials.
-            </li>
-            <li>
-              Through our engagement in tree planting projects, we intend to
-              offset 100% of the carbon emissions from both our travels and our
-              personal lives.
-            </li>
-          </ul>
-          <h3><strong>Our interactions and partnerships</strong></h3>
-          <ul>
-            <li>
-              We commit to only engaging with organisations and companies who
-              have clear sustainability credentials. We are aware of
-              greenwashing and how to spot it and we will always seek first or
-              third-party clarity on sustainability claims.
-            </li>
-            <li>
-              We will prioritise interactions and partnerships with
-              organisations and companies who have signed-up to the Glasgow
-              Declaration and/or Tourism Declares.
-            </li>
-          </ul>
-          <h3><strong>Our content</strong></h3>
-          <p>
-            This section relates primarily to the content <a
-              href="https://blog.giveback.guide/">on our blog</a
-            >, but can also apply to the content in our app.
-          </p>
-          <ul>
-            <li>
-              We will prioritise publishing information on overland public
-              transport options before information on flights.
-            </li>
-            <li>
-              We will continue to promote less-explored places to help combat
-              overtourism.
-            </li>
-            <li>
-              We commit to helping our readers understand the importance of
-              taking personal responsibility when it comes to sustainability. We
-              will aim to demonstrate how taking easy steps in our personal
-              lives and taking smart decisions in our travels can have a domino
-              effect. Once we start making demands and becoming activists,
-              companies will listen.
-            </li>
-            <li>
-              We will prioritise the promotion of sustainable tours and
-              activities and we will particularly focus on promoting
-              conservation and environmental activities.
-            </li>
-            <li>
-              We will only promote cafes and restaurants who are either fully
-              vegan or who serves a wide selection of vegan dishes.&nbsp;
-            </li>
-            <li>
-              We will remove references to meat eating that we published before
-              we switched to veganism.
-            </li>
-            <li>
-              We will share our work on social media and via our newsletter to
-              help spread the word on sustainable travel and how/why it&rsquo;s
-              good for us all.
-            </li>
-          </ul>
-          <p>
-            <em
-              >Our climate action plan is fluid, meaning we may adjust or add
-              elements at any time. We want to be transparent, so if we ever do
-              make changes to the plan, we&rsquo;ll publish the details of the
-              changes on this page.&nbsp;</em>
-          </p>
-          <h2>Annual Reports</h2>
-          <p>
-            A significant part of creating a Climate Action Plan is reporting on
-            its impact. It is our intention to create an impact report annually
-            and publish it in full right here.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-</MainLayout>
+    </p>
+    <h2>Annual Reports</h2>
+    <p>
+        A significant part of creating a Climate Action Plan is reporting on its
+        impact. It is our intention to create an impact report annually and
+        publish it in full right here.
+    </p>
+</GenericPage>

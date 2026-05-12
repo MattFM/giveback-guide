@@ -1,0 +1,44 @@
+---
+import MainLayout from "./MainLayout.astro";
+
+interface Props {
+    title: string;
+    headerTitle: string;
+    subtitle?: string;
+    description?: string;
+    image?: string;
+}
+
+const { title, headerTitle, subtitle, description, image } = Astro.props;
+---
+
+<MainLayout title={title} description={description} image={image}>
+    <main>
+        <section class="bg-white dark:bg-gray-900">
+            <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-xl lg:px-6">
+                <!-- Header -->
+                <div class="max-w-4xl mb-12">
+                    <h1
+                        class="mb-4 text-4xl sm:text-5xl tracking-tight font-bold text-gray-900 dark:text-white"
+                    >
+                        {headerTitle}
+                    </h1>
+                    {
+                        subtitle && (
+                            <p class="text-xl text-gray-500 dark:text-gray-400">
+                                {subtitle}
+                            </p>
+                        )
+                    }
+                </div>
+
+                <!-- Content -->
+                <div class="max-w-4xl">
+                    <div class="prose max-w-none dark:prose-invert">
+                        <slot />
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</MainLayout>
