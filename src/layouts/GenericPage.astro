@@ -2,14 +2,28 @@
 import MainLayout from "./MainLayout.astro";
 
 interface Props {
-    title: string;
-    headerTitle: string;
+    title?: string;
+    headerTitle?: string;
     subtitle?: string;
     description?: string;
     image?: string;
+    frontmatter?: {
+        title?: string;
+        headerTitle?: string;
+        subtitle?: string;
+        description?: string;
+        image?: string;
+    };
 }
 
-const { title, headerTitle, subtitle, description, image } = Astro.props;
+// Support both direct component usage and MDX frontmatter layout usage
+const props = Astro.props.frontmatter ?? Astro.props;
+
+const title = props.title ?? "";
+const headerTitle = props.headerTitle ?? "";
+const subtitle = props.subtitle;
+const description = props.description;
+const image = props.image;
 ---
 
 <MainLayout title={title} description={description} image={image}>

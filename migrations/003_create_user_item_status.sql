@@ -54,3 +54,6 @@ create policy "Delete own statuses"
 -- Helpful index (primary key already covers typical lookups)
 create index if not exists user_item_status_user_type_id_idx
   on public.user_item_status (user_id, item_type, item_id);
+
+-- Grant authenticated users full access via the Data API
+grant select, insert, update, delete on public.user_item_status to authenticated;

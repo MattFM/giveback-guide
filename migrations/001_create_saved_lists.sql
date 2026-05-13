@@ -62,3 +62,7 @@ create policy list_items_delete_if_owner_of_list on public.list_items
 -- Indexes for performance
 create index if not exists idx_list_items_item on public.list_items(item_type, item_id);
 create index if not exists idx_lists_user on public.lists(user_id);
+
+-- Grant authenticated users full access via the Data API
+grant select, insert, update, delete on public.lists to authenticated;
+grant select, insert, update, delete on public.list_items to authenticated;
