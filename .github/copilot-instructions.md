@@ -1,8 +1,8 @@
-# Giveback Guide - AI Coding Agent Instructions
+# Give Back Guide - AI Coding Agent Instructions
 
 ## Project Overview
 
-**Giveback Guide** is a curated travel platform helping conscious travelers make better choices by replacing typical tourist activities with alternatives that have a positive impact on people, places, and the planet. Users discover and explore:
+**Give Back Guide** is a curated travel platform helping conscious travelers make better choices by replacing typical tourist activities with alternatives that have a positive impact on people, places, and the planet. Users discover and explore:
 - **Projects**: Animal sanctuaries, cultural exchanges, NGOs, and community initiatives to visit instead of exploitative tourism
 - **Stays**: Sustainable accommodations (eco-lodges, social enterprises, community-owned properties)
 - **Blog**: Travel guides and impact stories

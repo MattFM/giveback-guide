@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import AdAvatar from '../../../assets/ads/getyourguide-avatar.png';
+import { SITE_TITLE } from '../../../consts';
 
 // Editable content variables
 const heading = "Download the GetYourGuide App";
@@ -37,7 +38,7 @@ const accentColor = "text-[#ff5533] dark:text-[#ffb29b]"; // Brand accent for li
       <div class="flex-shrink-0 mt-0.5">
         <Image 
           src={AdAvatar} 
-          alt="Giveback Guide Avatar" 
+          alt={`${SITE_TITLE} Avatar`} 
           class="w-10 h-10 rounded-lg object-cover ring-2 ring-[#ff5533]/20 dark:ring-[#ff5533]/30"
         />
       </div>

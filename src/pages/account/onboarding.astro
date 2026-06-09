@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
+import { SITE_TITLE } from '../../consts';
 ---
 
 <MainLayout 
@@ -69,7 +70,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
       </div>
       
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4" style="color: #FFFFFF;">
-        Welcome to <span class="gradient-highlight">Giveback Guide</span>
+        Welcome to <span class="gradient-highlight">{SITE_TITLE}</span>
       </h1>
       <p class="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style="color: #D1D4D1;">
         Just a few quick questions to personalize your experience.
@@ -117,7 +118,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                 <ul class="mt-1 ml-4 list-disc">
                   <li>A detailed exploration of a problem affecting modern travel</li>
                   <li>Insights from people helping to build regenerative tourism right now</li>
-                  <li>News and updates about Giveback Guide</li>
+                  <li>News and updates about {SITE_TITLE}</li>
                 </ul>
               </div>
             </div>

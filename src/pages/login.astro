@@ -1,5 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import { SITE_TITLE } from '../consts';
 ---
 
 <MainLayout title="Login" transition:persist={false}>
@@ -9,7 +10,7 @@ import MainLayout from '../layouts/MainLayout.astro';
         <div class="hidden lg:flex lg:flex-col lg:justify-center px-8 xl:px-16 py-12" style="background-color: #1C2434;">
             <div class="max-w-xl">
                 <h1 class="text-4xl xl:text-5xl font-extrabold text-white mb-6">
-                    Welcome to Giveback Guide
+                        Welcome to {SITE_TITLE}
                 </h1>
                 <p class="text-lg xl:text-xl text-white/80 mb-12">
                     Sign in to save projects and stays, track your impact journey, and discover meaningful travel experiences.
@@ -62,7 +63,7 @@ import MainLayout from '../layouts/MainLayout.astro';
                 <!-- Mobile Hero (Hidden on lg+) -->
                 <div class="lg:hidden mb-8 text-center">
                     <h1 class="text-3xl sm:text-4xl font-extrabold mb-3" style="color: #1C2434;">
-                        Welcome to Giveback Guide
+                    Welcome to {SITE_TITLE}
                     </h1>
                     <p class="text-base sm:text-lg" style="color: #7E827E;">
                         Sign in to save projects and track your impact journey.
@@ -161,7 +162,7 @@ import MainLayout from '../layouts/MainLayout.astro';
                         <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #A98FFA;" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
-                        <span class="text-xs" style="color: #7E827E;">Check your inbox for an email from Giveback Guide</span>
+                        <span class="text-xs" style="color: #7E827E;">Check your inbox for an email from {SITE_TITLE}</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #A98FFA;" fill="currentColor" viewBox="0 0 20 20">

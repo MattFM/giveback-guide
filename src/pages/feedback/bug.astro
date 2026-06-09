@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../../consts";
 ---
 
 <MainLayout title="Report a Bug" headerVariant="transparent" headerTheme="dark">
@@ -10,7 +11,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
       </div>
       <h1 class="text-4xl font-black text-white mb-4">Help Us Fix It</h1>
       <p class="text-lg text-white/90 mb-6">
-        Thanks for taking the time to report this. Every bug you catch makes Giveback Guide better for everyone.
+        Thanks for taking the time to report this. Every bug you catch makes {SITE_TITLE} better for everyone.
       </p>
       <a 
         href="/feedback/" 

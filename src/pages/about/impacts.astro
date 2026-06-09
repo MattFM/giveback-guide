@@ -2,10 +2,11 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import Hero from "../../components/sections/Hero.astro";
 import ImpactAreaCard from "../../components/content/ImpactAreaCard.astro";
+import { SITE_TITLE } from "../../consts";
 
-const title = "Impact Areas - Giveback Guide";
+const title = `Impact Areas - ${SITE_TITLE}`;
 const description =
-  "Learn about the different ways projects and stays on Giveback Guide contribute to positive change for people, places, and the planet.";
+  `Learn about the different ways projects and stays on ${SITE_TITLE} contribute to positive change for people, places, and the planet.`;
 
 // Organize impact areas by category
 const environmentalAreas = [

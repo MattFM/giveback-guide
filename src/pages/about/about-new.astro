@@ -1,8 +1,9 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../../consts";
 ---
 
-<MainLayout title="About Giveback Guide" headerVariant="default">
+<MainLayout title={`About ${SITE_TITLE}`} headerVariant="default">
     <main class="bg-white dark:bg-gray-900">
         <!-- Hero Section -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
@@ -10,7 +11,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
                 <h1
                     class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight"
                 >
-                    About Giveback Guide
+                    About {SITE_TITLE}
                 </h1>
                 <p class="text-xl text-gray-500 dark:text-gray-400 mb-8">
                     Everything you need to know about our platform

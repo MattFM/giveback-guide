@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../../consts";
 ---
 
 <MainLayout 
@@ -137,7 +138,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
             </div>
             <div>
               <h3 class="font-bold mb-1" style="color: #1C2434;">Real examples of regenerative travel</h3>
-              <p style="color: #4A504A;">Hand-picked experiences and accommodation from the Giveback Guide database</p>
+              <p style="color: #4A504A;">Hand-picked experiences and accommodation from the {SITE_TITLE} database</p>
             </div>
           </div>
           
@@ -255,9 +256,9 @@ import MainLayout from "../../layouts/MainLayout.astro";
           </div>
           
           <div>
-            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">Is this related to Giveback Guide?</h3>
+            <h3 class="text-lg font-bold mb-2" style="color: #1C2434;">Is this related to {SITE_TITLE}?</h3>
             <p style="color: #4A504A;">
-              Yes. This newsletter is part of <a href="https://giveback.guide" class="underline hover:no-underline" style="color: #7353D4;">Giveback Guide</a>, a platform connecting travellers with experiences that create meaningful impact. The newsletter explores the ideas and the platform helps you act on them.
+              Yes. This newsletter is part of <a href="https://giveback.guide" class="underline hover:no-underline" style="color: #7353D4;">{SITE_TITLE}</a>, a platform connecting travellers with experiences that create meaningful impact. The newsletter explores the ideas and the platform helps you act on them.
             </p>
           </div>
         </div>

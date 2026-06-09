@@ -1,6 +1,7 @@
 ---
 import Hero from "./Hero.astro";
 import Button from "../ui/Button.astro";
+import { SITE_TITLE } from "../../consts";
 
 // Update badge configuration
 const badge = {
@@ -130,7 +131,7 @@ const badge = {
     <!-- Secondary CTA: Learn More Link -->
     <div class="animate-learn-more">
         <a href="/why" class="learn-more-link">
-            <span>Learn more about Giveback Guide</span>
+            <span>Learn more about {SITE_TITLE}</span>
             <svg
                 class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                 fill="currentColor"

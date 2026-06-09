@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Component Migration Script for Giveback Guide
+# Component Migration Script for Give Back Guide
 # Implements Option 3 - Hybrid Organization
 # Run from project root: bash migrate-components.sh
 

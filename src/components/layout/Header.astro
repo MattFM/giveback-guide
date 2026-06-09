@@ -1,5 +1,6 @@
 ---
 import NavigationDrawer from './NavigationDrawer.astro';
+import { SITE_TITLE } from '../../consts';
 
 interface Props {
   variant?: 'default' | 'transparent';
@@ -67,7 +68,7 @@ const mobileButtonClasses = theme === 'dark'
         href="/"
         class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded cursor-pointer"
       >
-        <svg class={`w-12 h-12 ${logoFillClass}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 749.999995" aria-label="Giveback Guide">
+        <svg class={`w-12 h-12 ${logoFillClass}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 749.999995" aria-label={SITE_TITLE}>
           <g>
             <g>
               <g transform="translate(0.00000265, 258.603195)">

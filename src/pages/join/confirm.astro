@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import { SITE_TITLE } from "../../consts";
 ---
 
 <MainLayout title="Confirm your email">
@@ -125,7 +126,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
                 word.
               </p>
               <a
-                href="whatsapp://send?text=Check out Giveback Guide: https://giveback.guide"
+                href={`whatsapp://send?text=Check out ${SITE_TITLE}: https://giveback.guide`}
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
                 ><svg
                   class="w-4 h-4 me-2.5"
@@ -148,7 +149,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
                 </svg> Share on Whatsapp</a
               >
               <a
-                href="mailto:?subject=Check out Giveback Guide&body=Hey! You should check out Giveback Guide at https://giveback.guide"
+                href={`mailto:?subject=Check out ${SITE_TITLE}&body=Hey! You should check out ${SITE_TITLE} at https://giveback.guide`}
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
                 ><svg
                   class="w-4 h-4 me-2.5"

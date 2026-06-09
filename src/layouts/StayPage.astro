@@ -15,12 +15,13 @@ import SupportCTA from "../components/sections/SupportCTA.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import StockPhotoNotice from "../components/content/StockPhotoNotice.astro";
 import { getAllSearchTerms } from "../data/country-aliases";
+import { SITE_TITLE } from "../consts";
 
 type Props = CollectionEntry<"stays">["data"];
 
 const { properties } = Astro.props;
 const title =
-    (properties.sTitle || "Default Title") + " - Stays on Giveback Guide";
+    (properties.sTitle || "Default Title") + ` - Stays on ${SITE_TITLE}`;
 const image = properties.sImageURL1 || "/giveback-guide-placeholder.jpg"; // Fallback image
 
 // Format pLocale as a comma-separated string

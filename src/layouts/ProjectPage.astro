@@ -17,12 +17,13 @@ import GetInvolvedBox from "../components/content/GetInvolvedBox.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 import { getAllSearchTerms } from "../data/country-aliases";
+import { SITE_TITLE } from "../consts";
 
 type Props = CollectionEntry<"projects">["data"];
 
 const { properties } = Astro.props;
 const title =
-    (properties.pTitle || "Default Title") + " - Projects on Giveback Guide";
+    (properties.pTitle || "Default Title") + ` - Projects on ${SITE_TITLE}`;
 const image = properties.pImageURL || "/giveback-guide-placeholder.jpg"; // Fallback image
 
 // Format pLocale as a comma-separated string

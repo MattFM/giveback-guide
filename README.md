@@ -1,4 +1,4 @@
-# Giveback Guide
+# Give Back Guide
 
 A travel-focused platform built with Astro that helps users discover meaningful ways to give back to the places they visit through animal sanctuaries, cultural exchanges, social impact projects, and sustainable travel experiences.
 
