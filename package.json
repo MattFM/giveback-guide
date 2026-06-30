@@ -29,7 +29,6 @@
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
-    "@chlorinec-pkgs/notion-astro-loader": "^1.1.2",
     "@notionhq/client": "^2.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "wrangler": "^4.61.1"

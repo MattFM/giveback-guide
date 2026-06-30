@@ -84,7 +84,7 @@
 
 ### Projects & Stays Content Management (Notion-Powered)
 - **Content lives in Notion**: Projects and stays are managed in Notion databases
-- Content is loaded at **build time** via `@chlorinec-pkgs/notion-astro-loader` in `src/content.config.ts`
+- Content is loaded at **build time** via a custom Notion loader (`src/lib/notion-loader.ts`) in `src/content.config.ts`
 - Two collections: `projects`, `stays` with strict schema validation
 - Each collection filters for `Status = "Published"` in Notion
 - **Critical**: Custom ID fields (`pID`, `sID`) use Notion's `unique_id` property with `{prefix, number}` format (e.g., `PRO-777`, `STY-123`)

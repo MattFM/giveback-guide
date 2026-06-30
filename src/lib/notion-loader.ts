@@ -5,7 +5,7 @@ import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
  * Retry wrapper around native Node.js fetch to bypass the node-fetch@2
  * "Premature close" bug and handle transient Notion API failures.
  *
- * The deprecated @chlorinec-pkgs/notion-astro-loader depends on
+ * The previous loader depended on
  * @notionhq/client v2 which defaults to node-fetch@2. By passing this
  * custom fetch to the Client constructor, we use native fetch (gzip-safe)
  * with exponential-backoff retries instead.
@@ -128,20 +128,3 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
     },
   };
 }
-
-/* === REVERT BLOCK ===
-If the custom loader causes issues, restore the original wrapper by replacing
-everything above with the code below. No other files need to change.
-
-import type { Loader } from "astro/loaders";
-import { notionLoader as baseNotionLoader } from "@chlorinec-pkgs/notion-astro-loader";
-
-export function notionLoader(options: Parameters<typeof baseNotionLoader>[0]): Loader {
-  const baseLoader = baseNotionLoader(options);
-
-  return {
-    name: baseLoader.name,
-    load: baseLoader.load,
-  };
-}
-=== END REVERT BLOCK === */
