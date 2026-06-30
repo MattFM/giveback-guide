@@ -1,5 +1,8 @@
 import type { Loader } from "astro/loaders";
-import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
+import { Client, isFullPage, isFullBlock, iteratePaginatedAPI } from "@notionhq/client";
+import { unified } from "unified";
+import notionRehype from "notion-rehype-k";
+import rehypeStringify from "rehype-stringify";
 
 /**
  * Retry wrapper around native Node.js fetch to bypass the node-fetch@2
@@ -46,6 +49,40 @@ export interface NotionLoaderOptions {
   [key: string]: unknown;
 }
 
+/**
+ * Recursively fetch all blocks for a Notion page.
+ */
+async function* listBlocks(
+  client: Client,
+  blockId: string
+): AsyncGenerator<any, void, unknown> {
+  for await (const block of iteratePaginatedAPI(client.blocks.children.list, {
+    block_id: blockId,
+  })) {
+    if (!isFullBlock(block)) {
+      continue;
+    }
+    if (block.has_children) {
+      const children = [];
+      for await (const child of listBlocks(client, block.id)) {
+        children.push(child);
+      }
+      // @ts-ignore -- attach children to the block's typed content
+      block[block.type].children = children;
+    }
+    yield block;
+  }
+}
+
+/**
+ * Render Notion blocks to HTML string using notion-rehype-k.
+ */
+async function renderBlocksToHtml(blocks: any[]): Promise<string> {
+  const processor = unified().use(notionRehype).use(rehypeStringify);
+  const vfile = await processor.process({ data: blocks });
+  return String(vfile);
+}
+
 export function notionLoader(options: NotionLoaderOptions): Loader {
   const {
     database_id,
@@ -84,6 +121,8 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
       });
 
       let pageCount = 0;
+      let renderedCount = 0;
+      const renderPromises: Promise<void>[] = [];
 
       for await (const page of pages) {
         if (!isFullPage(page)) {
@@ -94,7 +133,12 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
         const isCached = existingPageIds.delete(page.id);
         const existingPage = store.get(page.id);
 
-        if (existingPage?.digest !== page.last_edited_time) {
+        // Re-render if page changed or if previously stored without rendered content
+        const needsRender =
+          existingPage?.digest !== page.last_edited_time ||
+          !existingPage?.rendered;
+
+        if (needsRender) {
           const filePath = `notion/${page.id}.md`;
           const data = await parseData({
             id: page.id,
@@ -102,12 +146,39 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
             filePath,
           });
 
-          store.set({
-            id: page.id,
-            digest: page.last_edited_time,
-            data,
-            filePath,
-          });
+          const renderPromise = (async () => {
+            try {
+              const blocks = [];
+              for await (const block of listBlocks(client, page.id)) {
+                blocks.push(block);
+              }
+              const html = await renderBlocksToHtml(blocks);
+              // Force Astro to accept the update by deleting the stale entry first
+              store.delete(page.id);
+              store.set({
+                id: page.id,
+                digest: page.last_edited_time,
+                data,
+                rendered: { html },
+                filePath,
+              });
+              renderedCount++;
+            } catch (err) {
+              log_db.warn(
+                `Failed to render page ${page.id.slice(0, 6)}: ${err instanceof Error ? err.message : String(err)}`
+              );
+              // Store without rendered content so the page still builds
+              store.delete(page.id);
+              store.set({
+                id: page.id,
+                digest: page.last_edited_time,
+                data,
+                filePath,
+              });
+            }
+          })();
+
+          renderPromises.push(renderPromise);
 
           log_db.info(
             `${isCached ? "Updated" : "Created"} page ${page.id.slice(0, 6)}`
@@ -115,6 +186,13 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
         } else {
           log_db.debug(`Skipped page ${page.id.slice(0, 6)}`);
         }
+      }
+
+      // Wait for all render operations to complete
+      if (renderPromises.length > 0) {
+        log_db.info(`Rendering ${renderPromises.length} updated pages`);
+        await Promise.all(renderPromises);
+        log_db.info(`Rendered ${renderedCount} pages`);
       }
 
       for (const deletedPageId of existingPageIds) {

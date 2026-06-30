@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import pagefind from "astro-pagefind";
@@ -11,13 +12,16 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://giveback.guide',
   trailingSlash: 'always',
-  integrations: [
-    mdx({
+  markdown: {
+    processor: unified({
       remarkPlugins: [remarkResponsiveImages],
-    }), 
+    }),
+  },
+  integrations: [
+    mdx(),
     sitemap({
       filter: (page) => !page.includes('/docs/'),
-    }), 
+    }),
     pagefind()
   ],
 
