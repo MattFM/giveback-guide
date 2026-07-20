@@ -1,34 +1,38 @@
 ---
 import { getCollection } from "astro:content";
 import BaseSelectDropdown from "./BaseSelectDropdown.astro";
-
-// Get the current tag from the URL
-const currentTagPromise = (async () => {
-  const pathSegments = Astro.url.pathname.split("/");
-  const potentialTag = pathSegments[2];
-
-  const posts = await getCollection("blog");
-  const validTags = posts.reduce((acc: Set<string>, post) => {
-    post.data.tags.forEach((tag) => {
-      acc.add(tag.toLowerCase().replace(/\s+/g, "-"));
-    });
-    return acc;
-  }, new Set<string>());
-
-  return validTags.has(potentialTag) ? potentialTag : null;
-})();
-const currentTag = await currentTagPromise;
+import { isValidBlogTag, getTagSlug } from "../../../lib/blog-tags";
 
 const posts = await getCollection("blog");
 
-// Extract unique tags and sort alphabetically
+// Get the current tag from the URL
+const pathSegments = Astro.url.pathname.split("/");
+const potentialTag = pathSegments[2];
+
+// Build a set of valid, used tag slugs
+const validUsedSlugs = posts.reduce((acc: Set<string>, post) => {
+  post.data.tags.forEach((tag) => {
+    if (isValidBlogTag(tag)) {
+      acc.add(getTagSlug(tag));
+    }
+  });
+  return acc;
+}, new Set<string>());
+
+const currentTag = validUsedSlugs.has(potentialTag) ? potentialTag : null;
+
+// Extract unique tags that are both valid and in use, then sort alphabetically
 const uniqueTags = [
-  ...new Set(posts.flatMap((post) => post.data.tags)),
+  ...new Set(
+    posts
+      .flatMap((post) => post.data.tags)
+      .filter(isValidBlogTag)
+  ),
 ].sort();
 
 // Transform to items array for BaseSelectDropdown
 const items = uniqueTags.map((tag) => {
-  const tagSlug = tag.toLowerCase().replace(/\s+/g, "-");
+  const tagSlug = getTagSlug(tag);
   return {
     name: tag,
     slug: tagSlug,

@@ -5,11 +5,14 @@ import AdBox from "../components/features/ads/AdBox.astro";
 import SupportBox from "../components/sections/SupportBox.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+import { getValidTags, getTagSlug } from "../lib/blog-tags";
 
 type Props = CollectionEntry<"blog">["data"];
 
 const { title, description, coverImage, published, lastUpdated, tags } =
     Astro.props;
+
+const validTags = getValidTags(tags);
 
 // Format the date
 const formattedDate = new Date(published).toLocaleDateString("en-GB", {
@@ -69,10 +72,10 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
                 <section class="py-6 px-4">
                     <p data-pagefind-meta="categories">
                         {
-                            tags.map((tag: string) => (
+                            validTags.map((tag) => (
                                 <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 mt-4 mb-2 mr-2">
                                     <a
-                                        href={`/blog/${tag.toLowerCase().replace(/\s+/g, "-")}/`}
+                                        href={`/blog/${getTagSlug(tag)}/`}
                                     >
                                         {tag}
                                     </a>

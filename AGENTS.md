@@ -105,6 +105,7 @@ export async function getStaticPaths() {
 - **Projects/Stays**: Notion databases loaded at build time
 - Schema validation via Zod in `src/content.config.ts`
 - Status filtering: Only `Published` items included
+- **Blog Tags**: Centralised in `src/lib/blog-tags.ts`. To add a tag, add an object with `name` and `description` to the `BLOG_TAGS` array. This list is used by the tag dropdown and tag page generation to filter out invalid or unused tags. The description is displayed on tag listing pages and used as the SEO meta description. The schema uses `z.array(z.string())` so Astro Editor renders a tag input UI rather than a raw YAML editor.
 
 ### Authentication & User Data
 - Supabase magic link authentication via `src/lib/supabase.ts`

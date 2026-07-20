@@ -12,6 +12,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://giveback.guide',
   trailingSlash: 'always',
+  redirects: {
+    '/blog/announcements/': '/blog/changelog/',
+  },
   markdown: {
     processor: unified({
       remarkPlugins: [remarkResponsiveImages],

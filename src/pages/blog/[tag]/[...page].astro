@@ -8,22 +8,25 @@ import BlogTagsDropdown from "../../../components/ui/Dropdown/BlogTagsDropdown.a
 import Pagination from "../../../components/ui/Pagination.astro";
 import PageHeader from "../../../components/layout/PageHeader.astro";
 import NewsletterForm from "../../../components/features/newsletter/NewsletterForm.astro";
+import { isValidBlogTag, getTagSlug, getTagDescription } from "../../../lib/blog-tags";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all blog posts from MDX collection
   const posts = await getCollection("blog");
 
-  // Extract unique tags from all posts
+  // Extract unique valid tags from all posts
   const tags = new Set(
-    posts.flatMap((post) => post.data.tags)
+    posts.flatMap((post) => post.data.tags).filter(isValidBlogTag)
   );
 
   // Generate paginated paths for each tag
   const paths = [];
   for (const tag of tags) {
+    const tagSlug = getTagSlug(tag);
+
     const filteredPosts = posts.filter((post) =>
       post.data.tags.some(
-        (t) => t.toLowerCase().replace(/\s+/g, "-") === tag.toLowerCase().replace(/\s+/g, "-")
+        (t) => getTagSlug(t) === tagSlug
       )
     );
 
@@ -34,7 +37,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
     const paginatedPaths = paginate(sortedPosts, {
       pageSize: 9, // Number of posts per page
-      params: { tag: tag.toLowerCase().replace(/\s+/g, "-") },
+      params: { tag: tagSlug },
       props: { tag }, // Pass the tag as a prop
     });
 
@@ -46,20 +49,23 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
 const { tag } = Astro.params; // Get the current tag from the URL
 const { page } = Astro.props; // Get the paginated data
+const tagName = Astro.props.tag; // Original tag name from props
 
 // Convert the tag slug back to a readable format
 const readableTag = tag
   .split("-")
   .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
   .join(" ");
+
+const tagDescription = getTagDescription(tagName);
 ---
 
-<MainLayout title={`Posts in ${readableTag} - Page ${page.currentPage} of ${page.lastPage}`}>
+<MainLayout title={`Posts in ${readableTag} - Page ${page.currentPage} of ${page.lastPage}`} description={tagDescription || `All of our blog posts that have the ${readableTag} tag.`}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <PageHeader
         title={readableTag}
-        subtitle={`All of our blog posts that have the <span class="italic">${readableTag}</span> tag.`}
+        subtitle={tagDescription || `All of our blog posts that have the <span class="italic">${readableTag}</span> tag.`}
       />
       <div class="flex flex-col items-start justify-between p-2 space-y-3 flex-row space-y-0 mb-4">
         <div ><span class="text-sm font-normal text-gray-500 dark:text-gray-400"

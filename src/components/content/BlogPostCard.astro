@@ -2,6 +2,7 @@
 import ResponsiveImage from '../ui/Image/ResponsiveImage.astro';
 import BaseCard from '../ui/BaseCard.astro';
 import type { CollectionEntry } from 'astro:content';
+import { getValidTags, getTagSlug } from '../../lib/blog-tags';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -9,6 +10,8 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, slug, coverImage, tags, description } = post.data;
+
+const validTags = getValidTags(tags);
 ---
 
 <BaseCard>
@@ -31,11 +34,11 @@ const { title, slug, coverImage, tags, description } = post.data;
     </a>
   </div>
   <div class="mb-2">
-    {tags.map((tag: string) => (
+    {validTags.map((tag) => (
       <span
         class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5"
       >
-        <a href={`/blog/${tag.toLowerCase().replace(/\s+/g, "-")}/`}>
+        <a href={`/blog/${getTagSlug(tag)}/`}>
           {tag}
         </a>
       </span>
