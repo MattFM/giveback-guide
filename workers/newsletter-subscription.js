@@ -1,17 +1,17 @@
 /**
- * Beehiiv Newsletter Subscription Worker
- * 
- * This Worker handles newsletter subscriptions via the Beehiiv API V2.
+ * Email Octopus Newsletter Subscription Worker
+ *
+ * This Worker handles newsletter subscriptions via the Email Octopus API v2.
  * Copy this code into your Cloudflare Worker in the admin panel.
- * 
+ *
  * Environment Variables to set in Cloudflare:
- * - BEEHIIV_API_KEY: Your Beehiiv API key
- * - BEEHIIV_PUBLICATION_ID: Your Beehiiv publication ID
+ * - EMAILOCTOPUS_API_KEY: Your Email Octopus API key
+ * - EMAILOCTOPUS_LIST_ID: Your Email Octopus list ID
  * - CORS_ORIGIN: Allowed origin for CORS (e.g., https://giveback.guide)
  * - ALLOW_LOCALHOST: Set to 'true' to allow requests from localhost:4321 (for testing)
  */
 
-const BEEHIIV_API_BASE = 'https://api.beehiiv.com/v2';
+const EMAILOCTOPUS_API_BASE = 'https://api.emailoctopus.com';
 
 // CORS headers helper
 const corsHeaders = (origin) => ({
@@ -45,22 +45,30 @@ const errorResponse = (message, status = 400, origin) => new Response(
   }
 );
 
-// Create subscriber in Beehiiv
-async function createSubscriber(email, metadata = {}, apiKey, publicationId) {
-  const url = `${BEEHIIV_API_BASE}/publications/${publicationId}/subscriptions`;
-  
+// Create subscriber in Email Octopus
+async function createSubscriber(email, metadata = {}, apiKey, listId) {
+  const url = `${EMAILOCTOPUS_API_BASE}/lists/${listId}/contacts`;
+
   const body = {
-    email,
-    reactivate_existing: false,
-    send_welcome_email: true,
-    utm_source: metadata.source || 'website',
-    utm_medium: metadata.medium || 'organic',
-    utm_campaign: metadata.campaign || 'general',
+    email_address: email,
   };
 
-  // Add optional fields if provided
-  if (metadata.firstName) body.first_name = metadata.firstName;
-  if (metadata.lastName) body.last_name = metadata.lastName;
+  // Add source as a tag for tracking
+  const sourceTag = metadata.source || 'website';
+  body.tags = [`source:${sourceTag}`];
+
+  // Add optional name field if provided
+  if (metadata.firstName) {
+    body.fields = {
+      FirstName: metadata.firstName,
+    };
+  }
+
+  // Force subscribed status for onboarding (user already verified via Supabase magic link)
+  if (sourceTag === 'onboarding') {
+    body.status = 'subscribed';
+  }
+  // Otherwise, omit status so Email Octopus respects the list's double opt-in setting
 
   const response = await fetch(url, {
     method: 'POST',
@@ -72,16 +80,16 @@ async function createSubscriber(email, metadata = {}, apiKey, publicationId) {
   });
 
   const data = await response.json();
-  
+
   if (!response.ok) {
-    // Handle specific Beehiiv error cases
+    // Handle specific Email Octopus error cases
     if (response.status === 409) {
       throw new Error('Already subscribed');
     }
     if (response.status === 422) {
-      throw new Error(data.message || 'Invalid email address');
+      throw new Error(data.error?.message || 'Invalid email address');
     }
-    throw new Error(data.message || 'Failed to create subscription');
+    throw new Error(data.error?.message || 'Failed to create subscription');
   }
 
   return data;
@@ -92,12 +100,12 @@ export default {
   async fetch(request, env, ctx) {
     // Determine allowed origins based on environment
     const allowedOrigins = [env.CORS_ORIGIN || 'https://giveback.guide'];
-    
+
     // Allow localhost for testing if ALLOW_LOCALHOST is set to 'true'
     if (env.ALLOW_LOCALHOST === 'true') {
       allowedOrigins.push('http://localhost:4321', 'http://127.0.0.1:4321');
     }
-    
+
     const requestOrigin = request.headers.get('Origin');
     // Use request origin if it's in allowed list, otherwise use first allowed origin
     const origin = allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0];
@@ -113,10 +121,10 @@ export default {
     }
 
     // Verify environment variables are set
-    const apiKey = env.BEEHIIV_API_KEY;
-    const publicationId = env.BEEHIIV_PUBLICATION_ID;
+    const apiKey = env.EMAILOCTOPUS_API_KEY;
+    const listId = env.EMAILOCTOPUS_LIST_ID;
 
-    if (!apiKey || !publicationId) {
+    if (!apiKey || !listId) {
       console.error('Missing environment variables');
       return errorResponse('Server configuration error', 500, origin);
     }
@@ -144,8 +152,8 @@ export default {
           firstName: name,
         };
 
-        // Create subscriber in Beehiiv
-        const subscriber = await createSubscriber(email, metadata, apiKey, publicationId);
+        // Create subscriber in Email Octopus
+        const subscriber = await createSubscriber(email, metadata, apiKey, listId);
 
         return successResponse({
           message: 'Successfully subscribed',
@@ -153,8 +161,7 @@ export default {
         }, origin);
 
       } else if (action === 'unsubscribe') {
-        // Note: Beehiiv handles unsubscribes via email links
-        // This endpoint could be used for authenticated user management if needed
+        // Note: Email Octopus handles unsubscribes via email preference center
         return successResponse({
           message: 'Unsubscribe via email preference center',
         }, origin);
@@ -165,7 +172,7 @@ export default {
 
     } catch (error) {
       console.error('Subscription error:', error);
-      
+
       // Handle known error cases
       if (error.message === 'Already subscribed') {
         return successResponse({

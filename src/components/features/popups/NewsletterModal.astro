@@ -89,11 +89,6 @@
         </button>
       </form>
 
-      <!-- Learn More link -->
-      <p class="mt-4 text-center text-sm" style="color: #7E827E;">
-        Want to know more? <a href="/the-problem-with-travel/" class="font-medium hover:underline" style="color: #7353D4;">Learn about The Problem With Travel</a>
-      </p>
-
       <!-- Privacy policy -->
       <p class="mt-3 text-center text-xs" style="color: #9CA3AF;">
         We won't share your details. Unsubscribe anytime. <a href="/privacy/" class="underline hover:no-underline" style="color: #7E827E;">Read our Privacy Policy</a>.
@@ -143,7 +138,7 @@
   </div>
 </div>
 
-<script is:inline>
+<script is:inline define:vars={{ WORKER_URL: import.meta.env.PUBLIC_WORKER_URL }}>
   (function () {
     const STORAGE_KEY = 'newsletter_modal_dismissed_until';
     const DISMISS_DAYS = 60;
@@ -292,8 +287,6 @@
     }
 
     // Form submission
-    const WORKER_URL = 'https://beehiiv.matt-c4f.workers.dev/';
-    
     function handleSubmit(e) {
       e.preventDefault();
       

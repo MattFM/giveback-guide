@@ -24,8 +24,8 @@ const today = new Date();
                         class="text-sm font-semibold mb-3"
                         style="color: #1C2434;"
                     >
-                        Join the conversation on the future of travel by
-                        subscribing to our monthly newsletter
+                        Get news & updates, plus our latest blog posts in your
+                        inbox.
                     </p>
                     <form id="footer-subscribe-form" class="w-full">
                         <div class="flex gap-2">
@@ -53,11 +53,12 @@ const today = new Date();
                             </Button>
                         </div>
                         <p class="mt-2 text-xs" style="color: #7E827E;">
-                            We care about your data. <a
+                            Unsubscribe anytime. By subscribing, you agree to
+                            our <a
                                 href="/privacy"
                                 class="hover:underline"
                                 style="color: #1C2434;">Privacy Policy</a
-                            >
+                            >.
                         </p>
                         <p
                             id="footer-subscribe-message"
@@ -69,7 +70,7 @@ const today = new Date();
                 </div>
 
                 <script>
-                    const WORKER_URL = "https://beehiiv.matt-c4f.workers.dev/";
+                    const WORKER_URL = import.meta.env.PUBLIC_WORKER_URL;
                     const footerForm = document.getElementById(
                         "footer-subscribe-form",
                     );
@@ -108,7 +109,7 @@ const today = new Date();
                                     footerMessage.textContent =
                                         data.alreadySubscribed
                                             ? "You are already subscribed!"
-                                            : "Successfully subscribed to The Problem with Travel!";
+                                            : "Done! Check your email to confirm your subscription.";
                                     footerMessage.style.color = "#10B981";
                                     document.getElementById(
                                         "footer-email",
@@ -156,12 +157,6 @@ const today = new Date();
                         <li class="mb-4">
                             <a href="/login/" class="hover:underline"
                                 >Join / Log in</a
-                            >
-                        </li>
-                        <li class="mb-4">
-                            <a
-                                href="/the-problem-with-travel/"
-                                class="hover:underline">Newsletter</a
                             >
                         </li>
                         <li>
