@@ -1,0 +1,23 @@
+---
+export interface Props {
+    title: string;
+    subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<div class="max-w-4xl mb-12">
+    <h1
+        class="mb-4 text-4xl sm:text-5xl tracking-tight font-bold text-gray-900 dark:text-white"
+    >
+        {title}
+    </h1>
+    {
+        subtitle && (
+            <p class="text-xl text-gray-500 dark:text-gray-400">
+                <Fragment set:html={subtitle} />
+            </p>
+        )
+    }
+</div>

@@ -6,6 +6,8 @@ import type { GetStaticPathsOptions } from "astro";
 import BlogPostCard from "../../../components/content/BlogPostCard.astro";
 import BlogTagsDropdown from "../../../components/ui/Dropdown/BlogTagsDropdown.astro";
 import Pagination from "../../../components/ui/Pagination.astro";
+import PageHeader from "../../../components/layout/PageHeader.astro";
+import NewsletterForm from "../../../components/features/newsletter/NewsletterForm.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all blog posts from MDX collection
@@ -55,16 +57,10 @@ const readableTag = tag
 <MainLayout title={`Posts in ${readableTag} - Page ${page.currentPage} of ${page.lastPage}`}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-      <div class="max-w-screen-md mb-8 lg:mb-16">
-        <h1
-          class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-        >
-          {readableTag}
-        </h1>
-        <p class="text-gray-500 sm:text-xl dark:text-gray-400">
-          All of our blog posts that have the <span class="italic">{readableTag}</span> tag.
-        </p>
-      </div>
+      <PageHeader
+        title={readableTag}
+        subtitle={`All of our blog posts that have the <span class="italic">${readableTag}</span> tag.`}
+      />
       <div class="flex flex-col items-start justify-between p-2 space-y-3 flex-row space-y-0 mb-4">
         <div ><span class="text-sm font-normal text-gray-500 dark:text-gray-400"
           >Showing <span class="font-semibold text-gray-900 dark:text-white"
@@ -81,6 +77,19 @@ const readableTag = tag
         {page.data.map((post) => (
           <BlogPostCard post={post} />
         ))}
+      </div>
+
+      <div class="mt-20 max-w-2xl mx-auto text-center">
+        <NewsletterForm
+          source="blog-tag-page"
+          id="blog-tag"
+          layout="vertical"
+          size="lg"
+          heading="Get the latest blog posts delivered to your inbox"
+          description="Subscribe for travel tips, destination guides, and stories from our adventures."
+          placeholder="Enter your email"
+          wrapperClass="text-center"
+        />
       </div>
     </div>
   </section>

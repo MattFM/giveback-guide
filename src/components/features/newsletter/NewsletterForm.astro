@@ -1,0 +1,167 @@
+---
+import Button from "../../ui/Button.astro";
+
+export interface Props {
+    source: string;
+    id?: string;
+    layout?: 'horizontal' | 'vertical';
+    size?: 'sm' | 'md' | 'lg';
+    showPrivacyText?: boolean;
+    privacyText?: string;
+    placeholder?: string;
+    buttonText?: string;
+    submittingText?: string;
+    heading?: string;
+    description?: string;
+    wrapperClass?: string;
+    formClass?: string;
+    inputClass?: string;
+}
+
+const {
+    source,
+    id = 'newsletter-form',
+    layout = 'horizontal',
+    size = 'md',
+    showPrivacyText = true,
+    privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline" style="color: #1C2434;">Privacy Policy</a>.',
+    placeholder = 'Your email',
+    buttonText = 'Subscribe',
+    submittingText = 'Subscribing...',
+    heading,
+    description,
+    wrapperClass = '',
+    formClass = '',
+    inputClass = '',
+} = Astro.props;
+
+const formId = `${id}-form`;
+const emailId = `${id}-email`;
+const messageId = `${id}-message`;
+const btnId = `${id}-btn`;
+
+const isHorizontal = layout === 'horizontal';
+
+const inputSizeClasses = {
+    sm: 'py-2 px-3',
+    md: 'py-3 px-4',
+    lg: 'py-4 px-5',
+};
+
+const buttonSize = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md';
+---
+
+<div class={wrapperClass}>
+    {heading && (
+        <h2 class="mb-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            {heading}
+        </h2>
+    )}
+    {description && (
+        <p class="mb-6 text-gray-500 dark:text-gray-400">
+            {description}
+        </p>
+    )}
+
+    <form id={formId} class={`w-full ${formClass}`}>
+        <div class={isHorizontal ? 'flex gap-2' : 'flex flex-col gap-3'}>
+            <div class={isHorizontal ? 'relative flex-1' : 'relative w-full'}>
+                <label for={emailId} class="sr-only">Email address</label>
+                <input
+                    class={`block w-full bg-white rounded-lg border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-1 ${inputSizeClasses[size]} ${inputClass}`}
+                    style="color: #1C2434; border-color: #D1D4D1; --tw-ring-color: rgba(169, 143, 250, 0.3); font-size: 16px;"
+                    placeholder={placeholder}
+                    type="email"
+                    id={emailId}
+                    name="email"
+                    required
+                />
+            </div>
+            <Button
+                type="submit"
+                variant="primary"
+                size={buttonSize}
+                id={btnId}
+                fullWidth={!isHorizontal}
+            >
+                {buttonText}
+            </Button>
+        </div>
+        {showPrivacyText && (
+            <p class="mt-2 text-xs" style="color: #7E827E;">
+                <Fragment set:html={privacyText} />
+            </p>
+        )}
+        <p
+            id={messageId}
+            class="mt-2 text-xs hidden"
+            style="color: #1C2434;"
+        >
+        </p>
+    </form>
+</div>
+
+<script is:inline define:vars={{ WORKER_URL: import.meta.env.PUBLIC_WORKER_URL, formId, emailId, messageId, btnId, source, submittingText, buttonText }}>
+    const form = document.getElementById(formId);
+    const messageEl = document.getElementById(messageId);
+    const btn = document.getElementById(btnId);
+
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const emailInput = document.getElementById(emailId);
+            if (!emailInput) return;
+
+            const email = emailInput.value;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = submittingText;
+            }
+            if (messageEl) {
+                messageEl.classList.add("hidden");
+            }
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        source: source,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (messageEl) {
+                    if (data.success) {
+                        messageEl.textContent = data.alreadySubscribed
+                            ? "You are already subscribed!"
+                            : "Done! Check your email to confirm your subscription.";
+                        messageEl.style.color = "#10B981";
+                        emailInput.value = "";
+                    } else {
+                        messageEl.textContent = data.error || "Subscription failed. Please try again.";
+                        messageEl.style.color = "#EF4444";
+                    }
+                    messageEl.classList.remove("hidden");
+                }
+            } catch (error) {
+                if (messageEl) {
+                    messageEl.textContent = "Network error. Please try again.";
+                    messageEl.style.color = "#EF4444";
+                    messageEl.classList.remove("hidden");
+                }
+            }
+
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = buttonText;
+            }
+        });
+    }
+</script>

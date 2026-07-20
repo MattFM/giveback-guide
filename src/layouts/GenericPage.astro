@@ -1,5 +1,6 @@
 ---
 import MainLayout from "./MainLayout.astro";
+import PageHeader from "../components/layout/PageHeader.astro";
 
 interface Props {
     title?: string;
@@ -30,21 +31,7 @@ const image = props.image;
     <main>
         <section class="bg-white dark:bg-gray-900">
             <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-xl lg:px-6">
-                <!-- Header -->
-                <div class="max-w-4xl mb-12">
-                    <h1
-                        class="mb-4 text-4xl sm:text-5xl tracking-tight font-bold text-gray-900 dark:text-white"
-                    >
-                        {headerTitle}
-                    </h1>
-                    {
-                        subtitle && (
-                            <p class="text-xl text-gray-500 dark:text-gray-400">
-                                {subtitle}
-                            </p>
-                        )
-                    }
-                </div>
+                <PageHeader title={headerTitle} subtitle={subtitle} />
 
                 <!-- Content -->
                 <div class="max-w-4xl">
