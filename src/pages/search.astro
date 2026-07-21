@@ -1,29 +1,17 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import Hero from "../components/sections/Hero.astro";
+import PageHeader from "../components/layout/PageHeader.astro";
 import { SITE_TITLE } from "../consts";
 ---
 
-<MainLayout 
-  title={`Search ${SITE_TITLE}`}
-  headerVariant="transparent"
-  headerTheme="dark"
->
+<MainLayout title={`Search ${SITE_TITLE}`}>
   <main>
-    <!-- Hero Section -->
-    <Hero
-      title="Search"
-      description="Find projects, stays and blog posts"
-      background="color"
-      backgroundValue="#1C2434"
-      theme="dark"
-      size="small"
-      align="left"
-    >
-    </Hero>
-
     <section class="bg-white dark:bg-gray-900">
       <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <PageHeader
+          title="Search"
+          subtitle="Find projects, stays and blog posts"
+        />
 
         <!-- Search Input -->
         <div class="max-w-screen-md mx-auto mb-8">

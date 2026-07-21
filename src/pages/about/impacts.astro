@@ -1,6 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
-import Hero from "../../components/sections/Hero.astro";
+import PageHeader from "../../components/layout/PageHeader.astro";
 import ImpactAreaCard from "../../components/content/ImpactAreaCard.astro";
 import { SITE_TITLE } from "../../consts";
 
@@ -46,22 +46,15 @@ const iconOpacity = 0.05;
 const displayMode: 'code' | 'icon' = 'icon';
 ---
 
-<MainLayout
-  title={title}
-  description={description}
-  headerVariant="transparent"
-  headerTheme="dark"
->
-  <!-- Hero Section -->
-  <Hero
-    title="Every Choice Creates Real Impact"
-    description="19 impact areas covering everything from animal welfare to cultural preservation. Discover exactly how your travel choices make a difference for people, places, and the planet"
-    background="color"
-    backgroundValue="#1C2434"
-    theme="dark"
-    size="small"
-    align="left"
-  />
+<MainLayout title={title} description={description}>
+  <section class="bg-white dark:bg-gray-900">
+    <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+      <PageHeader
+        title="Every Choice Creates Real Impact"
+        subtitle="19 impact areas covering everything from animal welfare to cultural preservation. Discover exactly how your travel choices make a difference for people, places, and the planet"
+      />
+    </div>
+  </section>
 
   <!-- Environmental & Conservation Section -->
   <section style="background-color: #F6F7F6;">
