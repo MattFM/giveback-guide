@@ -13,7 +13,7 @@ export default defineConfig({
   site: 'https://giveback.guide',
   trailingSlash: 'always',
   redirects: {
-    '/blog/announcements/': '/blog/changelog/',
+    '/blog/announcements/': '/blog/news-and-updates/',
   },
   markdown: {
     processor: unified({

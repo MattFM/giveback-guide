@@ -13,9 +13,13 @@ export const BLOG_TAGS: BlogTagEntry[] = [
     description: "Learn how to travel sustainably with our top travel advice,",
   },
   {
-    name: "Changelog",
+    name: "News & Updates",
     description: "Latest news and updates on the Give Back Guide platform.",
   },
+  {
+    name: "Understanding the Problems",
+    description: "To fix the tourism industry, we must first understand the problems we are dealing with.",
+  }
 ] as const;
 
 export type BlogTag = (typeof BLOG_TAGS)[number]["name"];
