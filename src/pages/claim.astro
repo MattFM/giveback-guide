@@ -1,0 +1,56 @@
+---
+import GenericPage from "../layouts/GenericPage.astro";
+---
+
+<GenericPage
+    title="Claim your Listing - Give Back Guide"
+    headerTitle="Claim your listing"
+    subtitle="Help us to keep your listing looking its very best"
+>
+    <p>
+        Give Back Guide is a non-profit sustainable and regenerative travel
+        platform that is built by and for the community.
+    </p>
+    <p>
+        Our free-to-access directory helps travellers to make better travel
+        choices that positively impacts people, places and the planet.
+    </p>
+    <p>
+        By claiming your listing, you can help us to ensure that the information
+        we have in our database is accurate and up to date.
+    </p>
+    <p>
+        Give Back Guide is a non-profit platform. We do not charge a fee for
+        listings or for claiming a listing.
+    </p>
+    <iframe
+        data-tally-src="https://tally.so/embed/RG1opj?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+        loading="lazy"
+        width="100%"
+        height="2389"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title="Claim a project"></iframe>
+    <script>
+        var d = document,
+            w = "https://tally.so/widgets/embed.js",
+            v = function () {
+                "undefined" != typeof Tally
+                    ? Tally.loadEmbeds()
+                    : d
+                          .querySelectorAll("iframe[data-tally-src]:not([src])")
+                          .forEach(function (e) {
+                              e.src = e.dataset.tallySrc;
+                          });
+            };
+        if ("undefined" != typeof Tally) v();
+        else if (d.querySelector('script[src="' + w + '"]') == null) {
+            var s = d.createElement("script");
+            ((s.src = w),
+                (s.onload = v),
+                (s.onerror = v),
+                d.body.appendChild(s));
+        }
+    </script>
+</GenericPage>
