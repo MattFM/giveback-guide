@@ -1,58 +1,65 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
+import GenericPage from "../layouts/GenericPage.astro";
 ---
 
-<MainLayout title="Submit">
-  <main>
-    <section class="bg-white dark:bg-gray-900">
-      <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-        <h2
-          class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white"
-        >
-          Submit
-        </h2>
-        <p
-          class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl"
-        >
-          We’re always keen to hear about new projects and stays that we can add
-          to our collection. If you know of one, you’re in the right place.
-        </p>
-        <iframe
-          data-tally-src="https://tally.so/embed/mYdpE6?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-          loading="lazy"
-          width="100%"
-          height="1029"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-          title="Submit a Project"></iframe>
-        <script is:inline>
-          var d = document,
+<GenericPage
+    title="Submit to Give Back Guide"
+    headerTitle="Submit a project"
+    subtitle="Help us to grow our database by submitting a project, tour or place to stay"
+>
+    <p>
+        Give Back Guide is a non-profit sustainable and regenerative travel
+        platform that is built by and for the community.
+    </p>
+    <p>
+        We research and verify most of the listings in our database ourselves,
+        but we also rely on submissions from our users and partners.
+    </p>
+    <p>
+        It is <strong>completely free</strong> to add listings to our database. If
+        you know of a project, tour or place to stay that you think would be a good
+        fit for our directory, please complete this form.
+    </p>
+    <p>
+        We manually check and verify each and every submission to ensure it
+        meets our values and criteria.
+    </p>
+    <iframe
+        data-tally-src="https://tally.so/embed/mYdpE6?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+        loading="lazy"
+        width="100%"
+        height="1029"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title="Submit a Project"></iframe>
+    <script is:inline>
+        var d = document,
             w = "https://tally.so/widgets/embed.js",
             v = function () {
-              "undefined" != typeof Tally
-                ? Tally.loadEmbeds()
-                : d
-                    .querySelectorAll("iframe[data-tally-src]:not([src])")
-                    .forEach(function (e) {
-                      e.src = e.dataset.tallySrc;
-                    });
+                "undefined" != typeof Tally
+                    ? Tally.loadEmbeds()
+                    : d
+                          .querySelectorAll("iframe[data-tally-src]:not([src])")
+                          .forEach(function (e) {
+                              e.src = e.dataset.tallySrc;
+                          });
             };
-          if ("undefined" != typeof Tally) v();
-          else if (d.querySelector('script[src="' + w + '"]') == null) {
+        if ("undefined" != typeof Tally) v();
+        else if (d.querySelector('script[src="' + w + '"]') == null) {
             var s = d.createElement("script");
-            (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
-          }
-        </script>
-        <script>
-          // Re-initialize Tally forms after View Transitions
-          document.addEventListener("astro:page-load", () => {
+            ((s.src = w),
+                (s.onload = v),
+                (s.onerror = v),
+                d.body.appendChild(s));
+        }
+    </script>
+    <script>
+        // Re-initialize Tally forms after View Transitions
+        document.addEventListener("astro:page-load", () => {
             if (typeof window !== "undefined" && "Tally" in window) {
-              (window as any).Tally.loadEmbeds();
+                (window as any).Tally.loadEmbeds();
             }
-          });
-        </script>
-      </div>
-    </section>
-  </main>
-</MainLayout>
+        });
+    </script>
+</GenericPage>
