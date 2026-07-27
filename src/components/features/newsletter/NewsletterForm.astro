@@ -1,11 +1,10 @@
 ---
-import Button from "../../ui/Button.astro";
+import BasecoatButton from "../../ui/BasecoatButton.astro";
 
 export interface Props {
     source: string;
     id?: string;
-    layout?: 'horizontal' | 'vertical';
-    size?: 'sm' | 'md' | 'lg';
+    size?: 'xs' | 'sm' | 'default' | 'lg';
     showPrivacyText?: boolean;
     privacyText?: string;
     placeholder?: string;
@@ -15,14 +14,12 @@ export interface Props {
     description?: string;
     wrapperClass?: string;
     formClass?: string;
-    inputClass?: string;
 }
 
 const {
     source,
     id = 'newsletter-form',
-    layout = 'horizontal',
-    size = 'md',
+    size = 'sm',
     showPrivacyText = true,
     privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline" style="color: #1C2434;">Privacy Policy</a>.',
     placeholder = 'Your email',
@@ -32,7 +29,6 @@ const {
     description,
     wrapperClass = '',
     formClass = '',
-    inputClass = '',
 } = Astro.props;
 
 const formId = `${id}-form`;
@@ -40,15 +36,14 @@ const emailId = `${id}-email`;
 const messageId = `${id}-message`;
 const btnId = `${id}-btn`;
 
-const isHorizontal = layout === 'horizontal';
+const buttonDataSize = size === 'default' ? undefined : size;
 
-const inputSizeClasses = {
-    sm: 'py-2 px-3',
-    md: 'py-3 px-4',
-    lg: 'py-4 px-5',
-};
-
-const buttonSize = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md';
+const inputGroupHeight = {
+    xs: '!h-7',
+    sm: '',
+    default: '!h-10',
+    lg: '!h-11',
+}[size];
 ---
 
 <div class={wrapperClass}>
@@ -64,28 +59,24 @@ const buttonSize = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md';
     )}
 
     <form id={formId} class={`w-full ${formClass}`}>
-        <div class={isHorizontal ? 'flex gap-2' : 'flex flex-col gap-3'}>
-            <div class={isHorizontal ? 'relative flex-1' : 'relative w-full'}>
-                <label for={emailId} class="sr-only">Email address</label>
-                <input
-                    class={`block w-full bg-white rounded-lg border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-1 ${inputSizeClasses[size]} ${inputClass}`}
-                    style="color: #1C2434; border-color: #D1D4D1; --tw-ring-color: rgba(169, 143, 250, 0.3); font-size: 16px;"
-                    placeholder={placeholder}
-                    type="email"
-                    id={emailId}
-                    name="email"
-                    required
-                />
-            </div>
-            <Button
+        <div class={`input-group ${inputGroupHeight}`}>
+            <label for={emailId} class="sr-only">Email address</label>
+            <input
+                type="email"
+                id={emailId}
+                name="email"
+                placeholder={placeholder}
+                required
+                style="font-size: 16px;"
+            />
+            <BasecoatButton
                 type="submit"
-                variant="primary"
-                size={buttonSize}
                 id={btnId}
-                fullWidth={!isHorizontal}
+                data-size={buttonDataSize}
+                data-align="end"
             >
                 {buttonText}
-            </Button>
+            </BasecoatButton>
         </div>
         {showPrivacyText && (
             <p class="mt-2 text-xs" style="color: #7E827E;">

@@ -59,12 +59,11 @@ const { page } = Astro.props;
                 {page.data.map((post) => <BlogPostCard post={post} />)}
             </div>
 
-            <div class="mt-20 max-w-2xl mx-auto text-center">
+            <div class="mt-20 max-w-xl mx-auto text-center">
                 <NewsletterForm
                     source="blog-page"
                     id="blog"
-                    layout="vertical"
-                    size="lg"
+                    size="sm"
                     heading="Get the latest blog posts delivered to your inbox"
                     description="Subscribe for travel tips, destination guides, and stories from our adventures."
                     placeholder="Enter your email"
