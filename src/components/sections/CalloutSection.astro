@@ -1,0 +1,55 @@
+---
+export interface Props {
+    backgroundColour: string;
+    darkBackgroundColour?: string;
+    ariaLabelledBy?: string;
+    ariaLabel?: string;
+}
+
+const { backgroundColour, darkBackgroundColour, ariaLabelledBy, ariaLabel } = Astro.props;
+
+const PRESETS: Record<string, string> = {
+    indigo: 'bg-gbg-indigo-300 dark:bg-gbg-indigo-800',
+    turquoise: 'bg-gbg-turquoise-300 dark:bg-gbg-turquoise-800',
+    azure: 'bg-gbg-azure-300 dark:bg-gbg-azure-800',
+    lime: 'bg-gbg-lime-300 dark:bg-gbg-lime-800',
+};
+
+const presetClasses = PRESETS[backgroundColour];
+const isTailwindClass =
+    backgroundColour.startsWith('bg-') || backgroundColour.startsWith('dark:');
+const sectionClasses = presetClasses || (isTailwindClass ? backgroundColour : '');
+const isCustomColour =
+    !sectionClasses &&
+    (backgroundColour.startsWith('#') ||
+        backgroundColour.startsWith('rgb') ||
+        backgroundColour.startsWith('hsl'));
+---
+
+<section
+    class={`callout-section ${sectionClasses}`.trim()}
+    aria-labelledby={ariaLabelledBy || undefined}
+    aria-label={!ariaLabelledBy ? ariaLabel || 'Callout section' : undefined}
+>
+    <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <slot />
+    </div>
+</section>
+
+{
+    isCustomColour && (
+        <style
+            define:vars={{
+                bgLight: backgroundColour,
+                bgDark: darkBackgroundColour || backgroundColour,
+            }}
+        >
+            .callout-section {
+                background-color: var(--bgLight);
+            }
+            .dark .callout-section {
+                background-color: var(--bgDark);
+            }
+        </style>
+    )
+}

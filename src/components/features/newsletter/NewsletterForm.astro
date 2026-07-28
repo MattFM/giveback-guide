@@ -4,7 +4,7 @@ import BasecoatButton from "../../ui/BasecoatButton.astro";
 export interface Props {
     source: string;
     id?: string;
-    size?: 'xs' | 'sm' | 'default' | 'lg';
+    size?: "xs" | "sm" | "default" | "lg";
     showPrivacyText?: boolean;
     privacyText?: string;
     placeholder?: string;
@@ -18,17 +18,17 @@ export interface Props {
 
 const {
     source,
-    id = 'newsletter-form',
-    size = 'sm',
+    id = "newsletter-form",
+    size = "sm",
     showPrivacyText = true,
     privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline" style="color: #1C2434;">Privacy Policy</a>.',
-    placeholder = 'Your email',
-    buttonText = 'Subscribe',
-    submittingText = 'Subscribing...',
+    placeholder = "Your email",
+    buttonText = "Subscribe",
+    submittingText = "Subscribing...",
     heading,
     description,
-    wrapperClass = '',
-    formClass = '',
+    wrapperClass = "",
+    formClass = "",
 } = Astro.props;
 
 const formId = `${id}-form`;
@@ -36,27 +36,29 @@ const emailId = `${id}-email`;
 const messageId = `${id}-message`;
 const btnId = `${id}-btn`;
 
-const buttonDataSize = size === 'default' ? undefined : size;
+const buttonDataSize = size === "default" ? undefined : size;
 
 const inputGroupHeight = {
-    xs: '!h-7',
-    sm: '',
-    default: '!h-10',
-    lg: '!h-11',
+    xs: "!h-7",
+    sm: "",
+    default: "!h-10",
+    lg: "!h-11",
 }[size];
 ---
 
 <div class={wrapperClass}>
-    {heading && (
-        <h2 class="mb-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            {heading}
-        </h2>
-    )}
-    {description && (
-        <p class="mb-6 text-gray-500 dark:text-gray-400">
-            {description}
-        </p>
-    )}
+    {
+        heading && (
+            <h2 class="mb-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                {heading}
+            </h2>
+        )
+    }
+    {
+        description && (
+            <p class="mb-6 text-gray-500 dark:text-gray-400">{description}</p>
+        )
+    }
 
     <form id={formId} class={`w-full ${formClass}`}>
         <div class={`input-group ${inputGroupHeight}`}>
@@ -78,21 +80,31 @@ const inputGroupHeight = {
                 {buttonText}
             </BasecoatButton>
         </div>
-        {showPrivacyText && (
-            <p class="mt-2 text-xs" style="color: #7E827E;">
-                <Fragment set:html={privacyText} />
-            </p>
-        )}
-        <p
-            id={messageId}
-            class="mt-2 text-xs hidden"
-            style="color: #1C2434;"
-        >
+        {
+            showPrivacyText && (
+                <p class="mt-2 text-xs" style="color: #7E827E;">
+                    <Fragment set:html={privacyText} />
+                </p>
+            )
+        }
+        <p id={messageId} class="mt-2 text-xs hidden" style="color: #1C2434;">
         </p>
     </form>
 </div>
 
-<script is:inline define:vars={{ WORKER_URL: import.meta.env.PUBLIC_WORKER_URL, formId, emailId, messageId, btnId, source, submittingText, buttonText }}>
+<script
+    is:inline
+    define:vars={{
+        WORKER_URL: import.meta.env.PUBLIC_WORKER_URL,
+        formId,
+        emailId,
+        messageId,
+        btnId,
+        source,
+        submittingText,
+        buttonText,
+    }}
+>
     const form = document.getElementById(formId);
     const messageEl = document.getElementById(messageId);
     const btn = document.getElementById(btnId);
@@ -136,7 +148,9 @@ const inputGroupHeight = {
                         messageEl.style.color = "#10B981";
                         emailInput.value = "";
                     } else {
-                        messageEl.textContent = data.error || "Subscription failed. Please try again.";
+                        messageEl.textContent =
+                            data.error ||
+                            "Subscription failed. Please try again.";
                         messageEl.style.color = "#EF4444";
                     }
                     messageEl.classList.remove("hidden");

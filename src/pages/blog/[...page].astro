@@ -7,6 +7,7 @@ import BlogTagsDropdown from "../../components/ui/Dropdown/BlogTagsDropdown.astr
 import Pagination from "../../components/ui/Pagination.astro";
 import PageHeader from "../../components/layout/PageHeader.astro";
 import NewsletterForm from "../../components/features/newsletter/NewsletterForm.astro";
+import CalloutSection from "../../components/sections/CalloutSection.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     // Get MDX blog posts
@@ -59,17 +60,6 @@ const { page } = Astro.props;
                 {page.data.map((post) => <BlogPostCard post={post} />)}
             </div>
 
-            <div class="mt-20 max-w-xl mx-auto text-center">
-                <NewsletterForm
-                    source="blog-page"
-                    id="blog"
-                    size="sm"
-                    heading="Get the latest blog posts delivered to your inbox"
-                    description="Subscribe for travel tips, destination guides, and stories from our adventures."
-                    placeholder="Enter your email"
-                    wrapperClass="text-center"
-                />
-            </div>
         </div>
     </section>
     <section class="bg-white dark:bg-gray-900">
@@ -83,4 +73,25 @@ const { page } = Astro.props;
             />
         </div>
     </section>
+    <CalloutSection backgroundColour="indigo" ariaLabelledBy="newsletter-heading">
+        <div class="max-w-xl mx-auto text-center">
+            <h2
+                id="newsletter-heading"
+                class="mb-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white"
+            >
+                Get the latest blog posts delivered to your inbox
+            </h2>
+            <p class="mb-6 text-gray-600 dark:text-gray-300">
+                Subscribe for travel tips, destination guides, and stories from
+                our adventures.
+            </p>
+            <NewsletterForm
+                source="blog-page"
+                id="blog"
+                size="sm"
+                placeholder="Enter your email"
+                wrapperClass="text-center"
+            />
+        </div>
+    </CalloutSection>
 </MainLayout>

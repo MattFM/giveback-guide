@@ -8,6 +8,7 @@ import BlogTagsDropdown from "../../../components/ui/Dropdown/BlogTagsDropdown.a
 import Pagination from "../../../components/ui/Pagination.astro";
 import PageHeader from "../../../components/layout/PageHeader.astro";
 import NewsletterForm from "../../../components/features/newsletter/NewsletterForm.astro";
+import CalloutSection from "../../../components/sections/CalloutSection.astro";
 import { isValidBlogTag, getTagSlug, getTagDescription } from "../../../lib/blog-tags";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
@@ -85,17 +86,6 @@ const tagDescription = getTagDescription(tagName);
         ))}
       </div>
 
-      <div class="mt-20 max-w-xl mx-auto text-center">
-        <NewsletterForm
-          source="blog-tag-page"
-          id="blog-tag"
-          size="sm"
-          heading="Get the latest blog posts delivered to your inbox"
-          description="Subscribe for travel tips, destination guides, and stories from our adventures."
-          placeholder="Enter your email"
-          wrapperClass="text-center"
-        />
-      </div>
     </div>
   </section>
 
@@ -111,4 +101,25 @@ const tagDescription = getTagDescription(tagName);
       />
     </div>
   </section>
+
+  <CalloutSection backgroundColour="indigo" ariaLabelledBy="newsletter-heading">
+    <div class="max-w-xl mx-auto text-center">
+      <h2
+        id="newsletter-heading"
+        class="mb-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white"
+      >
+        Get the latest blog posts delivered to your inbox
+      </h2>
+      <p class="mb-6 text-gray-600 dark:text-gray-300">
+        Subscribe for travel tips, destination guides, and stories from our adventures.
+      </p>
+      <NewsletterForm
+        source="blog-tag-page"
+        id="blog-tag"
+        size="sm"
+        placeholder="Enter your email"
+        wrapperClass="text-center"
+      />
+    </div>
+  </CalloutSection>
 </MainLayout>

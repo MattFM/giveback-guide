@@ -4,6 +4,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+.input-group {
+    @apply bg-white dark:bg-gray-900;
+}
+
 @theme {
     --color-primary-50: #eff6ff;
     --color-primary-100: #dbeafe;
@@ -15,6 +19,58 @@
     --color-primary-700: #1d4ed8;
     --color-primary-800: #1e40af;
     --color-primary-900: #1e3a8a;
+
+    /* gbg-indigo: base #C5BAF9 */
+    --color-gbg-indigo-50: #f6f5f9;
+    --color-gbg-indigo-100: #eceaf5;
+    --color-gbg-indigo-200: #ddd9f2;
+    --color-gbg-indigo-300: #d0c9f3;
+    --color-gbg-indigo-400: #c6bcf6;
+    --color-gbg-indigo-500: #c5baf9;
+    --color-gbg-indigo-600: #7458f5;
+    --color-gbg-indigo-700: #340bf5;
+    --color-gbg-indigo-800: #2103b1;
+    --color-gbg-indigo-900: #150464;
+    --color-gbg-indigo-950: #060219;
+
+    /* gbg-turquoise: base #78F1CF */
+    --color-gbg-turquoise-50: #d2e4df;
+    --color-gbg-turquoise-100: #bce0d6;
+    --color-gbg-turquoise-200: #a7e1d0;
+    --color-gbg-turquoise-300: #93e5ce;
+    --color-gbg-turquoise-400: #82ecce;
+    --color-gbg-turquoise-500: #78f1cf;
+    --color-gbg-turquoise-600: #16edb0;
+    --color-gbg-turquoise-700: #0aad7f;
+    --color-gbg-turquoise-800: #04664b;
+    --color-gbg-turquoise-900: #021c15;
+    --color-gbg-turquoise-950: #010e0a;
+
+    /* gbg-azure: base #8DE1E9 */
+    --color-gbg-azure-50: #dbe6e7;
+    --color-gbg-azure-100: #c8dfe1;
+    --color-gbg-azure-200: #b5dce0;
+    --color-gbg-azure-300: #a4dce1;
+    --color-gbg-azure-400: #96dee5;
+    --color-gbg-azure-500: #8de1e9;
+    --color-gbg-azure-600: #33cedd;
+    --color-gbg-azure-700: #199eaa;
+    --color-gbg-azure-800: #0d626a;
+    --color-gbg-azure-900: #052225;
+    --color-gbg-azure-950: #020c0d;
+
+    /* gbg-lime: base #DBFF63 */
+    --color-gbg-lime-50: #dee3cb;
+    --color-gbg-lime-100: #d7e2b3;
+    --color-gbg-lime-200: #d5e69b;
+    --color-gbg-lime-300: #d5ed84;
+    --color-gbg-lime-400: #d8f770;
+    --color-gbg-lime-500: #dbff63;
+    --color-gbg-lime-600: #c2fc00;
+    --color-gbg-lime-700: #87b000;
+    --color-gbg-lime-800: #4c6300;
+    --color-gbg-lime-900: #111600;
+    --color-gbg-lime-950: #0c0f00;
 
     --font-sans: 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-body: 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
