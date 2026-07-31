@@ -19,6 +19,15 @@ if (!PB_ADMIN_EMAIL || !PB_ADMIN_PASSWORD) {
 
 const pb = new PocketBase(PB_URL);
 
+async function collectionExists(name) {
+  try {
+    await pb.collections.getOne(name);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 async function setup() {
   try {
     console.log('Authenticating as admin...');
@@ -27,55 +36,55 @@ async function setup() {
 
     // 1. Update the users collection to add custom fields and enable OTP
     console.log('Configuring users collection...');
-    const usersCollection = await pb.collection('users').getOne('users');
+    const usersCollection = await pb.collections.getOne('users');
+    const usersId = usersCollection.id;
     
-    // Update users collection schema
-    const updatedUsers = {
-      ...usersCollection,
-      fields: [
-        ...(usersCollection.fields || []),
-        {
-          name: 'name',
-          type: 'text',
-          required: false,
-          options: { max: 200 }
-        },
-        {
-          name: 'prefs',
-          type: 'json',
-          required: false,
-          options: {}
-        }
-      ],
-      otp: {
-        enabled: true,
-        duration: 300, // 5 minutes
-        length: 8,
-        emailTemplate: {
-          subject: 'Your login link for Giveback Guide',
-          body: `Hello,
-
-Click here to log in: https://giveback.guide/account/verify?otpId={OTP_ID}&code={OTP}
-
-This link will expire in 5 minutes. If you didn't request this, please ignore it.
-
-Thanks,
-The Giveback Guide Team`
-        }
+    // Add custom fields if they don't exist
+    const existingFieldNames = (usersCollection.fields || []).map(f => f.name);
+    const fieldsToAdd = [];
+    
+    if (!existingFieldNames.includes('name')) {
+      fieldsToAdd.push({
+        name: 'name',
+        type: 'text',
+        required: false,
+        options: { max: 200 }
+      });
+    }
+    
+    if (!existingFieldNames.includes('prefs')) {
+      fieldsToAdd.push({
+        name: 'prefs',
+        type: 'json',
+        required: false,
+        options: {}
+      });
+    }
+    
+    if (fieldsToAdd.length > 0) {
+      usersCollection.fields = [...(usersCollection.fields || []), ...fieldsToAdd];
+    }
+    
+    // Enable OTP
+    usersCollection.otp = {
+      enabled: true,
+      duration: 300, // 5 minutes
+      length: 8,
+      emailTemplate: {
+        subject: 'Your login link for Giveback Guide',
+        body: `Hello,\n\nClick here to log in: https://giveback.guide/account/verify?otpId={OTP_ID}&code={OTP}\n\nThis link will expire in 5 minutes. If you didn't request this, please ignore it.\n\nThanks,\nThe Giveback Guide Team`
       }
     };
 
-    await pb.send('/api/collections/users', {
-      method: 'PATCH',
-      body: updatedUsers
-    });
+    await pb.collections.update('users', usersCollection);
     console.log('Users collection updated');
 
     // 2. Create lists collection
-    console.log('Creating lists collection...');
-    await pb.send('/api/collections', {
-      method: 'POST',
-      body: {
+    if (await collectionExists('lists')) {
+      console.log('lists collection already exists, skipping');
+    } else {
+      console.log('Creating lists collection...');
+      await pb.collections.create({
         name: 'lists',
         type: 'base',
         fields: [
@@ -84,7 +93,7 @@ The Giveback Guide Team`
             type: 'relation',
             required: true,
             options: {
-              collectionId: 'users',
+              collectionId: usersId,
               maxSelect: 1,
               cascadeDelete: false
             }
@@ -122,15 +131,16 @@ The Giveback Guide Team`
         createRule: '@request.auth.id != ""',
         updateRule: '@request.auth.id != "" && user = @request.auth.id',
         deleteRule: '@request.auth.id != "" && user = @request.auth.id'
-      }
-    });
-    console.log('lists collection created');
+      });
+      console.log('lists collection created');
+    }
 
     // 3. Create list_items collection
-    console.log('Creating list_items collection...');
-    await pb.send('/api/collections', {
-      method: 'POST',
-      body: {
+    if (await collectionExists('list_items')) {
+      console.log('list_items collection already exists, skipping');
+    } else {
+      console.log('Creating list_items collection...');
+      await pb.collections.create({
         name: 'list_items',
         type: 'base',
         fields: [
@@ -175,15 +185,16 @@ The Giveback Guide Team`
         createRule: '@request.auth.id != "" && list.user = @request.auth.id',
         updateRule: '@request.auth.id != "" && list.user = @request.auth.id',
         deleteRule: '@request.auth.id != "" && list.user = @request.auth.id'
-      }
-    });
-    console.log('list_items collection created');
+      });
+      console.log('list_items collection created');
+    }
 
     // 4. Create user_item_status collection
-    console.log('Creating user_item_status collection...');
-    await pb.send('/api/collections', {
-      method: 'POST',
-      body: {
+    if (await collectionExists('user_item_status')) {
+      console.log('user_item_status collection already exists, skipping');
+    } else {
+      console.log('Creating user_item_status collection...');
+      await pb.collections.create({
         name: 'user_item_status',
         type: 'base',
         fields: [
@@ -192,7 +203,7 @@ The Giveback Guide Team`
             type: 'relation',
             required: true,
             options: {
-              collectionId: 'users',
+              collectionId: usersId,
               maxSelect: 1,
               cascadeDelete: true
             }
@@ -251,9 +262,9 @@ The Giveback Guide Team`
         createRule: '@request.auth.id != ""',
         updateRule: '@request.auth.id != "" && user = @request.auth.id',
         deleteRule: '@request.auth.id != "" && user = @request.auth.id'
-      }
-    });
-    console.log('user_item_status collection created');
+      });
+      console.log('user_item_status collection created');
+    }
 
     console.log('\nSetup complete! All collections configured.');
     console.log('Next steps:');
