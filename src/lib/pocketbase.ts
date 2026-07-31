@@ -51,14 +51,36 @@ export const account = {
   },
 
   // createMagicURLSession -> pb.collection('users').requestOTP
-  // Pocketbase requestOTP is a public endpoint that works for existing users.
-  // For new users, it returns a dummy response but does not send an email.
-  // All existing users should be pre-imported via the migration script.
+  // For open beta support: try to create the user first if they don't exist.
+  // Auth collections require a password field even when Password auth is disabled,
+  // so we generate a random one. Users authenticate via OTP only.
   async createMagicURLSession(email: string, redirectTo?: string) {
     try {
       console.debug('createMagicURLSession using redirectTo=', redirectTo);
       
       const pb = getPB();
+      
+      // Try to create the user first (for new sign-ups)
+      // Generate a random password — users never see or use it
+      const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+      try {
+        await pb.collection('users').create({
+          email: email,
+          emailVisibility: true,
+          verified: false,
+          password: randomPassword,
+          passwordConfirm: randomPassword,
+        });
+        console.debug('Created new user for', email);
+      } catch (createErr: any) {
+        // If user already exists, this is expected — ignore and proceed
+        if (createErr.status === 400 && createErr.message?.includes('already exists')) {
+          console.debug('User already exists:', email);
+        } else {
+          console.error('Unexpected error creating user:', createErr);
+          throw createErr;
+        }
+      }
       
       const resp = await pb.collection('users').requestOTP(email);
       console.debug('pocketbase.requestOTP response for', email, resp);
