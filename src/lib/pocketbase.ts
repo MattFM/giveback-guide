@@ -51,11 +51,44 @@ export const account = {
   },
 
   // createMagicURLSession -> pb.collection('users').requestOTP
+  // Pocketbase requestOTP requires the user to exist. If they don't,
+  // we create them first (same behaviour as Supabase signInWithOtp).
   async createMagicURLSession(email: string, redirectTo?: string) {
     try {
       console.debug('createMagicURLSession using redirectTo=', redirectTo);
       
-      const resp = await getPB().collection('users').requestOTP(email);
+      const pb = getPB();
+      
+      // Try to find the user by email
+      let user = null;
+      try {
+        const result = await pb.collection('users').getList(1, 1, {
+          filter: `email = "${email}"`,
+        });
+        if (result.items && result.items.length > 0) {
+          user = result.items[0];
+        }
+      } catch (e) {
+        // User not found, will create below
+      }
+      
+      // If user doesn't exist, create them first
+      if (!user) {
+        console.debug('User not found, creating new user for', email);
+        try {
+          user = await pb.collection('users').create({
+            email: email,
+            emailVisibility: true,
+            verified: false,
+          });
+          console.debug('Created new user:', user.id);
+        } catch (createErr: any) {
+          console.error('Failed to create user:', createErr);
+          throw createErr;
+        }
+      }
+      
+      const resp = await pb.collection('users').requestOTP(email);
       console.debug('pocketbase.requestOTP response for', email, resp);
       
       return { data: resp, error: null };
