@@ -25,9 +25,9 @@ export async function getStatus(itemType: ItemType, itemId: string): Promise<Ite
     if (!userId) return null;
     
     const pbClient = pb();
-    const record = await pbClient.collection('user_item_status').getFirstListItem({
-      filter: `user = "${userId}" && item_type = "${itemType}" && item_id = "${String(itemId)}"`
-    });
+    const record = await pbClient.collection('user_item_status').getFirstListItem(
+      `user = "${userId}" && item_type = "${itemType}" && item_id = "${String(itemId)}"`
+    );
     
     return {
       item_type: record.item_type,
@@ -59,9 +59,9 @@ export async function setCompleted(itemType: ItemType, itemId: string, to: boole
     
     // Check if record exists first (upsert behaviour)
     try {
-      const existing = await pbClient.collection('user_item_status').getFirstListItem({
-        filter: `user = "${userId}" && item_type = "${itemType}" && item_id = "${String(itemId)}"`
-      });
+      const existing = await pbClient.collection('user_item_status').getFirstListItem(
+        `user = "${userId}" && item_type = "${itemType}" && item_id = "${String(itemId)}"`
+      );
       
       // Update existing
       const record = await pbClient.collection('user_item_status').update(existing.id, payload);

@@ -170,9 +170,9 @@ export async function saveItemToList(listId: string, itemType: ItemType, itemId:
   
   // Check if item already exists (upsert behaviour)
   try {
-    const existing = await pbClient.collection('list_items').getFirstListItem({
-      filter: `list = "${listId}" && item_type = "${itemType}" && item_id = "${itemId}"`
-    });
+    const existing = await pbClient.collection('list_items').getFirstListItem(
+      `list = "${listId}" && item_type = "${itemType}" && item_id = "${itemId}"`
+    );
     // Already exists, return it
     return {
       id: existing.id,
@@ -205,9 +205,9 @@ export async function removeItemFromList(listId: string, itemType: ItemType, ite
   
   // Find the item record first
   try {
-    const existing = await pbClient.collection('list_items').getFirstListItem({
-      filter: `list = "${listId}" && item_type = "${itemType}" && item_id = "${itemId}"`
-    });
+    const existing = await pbClient.collection('list_items').getFirstListItem(
+      `list = "${listId}" && item_type = "${itemType}" && item_id = "${itemId}"`
+    );
     await pbClient.collection('list_items').delete(existing.id);
     return true;
   } catch (e) {
