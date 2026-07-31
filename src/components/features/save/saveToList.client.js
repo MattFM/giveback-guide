@@ -10,7 +10,7 @@ import { getStatusesForItems, setCompleted } from '../../../lib/completed.js';
       // Use the same auth detection pattern as main auth system
       console.log('=== SaveToList auth debug ===');
       if (typeof window !== "undefined" && "localStorage" in window) {
-        const authToken = localStorage.getItem('pb_auth');
+        const authToken = localStorage.getItem('pocketbase_auth');
         if (authToken && authToken !== "null" && authToken !== "undefined") {
           try {
             const sessionData = JSON.parse(authToken);

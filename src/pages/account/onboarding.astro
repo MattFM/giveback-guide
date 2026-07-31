@@ -16,7 +16,7 @@ import { SITE_TITLE } from '../../consts';
     try {
       const hasToken = (() => {
         if (typeof window === 'undefined' || !('localStorage' in window)) return false;
-        const v = localStorage.getItem('pb_auth');
+        const v = localStorage.getItem('pocketbase_auth');
         return !!(v && v !== 'null' && v !== 'undefined');
       })();
       

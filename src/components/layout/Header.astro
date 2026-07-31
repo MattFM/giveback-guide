@@ -239,7 +239,7 @@ const mobileButtonClasses = theme === 'dark'
             function getCurrentUser() {
               try {
                 if (typeof window !== "undefined" && "localStorage" in window) {
-                  const authToken = localStorage.getItem('pb_auth');
+                  const authToken = localStorage.getItem('pocketbase_auth');
                   if (authToken && authToken !== "null" && authToken !== "undefined") {
                     try {
                       const sessionData = JSON.parse(authToken);
@@ -288,7 +288,7 @@ const mobileButtonClasses = theme === 'dark'
             // React to auth changes from other tabs/windows
             window.addEventListener("storage", (e) => {
               const k = (e && e.key) || "";
-              if (k === 'pb_auth') {
+              if (k === 'pocketbase_auth') {
                 console.log('Header: Storage event detected, updating buttons');
                 updateButtons();
               }

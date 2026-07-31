@@ -150,12 +150,12 @@ export const getCurrentUser = async () => {
     if (typeof window !== 'undefined') {
       console.debug('[getCurrentUser] Checking localStorage for auth tokens...');
       
-      // PocketBase stores auth in localStorage under the key 'pb_auth'
-      const authToken = localStorage.getItem('pb_auth');
+      // PocketBase stores auth in localStorage under the key 'pocketbase_auth'
+      const authToken = localStorage.getItem('pocketbase_auth');
       
       if (authToken) {
         try {
-          console.debug('[getCurrentUser] Attempting to parse auth token from pb_auth');
+          console.debug('[getCurrentUser] Attempting to parse auth token from pocketbase_auth');
           const sessionData = JSON.parse(authToken);
           console.debug('[getCurrentUser] Parsed session data structure keys:', Object.keys(sessionData));
           
@@ -178,7 +178,7 @@ export const getCurrentUser = async () => {
           console.error('[getCurrentUser] Failed to parse auth token:', parseError);
         }
       } else {
-        console.warn('[getCurrentUser] No pb_auth token found in localStorage');
+        console.warn('[getCurrentUser] No pocketbase_auth token found in localStorage');
       }
       
       return null;
