@@ -1,224 +1,186 @@
 # Pocketbase Migration Guide
 
-This document outlines the migration from Supabase to a self-hosted Pocketbase instance on `pb.giveback.guide` (Pikapods).
+## Current Status: DEVELOPMENT COMPLETE — READY FOR CUTOVER
 
-## Overview
+All code changes are complete and tested locally. The `migrate-to-pocketbase` branch contains the full migration. This document tracks what is done and what remains for cutover day.
 
-All auth, lists, and completion tracking now runs on Pocketbase. The old Supabase files (`src/lib/supabase.ts`) remain in the codebase for emergency rollback but are no longer imported by default.
+---
 
-## Environment Variables
+## ✅ Completed
 
-Update your `.env` and GitHub repository variables:
+### Code Migration (Branch: `migrate-to-pocketbase`)
+- [x] `src/lib/pocketbase.ts` — Auth layer with OTP support, user creation, profile updates
+- [x] `src/lib/auth.ts` — Defaults to `pocketbase` provider, removed Supabase fallback import
+- [x] `src/lib/lists.ts` — All list CRUD operations using Pocketbase SDK
+- [x] `src/lib/completed.ts` — Completion tracking using Pocketbase SDK
+- [x] All auth pages updated (`login`, `verify`, `dashboard`, `onboarding`, `profile`)
+- [x] `Header.astro`, `BaseHead.astro`, `saveToList.client.js` — Auth detection updated
+- [x] `astro.config.mjs` — `optimizeDeps` updated to `pocketbase`
+- [x] `package.json` — Dependencies swapped (`@supabase/supabase-js` → `pocketbase`)
+- [x] `.github/workflows/deploy.yml` — Environment variables updated
+- [x] `AGENTS.md`, `README.md`, `privacy.astro`, `.github/copilot-instructions.md` — Updated
+- [x] `pb_migrations/1785800000_setup_giveback_collections.js` — Migration file (not used, but present)
+- [x] `scripts/setup-pb-collections.js` — Collection setup script (deprecated, manual setup used instead)
+- [x] `scripts/migrate-users-to-pb.js` — User bulk-import script (ready for cutover)
 
-```
-PUBLIC_AUTH_PROVIDER=pocketbase
-PUBLIC_POCKETBASE_URL=https://pb.giveback.guide
-```
+### Pocketbase Instance Configuration (pb.giveback.guide)
+- [x] Deployed on Pikapods
+- [x] SMTP configured and tested (sends OTP emails successfully)
+- [x] Users collection: `name` (text) and `prefs` (json) custom fields added
+- [x] Users collection: OTP enabled (300s duration, 8-digit code)
+- [x] Users collection: OTP email template configured with `?otpId={OTP_ID}&code={OTP}` link
+- [x] Users collection: Create rule left blank (open beta — anyone can create account)
+- [x] `lists` collection created with fields, indexes, and API rules
+- [x] `list_items` collection created with fields, indexes, cascade delete, and API rules
+- [x] `user_item_status` collection created with fields, indexes, composite unique index, and API rules
 
-Remove from production:
-- `PUBLIC_SUPABASE_URL`
-- `PUBLIC_SUPABASE_ANON`
+### Local Testing (All Passing)
+- [x] OTP login flow works for new sign-ups (open beta)
+- [x] OTP login flow works for returning users
+- [x] Onboarding page saves `name` and `prefs` correctly
+- [x] Dashboard loads saved lists and items
+- [x] Saving projects/stays to lists works
+- [x] Creating new lists works
+- [x] Moving items between lists works
+- [x] Marking items as visited (`is_completed`) works
+- [x] Unmarking items as visited works
+- [x] Logout works
+- [x] Profile page loads and updates name
 
-Keep locally (for migration scripts only):
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `SUPABASE_URL` (old project URL)
+### Known Issues Fixed During Development
+- [x] Safari syntax error: `async import` → patched `pocketbase` package in `node_modules`
+- [x] Build failure: Vite trying to bundle `supabase.ts` → removed fallback import from `auth.ts`
+- [x] `localStorage` key mismatch: `pb_auth` → `pocketbase_auth` (Pocketbase SDK default)
+- [x] `getFirstListItem` filter syntax: passing `{ filter: ... }` object instead of string argument
+- [x] Trailing slashes missing on redirect URLs → added to all `window.location` calls
+- [x] User creation required password fields → added random password generation for new sign-ups
+- [x] `requestOTP` only works for existing users → added client-side user creation before OTP request
 
-## Pre-Migration Setup (do this well in advance)
+---
 
-### 1. Deploy Pocketbase on Pikapods
+## ⏳ Remaining: Cutover Day Tasks
 
-- Create a new Pocketbase pod on Pikapods
-- Set the admin superuser credentials
-- Note the public URL
+### Pre-Cutover (Do Beforehand)
+1. **Export Supabase data**
+   - In Supabase dashboard: export `lists`, `list_items`, `user_item_status` as CSV
+   - Keep Supabase project live until cutover is verified
 
-### 2. Configure SMTP
+2. **Push migration branch to GitHub**
+   ```bash
+   git push -u origin migrate-to-pocketbase
+   ```
 
-Pocketbase requires an SMTP provider for OTP emails. Configure in the admin UI:
-**Settings → Mail Settings**
+### Cutover Day (Do in One Sitting)
+1. **Deploy maintenance mode on `main`**
+   - Commit that hides login form, shows "back soon" message
+   - Push to `main` → deploys immediately, blocks all writes
 
-Options: Mailgun, SendGrid, Resend, Brevo, or Gmail SMTP.
+2. **Run user migration script**
+   ```bash
+   export SUPABASE_URL=https://your-project.supabase.co
+   export SUPABASE_SERVICE_ROLE_KEY=your-key
+   export PB_URL=https://pb.giveback.guide
+   export PB_ADMIN_EMAIL=your-admin-email
+   export PB_ADMIN_PASSWORD=your-admin-password
+   node scripts/migrate-users-to-pb.js
+   ```
+   - Creates 37 users with same UUIDs as Supabase, preserving `name` and `prefs`
 
-### 3. Configure CORS
+3. **Import data CSVs into Pocketbase**
+   - `lists` → Import `lists.csv`
+   - `list_items` → Import `list_items.csv`
+   - `user_item_status` → Import `user_item_status.csv`
+   - Spot-check counts and user associations
 
-In the admin UI: **Settings → CORS**
-Add your production origin (`https://giveback.guide`) and `http://localhost:4321` for local dev.
+4. **Merge migration branch and deploy**
+   ```bash
+   git checkout main
+   git merge migrate-to-pocketbase
+   git push origin main
+   ```
+   - GitHub Actions builds and deploys automatically
 
-### 4. Run the Collection Setup Script
+5. **Update GitHub repository variables**
+   - Remove: `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON`
+   - Add: `PUBLIC_POCKETBASE_URL` = `https://pb.giveback.guide`
+   - Ensure: `PUBLIC_AUTH_PROVIDER` = `pocketbase`
 
-```bash
-# Set environment variables
-export PB_URL=https://pb.giveback.guide
-export PB_ADMIN_EMAIL=your-admin-email@example.com
-export PB_ADMIN_PASSWORD=your-admin-password
+6. **Revert maintenance mode**
+   - Remove the temporary login block commit
+   - Push to `main`
 
-# Run the setup script
-node scripts/setup-pb-collections.js
-```
+7. **Verify**
+   - Test login with existing user
+   - Test login with new user (open beta)
+   - Test saving to lists, marking as visited
+   - Check dashboard stats
 
-This creates:
-- `users` collection with OTP enabled, custom `name` and `prefs` fields
-- `lists` collection with user relations and API rules
-- `list_items` collection with list relations and cascade delete
-- `user_item_status` collection with user relations and composite unique index
+### Post-Cutover
+- [ ] Cancel Supabase project (after 48h verification)
+- [ ] Remove old Supabase env vars from GitHub entirely
+- [ ] Delete `scripts/migrate-users-to-pb.js` from repo
+- [ ] Delete `src/lib/supabase.ts` from repo (after 1 week stability)
 
-### 5. Test OTP Authentication Locally
-
-Update your `.env` to point at the Pocketbase instance, run `pnpm run dev`, and test the login flow end-to-end.
-
-## Cutover Day (the live migration)
-
-### Step 1: Block Login (Deploy Maintenance Mode)
-
-Deploy a temporary commit on `main` that hides the login form. This prevents any new data writes during the migration window.
-
-### Step 2: Export Data from Supabase
-
-In the Supabase dashboard:
-1. **Table Editor → `lists`** → Export → CSV
-2. **Table Editor → `list_items`** → Export → CSV
-3. **Table Editor → `user_item_status`** → Export → CSV
-
-### Step 3: Migrate Users
-
-```bash
-export SUPABASE_URL=https://your-project.supabase.co
-export SUPABASE_SERVICE_ROLE_KEY=your-key
-export PB_URL=https://pb.giveback.guide
-export PB_ADMIN_EMAIL=your-admin-email
-export PB_ADMIN_PASSWORD=your-admin-password
-
-node scripts/migrate-users-to-pb.js
-```
-
-This creates 37 user records in Pocketbase with the **exact same UUIDs** as Supabase, preserving `name` and `prefs` metadata.
-
-### Step 4: Import Data Tables
-
-In the Pocketbase admin UI:
-1. **Collections → `lists`** → Import → Upload `lists.csv`
-2. **Collections → `list_items`** → Import → Upload `list_items.csv`
-3. **Collections → `user_item_status`** → Import → Upload `user_item_status.csv`
-
-Since user IDs are preserved, the relation fields map perfectly.
-
-### Step 5: Verify Data
-
-- Spot-check users in the PB admin UI
-- Confirm list counts and item counts look correct
-- Check that `user_item_status` records are associated with the correct users
-
-### Step 6: Merge the Migration Branch
-
-```bash
-git checkout main
-git merge migrate-to-pocketbase
-```
-
-### Step 7: Update GitHub Repository Variables
-
-In your GitHub repository settings:
-- Remove `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON` (vars)
-- Add `PUBLIC_POCKETBASE_URL` = `https://pb.giveback.guide` (vars)
-- Ensure `PUBLIC_AUTH_PROVIDER` is set to `pocketbase` (vars)
-
-### Step 8: Push and Deploy
-
-```bash
-git push origin main
-```
-
-GitHub Actions builds and deploys automatically.
-
-### Step 9: Remove Login Block
-
-Revert the temporary maintenance mode commit.
-
-### Step 10: Cleanup
-
-- Cancel the Supabase project
-- Remove old Supabase env vars from GitHub entirely
-- Delete the `scripts/migrate-users-to-pb.js` script from the repo (it's done its job)
+---
 
 ## Rollback Plan
 
-If anything goes wrong after the cutover:
+If anything goes wrong after cutover:
+1. Revert the merge commit on `main`
+2. Restore old GitHub repository variables (`PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON`)
+3. Push → site rolls back to Supabase build
+4. Supabase project remains live until explicitly cancelled
 
-1. **Revert the merge commit** on `main`
-2. **Re-enable Supabase** by restoring the old GitHub repository variables
-3. The old Supabase project is still live until you cancel it
-4. Push the revert → the site rolls back to the Supabase-connected build
+---
 
-## Architecture Changes
+## Architecture Reference
 
 ### Auth Flow
-- **Before**: Supabase Magic Link (`signInWithOtp`) → email link with `?userId=...&secret=...` → `getSessionFromUrl()`
-- **After**: Pocketbase OTP (`requestOTP`) → email link with `?otpId=...&code=...` → `authWithOTP()`
+- **Pocketbase OTP**: `requestOTP(email)` → sends email with `?otpId={OTP_ID}&code={OTP}` → `authWithOTP(otpId, code)`
+- **Session stored in**: `localStorage` key `pocketbase_auth` (Pocketbase SDK default)
+- **New user sign-up**: Client-side creates user with random password (required by PB auth collections), then requests OTP
 
 ### Data Access
-- **Before**: `supabase.from('table').select()` / `.insert()` / `.update()` / `.delete()`
-- **After**: `pb.collection('table').getList()` / `.create()` / `.update()` / `.delete()`
+- `pb.collection('lists').getList()` / `.create()` / `.update()` / `.delete()`
+- `pb.collection('list_items').getFirstListItem(filterString)` — note: takes string, not `{ filter: ... }`
+- `pb.collection('user_item_status').getList()` / `.create()` / `.update()`
 
-### Session Storage
-- **Before**: `localStorage` key matching `^sb-.*-auth-token$`
-- **After**: `localStorage` key `pb_auth`
-
-### User Metadata
-- **Before**: Stored in `user_metadata` JSON on Supabase auth user
-- **After**: Stored as custom fields (`name`, `prefs`) directly on the Pocketbase `users` collection record
-
-## Schema Mapping
-
+### Schema Mapping
 | Supabase Table | Pocketbase Collection | Notes |
 |---|---|---|
-| `auth.users` | `users` | Built-in auth collection with custom fields added |
-| `public.lists` | `lists` | `user_id` → `user` relation field |
-| `public.list_items` | `list_items` | `list_id` → `list` relation field, cascade delete enabled |
-| `public.user_item_status` | `user_item_status` | `user_id` → `user` relation field, composite unique index on `user, item_type, item_id` |
+| `auth.users` | `users` | Custom fields: `name`, `prefs`. OTP enabled. Create rule blank (open). |
+| `public.lists` | `lists` | `user_id` → `user` relation. `created_at` autodate. |
+| `public.list_items` | `list_items` | `list_id` → `list` relation. Cascade delete. Unique on `list, item_type, item_id`. |
+| `public.user_item_status` | `user_item_status` | `user_id` → `user` relation. Cascade delete. Unique on `user, item_type, item_id`. |
 
-## API Rules (Replaces RLS)
+---
 
-All collections use the same ownership pattern:
+## Environment Variables
 
+### Current `.env` (Development)
 ```
-listRule:   @request.auth.id != "" && user = @request.auth.id
-viewRule:   @request.auth.id != "" && user = @request.auth.id
-createRule: @request.auth.id != ""
-updateRule: @request.auth.id != "" && user = @request.auth.id
-deleteRule: @request.auth.id != "" && user = @request.auth.id
+PUBLIC_AUTH_PROVIDER=pocketbase
+PUBLIC_POCKETBASE_URL=https://pb.giveback.guide
+
+# Legacy — for migration script only
+SUPABASE_SERVICE_ROLE_KEY=...
+SUPABASE_URL=...
 ```
 
-`list_items` checks ownership via the parent list: `list.user = @request.auth.id`
+### GitHub Repository Variables (Production — update on cutover day)
+- **Remove**: `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON`
+- **Add**: `PUBLIC_POCKETBASE_URL` = `https://pb.giveback.guide`
+- **Keep**: `PUBLIC_AUTH_PROVIDER` = `pocketbase`
 
-## File Reference
+---
 
-### New Files
-- `src/lib/pocketbase.ts` — Auth and session management
-- `scripts/setup-pb-collections.js` — One-time collection setup
-- `scripts/migrate-users-to-pb.js` — User bulk-import from Supabase
+## Quick Reference: Picking Up This Migration
 
-### Modified Files
-- `src/lib/auth.ts` — Provider switch now defaults to `pocketbase`
-- `src/lib/lists.ts` — Replaced Supabase SDK with Pocketbase SDK
-- `src/lib/completed.ts` — Replaced Supabase SDK with Pocketbase SDK
-- `src/pages/login.astro` — Updated success messaging
-- `src/pages/account/verify.astro` — Reads `otpId` and `code` from URL
-- `src/pages/account/dashboard.astro` — Updated inline auth check
-- `src/pages/account/onboarding.astro` — Updated inline auth check
-- `src/pages/account/profile.astro` — Updated inline auth check
-- `src/components/layout/Header.astro` — Updated auth detection
-- `src/components/layout/BaseHead.astro` — Updated meta tags
-- `src/components/features/save/saveToList.client.js` — Updated auth detection
-- `astro.config.mjs` — Updated `optimizeDeps`
-- `package.json` — Swapped dependencies
-- `.github/workflows/deploy.yml` — Updated env vars
+If resuming in a new chat:
+1. You are on branch `migrate-to-pocketbase` (committed and pushed to GitHub)
+2. Pocketbase instance is live at `pb.giveback.guide` with all collections configured
+3. All code changes are committed — local testing is complete and passing
+4. **Next action**: Cutover day (see ⏳ Remaining section above)
+5. **No further code changes needed** unless testing reveals new issues
 
-### Legacy Files (kept for rollback)
-- `src/lib/supabase.ts` — Old Supabase auth layer (no longer imported by default)
-
-## Post-Migration: Gamification Ready
-
-Pocketbase supports your future gamification plans via:
-- **Event hooks** (Go or JavaScript) — auto-award badges on completion events
-- **Custom collections** — `badges`, `user_badges`, `user_roles`
-- **Realtime subscriptions** — live "badge unlocked" notifications via SSE
-- **File fields** — badge icons stored directly in collection records
+Last updated: 31 July 2026
