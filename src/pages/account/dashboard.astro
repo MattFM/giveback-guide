@@ -8,20 +8,14 @@ import MainLayout from "../../layouts/MainLayout.astro";
   headerTheme="dark"
   transition:persist={false}
 >
-  <!-- Early client-side heuristic: if no Supabase token, redirect fast to login (keeps site static) -->
+  <!-- Early client-side heuristic: if no PocketBase token, redirect fast to login (keeps site static) -->
   <script is:inline>
     try {
       const hasToken = (() => {
         if (typeof window === "undefined" || !("localStorage" in window))
           return false;
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && /^sb-.*-auth-token$/.test(k)) {
-            const v = localStorage.getItem(k);
-            if (v && v !== "null" && v !== "undefined") return true;
-          }
-        }
-        return false;
+        const v = localStorage.getItem('pb_auth');
+        return !!(v && v !== "null" && v !== "undefined");
       })();
       if (!hasToken) {
         window.location.replace("/login");

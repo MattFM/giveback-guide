@@ -69,17 +69,17 @@ import MainLayout from '../../layouts/MainLayout.astro';
     const verifyLink = async () => {
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('userId');
-        const secret = urlParams.get('secret');
+        const otpId = urlParams.get('otpId');
+        const code = urlParams.get('code');
 
         try {
-            // Verify the magic link
+            // Verify the OTP link
             if (typeof updateMagicURLSession !== 'function') {
                 throw new Error('Authentication system not available');
             }
 
-            if (userId && secret) {
-                await updateMagicURLSession(userId, secret);
+            if (otpId && code) {
+                await updateMagicURLSession(otpId, code);
             } else {
                 await updateMagicURLSession();
             }

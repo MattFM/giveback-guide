@@ -8,33 +8,18 @@ import { getStatusesForItems, setCompleted } from '../../../lib/completed.js';
   async function getCurrentUserLocal() {
     try {
       // Use the same auth detection pattern as main auth system
-      let authToken = null;
-      
       console.log('=== SaveToList auth debug ===');
       if (typeof window !== "undefined" && "localStorage" in window) {
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          console.log(`SaveToList checking key: ${k}`);
-          if (k && /^sb-.*-auth-token$/.test(k)) {
-            const v = localStorage.getItem(k);
-            if (v && v !== "null" && v !== "undefined") {
-              authToken = v;
-              console.log('SaveToList found auth token in key:', k);
-              break;
-            }
+        const authToken = localStorage.getItem('pb_auth');
+        if (authToken && authToken !== "null" && authToken !== "undefined") {
+          try {
+            const sessionData = JSON.parse(authToken);
+            const user = sessionData?.record || sessionData?.model;
+            console.log('SaveToList auth check - found user:', user?.id, user?.email);
+            return user || null;
+          } catch (parseError) {
+            console.error('SaveToList failed to parse auth token:', parseError);
           }
-        }
-      }
-      
-      if (authToken) {
-        try {
-          // Parse the actual Supabase session data
-          const sessionData = JSON.parse(authToken);
-          const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
-          console.log('SaveToList auth check - found user:', user?.id, user?.email);
-          return user || null;
-        } catch (parseError) {
-          console.error('SaveToList failed to parse auth token:', parseError);
         }
       }
       

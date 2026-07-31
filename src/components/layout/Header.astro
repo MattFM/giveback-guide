@@ -238,34 +238,18 @@ const mobileButtonClasses = theme === 'dark'
             
             function getCurrentUser() {
               try {
-                let authToken = null;
-                
-                // Find the Supabase auth token
                 if (typeof window !== "undefined" && "localStorage" in window) {
-                  for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (k && /^sb-.*-auth-token$/.test(k)) {
-                      const v = localStorage.getItem(k);
-                      if (v && v !== "null" && v !== "undefined") {
-                        authToken = v;
-                        break;
-                      }
+                  const authToken = localStorage.getItem('pb_auth');
+                  if (authToken && authToken !== "null" && authToken !== "undefined") {
+                    try {
+                      const sessionData = JSON.parse(authToken);
+                      const user = sessionData?.record || sessionData?.model;
+                      return user || null;
+                    } catch (parseError) {
+                      console.error('Header: Failed to parse auth token:', parseError);
                     }
                   }
                 }
-                
-                if (authToken) {
-                  try {
-                    // Parse the actual Supabase session data
-                    const sessionData = JSON.parse(authToken);
-                    // Extract user from session data (Supabase format)
-                    const user = sessionData?.user || sessionData?.data?.user || sessionData?.session?.user;
-                    return user || null;
-                  } catch (parseError) {
-                    console.error('Header: Failed to parse auth token:', parseError);
-                  }
-                }
-                
                 return null;
               } catch {
                 return null;
@@ -304,10 +288,7 @@ const mobileButtonClasses = theme === 'dark'
             // React to auth changes from other tabs/windows
             window.addEventListener("storage", (e) => {
               const k = (e && e.key) || "";
-              if (
-                /^sb-.*-auth-token$/.test(k) ||
-                k.indexOf("supabase.auth.token") !== -1
-              ) {
+              if (k === 'pb_auth') {
                 console.log('Header: Storage event detected, updating buttons');
                 updateButtons();
               }
