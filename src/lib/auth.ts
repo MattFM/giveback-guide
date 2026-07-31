@@ -1,19 +1,11 @@
-// Simple runtime switch between Appwrite, Supabase, and PocketBase wrappers.
-// Default to 'pocketbase' for new development. You can override by setting
-// PUBLIC_AUTH_PROVIDER in your environment (e.g. to 'appwrite' or 'supabase').
-
-const provider = (typeof import.meta !== 'undefined' ? (import.meta.env?.PUBLIC_AUTH_PROVIDER as string) : process.env.PUBLIC_AUTH_PROVIDER) || 'pocketbase';
+// Auth provider abstraction layer.
+// All calls are delegated to the pocketbase implementation.
 
 let _impl: any = null;
 
 async function loadImpl() {
   if (_impl) return _impl;
-  if (provider === 'pocketbase') {
-    _impl = await import('./pocketbase');
-  } else {
-    // Legacy Supabase provider for backwards compatibility
-    _impl = await import('./supabase');
-  }
+  _impl = await import('./pocketbase');
   return _impl;
 }
 
