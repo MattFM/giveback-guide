@@ -12,7 +12,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
                     return !!(v && v !== 'null' && v !== 'undefined');
                 })();
                 if (!hasToken) {
-                    window.location.replace('/login');
+                    window.location.replace('/login/');
                 }
             } catch {}
         </script>
@@ -262,7 +262,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
     (async () => {
         const user = await getCurrentUser().catch(() => null);
         if (!user) {
-            window.location.href = '/login';
+            window.location.href = '/login/';
             return;
         }
         const guard = document.getElementById('profileGuard');

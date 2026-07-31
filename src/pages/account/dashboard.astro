@@ -18,7 +18,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
         return !!(v && v !== "null" && v !== "undefined");
       })();
       if (!hasToken) {
-        window.location.replace("/login");
+        window.location.replace("/login/");
       }
     } catch {}
   </script>
@@ -537,7 +537,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
         if (confirm("Are you sure you want to logout?")) {
           try {
             await logout();
-            window.location.href = "/login";
+        window.location.href = "/login/";
           } catch (error) {
             console.error("Logout failed:", error);
           }

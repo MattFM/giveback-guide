@@ -194,7 +194,7 @@ import { SITE_TITLE } from '../consts';
         try {
             const user = await getCurrentUser();
             if (user) {
-                window.location.href = '/account/dashboard';
+                window.location.href = '/account/dashboard/';
                 return;
             }
         } catch (e) {
@@ -244,7 +244,7 @@ import { SITE_TITLE } from '../consts';
                 const formData = new FormData(form);
                 const email = formData.get('email') as string;
 
-                const redirectTo = `${window.location.origin}/account/verify`;
+                const redirectTo = `${window.location.origin}/account/verify/`;
                 console.debug('Requesting magic link with redirectTo=', redirectTo);
 
                 // Ensure minimum 500ms loading state for better UX

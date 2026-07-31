@@ -80,8 +80,6 @@ export const account = {
             email: email,
             emailVisibility: true,
             verified: false,
-            password: 'temp-password-change-me-123!',
-            passwordConfirm: 'temp-password-change-me-123!',
           });
           console.debug('Created new user:', user.id);
         } catch (createErr: any) {

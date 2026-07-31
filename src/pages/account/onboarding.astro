@@ -22,7 +22,7 @@ import { SITE_TITLE } from '../../consts';
       
       if (!hasToken) {
         console.warn('[Onboarding] No auth token found, redirecting to login');
-        window.location.replace('/login');
+        window.location.replace('/login/');
       }
     } catch (e) {
       console.error('[Onboarding] Early auth check error:', e);
