@@ -1,0 +1,57 @@
+---
+import GenericPage from "../../../layouts/GenericPage.astro";
+---
+
+<GenericPage
+    title="Submit a stay to Give Back Guide"
+    headerTitle="Submit a stay"
+    subtitle="Help us to grow our database by submitting a stay"
+>
+    <p>
+        Give Back Guide is a non-profit sustainable and regenerative travel
+        platform that is built by and for the community.
+    </p>
+    <p>
+        We research and verify most of the listings in our database ourselves,
+        but we also rely on submissions from our users and partners.
+    </p>
+    <p>
+        It is <strong>completely free</strong> to add listings to our database. If
+        you know of a project, tour or place to stay that you think would be a good
+        fit for our directory, please complete this form.
+    </p>
+    <p>
+        We manually check and verify each and every submission to ensure it
+        meets our values and criteria.
+    </p>
+    <iframe
+        data-tally-src="https://tally.so/embed/RG1RN4?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+        loading="lazy"
+        width="100%"
+        height="4214"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title="Submit a Stay"></iframe>
+    <script>
+        var d = document,
+            w = "https://tally.so/widgets/embed.js",
+            v = function () {
+                "undefined" != typeof Tally
+                    ? Tally.loadEmbeds()
+                    : d
+                          .querySelectorAll("iframe[data-tally-src]:not([src])")
+                          .forEach(function (e) {
+                              e.src = e.dataset.tallySrc;
+                          });
+            };
+        if ("undefined" != typeof Tally) v();
+        else if (d.querySelector('script[src="' + w + '"]') == null) {
+            var s = d.createElement("script");
+            ((s.src = w),
+                (s.onload = v),
+                (s.onerror = v),
+                d.body.appendChild(s));
+        }
+    </script>
+</GenericPage>

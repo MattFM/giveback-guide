@@ -92,7 +92,7 @@ export async function getStaticPaths() {
 - Graceful fallbacks for missing data
 - User-friendly error messages (UK English)
 - Console logging for debugging (remove in production)
-- RLS (Row Level Security) policies for all Supabase user data
+- API rules for all Pocketbase user data collections
 
 ### URL Patterns
 - All routes use trailing slashes (`trailingSlash: 'always'`)
@@ -108,9 +108,9 @@ export async function getStaticPaths() {
 - **Blog Tags**: Centralised in `src/lib/blog-tags.ts`. To add a tag, add an object with `name` and `description` to the `BLOG_TAGS` array. This list is used by the tag dropdown and tag page generation to filter out invalid or unused tags. The description is displayed on tag listing pages and used as the SEO meta description. The schema uses `z.array(z.string())` so Astro Editor renders a tag input UI rather than a raw YAML editor.
 
 ### Authentication & User Data
-- Supabase magic link authentication via `src/lib/supabase.ts`
+- Pocketbase OTP authentication via `src/lib/pocketbase.ts`
 - User state in localStorage, accessed via `getCurrentUser()`
-- RLS-protected tables: `lists`, `list_items`, `user_item_status`
+- API rules protect collections: `lists`, `list_items`, `user_item_status`
 - Client-side hydration for interactive features
 
 ### Performance Considerations
@@ -175,14 +175,15 @@ When writing JavaScript in `<script>` tags within `.astro` files, the project us
 - `NOTION_TOKEN` - Notion integration token
 - `PROJECTS_NOTION_DATABASE_ID` - Projects database ID
 - `STAYS_NOTION_DATABASE_ID` - Stays database ID
-- `PUBLIC_SUPABASE_URL` - Supabase project URL
-- `PUBLIC_SUPABASE_ANON` - Supabase anonymous key
+- `PUBLIC_POCKETBASE_URL` - Pocketbase instance URL
+- `PUBLIC_SUPABASE_URL` - Supabase project URL (legacy, for migration scripts only)
+- `PUBLIC_SUPABASE_ANON` - Supabase anonymous key (legacy, for migration scripts only)
 
 ## Key Development Notes
 
 - **Dev server runs continuously** - don't prompt to start unless needed
 - Content changes require rebuild (`pnpm run build`)
-- Database migrations are manual via Supabase dashboard
+- Database migrations are manual via Pocketbase admin UI or pb_migrations JS files
 - Deployments: Manual VSCode plugin trigger → GitHub Action → Cloudflare Workers
 - Trust code over `/docs` directory for current implementation
 - Always test accessibility before completing UI changes
@@ -191,7 +192,8 @@ When writing JavaScript in `<script>` tags within `.astro` files, the project us
 ## Critical Files
 
 - `src/content.config.ts` - Content schemas and Notion loader
-- `src/lib/supabase.ts` - Authentication and database helpers
+- `src/lib/pocketbase.ts` - Authentication and database helpers
+- `src/lib/supabase.ts` - Legacy Supabase helpers (kept for rollback)
 - `src/components/` - All UI components
 - `src/utils/remark-responsive-images.mjs` - Image transformation
 - `src/mdx-components.ts` - Global MDX components

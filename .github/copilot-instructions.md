@@ -17,7 +17,7 @@
 ### Tech Stack
 - **Frontend**: Astro 5 (SSG) with TailwindCSS 4, static-first approach
 - **Content**: MDX blog posts in codebase, Notion databases for projects/stays loaded at build time
-- **Backend**: Supabase for auth, user lists, and completion tracking
+- **Backend**: Pocketbase (self-hosted) for auth, user lists, and completion tracking
 - **Deployment**: Cloudflare Workers via GitHub Actions
 - **Search**: Pagefind for fast client-side search
 - **Images**: Cloudinary with responsive optimization, automatic markdown image conversion
@@ -102,12 +102,12 @@ export async function getStaticPaths() {
 }
 ```
 
-### User Features (Supabase + Client-Side)
-- **Authentication**: Magic link (OTP) via Supabase, abstracted in `src/lib/supabase.ts`
-- **Saved Lists**: Users can save projects/stays to custom lists (RLS-protected in Supabase)
-- **Completion Tracking**: Users mark items as "done" (`user_item_status` table)
+### User Features (Pocketbase + Client-Side)
+- **Authentication**: OTP via Pocketbase, abstracted in `src/lib/pocketbase.ts`
+- **Saved Lists**: Users can save projects/stays to custom lists (API rules protect Pocketbase collections)
+- **Completion Tracking**: Users mark items as "done" (`user_item_status` collection)
 - **Client-side hydration**: Auth checks happen in browser via `getCurrentUser()` parsing localStorage
-- Database tables: `lists`, `list_items`, `user_item_status` (see `migrations/`)
+- Collections: `lists`, `list_items`, `user_item_status` (see `MIGRATION.md`)
 
 ### Image Optimization
 - **Cloudinary** for responsive images via `src/utils/cloudinary.ts`
@@ -168,10 +168,10 @@ npm run build      # Build static site for testing (outputs to dist/)
 
 ### Database Migrations
 - SQL files in `migrations/` directory are **reference only**
-- Content is manually copied/pasted into Supabase dashboard SQL editor
+- Content is manually copied/pasted into Pocketbase admin UI or pb_migrations JS files
 - Not executed directly via CLI
 - Keep files for documentation and version control
-- RLS policies are critical: all user data tables require `auth.uid() = user_id` checks
+- API rules are critical: all user data collections require ownership checks via `user = @request.auth.id`
 
 ### Adding New Content Types
 1. **User creates Notion database** manually and provides ID
@@ -195,10 +195,10 @@ npm run build      # Build static site for testing (outputs to dist/)
 - All use trailing slashes (`trailingSlash: 'always'` in `astro.config.mjs`)
 
 ### Authentication Abstraction
-- `src/lib/supabase.ts` provides authentication via Supabase
+- `src/lib/pocketbase.ts` provides authentication via Pocketbase
 - Use exported functions: `getCurrentUser()`, `createMagicURLSession()`, `logout()`
 - Lazy initialization prevents build-time errors when env vars missing
-- Legacy: Some function names (like `account` object) may reference old Appwrite patterns but now use Supabase
+- Legacy: Some function names (like `account` object) may reference old Appwrite/Supabase patterns but now use Pocketbase
 
 ### Component Hydration
 - Most components are server-rendered Astro components (`.astro`)
@@ -216,8 +216,8 @@ npm run build      # Build static site for testing (outputs to dist/)
 ## Pitfalls & Gotchas
 
 1. **Notion Rollup Properties**: Rollups return nested structures; must transform with `.transform()` in schema (see `pTypesNames` for array extraction)
-2. **Item IDs**: Must be strings (`String(itemId)`) when saving to Supabase `item_id` column (migration 002 normalized this)
-3. **Auth in Static Sites**: User state lives in localStorage; use `getCurrentUser()` which parses Supabase session tokens
+2. **Item IDs**: Must be strings (`String(itemId)`) when saving to Pocketbase `item_id` field (migration 002 normalized this from old JSON format)
+3. **Auth in Static Sites**: User state lives in localStorage; use `getCurrentUser()` which parses Pocketbase auth tokens (`pb_auth` key)
 4. **Search**: Pagefind integration runs post-build; search UI in `src/pages/search.astro`
 5. **Dark Mode**: TailwindCSS `dark:` classes are used throughout components, but no theme toggle is currently implemented
 6. **Docs Directory**: `/docs/` is excluded from sitemap and robots.txt (internal use only)
@@ -225,7 +225,8 @@ npm run build      # Build static site for testing (outputs to dist/)
 ## Key Files Reference
 
 - **Content schemas**: `src/content.config.ts` (Notion loader + Zod schemas)
-- **Database client**: `src/lib/supabase.ts` (auth + account helpers)
+- **Database client**: `src/lib/pocketbase.ts` (auth + account helpers)
+- **Legacy database client**: `src/lib/supabase.ts` (kept for rollback reference only)
 - **Lists logic**: `src/lib/lists.ts` (CRUD for saved lists)
 - **Completion tracking**: `src/lib/completed.ts` (mark items as done)
 - **Image utils**: `src/utils/cloudinary.ts` (responsive image generation)
@@ -243,9 +244,13 @@ Required for development and deployment:
 - `PROJECTS_NOTION_DATABASE_ID` - Database ID for projects
 - `STAYS_NOTION_DATABASE_ID` - Database ID for stays
 
-**Supabase (Database & Auth)**:
-- `PUBLIC_SUPABASE_URL` - Supabase project URL (public)
-- `PUBLIC_SUPABASE_ANON` - Supabase anonymous/public API key (public)
+**Pocketbase (Database & Auth)**:
+- `PUBLIC_POCKETBASE_URL` - Pocketbase instance URL (public)
+- `PUBLIC_AUTH_PROVIDER` - Set to `pocketbase` (switches auth abstraction layer)
+
+**Legacy (migration scripts only)**:
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (for user migration script)
+- `SUPABASE_URL` - Old Supabase project URL (for user migration script)
 
 **Cloudinary (Image Optimization)** - Optional:
 - Images are optimized via Cloudinary URLs in Notion; no API key needed client-side

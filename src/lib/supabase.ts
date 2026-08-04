@@ -83,7 +83,7 @@ export const account = {
     try {
       // Default redirect to our verify handler if not provided
       if (!redirectTo && typeof window !== 'undefined') {
-        redirectTo = `${window.location.origin}/account/verify`;
+        redirectTo = `${window.location.origin}/account/verify/`;
       }
 
       console.debug('createMagicURLSession using redirectTo=', redirectTo);

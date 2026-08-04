@@ -3,22 +3,16 @@ import MainLayout from '../../layouts/MainLayout.astro';
 ---
 
 <MainLayout title="Profile" transition:persist={false}>
-        <!-- Early client-side heuristic redirect if no Supabase auth token found -->
+        <!-- Early client-side heuristic redirect if no PocketBase auth token found -->
         <script is:inline>
             try {
                 const hasToken = (() => {
                     if (typeof window === 'undefined' || !('localStorage' in window)) return false;
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const k = localStorage.key(i);
-                        if (k && /^sb-.*-auth-token$/.test(k)) {
-                            const v = localStorage.getItem(k);
-                            if (v && v !== 'null' && v !== 'undefined') return true;
-                        }
-                    }
-                    return false;
+                    const v = localStorage.getItem('pocketbase_auth');
+                    return !!(v && v !== 'null' && v !== 'undefined');
                 })();
                 if (!hasToken) {
-                    window.location.replace('/login');
+                    window.location.replace('/login/');
                 }
             } catch {}
         </script>
@@ -268,7 +262,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
     (async () => {
         const user = await getCurrentUser().catch(() => null);
         if (!user) {
-            window.location.href = '/login';
+            window.location.href = '/login/';
             return;
         }
         const guard = document.getElementById('profileGuard');

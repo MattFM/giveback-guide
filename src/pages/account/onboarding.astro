@@ -9,28 +9,20 @@ import { SITE_TITLE } from '../../consts';
   headerTheme="dark"
   transition:persist={false}
 >
-  <!-- Early client-side heuristic redirect if no Supabase auth token found -->
+  <!-- Early client-side heuristic redirect if no PocketBase auth token found -->
   <script is:inline>
     // Quick check for auth token - if missing, redirect immediately
     // Verify page should have established session before routing here
     try {
       const hasToken = (() => {
         if (typeof window === 'undefined' || !('localStorage' in window)) return false;
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && /^sb-.*-auth-token$/.test(k)) {
-            const v = localStorage.getItem(k);
-            if (v && v !== 'null' && v !== 'undefined') {
-              return true;
-            }
-          }
-        }
-        return false;
+        const v = localStorage.getItem('pocketbase_auth');
+        return !!(v && v !== 'null' && v !== 'undefined');
       })();
       
       if (!hasToken) {
         console.warn('[Onboarding] No auth token found, redirecting to login');
-        window.location.replace('/login');
+        window.location.replace('/login/');
       }
     } catch (e) {
       console.error('[Onboarding] Early auth check error:', e);

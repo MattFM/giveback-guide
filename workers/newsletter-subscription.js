@@ -64,7 +64,7 @@ async function createSubscriber(email, metadata = {}, apiKey, listId) {
     };
   }
 
-  // Force subscribed status for onboarding (user already verified via Supabase magic link)
+  // Force subscribed status for onboarding (user already verified via OTP authentication)
   if (sourceTag === 'onboarding') {
     body.status = 'subscribed';
   }

@@ -6,7 +6,7 @@ A travel-focused platform built with Astro that helps users discover meaningful 
 
 - **Framework**: Astro 5.10.0 with Static Site Generation
 - **Styling**: TailwindCSS 4.1.3 with Flowbite components
-- **Database**: Supabase
+- **Database**: Pocketbase (self-hosted)
 - **Deployment**: Cloudflare Workers (via Wrangler)
 - **Search**: Pagefind integration
 - **Content**: MDX support with RSS feeds
@@ -94,7 +94,8 @@ Business logic and integrations:
 - `auth.ts` - Authentication handling
 - `completed.ts` - Completion tracking
 - `lists.ts` - User list management
-- `supabase.ts` - Database client configuration
+- `pocketbase.ts` - Database client configuration
+- `supabase.ts` - Legacy Supabase client (kept for rollback reference)
 
 #### Pages (`/src/pages/`)
 
@@ -157,7 +158,7 @@ Build and utility scripts
 
 1. **Content Management**: MDX-based blog with RSS feeds
 2. **Search**: Integrated Pagefind for fast site search
-3. **User Authentication**: Supabase-powered auth system
+3. **User Authentication**: Pocketbase-powered OTP auth system (self-hosted)
 4. **Saved Lists**: Users can save and organize content
 5. **Responsive Images**: Cloudinary integration with skeleton loading
 6. **Filtering**: Multiple dropdown filters for projects and stays
@@ -194,7 +195,7 @@ npm run deploy   # Build and deploy to Cloudflare Workers
 
 ## Database
 
-The project uses Supabase with a migration-based schema. Current migrations handle:
+The project uses Pocketbase (self-hosted) with SQLite-backed collections. Legacy SQL migrations (Supabase era) remain in `migrations/` for reference. Current collections handle:
 - User saved lists functionality
 - Item ID normalization
 - User item status tracking
