@@ -74,10 +74,20 @@ export const account = {
         console.debug('Created new user for', email);
       } catch (createErr: any) {
         // If user already exists, this is expected — ignore and proceed
+        // PocketBase returns nested data: { data: { email: { code: 'validation_not_unique' } } }
+        const responseData = createErr.data || createErr.response || {};
+        const validationData = responseData.data || responseData;
+        const emailError = validationData.email;
+        const errorString = JSON.stringify(responseData);
+
         const isAlreadyExists = createErr.status === 400 && (
           createErr.message?.includes('already exists') ||
-          createErr.data?.email?.code === 'validation_not_unique' ||
-          createErr.data?.email?.code === 'validation_unique'
+          emailError?.code === 'validation_not_unique' ||
+          emailError?.code === 'validation_unique' ||
+          (typeof emailError === 'string' && emailError.includes('unique')) ||
+          createErr.message?.includes('Value must be unique') ||
+          errorString.includes('validation_not_unique') ||
+          errorString.includes('Value must be unique')
         );
         if (isAlreadyExists) {
           console.debug('User already exists:', email);
