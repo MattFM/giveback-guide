@@ -74,7 +74,12 @@ export const account = {
         console.debug('Created new user for', email);
       } catch (createErr: any) {
         // If user already exists, this is expected — ignore and proceed
-        if (createErr.status === 400 && createErr.message?.includes('already exists')) {
+        const isAlreadyExists = createErr.status === 400 && (
+          createErr.message?.includes('already exists') ||
+          createErr.data?.email?.code === 'validation_not_unique' ||
+          createErr.data?.email?.code === 'validation_unique'
+        );
+        if (isAlreadyExists) {
           console.debug('User already exists:', email);
         } else {
           console.error('Unexpected error creating user:', createErr);
