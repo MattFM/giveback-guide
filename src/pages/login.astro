@@ -72,105 +72,16 @@ import { SITE_TITLE } from '../consts';
 
                 <!-- Login Card -->
                 <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold mb-2 flex items-center" style="color: #1C2434;">
-                    <span class="leading-tight">Get Started</span>
-                    <span class="ml-3 inline-flex items-center h-6 leading-none rounded px-2 text-xs font-semibold bg-yellow-100 text-yellow-800" role="note" aria-hidden="false" aria-label="Early access">Early access</span>
-                </h2>
-                <p class="text-sm mb-2" style="color: #7E827E;">
-                    Enter your email to sign in or create a new account. We'll then send you a magic link. No password required.
+            <div class="mb-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: rgba(169, 143, 250, 0.1);">
+                    <svg class="w-8 h-8" style="color: #A98FFA;" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-2" style="color: #1C2434;">We'll be back soon</h2>
+                <p class="text-sm" style="color: #7E827E;">
+                    We are performing maintenance to improve your experience. Please check back in a little while.
                 </p>
-                <p id="early-access-note" class="text-sm font-bold" style="color: #7E827E;">
-                    Our dashboard is still in development. Help us to test the experience and provide feedback if you can.
-                </p>
-            </div>
-
-            <!-- Magic URL form -->
-            <form id="magicURLForm" class="space-y-6" aria-describedby="early-access-note">
-                <div>
-                    <label for="email" class="block mb-2 text-sm font-semibold" style="color: #1C2434;">Email address</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        required 
-                        class="w-full px-4 py-3 text-sm rounded-lg focus:outline-none focus:ring-2 transition-all duration-300"
-                        style="border: 2px solid #E8EAE8; color: #1C2434; background: white; focus:ring-color: #A98FFA;"
-                        placeholder="your@email.com"
-                    >
-                </div>
-
-                <!-- Honeypot: invisible to users, catches naive bots that fill all inputs -->
-                <div style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
-                    <label for="hp_name">Leave this field empty</label>
-                    <input type="text" id="hp_name" name="hp_name" autocomplete="off" tabindex="-1" />
-                </div>
-                
-                <button 
-                    type="submit" 
-                    id="submit-button"
-                    class="w-full py-3.5 text-sm font-semibold rounded-lg transition-all duration-300 hover:shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                    style="background-color: #1C2434; color: white;"
-                >
-                    <span id="button-text">Send Magic Link</span>
-                    <span id="button-spinner" class="hidden">
-                        <span class="inline-flex items-center gap-2">
-                            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Sending...
-                        </span>
-                    </span>
-                </button>
-
-                <!-- Success Message -->
-                <div id="success-message" role="status" aria-live="polite" class="p-4 rounded-lg hidden" style="background-color: #F0FDF4; border: 1px solid #86EFAC;">
-                    <div class="flex items-start gap-3">
-                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color: #16A34A;" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <div>
-                            <div class="text-sm font-semibold mb-1" style="color: #16A34A;">Magic link sent!</div>
-                            <div class="text-xs" style="color: #15803D;">Check your email and click the link to continue. The link expires in 1 hour.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Error Message -->
-                <div id="error-message" class="p-4 rounded-lg hidden" style="background-color: #FEF2F2; border: 1px solid #FECACA;">
-                    <div class="flex items-start gap-3">
-                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color: #DC2626;" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                        </svg>
-                        <div class="text-sm" style="color: #DC2626;" id="error-text"></div>
-                    </div>
-                </div>
-            </form>
-
-            <!-- How it Works -->
-            <div class="mt-8 pt-6 border-t" style="border-color: #E8EAE8;">
-                <h3 class="text-xs font-semibold uppercase tracking-wide mb-3" style="color: #7E827E;">How it works</h3>
-                <ul class="space-y-2">
-                    <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #A98FFA;" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="text-xs" style="color: #7E827E;">Enter your email and click "Send Magic Link"</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #A98FFA;" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="text-xs" style="color: #7E827E;">Check your inbox for an email from {SITE_TITLE}</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #A98FFA;" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="text-xs" style="color: #7E827E;">Click the link to instantly sign in or create your account</span>
-                    </li>
-                </ul>
             </div>
                 </div>
 

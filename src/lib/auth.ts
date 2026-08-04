@@ -16,28 +16,36 @@ async function loadImpl() {
 
 export async function getImpl() { return await loadImpl(); }
 
+// MAINTENANCE MODE: temporarily block all auth to prevent writes during database migration
+const IN_MAINTENANCE = true;
+
 export const createMagicURLSession = async (...args: any[]) => {
+  if (IN_MAINTENANCE) throw new Error('We are performing maintenance. Please try again shortly.');
   const m = await loadImpl();
   return m.createMagicURLSession(...args);
 };
 
 export const updateMagicURLSession = async (...args: any[]) => {
+  if (IN_MAINTENANCE) throw new Error('We are performing maintenance. Please try again shortly.');
   const m = await loadImpl();
   if (typeof m.updateMagicURLSession !== 'function') throw new Error('updateMagicURLSession not implemented by provider');
   return m.updateMagicURLSession(...args);
 };
 
 export const getCurrentUser = async (...args: any[]) => {
+  if (IN_MAINTENANCE) return null;
   const m = await loadImpl();
   return m.getCurrentUser(...args);
 };
 
 export const updateAccountName = async (...args: any[]) => {
+  if (IN_MAINTENANCE) throw new Error('We are performing maintenance. Please try again shortly.');
   const m = await loadImpl();
   return m.updateAccountName(...args);
 };
 
 export const updateAccountPreference = async (...args: any[]) => {
+  if (IN_MAINTENANCE) throw new Error('We are performing maintenance. Please try again shortly.');
   const m = await loadImpl();
   return m.updateAccountPreference(...args);
 };
@@ -48,6 +56,7 @@ export const logout = async (...args: any[]) => {
 };
 
 export const deleteAccount = async (...args: any[]) => {
+  if (IN_MAINTENANCE) throw new Error('We are performing maintenance. Please try again shortly.');
   const m = await loadImpl();
   return m.deleteAccount(...args);
 };
