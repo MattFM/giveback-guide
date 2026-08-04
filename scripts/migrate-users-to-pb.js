@@ -84,6 +84,8 @@ async function migrate() {
         }
 
         // Create user with the exact same UUID
+        // Auth collections require password even when password auth is disabled
+        const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
         await pb.send('/api/collections/users/records', {
           method: 'POST',
           body: {
@@ -91,6 +93,8 @@ async function migrate() {
             email: email,
             emailVisibility: true,
             verified: true,
+            password: randomPassword,
+            passwordConfirm: randomPassword,
             name: name,
             prefs: prefs
           }
@@ -100,6 +104,8 @@ async function migrate() {
         created++;
       } catch (err) {
         console.error(`Failed to create ${email}:`, err.message || err);
+        if (err?.data) console.error('  Error data:', JSON.stringify(err.data, null, 2));
+        if (err?.response) console.error('  Response:', JSON.stringify(err.response, null, 2));
         failed++;
       }
     }
