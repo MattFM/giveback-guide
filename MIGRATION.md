@@ -1,14 +1,18 @@
 # Pocketbase Migration Guide
 
-## Current Status: DEVELOPMENT COMPLETE — READY FOR CUTOVER
+## Current Status: CUTOVER COMPLETE — PRODUCTION LIVE
 
-All code changes are complete and tested locally. The `migrate-to-pocketbase` branch contains the full migration. This document tracks what is done and what remains for cutover day.
+The migration from Supabase to PocketBase was completed on **4 August 2026**. The site is now fully live on PocketBase. This document tracks what was done, issues encountered, and remaining cleanup tasks.
 
 ---
 
 ## ✅ Completed
 
-### Code Migration (Branch: `migrate-to-pocketbase`)
+### Pre-Cutover (Done Beforehand)
+- [x] `migrate-to-pocketbase` branch pushed to GitHub
+- [x] All Supabase data exported (users, lists, list_items, user_item_status)
+
+### Code Migration (Merged to `main`)
 - [x] `src/lib/pocketbase.ts` — Auth layer with OTP support, user creation, profile updates
 - [x] `src/lib/auth.ts` — Defaults to `pocketbase` provider, removed Supabase fallback import
 - [x] `src/lib/lists.ts` — All list CRUD operations using Pocketbase SDK
@@ -19,9 +23,6 @@ All code changes are complete and tested locally. The `migrate-to-pocketbase` br
 - [x] `package.json` — Dependencies swapped (`@supabase/supabase-js` → `pocketbase`)
 - [x] `.github/workflows/deploy.yml` — Environment variables updated
 - [x] `AGENTS.md`, `README.md`, `privacy.astro`, `.github/copilot-instructions.md` — Updated
-- [x] `pb_migrations/1785800000_setup_giveback_collections.js` — Migration file (not used, but present)
-- [x] `scripts/setup-pb-collections.js` — Collection setup script (deprecated, manual setup used instead)
-- [x] `scripts/migrate-users-to-pb.js` — User bulk-import script (ready for cutover)
 
 ### Pocketbase Instance Configuration (pb.giveback.guide)
 - [x] Deployed on Pikapods
@@ -34,18 +35,30 @@ All code changes are complete and tested locally. The `migrate-to-pocketbase` br
 - [x] `list_items` collection created with fields, indexes, cascade delete, and API rules
 - [x] `user_item_status` collection created with fields, indexes, composite unique index, and API rules
 
-### Local Testing (All Passing)
-- [x] OTP login flow works for new sign-ups (open beta)
-- [x] OTP login flow works for returning users
+### Data Migration Results
+- **Users migrated**: 72 users from Supabase to PocketBase (original UUIDs preserved)
+- **Lists migrated**: 31 lists
+- **List items migrated**: 42 list_items
+- **User item status migrated**: 15 user_item_status records
+- **Newsletter subscription**: Cloudflare Worker integration restored
+
+### Verification (All Passing)
+- [x] Existing migrated user login works
+- [x] New user sign-up works (open beta)
 - [x] Onboarding page saves `name` and `prefs` correctly
-- [x] Dashboard loads saved lists and items
+- [x] Dashboard loads saved lists and items with correct counts
 - [x] Saving projects/stays to lists works
 - [x] Creating new lists works
-- [x] Moving items between lists works
 - [x] Marking items as visited (`is_completed`) works
 - [x] Unmarking items as visited works
+- [x] Newsletter subscription works (footer + onboarding)
 - [x] Logout works
 - [x] Profile page loads and updates name
+
+### Critical Issues Fixed During Cutover
+- [x] **Users collection `id` field rejected UUIDs** — `autogeneratePattern` was `[a-z0-9]{15}` with `max: 15`. Fixed to `max: 36`, `min: 0`, `pattern: ^[a-zA-Z0-9-]+$`, and restored `autogeneratePattern` for new sign-ups.
+- [x] **Duplicate user detection failed** — PocketBase returns `validation_not_unique` in `error.data.email.code`, but the app only checked for the string `"already exists"`. Updated `createMagicURLSession` to check both `message` and `data.email.code` across all response shapes.
+- [x] **Newsletter subscription broken** — `PUBLIC_WORKER_URL` was missing from GitHub repository variables and the build workflow. Added the variable and updated `.github/workflows/deploy.yml` to pass it to the build step.
 
 ### Known Issues Fixed During Development
 - [x] Safari syntax error: `async import` → patched `pocketbase` package in `node_modules`
@@ -58,78 +71,47 @@ All code changes are complete and tested locally. The `migrate-to-pocketbase` br
 
 ---
 
-## ⏳ Remaining: Cutover Day Tasks
+## 🧹 Remaining: Post-Cutover Cleanup
 
-### Pre-Cutover (Do Beforehand)
-1. **Export Supabase data**
-   - In Supabase dashboard: export `lists`, `list_items`, `user_item_status` as CSV
-   - Keep Supabase project live until cutover is verified
+**Do these after 48 hours of stable production use.**
 
-2. **Push migration branch to GitHub**
-   ```bash
-   git push -u origin migrate-to-pocketbase
-   ```
+### 1. Cancel Supabase Project
+- Log into Supabase dashboard
+- Cancel the `mckzuxiwutlvxyxzaext` project
+- This stops all billing for the old database
 
-### Cutover Day (Do in One Sitting)
-1. **Deploy maintenance mode on `main`**
-   - Commit that hides login form, shows "back soon" message
-   - Push to `main` → deploys immediately, blocks all writes
+### 2. Remove Legacy Files from Repository
+```bash
+# Delete migration scripts (no longer needed)
+rm scripts/migrate-users-to-pb.js
+rm scripts/migrate-data-to-pb.js
+rm scripts/fix-pb-id-field.js
+rm scripts/fix-pb-users-id.js
+rm scripts/fix-all-pb-collections.js
+rm scripts/verify-pb-users.js
+rm scripts/verify-pb-data.js
+rm scripts/debug-supabase-schema.js
+rm scripts/setup-pb-collections.js
+rm -rf pb_migrations/
 
-2. **Run user migration script**
-   ```bash
-   export SUPABASE_URL=https://your-project.supabase.co
-   export SUPABASE_SERVICE_ROLE_KEY=your-key
-   export PB_URL=https://pb.giveback.guide
-   export PB_ADMIN_EMAIL=your-admin-email
-   export PB_ADMIN_PASSWORD=your-admin-password
-   node scripts/migrate-users-to-pb.js
-   ```
-   - Creates 37 users with same UUIDs as Supabase, preserving `name` and `prefs`
+# Delete legacy Supabase code (after 1 week stability)
+rm src/lib/supabase.ts
 
-3. **Import data CSVs into Pocketbase**
-   - `lists` → Import `lists.csv`
-   - `list_items` → Import `list_items.csv`
-   - `user_item_status` → Import `user_item_status.csv`
-   - Spot-check counts and user associations
+# Update package.json to remove @supabase/supabase-js if no longer needed anywhere
+```
 
-4. **Merge migration branch and deploy**
-   ```bash
-   git checkout main
-   git merge migrate-to-pocketbase
-   git push origin main
-   ```
-   - GitHub Actions builds and deploys automatically
+### 3. Clean Up GitHub Repository Variables
+- Remove any remaining Supabase secrets from GitHub if they exist (e.g. `SUPABASE_SERVICE_ROLE_KEY`)
+- Verify `PUBLIC_POCKETBASE_URL` and `PUBLIC_WORKER_URL` are the only public variables needed
 
-5. **Update GitHub repository variables**
-   - Remove: `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON`
-   - Add: `PUBLIC_POCKETBASE_URL` = `https://pb.giveback.guide`
-   - Ensure: `PUBLIC_AUTH_PROVIDER` = `pocketbase`
+### 4. Update Documentation
+- Update `AGENTS.md` to remove references to Supabase migration
+- Update `README.md` if it mentions Supabase anywhere
+- Update this file (`migration.md`) to mark all cleanup items as done
 
-6. **Revert maintenance mode**
-   - Remove the temporary login block commit
-   - Push to `main`
-
-7. **Verify**
-   - Test login with existing user
-   - Test login with new user (open beta)
-   - Test saving to lists, marking as visited
-   - Check dashboard stats
-
-### Post-Cutover
-- [ ] Cancel Supabase project (after 48h verification)
-- [ ] Remove old Supabase env vars from GitHub entirely
-- [ ] Delete `scripts/migrate-users-to-pb.js` from repo
-- [ ] Delete `src/lib/supabase.ts` from repo (after 1 week stability)
-
----
-
-## Rollback Plan
-
-If anything goes wrong after cutover:
-1. Revert the merge commit on `main`
-2. Restore old GitHub repository variables (`PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON`)
-3. Push → site rolls back to Supabase build
-4. Supabase project remains live until explicitly cancelled
+### 5. Review `.env` Files
+- Remove commented-out Supabase credentials from `.env`
+- Ensure `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_URL` are not in `.env` (they were needed for scripts only)
 
 ---
 
@@ -161,26 +143,18 @@ If anything goes wrong after cutover:
 ```
 PUBLIC_AUTH_PROVIDER=pocketbase
 PUBLIC_POCKETBASE_URL=https://pb.giveback.guide
-
-# Legacy — for migration script only
-SUPABASE_SERVICE_ROLE_KEY=...
-SUPABASE_URL=...
+PUBLIC_WORKER_URL=https://newsletter-subscription.matt-c4f.workers.dev
 ```
 
-### GitHub Repository Variables (Production — update on cutover day)
-- **Remove**: `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON`
-- **Add**: `PUBLIC_POCKETBASE_URL` = `https://pb.giveback.guide`
-- **Keep**: `PUBLIC_AUTH_PROVIDER` = `pocketbase`
+### GitHub Repository Variables (Production)
+- `PUBLIC_POCKETBASE_URL` = `https://pb.giveback.guide`
+- `PUBLIC_WORKER_URL` = `https://newsletter-subscription.matt-c4f.workers.dev`
+- `PUBLIC_AUTH_PROVIDER` = `pocketbase`
 
 ---
 
-## Quick Reference: Picking Up This Migration
+## Quick Reference
 
-If resuming in a new chat:
-1. You are on branch `migrate-to-pocketbase` (committed and pushed to GitHub)
-2. Pocketbase instance is live at `pb.giveback.guide` with all collections configured
-3. All code changes are committed — local testing is complete and passing
-4. **Next action**: Cutover day (see ⏳ Remaining section above)
-5. **No further code changes needed** unless testing reveals new issues
+The migration is complete. No further action is needed unless issues arise.
 
-Last updated: 31 July 2026
+Last updated: 4 August 2026
