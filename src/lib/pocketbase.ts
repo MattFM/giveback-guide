@@ -237,8 +237,35 @@ export const deleteAccount = async () => {
   const pb = getPB();
   const record = pb.authStore.record;
   if (!record) throw new Error('Not authenticated');
-  
-  await pb.collection('users').delete(record.id);
+
+  const userId = record.id;
+
+  // 1. Delete user_item_status records (cascade delete is enabled, but explicit is safer)
+  try {
+    const statusRecords = await pb.collection('user_item_status').getFullList({
+      filter: `user = "${userId}"`,
+    });
+    for (const item of statusRecords) {
+      await pb.collection('user_item_status').delete(item.id);
+    }
+  } catch (e) {
+    console.warn('No user_item_status records to delete or deletion failed', e);
+  }
+
+  // 2. Delete lists (list_items cascade-delete automatically because list_items.list has cascadeDelete: true)
+  try {
+    const lists = await pb.collection('lists').getFullList({
+      filter: `user = "${userId}"`,
+    });
+    for (const list of lists) {
+      await pb.collection('lists').delete(list.id);
+    }
+  } catch (e) {
+    console.warn('No lists to delete or deletion failed', e);
+  }
+
+  // 3. Finally delete the user account
+  await pb.collection('users').delete(userId);
   pb.authStore.clear();
 };
 
