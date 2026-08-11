@@ -1,45 +1,61 @@
 ---
-import MainLayout from "../../layouts/MainLayout.astro";
+import GenericPage from "../../layouts/GenericPage.astro";
 ---
 
-<MainLayout title="Advertising on Giveback">
-  <main>
-    <section class="max-w-screen-xl mx-auto py-16 px-4 lg:py-24 lg:px-6">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-16 mx-3">
-        <div
-          class="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400"
-        >
-        <h2
-            class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white"
-          >
-            Advertising on Giveback
-          </h2>
-          <p class="mb-4 text-gray-500 sm:text-xl dark:text-gray-400">
-            Our platform is free to use and we are committed to keeping it that way.
-          </p>
-          <p class="mb-4 font-light">
-            We rely on the support of like-minded brands and advertisers to keep the platform running
-            and to continue to improve it. Your support will help us to maintain
-            the platform, add new features, and provide better resources for our
-            users.
-          </p>
-          <p class="mb-4 font-light">
-            If you are interested in advertising with us, please complete the form and we'll get back to you as soon as possible.
-            </p>
-        </div>
-        <div>
-          <iframe data-tally-src="https://tally.so/embed/w75XrR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="694" frameborder="0" marginheight="0" marginwidth="0" title="Advertising Form"></iframe>
-<script is:inline>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
-<script>
-  // Re-initialize Tally forms after View Transitions
-  document.addEventListener("astro:page-load", () => {
-    if (typeof window !== "undefined" && "Tally" in window) {
-      (window as any).Tally.loadEmbeds();
-    }
-  });
-</script>
-      </div>
-      </div>
-    </section>
-  </main>
-</MainLayout>
+<GenericPage
+    title="Advertise on Give Back Guide"
+    headerTitle="Advertise on Give Back Guide"
+    subtitle="Support our mission and reach highly-engaged, passionate and caring travellers"
+>
+    <p>
+        Our platform is free to use and we are committed to keeping it that way.
+    </p>
+    <p>
+        We rely on the support of like-minded brands and advertisers to keep the
+        platform running and to continue to improve it. Your support will help
+        us to maintain the platform, add new features, and provide better
+        resources for our users.
+    </p>
+    <p>
+        If you are interested in advertising with us, please complete the form
+        and we'll get back to you as soon as possible.
+    </p>
+    <iframe
+        data-tally-src="https://tally.so/embed/w75XrR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+        loading="lazy"
+        width="100%"
+        height="694"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title="Advertising Form"></iframe>
+    <script is:inline>
+        var d = document,
+            w = "https://tally.so/widgets/embed.js",
+            v = function () {
+                "undefined" != typeof Tally
+                    ? Tally.loadEmbeds()
+                    : d
+                          .querySelectorAll("iframe[data-tally-src]:not([src])")
+                          .forEach(function (e) {
+                              e.src = e.dataset.tallySrc;
+                          });
+            };
+        if ("undefined" != typeof Tally) v();
+        else if (d.querySelector('script[src="' + w + '"]') == null) {
+            var s = d.createElement("script");
+            ((s.src = w),
+                (s.onload = v),
+                (s.onerror = v),
+                d.body.appendChild(s));
+        }
+    </script>
+    <script>
+        // Re-initialize Tally forms after View Transitions
+        document.addEventListener("astro:page-load", () => {
+            if (typeof window !== "undefined" && "Tally" in window) {
+                (window as any).Tally.loadEmbeds();
+            }
+        });
+    </script>
+</GenericPage>
