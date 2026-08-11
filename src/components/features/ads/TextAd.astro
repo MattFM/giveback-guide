@@ -1,0 +1,373 @@
+---
+import type { TextAd } from "../../../data/ads";
+import { ADS, getActiveAds } from "../../../data/ads";
+
+interface Props {
+    format?: "inline" | "sidebar";
+    ads?: TextAd[];
+}
+
+const { format = "inline", ads: propAds } = Astro.props;
+
+// Use provided ads (for design/testing) or fall back to the global inventory
+const allAds = propAds ?? ADS;
+const activeAds = getActiveAds(allAds);
+
+// Fallback: if no active ads, render nothing on the server side
+const fallbackAd = activeAds[0] ?? null;
+
+// Inline the active ad pool as JSON for the client script
+const adPoolJson = JSON.stringify(activeAds);
+---
+
+{
+    activeAds.length > 0 && (
+        <div
+            class="text-ad-container"
+            data-format={format}
+            data-ad-pool={adPoolJson}
+            data-fallback-id={fallbackAd?.id}
+        >
+            {/* ===== INLINE FORMAT ===== */}
+            {format === "inline" && (
+                <div class="ad-inline">
+                    <div class="ad-inline-content">
+                        <span class="badge" data-variant="outline">
+                            Ad
+                        </span>
+                        <span class="ad-inline-title">{fallbackAd?.title}</span>
+                        <span class="ad-inline-separator">—</span>
+                        <span class="ad-inline-desc">
+                            {fallbackAd?.description}
+                        </span>
+                    </div>
+                    <a
+                        class="btn btn-primary ad-inline-btn"
+                        href={fallbackAd?.url}
+                        target="_blank"
+                        rel="noopener sponsored"
+                        aria-label={`${fallbackAd?.cta} — ${fallbackAd?.title}`}
+                    >
+                        <span class="ad-cta">{fallbackAd?.cta}</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M7 7h10v10" />
+                            <path d="M7 17 17 7" />
+                        </svg>
+                    </a>
+                </div>
+            )}
+
+            {/* ===== SIDEBAR FORMAT ===== */}
+            {format === "sidebar" && (
+                <div class="ad-sidebar">
+                    <span class="badge ad-sidebar-label" data-variant="outline">
+                        Ad
+                    </span>
+                    <div class="ad-sidebar-body">
+                        <h3 class="ad-sidebar-title">{fallbackAd?.title}</h3>
+                        <p class="ad-sidebar-desc">{fallbackAd?.description}</p>
+                    </div>
+                    <div class="ad-sidebar-footer">
+                        <a
+                            class="btn btn-primary ad-sidebar-btn w-full"
+                            href={fallbackAd?.url}
+                            target="_blank"
+                            rel="noopener sponsored"
+                            aria-label={`${fallbackAd?.cta} — ${fallbackAd?.title}`}
+                        >
+                            <span class="ad-cta">{fallbackAd?.cta}</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M7 7h10v10" />
+                                <path d="M7 17 17 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
+<script>
+    interface AdData {
+        id: string;
+        title: string;
+        businessName: string;
+        url: string;
+        cta: string;
+        description: string;
+        weight: number;
+    }
+
+    function pickWeightedAd(ads: AdData[]): AdData | null {
+        if (ads.length === 0) return null;
+        const totalWeight: number = ads.reduce(
+            (sum: number, ad: AdData) => sum + ad.weight,
+            0,
+        );
+        if (totalWeight <= 0) return null;
+
+        let random: number = Math.random() * totalWeight;
+        for (const ad of ads) {
+            random -= ad.weight;
+            if (random <= 0) return ad;
+        }
+        return ads[ads.length - 1] ?? null;
+    }
+
+    function renderInline(container: HTMLElement, ad: AdData | null): void {
+        const wrapper: HTMLElement | null =
+            container.querySelector(".ad-inline");
+        if (!wrapper) return;
+
+        if (!ad) {
+            wrapper.style.display = "none";
+            return;
+        }
+        wrapper.style.display = "";
+
+        const titleEl: HTMLElement | null =
+            wrapper.querySelector(".ad-inline-title");
+        if (titleEl) titleEl.textContent = ad.title;
+
+        const descEl: HTMLElement | null =
+            wrapper.querySelector(".ad-inline-desc");
+        if (descEl) descEl.textContent = ad.description;
+
+        const ctaEl: HTMLElement | null = wrapper.querySelector(".ad-cta");
+        if (ctaEl) ctaEl.textContent = ad.cta;
+
+        const linkEl: HTMLAnchorElement | null = wrapper.querySelector(
+            "a[rel*='sponsored']",
+        );
+        if (linkEl) {
+            linkEl.href = ad.url;
+            linkEl.setAttribute("aria-label", `${ad.cta} — ${ad.title}`);
+        }
+    }
+
+    function renderSidebar(container: HTMLElement, ad: AdData | null): void {
+        const wrapper: HTMLElement | null =
+            container.querySelector(".ad-sidebar");
+        if (!wrapper) return;
+
+        if (!ad) {
+            wrapper.style.display = "none";
+            return;
+        }
+        wrapper.style.display = "";
+
+        const titleEl: HTMLElement | null =
+            wrapper.querySelector(".ad-sidebar-title");
+        if (titleEl) titleEl.textContent = ad.title;
+
+        const descEl: HTMLElement | null =
+            wrapper.querySelector(".ad-sidebar-desc");
+        if (descEl) descEl.textContent = ad.description;
+
+        const ctaEl: HTMLElement | null = wrapper.querySelector(".ad-cta");
+        if (ctaEl) ctaEl.textContent = ad.cta;
+
+        const linkEl: HTMLAnchorElement | null = wrapper.querySelector(
+            "a[rel*='sponsored']",
+        );
+        if (linkEl) {
+            linkEl.href = ad.url;
+            linkEl.setAttribute("aria-label", `${ad.cta} — ${ad.title}`);
+        }
+    }
+
+    function initTextAd(container: HTMLElement): void {
+        const poolAttr: string | undefined = container.dataset.adPool;
+        if (!poolAttr) return;
+
+        let pool: AdData[] = [];
+        try {
+            pool = JSON.parse(poolAttr) as AdData[];
+        } catch {
+            return;
+        }
+
+        const format: string | undefined = container.dataset.format;
+        const selected: AdData | null = pickWeightedAd(pool);
+
+        if (format === "sidebar") {
+            renderSidebar(container, selected);
+        } else {
+            renderInline(container, selected);
+        }
+    }
+
+    function initAllTextAds(): void {
+        const containers: NodeListOf<HTMLElement> =
+            document.querySelectorAll(".text-ad-container");
+        containers.forEach((container: HTMLElement) => initTextAd(container));
+    }
+
+    // Initialise on page load
+    initAllTextAds();
+
+    // Listen for reroll events (used on the design showcase page)
+    document.addEventListener("ads:reroll", () => {
+        initAllTextAds();
+    });
+</script>
+
+<style>
+    /* ===== INLINE FORMAT ===== */
+    .ad-inline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--color-border, #e5e7eb);
+        border-radius: 0.75rem;
+        background-color: var(--color-background, #ffffff);
+        flex-wrap: wrap;
+    }
+
+    .dark .ad-inline {
+        border-color: var(--color-border, #374151);
+        background-color: var(--color-background, #111827);
+    }
+
+    .ad-inline-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ad-inline-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--color-foreground, #111827);
+        white-space: nowrap;
+    }
+
+    .dark .ad-inline-title {
+        color: var(--color-foreground, #f9fafb);
+    }
+
+    .ad-inline-separator {
+        font-size: 0.875rem;
+        color: var(--color-muted-foreground, #6b7280);
+        white-space: nowrap;
+    }
+
+    .ad-inline-desc {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--color-muted-foreground, #6b7280);
+    }
+
+    .ad-inline-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    /* ===== SIDEBAR FORMAT ===== */
+    .ad-sidebar {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--color-border, #e5e7eb);
+        border-radius: 1rem;
+        background-color: var(--color-background, #ffffff);
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .dark .ad-sidebar {
+        border-color: var(--color-border, #374151);
+        background-color: var(--color-background, #111827);
+    }
+
+    .ad-sidebar-label {
+        position: absolute;
+        top: -0.6rem;
+        left: 0.75rem;
+        background-color: var(--color-background, #ffffff);
+        line-height: 1;
+    }
+
+    .dark .ad-sidebar-label {
+        background-color: var(--color-background, #111827);
+    }
+
+    .ad-sidebar-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-top: 0.25rem;
+    }
+
+    .ad-sidebar-title {
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.4;
+        color: var(--color-foreground, #111827);
+        margin: 0;
+    }
+
+    .dark .ad-sidebar-title {
+        color: var(--color-foreground, #f9fafb);
+    }
+
+    .ad-sidebar-desc {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--color-muted-foreground, #6b7280);
+        margin: 0;
+    }
+
+    .ad-sidebar-footer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ad-sidebar-btn {
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        min-width: 0;
+    }
+
+    .ad-sidebar-btn .ad-cta {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+    }
+
+    .ad-sidebar-btn svg {
+        flex-shrink: 0;
+    }
+</style>

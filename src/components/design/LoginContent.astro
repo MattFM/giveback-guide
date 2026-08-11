@@ -1,0 +1,355 @@
+---
+import { SITE_TITLE } from "../../consts";
+import PageHeader from "../layout/PageHeader.astro";
+import BasecoatButton from "../ui/BasecoatButton.astro";
+---
+
+<!-- Page Header -->
+<div class="px-4 py-8 lg:py-12 max-w-screen-xl mx-auto">
+    <PageHeader
+        title="Create an account or login"
+        subtitle="Save projects, stays and trips to custom lists and track your impact"
+    />
+</div>
+
+<!-- Two Column Layout -->
+<section class="border-t border-gray-200 dark:border-gray-800">
+    <div class="lg:grid lg:grid-cols-2">
+        <!-- Left Column: Hero & Info -->
+        <div
+            class="flex flex-col lg:justify-center bg-gray-50 dark:bg-gray-900"
+        >
+            <div class="max-w-xl w-full lg:ml-auto px-8 xl:px-16 py-12">
+                <!-- Benefits List -->
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                ><path
+                                    d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                                ></path><path
+                                    d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                                ></path><path d="M7 3v4a1 1 0 0 0 1 1h7"
+                                ></path></svg
+                            >
+                        </div>
+                        <div>
+                            <h3
+                                class="text-gray-900 dark:text-white font-semibold mb-1"
+                            >
+                                Save &amp; Organise
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Create custom lists of projects, stays and trips
+                                you want to engage with
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                ><path d="M12 16v5"></path><path
+                                    d="M16 14.639V21"></path><path
+                                    d="M20 10.656V21"></path><path
+                                    d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"
+                                ></path><path d="M4 18.463V21"></path><path
+                                    d="M8 14.656V21"></path></svg
+                            >
+                        </div>
+                        <div>
+                            <h3
+                                class="text-gray-900 dark:text-white font-semibold mb-1"
+                            >
+                                Track Your Impact
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Mark listings as 'visited' and keep track of
+                                your positive impact
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="w-5 h-5"
+                                ><path
+                                    d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2"
+                                ></path><path
+                                    d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2"
+                                ></path><path
+                                    d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3"
+                                ></path><path d="M4 22h16"></path><path
+                                    d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"
+                                ></path><path
+                                    d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3"
+                                ></path></svg
+                            >
+                        </div>
+                        <div>
+                            <h3
+                                class="text-gray-900 dark:text-white font-semibold mb-1"
+                            >
+                                First in line for new features
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                In the future, you'll be able to earn rewards as
+                                you grow your positive travel footprint
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Form -->
+        <div class="flex items-center justify-center">
+            <div class="w-full max-w-md lg:mr-auto px-4 py-12 lg:py-16">
+                <!-- Login Card -->
+                <article class="card">
+                    <header>
+                        <h2 class="card-title text-xl font-bold">
+                            Create an account or login
+                        </h2>
+                    </header>
+                    <section class="px-6">
+                        <p
+                            class="text-sm text-gray-500 dark:text-gray-400 mb-6"
+                        >
+                            Enter your email to login or create a new account.
+                            We'll then send you a magic link. No password
+                            required.
+                        </p>
+
+                        <!-- Magic URL form -->
+                        <form id="magicURLForm" class="space-y-6">
+                            <div class="field">
+                                <label for="email">Email address</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    class="input"
+                                    placeholder="your@email.com"
+                                />
+                            </div>
+
+                            <!-- Honeypot: invisible to users, catches naive bots that fill all inputs -->
+                            <div
+                                style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;"
+                                aria-hidden="true"
+                            >
+                                <label for="hp_name"
+                                    >Leave this field empty</label
+                                >
+                                <input
+                                    type="text"
+                                    id="hp_name"
+                                    name="hp_name"
+                                    autocomplete="off"
+                                    tabindex="-1"
+                                />
+                            </div>
+
+                            <BasecoatButton
+                                type="submit"
+                                id="submit-button"
+                                fullWidth
+                                data-size="lg"
+                            >
+                                <span id="button-text">Send Magic Link</span>
+                                <span id="button-spinner" class="hidden">
+                                    <span
+                                        class="inline-flex items-center gap-2"
+                                    >
+                                        <svg
+                                            class="animate-spin w-4 h-4"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle
+                                                class="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                stroke-width="4"></circle>
+                                            <path
+                                                class="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            ></path>
+                                        </svg>
+                                        Sending...
+                                    </span>
+                                </span>
+                            </BasecoatButton>
+
+                            <!-- Success Message -->
+                            <div
+                                id="success-message"
+                                role="status"
+                                aria-live="polite"
+                                class="alert hidden bg-green-50 text-green-900 border-green-200 dark:bg-green-950 dark:border-green-800 dark:text-green-100"
+                            >
+                                <svg
+                                    class="text-green-600 dark:text-green-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Login link sent!</strong>
+                                <section
+                                    class="!text-green-700 dark:!text-green-300"
+                                >
+                                    <p>
+                                        Check your email and click the link to
+                                        continue. The link expires in 5 minutes.
+                                    </p>
+                                </section>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div
+                                id="error-message"
+                                class="alert hidden"
+                                data-variant="destructive"
+                            >
+                                <svg
+                                    class="text-red-600 dark:text-red-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <section>
+                                    <p id="error-text"></p>
+                                </section>
+                            </div>
+                        </form>
+
+                        <!-- How it Works -->
+                        <div
+                            class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700"
+                        >
+                            <h3
+                                class="text-xs font-semibold uppercase tracking-wide mb-3 text-gray-500 dark:text-gray-400"
+                            >
+                                How it works
+                            </h3>
+                            <ul class="space-y-2">
+                                <li class="flex items-start gap-2">
+                                    <svg
+                                        class="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400 dark:text-gray-500"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span
+                                        class="text-xs text-gray-500 dark:text-gray-400"
+                                        >Enter your email and click "Send Magic
+                                        Link"</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg
+                                        class="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400 dark:text-gray-500"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span
+                                        class="text-xs text-gray-500 dark:text-gray-400"
+                                        >Check your inbox for an email from {
+                                            SITE_TITLE
+                                        }</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg
+                                        class="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400 dark:text-gray-500"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span
+                                        class="text-xs text-gray-500 dark:text-gray-400"
+                                        >Click the link to instantly sign in or
+                                        create your account</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </article>
+
+                <!-- Legal -->
+                <p
+                    class="text-xs text-center mt-6 text-gray-400 dark:text-gray-500"
+                >
+                    By continuing, you agree to our&nbsp;
+                    <a
+                        href="/terms/"
+                        class="underline hover:no-underline text-gray-600 dark:text-gray-300"
+                        >Terms of Service</a
+                    >&nbsp;and&nbsp;
+                    <a
+                        href="/privacy/"
+                        class="underline hover:no-underline text-gray-600 dark:text-gray-300"
+                        >Privacy Policy</a
+                    >.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

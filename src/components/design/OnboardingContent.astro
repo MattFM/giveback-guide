@@ -1,0 +1,174 @@
+---
+import { SITE_TITLE } from "../../consts";
+import PageHeader from "../layout/PageHeader.astro";
+import BasecoatButton from "../ui/BasecoatButton.astro";
+---
+
+<!-- Two Column Layout -->
+<section class="border-t border-gray-200 dark:border-gray-800">
+    <div class="lg:grid lg:grid-cols-2">
+        <!-- Left Column: Hero & Info -->
+        <div
+            class="flex flex-col lg:justify-center bg-gray-50 dark:bg-gray-900"
+        >
+            <div class="max-w-xl w-full lg:ml-auto px-8 xl:px-16 py-12">
+                <h1
+                    class="text-4xl xl:text-5xl font-extrabold text-gray-900 dark:text-white mb-6"
+                >
+                    Welcome to {SITE_TITLE}
+                </h1>
+                <p
+                    class="text-lg xl:text-xl text-gray-500 dark:text-gray-400 mb-12"
+                >
+                    Thank you for signing up for your free account. Before
+                    sending you to your dashboard, we have a couple of quick
+                    questions for you.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Column: Form -->
+        <div class="flex items-center justify-center">
+            <div class="w-full max-w-lg lg:mr-auto px-4 py-12 lg:py-16">
+                <article class="card">
+                    <header>
+                        <h2 class="card-title text-xl font-bold">
+                            Complete Your Profile
+                        </h2>
+                    </header>
+                    <section class="px-6">
+                        <form id="onboardForm" class="space-y-8">
+                            <!-- First Name -->
+                            <div class="field">
+                                <label for="firstName"
+                                    >What should we call you?</label
+                                >
+                                <input
+                                    id="firstName"
+                                    name="name"
+                                    type="text"
+                                    required
+                                    class="input"
+                                    placeholder="Your first name"
+                                />
+                            </div>
+
+                            <!-- Newsletter Opt-in -->
+                            <div
+                                class="flex items-start gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                            >
+                                <input
+                                    id="newsletter"
+                                    name="newsletter"
+                                    type="checkbox"
+                                    class="input mt-0.5"
+                                />
+                                <div class="flex-1">
+                                    <label
+                                        for="newsletter"
+                                        class="block text-base font-medium cursor-pointer text-gray-900 dark:text-white"
+                                    >
+                                        Subscribe to our newsletter
+                                    </label>
+                                    <div
+                                        class="text-sm mt-2 text-gray-500 dark:text-gray-400"
+                                    >
+                                        <p class="mt-1">
+                                            Get news and updates from us, plus
+                                            our latest blog posts and news from
+                                            the sustainable travel world
+                                            directly to your inbox. No spam,
+                                            unsubscribe anytime.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Newsletter Confirmation Message -->
+                            <div
+                                id="newsletterConfirmMsg"
+                                class="alert hidden bg-green-50 text-green-900 border-green-200 dark:bg-green-950 dark:border-green-800 dark:text-green-100"
+                                role="status"
+                                aria-live="polite"
+                            >
+                                <svg
+                                    class="text-green-600 dark:text-green-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <strong>Subscribed!</strong>
+                                <section
+                                    class="!text-green-700 dark:!text-green-300"
+                                >
+                                    <p>
+                                        You'll may receive a separate email with
+                                        instructions to confirm your
+                                        subscription. Don't worry though if you
+                                        don't.
+                                    </p>
+                                </section>
+                            </div>
+
+                            <!-- Terms Consent -->
+                            <div class="flex items-start gap-4">
+                                <input
+                                    id="consent"
+                                    name="consent"
+                                    type="checkbox"
+                                    required
+                                    class="input mt-0.5"
+                                />
+                                <label
+                                    for="consent"
+                                    class="text-sm leading-relaxed cursor-pointer text-gray-600 dark:text-gray-400"
+                                >
+                                    I agree to the <a
+                                        href="/terms"
+                                        class="font-semibold underline hover:no-underline text-gray-900 dark:text-white"
+                                        >Terms of Service</a
+                                    > and <a
+                                        href="/privacy"
+                                        class="font-semibold underline hover:no-underline text-gray-900 dark:text-white"
+                                        >Privacy Policy</a
+                                    >
+                                </label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <BasecoatButton
+                                type="submit"
+                                id="submitBtn"
+                                fullWidth
+                                data-size="lg"
+                            >
+                                <span class="inline-flex items-center gap-2">
+                                    Continue to Dashboard
+                                    <svg
+                                        class="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                    </svg>
+                                </span>
+                            </BasecoatButton>
+
+                            <!-- Form Message -->
+                            <div id="formMessage" class="alert hidden"></div>
+                        </form>
+                    </section>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>

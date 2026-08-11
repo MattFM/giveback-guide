@@ -23,7 +23,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/docs/'),
+      filter: (page) => !page.includes('/docs/') && !page.includes('/design/'),
     }),
     pagefind()
   ],

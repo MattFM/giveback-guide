@@ -8,6 +8,7 @@ interface Props {
     image?: string; // Accept the image prop
     headerVariant?: "default" | "transparent"; // Header display mode
     headerTheme?: "light" | "dark"; // Header text/icon color theme
+    noindex?: boolean;
 }
 
 const {
@@ -16,13 +17,14 @@ const {
     image,
     headerVariant = "default",
     headerTheme = "light",
+    noindex,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} image={image} />
+        <BaseHead title={title} description={description} image={image} noindex={noindex} />
     </head>
     <body>
         <Header variant={headerVariant} theme={headerTheme} />

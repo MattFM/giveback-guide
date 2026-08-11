@@ -1,0 +1,46 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LoginContent from '../../components/design/LoginContent.astro';
+---
+
+<MainLayout title="Design: Login" noindex={true}>
+  <!-- Design Toolbar -->
+  <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+      <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">State Preview</p>
+      <div class="flex gap-2">
+        <button id="btn-default" class="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">Default</button>
+        <button id="btn-success" class="px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-700 hover:bg-green-200 transition-colors">Success</button>
+        <button id="btn-error" class="px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-200 transition-colors">Error</button>
+      </div>
+    </div>
+  </div>
+
+  <LoginContent />
+</MainLayout>
+
+<script>
+  const successMsg = document.getElementById('success-message');
+  const errorMsg = document.getElementById('error-message');
+  const errorText = document.getElementById('error-text');
+
+  const showState = (state: string) => {
+    if (successMsg) {
+      successMsg.classList.toggle('hidden', state !== 'success');
+    }
+    if (errorMsg) {
+      errorMsg.classList.toggle('hidden', state !== 'error');
+    }
+    if (errorText && state === 'error') {
+      errorText.textContent = 'Failed to send magic link. Please try again.';
+    }
+  };
+
+  const btnDefault = document.getElementById('btn-default');
+  const btnSuccess = document.getElementById('btn-success');
+  const btnError = document.getElementById('btn-error');
+
+  btnDefault?.addEventListener('click', () => showState('default'));
+  btnSuccess?.addEventListener('click', () => showState('success'));
+  btnError?.addEventListener('click', () => showState('error'));
+</script>

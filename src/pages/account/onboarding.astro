@@ -1,12 +1,12 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
-import { SITE_TITLE } from '../../consts';
+import OnboardingContent from '../../components/design/OnboardingContent.astro';
 ---
 
-<MainLayout 
+<MainLayout
   title="Welcome"
-  headerVariant="transparent"
-  headerTheme="dark"
+  headerVariant="default"
+  headerTheme="light"
   transition:persist={false}
 >
   <!-- Early client-side heuristic redirect if no PocketBase auth token found -->
@@ -19,7 +19,7 @@ import { SITE_TITLE } from '../../consts';
         const v = localStorage.getItem('pocketbase_auth');
         return !!(v && v !== 'null' && v !== 'undefined');
       })();
-      
+
       if (!hasToken) {
         console.warn('[Onboarding] No auth token found, redirecting to login');
         window.location.replace('/login/');
@@ -36,172 +36,23 @@ import { SITE_TITLE } from '../../consts';
   </noscript>
 
   <!-- Loading State: Show while verifying authentication -->
-  <div id="loadingState" class="min-h-screen flex items-center justify-center" style="background-color: #1C2434;">
+  <div id="loadingState" class="min-h-screen flex items-center justify-center bg-white">
     <div class="text-center">
-      <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background-color: rgba(169, 143, 250, 0.1);">
-        <svg class="animate-spin w-8 h-8" style="color: #A98FFA;" fill="none" viewBox="0 0 24 24">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-violet-50">
+        <svg class="animate-spin w-8 h-8 text-violet-500" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
       </div>
-      <p class="text-lg font-medium" style="color: #FFFFFF;">Verifying your account...</p>
+      <p class="text-lg font-medium text-gray-900">Verifying your account...</p>
     </div>
   </div>
 
   <!-- Page Guard: Keep everything hidden until we verify user needs onboarding -->
   <div id="pageGuard" class="hidden">
-  
-  <!-- Hero Section with Dark Background -->
-  <section style="background-color: #1C2434; padding: 6rem 1rem 0;">
-    <div class="max-w-3xl mx-auto text-center pb-12">
-      <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full" style="background: rgba(169, 143, 250, 0.12); border: 1px solid rgba(169, 143, 250, 0.25);">
-        <svg class="w-4 h-4" style="color: #C4B3FC;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"/>
-        </svg>
-        <span class="text-sm font-semibold" style="color: #FFFFFF;">Quick Setup</span>
-      </div>
-      
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4" style="color: #FFFFFF;">
-        Welcome to <span class="gradient-highlight">{SITE_TITLE}</span>
-      </h1>
-      <p class="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto" style="color: #D1D4D1;">
-        Just a few quick questions to personalize your experience.
-      </p>
-    </div>
-  </section>
-
-  <!-- Form Section -->
-  <section style="background: linear-gradient(to bottom, #1C2434 0%, #F6F7F6 20%);">
-    <div id="onboardGuard" aria-busy="true" class="max-w-xl mx-auto px-4 pb-24">
-      <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-12 border border-gray-200">
-        <form id="onboardForm" class="space-y-8">
-          <!-- First Name -->
-          <div>
-            <label for="firstName" class="block text-base font-semibold mb-2" style="color: #1C2434;">
-              What should we call you?
-            </label>
-            <input 
-              id="firstName" 
-              name="name" 
-              type="text" 
-              required 
-              placeholder="Your first name" 
-              class="w-full px-4 py-3.5 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
-              style="border: 2px solid #E8EAE8; background: #FFFFFF;"
-            />
-          </div>
-
-          <!-- Newsletter Opt-in -->
-          <div class="flex items-start gap-4 p-4 rounded-lg" style="background: #F6F7F6; border: 1px solid #E8EAE8;">
-            <input
-              id="newsletter"
-              name="newsletter"
-              type="checkbox"
-              class="w-5 h-5 mt-0.5 rounded cursor-pointer"
-              style="accent-color: #A98FFA;"
-            />
-            <div class="flex-1">
-              <label for="newsletter" class="block text-base font-medium cursor-pointer" style="color: #1C2434;">
-                Subscribe to our newsletter
-              </label>
-              <div class="text-sm mt-2" style="color: #7E827E;">
-                <p class="mt-1">The Problem With Travel (And How To Fix It) is a monthly newsletter about reimagining how we travel.</p>
-                <p class="mt-2">Each edition contains:</p>
-                <ul class="mt-1 ml-4 list-disc">
-                  <li>A detailed exploration of a problem affecting modern travel</li>
-                  <li>Insights from people helping to build regenerative tourism right now</li>
-                  <li>News and updates about {SITE_TITLE}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- Newsletter Confirmation Message -->
-          <div id="newsletterConfirmMsg" class="hidden p-3 rounded-lg text-sm" style="background: rgba(169, 143, 250, 0.1); border: 1px solid rgba(169, 143, 250, 0.25); color: #7353D4;">
-            Awesome! You'll receive a separate email from us to confirm your subscription.
-          </div>
-
-          <!-- Terms Consent -->
-          <div class="flex items-start gap-4">
-            <input 
-              id="consent" 
-              name="consent" 
-              type="checkbox" 
-              required 
-              class="w-5 h-5 mt-0.5 rounded cursor-pointer"
-              style="accent-color: #A98FFA;"
-            />
-            <label for="consent" class="text-sm leading-relaxed cursor-pointer" style="color: #424D62;">
-              I agree to the <a href="/terms" class="font-semibold underline hover:no-underline cursor-pointer" style="color: #7353D4;">Terms of Service</a> and <a href="/privacy" class="font-semibold underline hover:no-underline cursor-pointer" style="color: #7353D4;">Privacy Policy</a>
-            </label>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="pt-4">
-            <button 
-              id="submitBtn" 
-              type="submit" 
-              class="w-full py-4 px-6 text-base font-semibold text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              style="background-color: #1C2434;"
-            >
-              <span class="inline-flex items-center gap-2">
-                Continue to Dashboard
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
-            </button>
-          </div>
-
-          <!-- Form Message -->
-          <div id="formMessage" class="mt-4 text-center text-sm font-medium hidden"></div>
-        </form>
-      </div>
-    </div>
-  </section>
-  
+    <OnboardingContent />
   </div><!-- end pageGuard -->
 </MainLayout>
-
-<style>
-  /* Gradient text highlight for hero */
-  .gradient-highlight {
-    background: linear-gradient(
-      135deg,
-      #DED5FD,
-      #C4B3FC,
-      #A98FFA,
-      #C4B3FC,
-      #DED5FD
-    );
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientShift 4s ease infinite;
-    font-weight: 900;
-  }
-
-  @keyframes gradientShift {
-    0%, 100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* Input focus state */
-  input[type="text"]:focus {
-    border-color: #A98FFA !important;
-    ring-color: #A98FFA !important;
-  }
-
-  /* Button hover state */
-  #submitBtn:hover:not(:disabled) {
-    background-color: #0F1419;
-  }
-</style>
 
 <script>
   import { getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/auth';
@@ -221,8 +72,12 @@ import { SITE_TITLE } from '../../consts';
     if (!formMessage) return;
     formMessage.textContent = msg;
     formMessage.classList.remove('hidden');
-    formMessage.classList.toggle('text-red-600', isError);
-    formMessage.classList.toggle('text-green-600', !isError);
+    formMessage.classList.toggle('bg-red-50', isError);
+    formMessage.classList.toggle('border-red-200', isError);
+    formMessage.classList.toggle('text-red-700', isError);
+    formMessage.classList.toggle('bg-green-50', !isError);
+    formMessage.classList.toggle('border-green-200', !isError);
+    formMessage.classList.toggle('text-green-700', !isError);
   };
 
   // Subscribe to Email Octopus newsletter via Worker

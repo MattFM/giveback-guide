@@ -1,0 +1,82 @@
+---
+import TextAd from "../features/ads/TextAd.astro";
+---
+
+<section class="py-12 px-4 max-w-screen-xl mx-auto space-y-16">
+  <div class="space-y-4">
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+      Design: Text Ads
+    </h1>
+    <p class="text-gray-600 dark:text-gray-400 max-w-2xl">
+      Preview both ad formats with sample inventory. Click "Reroll ads" to test
+      the client-side weighted random selection.
+    </p>
+
+    <button
+      id="reroll-ads"
+      class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
+      style="background-color: #1C2434;"
+      aria-label="Randomly select new ads from the pool"
+    >
+      <svg
+        class="w-4 h-4"
+        aria-hidden="true"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"
+        />
+      </svg>
+      Reroll ads
+    </button>
+  </div>
+
+  <!-- Inline Format -->
+  <div class="space-y-6">
+    <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+        Inline format
+      </h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Used for mid-content placements on project, stay, and blog pages.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <TextAd format="inline" />
+      <TextAd format="inline" />
+    </div>
+  </div>
+
+  <!-- Sidebar Format -->
+  <div class="space-y-6">
+    <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+        Sidebar format
+      </h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Used for sticky sidebar placements on blog posts and project pages.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <TextAd format="sidebar" />
+      <TextAd format="sidebar" />
+      <TextAd format="sidebar" />
+    </div>
+  </div>
+</section>
+
+<script>
+  const rerollBtn: HTMLButtonElement | null =
+    document.getElementById("reroll-ads") as HTMLButtonElement | null;
+
+  rerollBtn?.addEventListener("click", () => {
+    document.dispatchEvent(new CustomEvent("ads:reroll"));
+  });
+</script>

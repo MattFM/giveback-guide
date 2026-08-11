@@ -1,0 +1,23 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import VerifyContent from '../../components/design/VerifyContent.astro';
+---
+
+<MainLayout title="Design: Verify" noindex={true}>
+  <div class="space-y-12 py-12 px-4">
+    <div>
+      <p class="text-center text-xs font-semibold uppercase tracking-wide mb-4 text-gray-500">Loading State</p>
+      <VerifyContent status="loading" />
+    </div>
+
+    <div>
+      <p class="text-center text-xs font-semibold uppercase tracking-wide mb-4 text-gray-500">Success State</p>
+      <VerifyContent status="success" />
+    </div>
+
+    <div>
+      <p class="text-center text-xs font-semibold uppercase tracking-wide mb-4 text-gray-500">Error State</p>
+      <VerifyContent status="error" />
+    </div>
+  </div>
+</MainLayout>
