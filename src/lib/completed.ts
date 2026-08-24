@@ -150,7 +150,8 @@ export async function getStatusesForItems(pairs: Array<{ item_type: ItemType; it
     queries.push(
       pbClient.collection('user_item_status').getList(1, 500, {
         filter: `user = "${userId}" && item_type = "project" && (${idFilter})`,
-        fields: 'item_type,item_id,is_completed,completed_at,completion_source'
+        fields: 'item_type,item_id,is_completed,completed_at,completion_source',
+        $autoCancel: false,
       }).then(res => res.items)
     );
   }
@@ -159,11 +160,12 @@ export async function getStatusesForItems(pairs: Array<{ item_type: ItemType; it
     queries.push(
       pbClient.collection('user_item_status').getList(1, 500, {
         filter: `user = "${userId}" && item_type = "stay" && (${idFilter})`,
-        fields: 'item_type,item_id,is_completed,completed_at,completion_source'
+        fields: 'item_type,item_id,is_completed,completed_at,completion_source',
+        $autoCancel: false,
       }).then(res => res.items)
     );
   }
-  
+
   try {
     const results = await Promise.all(queries);
     results.forEach(rows => {
@@ -171,7 +173,9 @@ export async function getStatusesForItems(pairs: Array<{ item_type: ItemType; it
         result[`${row.item_type}:${String(row.item_id)}`] = row as ItemStatus;
       });
     });
-  } catch {}
+  } catch (err: any) {
+    console.error('[getStatusesForItems] Failed to load statuses:', err);
+  }
   return result;
 }
 
