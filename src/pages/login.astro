@@ -25,6 +25,13 @@ import LoginContent from '../components/design/LoginContent.astro';
         }
     })();
 
+    // Show session-expired message if redirected from a protected page
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('expired') === '1' && errorMessage && errorText) {
+        errorText.textContent = 'Your session has expired. Please log in again.';
+        errorMessage.classList.remove('hidden');
+    }
+
     // Magic URL Form Handler
     const form = document.getElementById('magicURLForm') as HTMLFormElement;
     const errorMessage = document.getElementById('error-message');

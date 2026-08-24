@@ -262,7 +262,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
     (async () => {
         const user = await getCurrentUser().catch(() => null);
         if (!user) {
-            window.location.href = '/login/';
+            window.location.href = '/login/?expired=1';
             return;
         }
         const guard = document.getElementById('profileGuard');

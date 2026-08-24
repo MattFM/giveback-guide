@@ -179,7 +179,7 @@ import OnboardingContent from '../../components/design/OnboardingContent.astro';
     
     if (!user) {
       console.error('[Onboarding] Not authenticated, redirecting to login');
-      window.location.replace('/login');
+      window.location.replace('/login/?expired=1');
       return;
     }
 

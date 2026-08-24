@@ -1,4 +1,4 @@
-import { pb } from './pocketbase';
+import { pb, getCurrentUser } from './pocketbase';
 
 export type ItemType = 'project' | 'stay';
 
@@ -23,9 +23,8 @@ export type ListWithItems = List & { items: ListItem[] };
 
 async function getUserId(): Promise<string | null> {
   try {
-    const pbClient = pb();
-    const record = pbClient.authStore.record;
-    return record?.id || null;
+    const user = await getCurrentUser();
+    return user?.id || null;
   } catch {
     return null;
   }

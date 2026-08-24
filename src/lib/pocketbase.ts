@@ -3,6 +3,11 @@ import PocketBase from 'pocketbase';
 // Lazy-initialize PocketBase to avoid crashing at module import time if envs are missing.
 let _pb: PocketBase | null = null;
 
+// Session validation cache to avoid duplicate authRefresh calls within a single page load
+let _cachedUser: any = null;
+let _cacheTime = 0;
+const CACHE_TTL = 5000; // 5 seconds
+
 function readPublicEnv() {
   const url = typeof import.meta !== 'undefined' ? (import.meta.env?.PUBLIC_POCKETBASE_URL as string) : process.env.PUBLIC_POCKETBASE_URL;
   return url || '';
@@ -155,49 +160,76 @@ export const updateMagicURLSession = async (otpId?: string, code?: string) => {
 
 export const getCurrentUser = async () => {
   try {
-    // For static sites, check localStorage tokens and parse real user data
-    if (typeof window !== 'undefined') {
-      console.debug('[getCurrentUser] Checking localStorage for auth tokens...');
-      
-      // PocketBase stores auth in localStorage under the key 'pocketbase_auth'
+    const now = Date.now();
+    if (_cachedUser && (now - _cacheTime) < CACHE_TTL) {
+      console.debug('[getCurrentUser] Returning cached user');
+      return _cachedUser;
+    }
+
+    if (typeof window === 'undefined') {
+      // Server-side fallback
+      console.debug('[getCurrentUser] Not in browser context, using PocketBase client directly');
+      const u = await account.get();
+      console.debug('[getCurrentUser] PocketBase client returned:', u ? { id: u.id, email: u.email } : null);
+      return u;
+    }
+
+    console.debug('[getCurrentUser] Validating browser auth with server...');
+    const pbClient = getPB();
+
+    // Ensure authStore is populated from localStorage if the SDK hasn't auto-loaded yet
+    if (!pbClient.authStore.token) {
       const authToken = localStorage.getItem('pocketbase_auth');
-      
       if (authToken) {
         try {
-          console.debug('[getCurrentUser] Attempting to parse auth token from pocketbase_auth');
           const sessionData = JSON.parse(authToken);
-          console.debug('[getCurrentUser] Parsed session data structure keys:', Object.keys(sessionData));
-          
-          // Extract record from session data (PocketBase format)
-          const record = sessionData?.record;
-          if (record) {
-            console.debug('[getCurrentUser] Found user:', { id: record.id, email: record.email });
-            
-            return {
-              ...record,
-              id: record.id,
-              email: record.email,
-              name: record.name || null,
-              prefs: record.prefs || null,
-            };
+          if (sessionData.token && sessionData.record) {
+            pbClient.authStore.save(sessionData.token, sessionData.record);
+            console.debug('[getCurrentUser] Loaded auth from localStorage into authStore');
           } else {
-            console.warn('[getCurrentUser] No record found in session data. Available keys:', Object.keys(sessionData));
+            console.warn('[getCurrentUser] localStorage auth missing token or record');
+            return null;
           }
         } catch (parseError) {
           console.error('[getCurrentUser] Failed to parse auth token:', parseError);
+          return null;
         }
       } else {
         console.warn('[getCurrentUser] No pocketbase_auth token found in localStorage');
+        return null;
       }
-      
+    }
+
+    // Validate token with server via authRefresh
+    try {
+      const authData = await pbClient.collection('users').authRefresh();
+      console.debug('[getCurrentUser] Token validated successfully:', {
+        id: authData.record.id,
+        email: authData.record.email,
+      });
+
+      const user = {
+        ...authData.record,
+        id: authData.record.id,
+        email: authData.record.email,
+        name: authData.record.name || null,
+        prefs: authData.record.prefs || null,
+      };
+
+      _cachedUser = user;
+      _cacheTime = now;
+      return user;
+    } catch (refreshErr: any) {
+      console.warn('[getCurrentUser] Token validation failed:', refreshErr.message || refreshErr);
+      // Clear invalid session
+      pbClient.authStore.clear();
+      try {
+        localStorage.removeItem('pocketbase_auth');
+      } catch {}
+      _cachedUser = null;
+      _cacheTime = 0;
       return null;
     }
-    
-    // Fallback to real PocketBase auth if in a server environment
-    console.debug('[getCurrentUser] Not in browser context, using PocketBase client directly');
-    const u = await account.get();
-    console.debug('[getCurrentUser] PocketBase client returned:', u ? { id: u.id, email: u.email } : null);
-    return u;
   } catch (e) {
     console.error('[getCurrentUser] Unexpected error:', e);
     return null;
@@ -231,6 +263,8 @@ export const updateAccountPreference = async (key: string, value: any) => {
 
 export const logout = async () => {
   getPB().authStore.clear();
+  _cachedUser = null;
+  _cacheTime = 0;
 };
 
 export const deleteAccount = async () => {
@@ -267,6 +301,8 @@ export const deleteAccount = async () => {
   // 3. Finally delete the user account
   await pb.collection('users').delete(userId);
   pb.authStore.clear();
+  _cachedUser = null;
+  _cacheTime = 0;
 };
 
 // Remove default export that conflicts with named exports

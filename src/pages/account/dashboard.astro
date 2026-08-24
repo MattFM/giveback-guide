@@ -482,7 +482,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
       console.debug("Dashboard auth check user:", user);
       if (!user) {
         console.debug("No user found - redirecting to login");
-        window.location.href = "/login";
+        window.location.href = "/login/?expired=1";
         return;
       }
 
@@ -623,7 +623,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
         listsContainer.innerHTML = `
           <div class="p-8 rounded-xl border-2 border-dashed text-center bg-white" style="border-color: #E8EAE8;">
             <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
             <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>

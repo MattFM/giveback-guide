@@ -1,4 +1,4 @@
-import { pb } from './pocketbase';
+import { pb, getCurrentUser } from './pocketbase';
 import type { ItemType } from './lists';
 
 export type ItemStatus = {
@@ -11,9 +11,8 @@ export type ItemStatus = {
 
 async function getUserId(): Promise<string | null> {
   try {
-    const pbClient = pb();
-    const record = pbClient.authStore.record;
-    return record?.id || null;
+    const user = await getCurrentUser();
+    return user?.id || null;
   } catch {
     return null;
   }
