@@ -1136,6 +1136,18 @@ import MainLayout from "../../layouts/MainLayout.astro";
       }
     }
 
+    function isAuthError(err: any): boolean {
+      return err && (err.status === 401 || err.status === 403);
+    }
+
+    async function handleAuthFailure() {
+      console.warn("[Dashboard] Authentication failed during data load — redirecting to login");
+      try {
+        await logout();
+      } catch {}
+      window.location.href = "/login/?expired=1";
+    }
+
     async function loadAndRender() {
       try {
         // Ensure auth first
@@ -1144,10 +1156,27 @@ import MainLayout from "../../layouts/MainLayout.astro";
         
         // Fetch data while skeletons are visible
         await fetchIndex();
-        const counts = await getSavedCounts();
+
+        let counts: { lists: number; items: number };
+        try {
+          counts = await getSavedCounts();
+        } catch (err: any) {
+          if (isAuthError(err)) {
+            return handleAuthFailure();
+          }
+          counts = { lists: 0, items: 0 };
+        }
         
         // Lists and completed statuses
-        lists = await getListsWithItems();
+        try {
+          lists = await getListsWithItems();
+        } catch (err: any) {
+          if (isAuthError(err)) {
+            return handleAuthFailure();
+          }
+          lists = [];
+        }
+
         const pairs: any[] = [];
         lists.forEach((l: any) =>
           (l.items || []).forEach((it: any) => {
@@ -1159,7 +1188,10 @@ import MainLayout from "../../layouts/MainLayout.astro";
         );
         try {
           statusByKey = await getStatusesForItems(pairs);
-        } catch {
+        } catch (err: any) {
+          if (isAuthError(err)) {
+            return handleAuthFailure();
+          }
           statusByKey = {};
         }
         
@@ -1167,7 +1199,11 @@ import MainLayout from "../../layouts/MainLayout.astro";
         let completedCount = 0;
         try {
           completedCount = await getCompletedCount();
-        } catch {}
+        } catch (err: any) {
+          if (isAuthError(err)) {
+            return handleAuthFailure();
+          }
+        }
         
         // Now hide skeletons and show stats/user info
         const statsSkeleton = document.getElementById("statsSkeleton");
