@@ -1,0 +1,84 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+import HugeIcon from "@/components/fundations/icons/HugeIcon.astro";
+import { MoreHorizontalIcon } from "@/lib/hugeicons";
+
+export interface Props extends HTMLAttributes<'div'> {}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div class={cn('relative inline-flex', className)} data-breadcrumb-dropdown {...props}>
+  <button
+    type="button"
+    class="flex size-9 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+    data-breadcrumb-dropdown-trigger
+    aria-expanded="false"
+    aria-haspopup="true"
+    aria-label="Show more breadcrumb items"
+  >
+    <HugeIcon icon={MoreHorizontalIcon} class="size-4" />
+    <span class="sr-only">More</span>
+  </button>
+  <div
+    class="absolute left-1/2 -translate-x-1/2 bottom-0 z-50 min-w-[8rem] overflow-hidden rounded-lg border bg-popover p-1 text-popover-foreground shadow-md"
+    data-breadcrumb-dropdown-content
+    role="menu"
+    hidden
+  >
+    <slot />
+  </div>
+</div>
+
+<script>
+  function initBreadcrumbDropdowns() {
+    document.querySelectorAll('[data-breadcrumb-dropdown]').forEach((dropdown) => {
+      if (dropdown.hasAttribute('data-initialized')) return;
+      dropdown.setAttribute('data-initialized', 'true');
+
+      const trigger = dropdown.querySelector('[data-breadcrumb-dropdown-trigger]');
+      const content = dropdown.querySelector('[data-breadcrumb-dropdown-content]') as HTMLElement;
+
+      if (!trigger || !content) return;
+
+      const toggleDropdown = () => {
+        const isOpen = content.hidden === false;
+        content.hidden = isOpen;
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+      };
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown();
+      });
+
+      // Close on click outside
+      document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target as Node) && !content.hidden) {
+          content.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Close on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !content.hidden) {
+          content.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Handle item clicks
+      content.querySelectorAll('a').forEach((item) => {
+        item.addEventListener('click', () => {
+          content.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+  }
+
+  initBreadcrumbDropdowns();
+  document.addEventListener('astro:page-load', initBreadcrumbDropdowns);
+</script>

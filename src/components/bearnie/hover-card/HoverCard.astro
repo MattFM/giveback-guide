@@ -1,0 +1,69 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {
+  openDelay?: number;
+  closeDelay?: number;
+}
+
+const { openDelay = 200, closeDelay = 300, class: className, ...props } = Astro.props;
+---
+
+<div
+  class={cn('relative inline-block', className)}
+  data-hover-card
+  data-open-delay={openDelay}
+  data-close-delay={closeDelay}
+  {...props}
+>
+  <slot />
+</div>
+
+<script>
+  function initHoverCards() {
+    document.querySelectorAll('[data-hover-card]').forEach((card) => {
+      if (card.hasAttribute('data-initialized')) return;
+      card.setAttribute('data-initialized', 'true');
+
+      const trigger = card.querySelector('[data-hover-card-trigger]');
+      const content = card.querySelector('[data-hover-card-content]') as HTMLElement;
+
+      if (!trigger || !content) return;
+
+      const openDelay = parseInt(card.getAttribute('data-open-delay') || '200');
+      const closeDelay = parseInt(card.getAttribute('data-close-delay') || '300');
+
+      let openTimeout: ReturnType<typeof setTimeout>;
+      let closeTimeout: ReturnType<typeof setTimeout>;
+
+      const showContent = () => {
+        clearTimeout(closeTimeout);
+        openTimeout = setTimeout(() => {
+          content.hidden = false;
+        }, openDelay);
+      };
+
+      const hideContent = () => {
+        clearTimeout(openTimeout);
+        closeTimeout = setTimeout(() => {
+          content.hidden = true;
+        }, closeDelay);
+      };
+
+      trigger.addEventListener('mouseenter', showContent);
+      trigger.addEventListener('mouseleave', hideContent);
+      trigger.addEventListener('focus', showContent);
+      trigger.addEventListener('blur', hideContent);
+
+      content.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimeout);
+      });
+
+      content.addEventListener('mouseleave', hideContent);
+    });
+  }
+
+  initHoverCards();
+  document.addEventListener('astro:page-load', initHoverCards);
+</script>

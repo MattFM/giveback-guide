@@ -1,0 +1,94 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div data-alert-dialog class={className} {...props}>
+  <slot />
+</div>
+
+<script>
+  import { trapFocus, generateId } from '@/utils/focus-trap';
+
+  function initAlertDialogs() {
+    document.querySelectorAll('[data-alert-dialog]').forEach((dialog) => {
+      if (dialog.hasAttribute('data-initialized')) return;
+      dialog.setAttribute('data-initialized', 'true');
+
+      const trigger = dialog.querySelector('[data-alert-dialog-trigger]') as HTMLElement;
+      const overlay = dialog.querySelector('[data-alert-dialog-overlay]') as HTMLElement;
+      const content = dialog.querySelector('[data-alert-dialog-content]') as HTMLElement;
+      const cancelButtons = dialog.querySelectorAll('[data-alert-dialog-cancel]');
+      const actionButtons = dialog.querySelectorAll('[data-alert-dialog-action]');
+      const title = dialog.querySelector('[data-alert-dialog-title]') as HTMLElement;
+      const description = dialog.querySelector('[data-alert-dialog-description]') as HTMLElement;
+
+      if (!trigger) return;
+
+      // Generate IDs for ARIA relationships
+      if (title && !title.id) {
+        title.id = generateId('alert-dialog-title');
+      }
+      if (description && !description.id) {
+        description.id = generateId('alert-dialog-desc');
+      }
+
+      // Set ARIA attributes on content
+      if (content) {
+        if (title?.id) content.setAttribute('aria-labelledby', title.id);
+        if (description?.id) content.setAttribute('aria-describedby', description.id);
+      }
+
+      let cleanupFocusTrap: (() => void) | null = null;
+
+      // Open dialog
+      trigger.addEventListener('click', () => {
+        if (overlay) overlay.hidden = false;
+        if (content) {
+          content.hidden = false;
+          // Set up focus trap
+          cleanupFocusTrap = trapFocus(content);
+        }
+      });
+
+      // Close dialog
+      const closeDialog = () => {
+        if (overlay) overlay.hidden = true;
+        if (content) content.hidden = true;
+        // Clean up focus trap
+        cleanupFocusTrap?.();
+        cleanupFocusTrap = null;
+        // Return focus to trigger
+        trigger?.focus();
+      };
+
+      // Cancel buttons close the dialog
+      cancelButtons.forEach((btn) => {
+        btn.addEventListener('click', closeDialog);
+      });
+
+      // Action buttons also close the dialog
+      actionButtons.forEach((btn) => {
+        btn.addEventListener('click', closeDialog);
+      });
+
+      // Note: No close on overlay click for alert dialogs (intentional)
+
+      // Close on Escape
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && overlay && !overlay.hidden) {
+          closeDialog();
+        }
+      };
+
+      document.addEventListener('keydown', handleEscape);
+    });
+  }
+
+  initAlertDialogs();
+  document.addEventListener('astro:page-load', initAlertDialogs);
+</script>

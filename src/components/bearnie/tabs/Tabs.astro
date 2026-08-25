@@ -1,0 +1,38 @@
+---
+import { cn } from "@/utils/cn";
+import type { HTMLAttributes } from "astro/types";
+
+export interface Props extends HTMLAttributes<"div"> {
+  defaultValue?: string;
+  orientation?: "horizontal" | "vertical";
+}
+
+const {
+  defaultValue,
+  orientation = "horizontal",
+  class: className,
+  ...props
+} = Astro.props;
+
+const classes = cn(
+  "w-full",
+  orientation === "vertical" && "grid grid-cols-1 lg:grid-cols-2 gap-4",
+  className
+);
+---
+
+<div
+  class={classes}
+  data-tabs
+  data-default-value={defaultValue}
+  data-orientation={orientation}
+  {...props}
+>
+  <slot />
+</div>
+
+<script>
+  import { ensureUiBootLoaded } from "@/utils/runtime/loader";
+
+  ensureUiBootLoaded();
+</script>

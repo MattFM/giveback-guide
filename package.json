@@ -22,10 +22,12 @@
     "astro-pagefind": "^2.0.0",
     "axios": "^1.18.1",
     "basecoat-css": "^1.0.2",
+    "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "fs-extra": "^11.3.6",
     "pocketbase": "^0.28.0",
     "sharp": "^0.35.2",
+    "tailwind-merge": "^3.6.0",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4.3.2",
     "unist-util-visit": "^5.1.0"

@@ -1,0 +1,45 @@
+---
+import { cn } from "@/utils/cn";
+import type { HTMLAttributes } from "astro/types";
+
+export interface Props extends HTMLAttributes<"a"> {
+  href?: string;
+  isActive?: boolean;
+  size?: "default" | "sm" | "lg" | "icon";
+}
+
+const {
+  href = "#",
+  isActive = false,
+  size = "icon",
+  class: className,
+  ...props
+} = Astro.props;
+
+const sizeStyles = {
+  default: "h-9 px-4 py-2",
+  sm: "h-8 px-3 text-xs",
+  lg: "h-10 px-8",
+  icon: "size-9",
+};
+
+const classes = cn(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium",
+  "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+  "disabled:pointer-events-none disabled:opacity-50",
+  isActive
+    ? "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+    : "hover:bg-accent hover:text-accent-foreground",
+  sizeStyles[size],
+  className
+);
+---
+
+<a
+  href={href}
+  aria-current={isActive ? "page" : undefined}
+  class={classes}
+  {...props}
+>
+  <slot />
+</a>

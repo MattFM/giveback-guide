@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "bearnie": {
+      "type": "local",
+      "command": ["npx", "@bearnie/mcp"],
+      "enabled": true,
+      "environment": {
+        "BEARNIE_REGISTRY_URL": "https://bearnie.dev/registry"
+      }
+    }
+  }
+}

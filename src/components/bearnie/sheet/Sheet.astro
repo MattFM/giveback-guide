@@ -1,0 +1,90 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export interface Props extends HTMLAttributes<"div"> {}
+
+const { ...props } = Astro.props;
+---
+
+<div data-sheet {...props}>
+  <slot />
+</div>
+
+<script>
+  import { trapFocus, generateId } from '@/utils/focus-trap';
+
+  function initSheets() {
+    document.querySelectorAll('[data-sheet]').forEach((sheet) => {
+      // Skip if already initialized
+      if (sheet.hasAttribute('data-initialized')) return;
+      sheet.setAttribute('data-initialized', 'true');
+      
+      const trigger = sheet.querySelector('[data-sheet-trigger]') as HTMLElement;
+      const overlay = sheet.querySelector('[data-sheet-overlay]');
+      const content = sheet.querySelector('[data-sheet-content]') as HTMLElement;
+      const title = sheet.querySelector('[data-sheet-title]') as HTMLElement;
+      const description = sheet.querySelector('[data-sheet-description]') as HTMLElement;
+      
+      if (!trigger || !overlay || !content) return;
+
+      // Generate IDs for ARIA relationships
+      if (title && !title.id) {
+        title.id = generateId('sheet-title');
+      }
+      if (description && !description.id) {
+        description.id = generateId('sheet-desc');
+      }
+
+      // Set ARIA attributes on content
+      if (title?.id) content.setAttribute('aria-labelledby', title.id);
+      if (description?.id) content.setAttribute('aria-describedby', description.id);
+      
+      // Move overlay and content to body to escape stacking context
+      document.body.appendChild(overlay);
+      document.body.appendChild(content);
+
+      let cleanupFocusTrap: (() => void) | null = null;
+      
+      // Close function
+      function closeSheet() {
+        (overlay as HTMLElement).hidden = true;
+        (content as HTMLElement).hidden = true;
+        document.body.style.overflow = '';
+        // Clean up focus trap
+        cleanupFocusTrap?.();
+        cleanupFocusTrap = null;
+        // Return focus to trigger
+        trigger?.focus();
+      }
+      
+      // Open sheet
+      trigger.addEventListener('click', () => {
+        (overlay as HTMLElement).hidden = false;
+        (content as HTMLElement).hidden = false;
+        document.body.style.overflow = 'hidden';
+        // Set up focus trap
+        cleanupFocusTrap = trapFocus(content);
+      });
+      
+      // Close on overlay click
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeSheet();
+      });
+      
+      // Close buttons
+      content.querySelectorAll('[data-sheet-close]').forEach(btn => {
+        btn.addEventListener('click', closeSheet);
+      });
+      
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !(overlay as HTMLElement).hidden) {
+          closeSheet();
+        }
+      });
+    });
+  }
+  
+  initSheets();
+  document.addEventListener('astro:page-load', initSheets);
+</script>

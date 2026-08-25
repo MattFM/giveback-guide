@@ -1,0 +1,17 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {}
+
+const { class: className, ...props } = Astro.props;
+
+const classes = cn(
+  'bg-muted data-[state=completed]:bg-primary transition-colors',
+  'h-0.5 w-6 shrink-0 mx-4',
+  '[[data-orientation=vertical]_&]:h-6 [[data-orientation=vertical]_&]:w-0.5 [[data-orientation=vertical]_&]:mx-0 [[data-orientation=vertical]_&]:ml-4',
+  className
+);
+---
+
+<div class={classes} data-stepper-separator aria-hidden="true" {...props} />

@@ -1,0 +1,103 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {
+  orientation?: 'horizontal' | 'vertical';
+  activeStep?: number;
+}
+
+const { 
+  orientation = 'horizontal', 
+  activeStep = 0,
+  class: className, 
+  ...props 
+} = Astro.props;
+
+const classes = cn(
+  'stepper flex',
+  orientation === 'horizontal' ? 'flex-row items-center' : 'flex-col',
+  className
+);
+---
+
+<div
+  class={classes}
+  data-stepper
+  data-orientation={orientation}
+  data-active-step={activeStep}
+  role="navigation"
+  aria-label="Progress"
+  {...props}
+>
+  <slot />
+</div>
+
+<script>
+  function initSteppers() {
+    document.querySelectorAll('[data-stepper]').forEach((stepper) => {
+      if (stepper.hasAttribute('data-initialized')) return;
+      stepper.setAttribute('data-initialized', 'true');
+
+      const activeStep = parseInt(stepper.getAttribute('data-active-step') || '0');
+      const items = Array.from(stepper.querySelectorAll('[data-stepper-item]')) as HTMLElement[];
+      const separators = stepper.querySelectorAll('[data-stepper-separator]');
+      const totalSteps = items.length;
+
+      // Update ARIA for all items
+      const updateAriaStates = (currentStep: number) => {
+        items.forEach((item, index) => {
+          const trigger = item.querySelector('[data-stepper-trigger]') as HTMLElement;
+          
+          if (index < currentStep) {
+            item.setAttribute('data-state', 'completed');
+            item.removeAttribute('aria-current');
+            if (trigger) {
+              trigger.setAttribute('aria-label', `Step ${index + 1} of ${totalSteps}, completed`);
+            }
+          } else if (index === currentStep) {
+            item.setAttribute('data-state', 'active');
+            item.setAttribute('aria-current', 'step');
+            if (trigger) {
+              trigger.setAttribute('aria-label', `Step ${index + 1} of ${totalSteps}, current`);
+            }
+          } else {
+            item.setAttribute('data-state', 'upcoming');
+            item.removeAttribute('aria-current');
+            if (trigger) {
+              trigger.setAttribute('aria-label', `Step ${index + 1} of ${totalSteps}, upcoming`);
+            }
+          }
+        });
+
+        // Update separators
+        separators.forEach((sep, index) => {
+          if (index < currentStep) {
+            sep.setAttribute('data-state', 'completed');
+          } else {
+            sep.setAttribute('data-state', 'upcoming');
+          }
+        });
+      };
+
+      // Initialize states
+      updateAriaStates(activeStep);
+
+      // Handle clicks on triggers
+      items.forEach((item) => {
+        const trigger = item.querySelector('[data-stepper-trigger]');
+        
+        if (trigger) {
+          trigger.addEventListener('click', () => {
+            const clickedIndex = parseInt(item.getAttribute('data-step') || '0');
+            updateAriaStates(clickedIndex);
+            stepper.setAttribute('data-active-step', String(clickedIndex));
+          });
+        }
+      });
+    });
+  }
+
+  initSteppers();
+  document.addEventListener('astro:page-load', initSteppers);
+</script>

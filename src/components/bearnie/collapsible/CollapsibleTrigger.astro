@@ -1,0 +1,40 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'span'> {}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<span
+  class={cn('cursor-pointer', className)}
+  data-collapsible-trigger
+  role="button"
+  tabindex="0"
+  aria-expanded="false"
+  {...props}
+>
+  <slot />
+</span>
+
+<script>
+  function initCollapsibleTriggers() {
+    document.querySelectorAll('[data-collapsible-trigger]').forEach((trigger) => {
+      if (trigger.hasAttribute('data-trigger-initialized')) return;
+      trigger.setAttribute('data-trigger-initialized', 'true');
+
+      // Handle keyboard activation
+      trigger.addEventListener('keydown', (e) => {
+        const event = e as KeyboardEvent;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
+      });
+    });
+  }
+
+  initCollapsibleTriggers();
+  document.addEventListener('astro:page-load', initCollapsibleTriggers);
+</script>

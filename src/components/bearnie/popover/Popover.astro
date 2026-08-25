@@ -1,0 +1,18 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div class={cn('relative inline-block', className)} data-popover {...props}>
+  <slot />
+</div>
+
+<script>
+  import { ensureUiBootLoaded } from "@/utils/runtime/loader";
+
+  ensureUiBootLoaded();
+</script>

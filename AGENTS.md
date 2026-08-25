@@ -4,17 +4,15 @@
 
 ```bash
 # Development
-pnpm run dev              # Start Astro dev server (runs continuously)
+pnpm dev              # Start Astro dev server (runs continuously)
 pnpm run build            # Build for production (uses --no-deprecation flag)
 
 # Content Management
-pnpm run blog:convert     # Convert Notion to MDX (utility script)
-pnpm run blog:validate    # Validate MDX blog posts
 pnpm run astro            # Direct Astro CLI access
 ```
 
 **Testing**: No formal test suite. Use manual testing:
-- `pnpm run dev` for development testing (runs continuously - **build verification not required**)
+- `pnpm dev` for development testing (runs continuously - **build verification not required**)
 - Test auth flows via `/login` and `/account/dashboard`
 - Browser console testing for client-side features
 - **Note**: User runs dev mode continuously; build verification is unnecessary as Astro dev server updates in real-time
@@ -30,12 +28,14 @@ pnpm run astro            # Direct Astro CLI access
 ### Component Architecture
 ```
 src/components/
+├── bearnie/     # UI component library (installed but not yet adopted)
 ├── content/     # Content display cards (BlogPostCard, ProjectCard, StayCard)
+├── design/      # Design-system page content (login, onboarding, verify, ads)
 ├── features/    # Feature-specific (save/, ads/, popups/)
 ├── layout/      # Site structure (Header, Footer, NavigationDrawer)
-├── sections/    # Homepage sections (HomeHero, LatestPosts)
+├── sections/    # Homepage sections (HomeSplitHero, LatestPosts, SplitHero)
 ├── ui/          # Reusable UI (Button, InfiniteScroll, Pagination, Dropdown/)
-└── utility/     # Non-visual (Analytics, TestListsClient)
+└── utility/     # Non-visual (Analytics, SkimlinksScript)
 ```
 
 ### Import Patterns
@@ -59,6 +59,7 @@ src/components/
 - All interactive elements must be keyboard accessible
 - Dark mode support via `dark:` classes (no theme toggle currently)
 - Three-tier visual system defined in `src/styles/global.css`
+- Bearnie theme tokens defined in `src/styles/bearnie.css` (not yet integrated)
 
 ### Image Handling
 - **Cloudinary** optimization via `ResponsiveImage.astro` component
@@ -96,9 +97,9 @@ export async function getStaticPaths() {
 
 ### URL Patterns
 - All routes use trailing slashes (`trailingSlash: 'always'`)
-- Blog: `/blog/[slug]/`, `/blog/[tag]/[page]/`
-- Projects: `/projects/[slug]/`, `/projects/[country]/[page]/`
-- Stays: `/stays/[slug]/`, `/stays/[country]/[page]/`
+- Blog: `/blog/[slug]/`, `/blog/[tag]/[...page]/`
+- Projects: `/projects/[slug]/`, `/projects/[country]/[...page]/`, `/projects/[country]/[locale]/[...page]/`
+- Stays: `/stays/[slug]/`, `/stays/[country]/[...page]/`, `/stays/[country]/[locale]/[...page]/`
 
 ### Content Management
 - **Blog**: MDX files in `src/content/blog/` (managed in codebase)
@@ -176,16 +177,13 @@ When writing JavaScript in `<script>` tags within `.astro` files, the project us
 - `PROJECTS_NOTION_DATABASE_ID` - Projects database ID
 - `STAYS_NOTION_DATABASE_ID` - Stays database ID
 - `PUBLIC_POCKETBASE_URL` - Pocketbase instance URL
-- `PUBLIC_SUPABASE_URL` - Supabase project URL (legacy, for migration scripts only)
-- `PUBLIC_SUPABASE_ANON` - Supabase anonymous key (legacy, for migration scripts only)
 
 ## Key Development Notes
 
 - **Dev server runs continuously** - don't prompt to start unless needed
 - Content changes require rebuild (`pnpm run build`)
 - Database migrations are manual via Pocketbase admin UI or pb_migrations JS files
-- Deployments: Manual VSCode plugin trigger → GitHub Action → Cloudflare Workers
-- Trust code over `/docs` directory for current implementation
+- Deployments: Manual push to GitHub → GitHub Action → Cloudflare Workers
 - Always test accessibility before completing UI changes
 - When in doubt, follow existing patterns in similar components
 
@@ -193,10 +191,10 @@ When writing JavaScript in `<script>` tags within `.astro` files, the project us
 
 - `src/content.config.ts` - Content schemas and Notion loader
 - `src/lib/pocketbase.ts` - Authentication and database helpers
-- `src/lib/supabase.ts` - Legacy Supabase helpers (kept for rollback)
 - `src/components/` - All UI components
 - `src/utils/remark-responsive-images.mjs` - Image transformation
 - `src/mdx-components.ts` - Global MDX components
+- `src/styles/global.css` - Custom theme and Tailwind configuration
+- `src/styles/bearnie.css` - Bearnie component library theme tokens
 - `astro.config.mjs` - Astro configuration and integrations
 - `wrangler.jsonc` - Cloudflare Workers settings (used by GitHub Action)
-- `migrations/` - Database schema changes (reference only)

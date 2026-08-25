@@ -1,0 +1,55 @@
+---
+import PopoverTrigger from "@/components/ui/popover/PopoverTrigger.astro";
+import HugeIcon from "@/components/fundations/icons/HugeIcon.astro";
+import { ArrowDown01Icon } from "@/lib/hugeicons";
+import { cn } from "@/utils/cn";
+import type { HTMLAttributes } from "astro/types";
+
+export interface Props extends HTMLAttributes<"button"> {
+  placeholder?: string;
+  disabled?: boolean;
+  inputGroupControl?: boolean;
+}
+
+const {
+  placeholder = "Select an option",
+  disabled = false,
+  inputGroupControl = false,
+  class: className,
+  ...props
+} = Astro.props;
+---
+
+<PopoverTrigger class="w-full">
+  <button
+    type="button"
+    class={cn(
+      "flex h-10 w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm",
+      "border-input focus:ring-ring",
+      "ring-offset-background placeholder:text-muted-foreground",
+      "focus:outline-none focus:ring-2 focus:ring-offset-2",
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      inputGroupControl &&
+        "rounded-none border-0 bg-transparent px-3 focus:ring-0 focus:ring-offset-0",
+      className
+    )}
+    data-combobox-trigger
+    data-slot={inputGroupControl ? "input-group-control" : undefined}
+    disabled={disabled}
+    {...props}
+  >
+    <span class="truncate text-left" data-combobox-value>{placeholder}</span>
+    <div class="flex items-center gap-1">
+      <slot name="clear-icon" />
+      <slot name="right-icon">
+        <HugeIcon
+          icon={ArrowDown01Icon}
+          size="sm"
+          class="text-muted-foreground"
+          data-combobox-chevron
+          aria-hidden="true"
+        />
+      </slot>
+    </div>
+  </button>
+</PopoverTrigger>

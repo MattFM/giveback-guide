@@ -7,6 +7,10 @@ import pagefind from "astro-pagefind";
 import remarkResponsiveImages from './src/utils/remark-responsive-images.mjs';
 
 import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
@@ -30,6 +34,11 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
     optimizeDeps: {
       include: ['pocketbase'],
     },

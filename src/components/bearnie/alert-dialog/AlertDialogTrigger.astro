@@ -1,0 +1,38 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'span'> {}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<span
+  data-alert-dialog-trigger
+  class={cn("inline-block cursor-pointer", className)}
+  role="button"
+  tabindex="0"
+  {...props}
+>
+  <slot />
+</span>
+
+<script>
+  function initAlertDialogTriggers() {
+    document.querySelectorAll('[data-alert-dialog-trigger]').forEach((trigger) => {
+      if (trigger.hasAttribute('data-trigger-initialized')) return;
+      trigger.setAttribute('data-trigger-initialized', 'true');
+
+      trigger.addEventListener('keydown', (e) => {
+        const event = e as KeyboardEvent;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
+      });
+    });
+  }
+
+  initAlertDialogTriggers();
+  document.addEventListener('astro:page-load', initAlertDialogTriggers);
+</script>

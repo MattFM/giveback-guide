@@ -1,0 +1,17 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'th'> {}
+
+const { class: className, ...props } = Astro.props;
+
+const classes = cn(
+  'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
+  className
+);
+---
+
+<th class={classes} {...props}>
+  <slot />
+</th>

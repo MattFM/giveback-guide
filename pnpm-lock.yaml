@@ -38,6 +38,9 @@ importers:
       basecoat-css:
         specifier: ^1.0.2
         version: 1.0.2
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       dotenv:
         specifier: ^16.5.0
         version: 16.6.1
@@ -50,6 +53,9 @@ importers:
       sharp:
         specifier: ^0.35.2
         version: 0.35.2
+      tailwind-merge:
+        specifier: ^3.6.0
+        version: 3.6.0
       tailwind-scrollbar-hide:
         specifier: ^4.0.0
         version: 4.0.0(tailwindcss@4.3.2)
@@ -2464,6 +2470,9 @@ packages:
     resolution: {integrity: sha512-XDpWUOPC6FEibaLzjfe0ucaV0YrOjYotGJO1WpF0Zd+n6ZGEQUsSugaoLq9QkEZtAfQIxT42UChcssDVPP3+/w==}
     engines: {node: '>=16'}
     hasBin: true
+
+  tailwind-merge@3.6.0:
+    resolution: {integrity: sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==}
 
   tailwind-scrollbar-hide@4.0.0:
     resolution: {integrity: sha512-gobtvVcThB2Dxhy0EeYSS1RKQJ5baDFkamkhwBvzvevwX6L4XQfpZ3me9s25Ss1ecFVT5jPYJ50n+7xTBJG9WQ==}
@@ -5564,6 +5573,8 @@ snapshots:
       csso: 5.0.5
       picocolors: 1.1.1
       sax: 1.6.0
+
+  tailwind-merge@3.6.0: {}
 
   tailwind-scrollbar-hide@4.0.0(tailwindcss@4.3.2):
     dependencies:

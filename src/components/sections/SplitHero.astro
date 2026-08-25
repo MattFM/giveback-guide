@@ -1,0 +1,52 @@
+---
+import { createResponsiveImage, RESPONSIVE_PRESETS } from "../../utils/cloudinary";
+
+interface Props {
+  coverImage: string;
+  coverImageAlt: string;
+  backgroundColor?: string;
+  coverImagePosition?: string;
+}
+
+const {
+  coverImage,
+  coverImageAlt,
+  backgroundColor = "bg-gray-50",
+  coverImagePosition = "center",
+} = Astro.props;
+
+const responsiveImage = createResponsiveImage(coverImage, {
+  sizes: RESPONSIVE_PRESETS.hero.sizes,
+  sizesAttribute: RESPONSIVE_PRESETS.hero.sizesAttribute,
+  fallbackWidth: 1200,
+  quality: 85,
+  format: "auto",
+});
+---
+
+<section class="grid grid-cols-1 lg:grid-cols-2 min-h-[60vh] lg:min-h-[80vh]">
+  <!-- Left: Content -->
+  <div
+    class={`${backgroundColor} flex flex-col justify-center px-6 py-16 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24`}
+  >
+    <div class="max-w-2xl xl:max-w-3xl">
+      <slot />
+    </div>
+  </div>
+
+  <!-- Right: Cover Image -->
+  <div class="relative min-h-[300px] lg:min-h-full overflow-hidden">
+    <img
+      src={responsiveImage.src}
+      srcset={responsiveImage.srcset}
+      sizes={responsiveImage.sizes}
+      alt={coverImageAlt}
+      width={responsiveImage.width}
+      height={responsiveImage.height}
+      loading="eager"
+      fetchpriority="high"
+      class="absolute inset-0 w-full h-full object-cover"
+      style={`object-position: ${coverImagePosition};`}
+    />
+  </div>
+</section>

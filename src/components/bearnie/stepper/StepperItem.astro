@@ -1,0 +1,25 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'div'> {
+  step: number;
+}
+
+const { step, class: className, ...props } = Astro.props;
+
+const classes = cn(
+  'stepper-item flex items-center gap-2 shrink-0',
+  className
+);
+---
+
+<div
+  class={classes}
+  data-stepper-item
+  data-step={step}
+  data-state="upcoming"
+  {...props}
+>
+  <slot />
+</div>

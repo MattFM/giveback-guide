@@ -1,0 +1,35 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+import HugeIcon from "@/components/fundations/icons/HugeIcon.astro";
+import { Loading03Icon } from "@/lib/hugeicons";
+
+export interface Props extends HTMLAttributes<'svg'> {
+  size?: 'sm' | 'default' | 'lg';
+}
+
+const {
+  size = 'default',
+  class: className,
+  color,
+  ...props
+} = Astro.props;
+
+const sizeStyles = {
+  sm: 'size-4',
+  default: 'size-6',
+  lg: 'size-8',
+};
+
+const classes = cn(
+  'animate-spin text-muted-foreground',
+  sizeStyles[size],
+  className
+);
+---
+
+<HugeIcon icon={Loading03Icon}
+  class={classes}
+  color={color ?? undefined}
+  {...(props as Record<string, string | number | undefined>)}
+/>

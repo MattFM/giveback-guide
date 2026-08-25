@@ -1,0 +1,37 @@
+---
+import { cn } from '@/utils/cn';
+import type { HTMLAttributes } from 'astro/types';
+
+export interface Props extends HTMLAttributes<'button'> {
+  disabled?: boolean;
+  destructive?: boolean;
+}
+
+const {
+  disabled = false,
+  destructive = false,
+  class: className,
+  ...props
+} = Astro.props;
+
+const classes = cn(
+  'relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
+  'focus:bg-accent focus:text-accent-foreground',
+  'hover:bg-accent hover:text-accent-foreground',
+  disabled && 'pointer-events-none opacity-50',
+  destructive && 'text-destructive focus:text-destructive',
+  className
+);
+---
+
+<button
+  type="button"
+  class={classes}
+  role="menuitem"
+  disabled={disabled}
+  tabindex="-1"
+  data-dropdown-item
+  {...props}
+>
+  <slot />
+</button>
