@@ -1,5 +1,7 @@
 ---
 import GenericPage from "../../layouts/GenericPage.astro";
+import Alert from "@/components/bearnie/alert/Alert.astro";
+import AlertDescription from "@/components/bearnie/alert/AlertDescription.astro";
 ---
 
 <GenericPage
@@ -24,15 +26,15 @@ import GenericPage from "../../layouts/GenericPage.astro";
         We manually check and verify each and every submission to ensure it
         meets our values and criteria.
     </p>
-    <div class="alert">
-        <p>
+    <Alert variant="warning">
+        <AlertDescription>
             <strong>Please note:</strong> If you are a founder, manager and/or team/staff
             members, please use our <a
                 href="https://giveback.guide/submit/onboarding/"
                 >Onboarding form</a
             > to add your organisation to our database.
-        </p>
-    </div>
+        </AlertDescription>
+    </Alert>
     <iframe
         data-tally-src="https://tally.so/embed/mYdpE6?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
         loading="lazy"

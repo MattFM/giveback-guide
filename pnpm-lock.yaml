@@ -35,9 +35,6 @@ importers:
       axios:
         specifier: ^1.18.1
         version: 1.18.1
-      basecoat-css:
-        specifier: ^1.0.2
-        version: 1.0.2
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1434,9 +1431,6 @@ packages:
 
   bail@2.0.2:
     resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
-
-  basecoat-css@1.0.2:
-    resolution: {integrity: sha512-C6I5rr7HziIAoBYNGPO5U6HaU/6FuF3iVp++IgoEqqJ836is3XoRty6l1ibXqxnoIRZNnOAYDMX8QxVC+58zhw==}
 
   bcp-47@2.1.0:
     resolution: {integrity: sha512-9IIS3UPrvIa1Ej+lVDdDwO7zLehjqsaByECw0bu2RRGP73jALm6FYbzI5gWbgHLvNdkvfXB5YrSbocZdOS0c0w==}
@@ -4019,8 +4013,6 @@ snapshots:
   axobject-query@4.1.0: {}
 
   bail@2.0.2: {}
-
-  basecoat-css@1.0.2: {}
 
   bcp-47@2.1.0:
     dependencies:

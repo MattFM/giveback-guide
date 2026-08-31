@@ -1,7 +1,15 @@
 ---
 import { SITE_TITLE } from "../../consts";
-import PageHeader from "../layout/PageHeader.astro";
-import BasecoatButton from "../ui/BasecoatButton.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import Input from "@/components/bearnie/input/Input.astro";
+
+import Alert from "@/components/bearnie/alert/Alert.astro";
+import AlertTitle from "@/components/bearnie/alert/AlertTitle.astro";
+import AlertDescription from "@/components/bearnie/alert/AlertDescription.astro";
 ---
 
 <!-- Two Column Layout -->
@@ -30,50 +38,41 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
         <!-- Right Column: Form -->
         <div class="flex items-center justify-center">
             <div class="w-full max-w-lg lg:mr-auto px-4 py-12 lg:py-16">
-                <article class="card">
-                    <header>
-                        <h2 class="card-title text-xl font-bold">
-                            Complete Your Profile
-                        </h2>
-                    </header>
-                    <section class="px-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Complete Your Profile</CardTitle>
+                    </CardHeader>
+                    <CardContent>
                         <form id="onboardForm" class="space-y-8">
                             <!-- First Name -->
-                            <div class="field">
-                                <label for="firstName"
-                                    >What should we call you?</label
-                                >
-                                <input
+                            <div class="space-y-2">
+                                <label for="firstName">What should we call you?</label>
+                                <Input
                                     id="firstName"
                                     name="name"
                                     type="text"
                                     required
-                                    class="input"
                                     placeholder="Your first name"
                                 />
                             </div>
 
                             <!-- Newsletter Opt-in -->
-                            <div
-                                class="flex items-start gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-                            >
+                            <div class="flex items-start gap-4">
                                 <input
                                     id="newsletter"
                                     name="newsletter"
                                     type="checkbox"
-                                    class="input mt-0.5"
+                                    class="size-4 shrink-0 cursor-pointer"
                                 />
                                 <div class="flex-1">
                                     <label
                                         for="newsletter"
-                                        class="block text-base font-medium cursor-pointer text-gray-900 dark:text-white"
+                                        class="block text-base font-medium cursor-pointer text-foreground"
                                     >
                                         Subscribe to our newsletter
                                     </label>
-                                    <div
-                                        class="text-sm mt-2 text-gray-500 dark:text-gray-400"
-                                    >
-                                        <p class="mt-1">
+                                    <div class="text-sm mt-2 text-muted-foreground">
+                                        <p>
                                             Get news and updates from us, plus
                                             our latest blog posts and news from
                                             the sustainable travel world
@@ -85,14 +84,15 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                             </div>
 
                             <!-- Newsletter Confirmation Message -->
-                            <div
+                            <Alert
                                 id="newsletterConfirmMsg"
-                                class="alert hidden bg-green-50 text-green-900 border-green-200 dark:bg-green-950 dark:border-green-800 dark:text-green-100"
+                                variant="success"
+                                class="hidden"
                                 role="status"
                                 aria-live="polite"
                             >
                                 <svg
-                                    class="text-green-600 dark:text-green-400"
+                                    class="w-5 h-5 text-green-600 dark:text-green-400"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >
@@ -101,18 +101,16 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                <strong>Subscribed!</strong>
-                                <section
-                                    class="!text-green-700 dark:!text-green-300"
-                                >
+                                <AlertTitle>Subscribed!</AlertTitle>
+                                <AlertDescription>
                                     <p>
                                         You'll may receive a separate email with
                                         instructions to confirm your
                                         subscription. Don't worry though if you
                                         don't.
                                     </p>
-                                </section>
-                            </div>
+                                </AlertDescription>
+                            </Alert>
 
                             <!-- Terms Consent -->
                             <div class="flex items-start gap-4">
@@ -121,30 +119,30 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                     name="consent"
                                     type="checkbox"
                                     required
-                                    class="input mt-0.5"
+                                    class="size-4 shrink-0 cursor-pointer"
                                 />
                                 <label
                                     for="consent"
-                                    class="text-sm leading-relaxed cursor-pointer text-gray-600 dark:text-gray-400"
+                                    class="text-sm leading-relaxed cursor-pointer text-muted-foreground"
                                 >
                                     I agree to the <a
                                         href="/terms"
-                                        class="font-semibold underline hover:no-underline text-gray-900 dark:text-white"
+                                        class="font-semibold underline hover:no-underline text-foreground"
                                         >Terms of Service</a
                                     > and <a
                                         href="/privacy"
-                                        class="font-semibold underline hover:no-underline text-gray-900 dark:text-white"
+                                        class="font-semibold underline hover:no-underline text-foreground"
                                         >Privacy Policy</a
                                     >
                                 </label>
                             </div>
 
                             <!-- Submit Button -->
-                            <BasecoatButton
+                            <Button
                                 type="submit"
                                 id="submitBtn"
-                                fullWidth
-                                data-size="lg"
+                                size="lg"
+                                class="w-full"
                             >
                                 <span class="inline-flex items-center gap-2">
                                     Continue to Dashboard
@@ -161,13 +159,18 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                             d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                                     </svg>
                                 </span>
-                            </BasecoatButton>
+                            </Button>
 
-                            <!-- Form Message -->
-                            <div id="formMessage" class="alert hidden"></div>
+                            <!-- Form Messages -->
+                            <Alert id="formMessageSuccess" variant="success" class="hidden" role="status" aria-live="polite">
+                                <AlertDescription id="formMessageSuccessText"></AlertDescription>
+                            </Alert>
+                            <Alert id="formMessageError" variant="destructive" class="hidden" role="alert">
+                                <AlertDescription id="formMessageErrorText"></AlertDescription>
+                            </Alert>
                         </form>
-                    </section>
-                </article>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     </div>

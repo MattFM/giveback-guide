@@ -1,6 +1,13 @@
 ---
 import type { TextAd } from "../../../data/ads";
 import { ADS, getActiveAds } from "../../../data/ads";
+import Badge from "@/components/bearnie/badge/Badge.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardDescription from "@/components/bearnie/card/CardDescription.astro";
+import CardFooter from "@/components/bearnie/card/CardFooter.astro";
 
 interface Props {
     format?: "inline" | "sidebar";
@@ -30,26 +37,26 @@ const adPoolJson = JSON.stringify(activeAds);
         >
             {/* ===== INLINE FORMAT ===== */}
             {format === "inline" && (
-                <div class="ad-inline">
-                    <div class="ad-inline-content">
-                        <span class="badge" data-variant="outline">
-                            Ad
-                        </span>
-                        <span class="ad-inline-title">{fallbackAd?.title}</span>
-                        <span class="ad-inline-separator">—</span>
-                        <span class="ad-inline-desc">
+                <div class="ad-inline flex items-center justify-between gap-3 px-4 py-3 rounded-lg border bg-card text-card-foreground flex-wrap">
+                    <div class="ad-inline-content flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                        <Badge variant="outline">Ad</Badge>
+                        <span class="ad-inline-title text-sm font-semibold text-foreground whitespace-nowrap">{fallbackAd?.title}</span>
+                        <span class="text-sm text-muted-foreground whitespace-nowrap">—</span>
+                        <span class="ad-inline-desc text-sm text-muted-foreground">
                             {fallbackAd?.description}
                         </span>
                     </div>
-                    <a
-                        class="btn btn-primary ad-inline-btn"
+                    <Button
                         href={fallbackAd?.url}
+                        size="sm"
+                        class="ad-inline-btn flex-shrink-0"
                         target="_blank"
                         rel="noopener sponsored"
                         aria-label={`${fallbackAd?.cta} — ${fallbackAd?.title}`}
                     >
                         <span class="ad-cta">{fallbackAd?.cta}</span>
                         <svg
+                            slot="right-icon"
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
                             height="16"
@@ -64,30 +71,32 @@ const adPoolJson = JSON.stringify(activeAds);
                             <path d="M7 7h10v10" />
                             <path d="M7 17 17 7" />
                         </svg>
-                    </a>
+                    </Button>
                 </div>
             )}
 
             {/* ===== SIDEBAR FORMAT ===== */}
             {format === "sidebar" && (
-                <div class="ad-sidebar">
-                    <span class="badge ad-sidebar-label" data-variant="outline">
+                <Card class="relative">
+                    <Badge variant="outline" class="absolute -top-2.5 left-3 bg-card">
                         Ad
-                    </span>
-                    <div class="ad-sidebar-body">
-                        <h3 class="ad-sidebar-title">{fallbackAd?.title}</h3>
-                        <p class="ad-sidebar-desc">{fallbackAd?.description}</p>
-                    </div>
-                    <div class="ad-sidebar-footer">
-                        <a
-                            class="btn btn-primary ad-sidebar-btn w-full"
+                    </Badge>
+                    <CardHeader class="pb-0">
+                        <CardTitle>{fallbackAd?.title}</CardTitle>
+                        <CardDescription>{fallbackAd?.description}</CardDescription>
+                    </CardHeader>
+                    <CardFooter class="mt-2">
+                        <Button
                             href={fallbackAd?.url}
+                            size="sm"
+                            class="w-full ad-sidebar-btn"
                             target="_blank"
                             rel="noopener sponsored"
                             aria-label={`${fallbackAd?.cta} — ${fallbackAd?.title}`}
                         >
                             <span class="ad-cta">{fallbackAd?.cta}</span>
                             <svg
+                                slot="right-icon"
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="16"
                                 height="16"
@@ -102,9 +111,9 @@ const adPoolJson = JSON.stringify(activeAds);
                                 <path d="M7 7h10v10" />
                                 <path d="M7 17 17 7" />
                             </svg>
-                        </a>
-                    </div>
-                </div>
+                        </Button>
+                    </CardFooter>
+                </Card>
             )}
         </div>
     )
@@ -170,7 +179,7 @@ const adPoolJson = JSON.stringify(activeAds);
 
     function renderSidebar(container: HTMLElement, ad: AdData | null): void {
         const wrapper: HTMLElement | null =
-            container.querySelector(".ad-sidebar");
+            container.querySelector("[data-slot='card']");
         if (!wrapper) return;
 
         if (!ad) {
@@ -180,11 +189,11 @@ const adPoolJson = JSON.stringify(activeAds);
         wrapper.style.display = "";
 
         const titleEl: HTMLElement | null =
-            wrapper.querySelector(".ad-sidebar-title");
+            wrapper.querySelector("[data-slot='card-title']");
         if (titleEl) titleEl.textContent = ad.title;
 
         const descEl: HTMLElement | null =
-            wrapper.querySelector(".ad-sidebar-desc");
+            wrapper.querySelector("[data-slot='card-description']");
         if (descEl) descEl.textContent = ad.description;
 
         const ctaEl: HTMLElement | null = wrapper.querySelector(".ad-cta");
@@ -236,127 +245,11 @@ const adPoolJson = JSON.stringify(activeAds);
 </script>
 
 <style>
-    /* ===== INLINE FORMAT ===== */
-    .ad-inline {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--color-border, #e5e7eb);
-        border-radius: 0.75rem;
-        background-color: var(--color-background, #ffffff);
-        flex-wrap: wrap;
-    }
-
-    .dark .ad-inline {
-        border-color: var(--color-border, #374151);
-        background-color: var(--color-background, #111827);
-    }
-
-    .ad-inline-content {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .ad-inline-title {
-        font-weight: 600;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: var(--color-foreground, #111827);
-        white-space: nowrap;
-    }
-
-    .dark .ad-inline-title {
-        color: var(--color-foreground, #f9fafb);
-    }
-
-    .ad-inline-separator {
-        font-size: 0.875rem;
-        color: var(--color-muted-foreground, #6b7280);
-        white-space: nowrap;
-    }
-
-    .ad-inline-desc {
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: var(--color-muted-foreground, #6b7280);
-    }
-
     .ad-inline-btn {
         flex-shrink: 0;
-        white-space: nowrap;
-    }
-
-    /* ===== SIDEBAR FORMAT ===== */
-    .ad-sidebar {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid var(--color-border, #e5e7eb);
-        border-radius: 1rem;
-        background-color: var(--color-background, #ffffff);
-        padding: 1.25rem;
-        gap: 1rem;
-    }
-
-    .dark .ad-sidebar {
-        border-color: var(--color-border, #374151);
-        background-color: var(--color-background, #111827);
-    }
-
-    .ad-sidebar-label {
-        position: absolute;
-        top: -0.6rem;
-        left: 0.75rem;
-        background-color: var(--color-background, #ffffff);
-        line-height: 1;
-    }
-
-    .dark .ad-sidebar-label {
-        background-color: var(--color-background, #111827);
-    }
-
-    .ad-sidebar-body {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        padding-top: 0.25rem;
-    }
-
-    .ad-sidebar-title {
-        font-weight: 600;
-        font-size: 1rem;
-        line-height: 1.4;
-        color: var(--color-foreground, #111827);
-        margin: 0;
-    }
-
-    .dark .ad-sidebar-title {
-        color: var(--color-foreground, #f9fafb);
-    }
-
-    .ad-sidebar-desc {
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: var(--color-muted-foreground, #6b7280);
-        margin: 0;
-    }
-
-    .ad-sidebar-footer {
-        display: flex;
-        flex-direction: column;
     }
 
     .ad-sidebar-btn {
-        justify-content: space-between;
-        gap: 0.5rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
         min-width: 0;
     }
 

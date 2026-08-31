@@ -1,5 +1,6 @@
 ---
-import BasecoatButton from "../../ui/BasecoatButton.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Input from "@/components/bearnie/input/Input.astro";
 
 export interface Props {
     source: string;
@@ -36,14 +37,15 @@ const emailId = `${id}-email`;
 const messageId = `${id}-message`;
 const btnId = `${id}-btn`;
 
-const buttonDataSize = size === "default" ? undefined : size;
-
-const inputGroupHeight = {
-    xs: "!h-7",
-    sm: "",
-    default: "!h-10",
-    lg: "!h-11",
+const inputSizeClass = {
+    xs: "h-7",
+    sm: "h-8",
+    default: "",
+    lg: "h-10",
 }[size];
+
+const buttonSize = size === "default" ? undefined : size;
+
 ---
 
 <div class={wrapperClass}>
@@ -61,24 +63,23 @@ const inputGroupHeight = {
     }
 
     <form id={formId} class={`w-full ${formClass}`}>
-        <div class={`input-group ${inputGroupHeight}`}>
+        <div class="flex gap-2">
             <label for={emailId} class="sr-only">Email address</label>
-            <input
+            <Input
                 type="email"
                 id={emailId}
                 name="email"
                 placeholder={placeholder}
                 required
-                style="font-size: 16px;"
+                class={`flex-1 bg-white ${inputSizeClass}`}
             />
-            <BasecoatButton
+            <Button
                 type="submit"
                 id={btnId}
-                data-size={buttonDataSize}
-                data-align="end"
+                size={buttonSize}
             >
                 {buttonText}
-            </BasecoatButton>
+            </Button>
         </div>
         {
             showPrivacyText && (

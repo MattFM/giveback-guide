@@ -1,6 +1,6 @@
 ---
 import SplitHero from "./SplitHero.astro";
-import BasecoatButton from "../ui/BasecoatButton.astro";
+import Button from "@/components/bearnie/button/Button.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
 
 const coverImage =
@@ -28,9 +28,9 @@ const coverImageAlt = "Woman standing on a bridge in a forest";
     </p>
 
     <div class="flex flex-wrap gap-4">
-        <BasecoatButton data-size="lg" data-open-search-modal>
+        <Button size="lg" data-open-search-modal>
             <svg
-                data-icon="inline-start"
+                slot="left-icon"
                 class="w-5 h-5"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
@@ -45,11 +45,11 @@ const coverImageAlt = "Woman standing on a bridge in a forest";
                 ></path>
             </svg>
             <span>Search 400+ projects & stays</span>
-        </BasecoatButton>
+        </Button>
 
-        <BasecoatButton href="/about/" data-variant="outline" data-size="lg">
+        <Button href="/about/" variant="outline" size="lg">
             Learn more
-        </BasecoatButton>
+        </Button>
     </div>
 </SplitHero>
 

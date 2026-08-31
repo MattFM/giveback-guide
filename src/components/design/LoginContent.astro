@@ -1,7 +1,15 @@
 ---
 import { SITE_TITLE } from "../../consts";
 import PageHeader from "../layout/PageHeader.astro";
-import BasecoatButton from "../ui/BasecoatButton.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import Input from "@/components/bearnie/input/Input.astro";
+import Alert from "@/components/bearnie/alert/Alert.astro";
+import AlertTitle from "@/components/bearnie/alert/AlertTitle.astro";
+import AlertDescription from "@/components/bearnie/alert/AlertDescription.astro";
 ---
 
 <!-- Page Header -->
@@ -136,13 +144,11 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
         <div class="flex items-center justify-center">
             <div class="w-full max-w-md lg:mr-auto px-4 py-12 lg:py-16">
                 <!-- Login Card -->
-                <article class="card">
-                    <header>
-                        <h2 class="card-title text-xl font-bold">
-                            Create an account or login
-                        </h2>
-                    </header>
-                    <section class="px-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Create an account or login</CardTitle>
+                    </CardHeader>
+                    <CardContent>
                         <p
                             class="text-sm text-gray-500 dark:text-gray-400 mb-6"
                         >
@@ -153,14 +159,13 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
 
                         <!-- Magic URL form -->
                         <form id="magicURLForm" class="space-y-6">
-                            <div class="field">
+                            <div class="space-y-2">
                                 <label for="email">Email address</label>
-                                <input
+                                <Input
                                     type="email"
                                     id="email"
                                     name="email"
                                     required
-                                    class="input"
                                     placeholder="your@email.com"
                                 />
                             </div>
@@ -182,11 +187,11 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                 />
                             </div>
 
-                            <BasecoatButton
+                            <Button
                                 type="submit"
                                 id="submit-button"
-                                fullWidth
-                                data-size="lg"
+                                size="lg"
+                                class="w-full"
                             >
                                 <span id="button-text">Send Magic Link</span>
                                 <span id="button-spinner" class="hidden">
@@ -214,17 +219,18 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                         Sending...
                                     </span>
                                 </span>
-                            </BasecoatButton>
+                            </Button>
 
                             <!-- Success Message -->
-                            <div
+                            <Alert
                                 id="success-message"
+                                variant="success"
+                                class="hidden"
                                 role="status"
                                 aria-live="polite"
-                                class="alert hidden bg-green-50 text-green-900 border-green-200 dark:bg-green-950 dark:border-green-800 dark:text-green-100"
                             >
                                 <svg
-                                    class="text-green-600 dark:text-green-400"
+                                    class="w-5 h-5 text-green-600 dark:text-green-400"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >
@@ -233,25 +239,23 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                <strong>Login link sent!</strong>
-                                <section
-                                    class="!text-green-700 dark:!text-green-300"
-                                >
+                                <AlertTitle>Login link sent!</AlertTitle>
+                                <AlertDescription>
                                     <p>
                                         Check your email and click the link to
                                         continue. The link expires in 5 minutes.
                                     </p>
-                                </section>
-                            </div>
+                                </AlertDescription>
+                            </Alert>
 
                             <!-- Error Message -->
-                            <div
+                            <Alert
                                 id="error-message"
-                                class="alert hidden"
-                                data-variant="destructive"
+                                variant="destructive"
+                                class="hidden"
                             >
                                 <svg
-                                    class="text-red-600 dark:text-red-400"
+                                    class="w-5 h-5 text-red-600 dark:text-red-400"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >
@@ -260,10 +264,10 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                <section>
+                                <AlertDescription>
                                     <p id="error-text"></p>
-                                </section>
-                            </div>
+                                </AlertDescription>
+                            </Alert>
                         </form>
 
                         <!-- How it Works -->
@@ -330,8 +334,8 @@ import BasecoatButton from "../ui/BasecoatButton.astro";
                                 </li>
                             </ul>
                         </div>
-                    </section>
-                </article>
+                    </CardContent>
+                </Card>
 
                 <!-- Legal -->
                 <p

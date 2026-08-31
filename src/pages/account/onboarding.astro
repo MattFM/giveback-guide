@@ -65,19 +65,21 @@ import OnboardingContent from '../../components/design/OnboardingContent.astro';
   const consent = document.getElementById('consent') as HTMLInputElement | null;
   const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
   // skip button removed from UI
-  const formMessage = document.getElementById('formMessage') as HTMLElement | null;
+  const formMessageSuccess = document.getElementById('formMessageSuccess') as HTMLElement | null;
+  const formMessageSuccessText = document.getElementById('formMessageSuccessText') as HTMLElement | null;
+  const formMessageError = document.getElementById('formMessageError') as HTMLElement | null;
+  const formMessageErrorText = document.getElementById('formMessageErrorText') as HTMLElement | null;
   const newsletterConfirmMsg = document.getElementById('newsletterConfirmMsg') as HTMLElement | null;
 
   const showMessage = (msg: string, isError = false) => {
-    if (!formMessage) return;
-    formMessage.textContent = msg;
-    formMessage.classList.remove('hidden');
-    formMessage.classList.toggle('bg-red-50', isError);
-    formMessage.classList.toggle('border-red-200', isError);
-    formMessage.classList.toggle('text-red-700', isError);
-    formMessage.classList.toggle('bg-green-50', !isError);
-    formMessage.classList.toggle('border-green-200', !isError);
-    formMessage.classList.toggle('text-green-700', !isError);
+    if (formMessageSuccess) formMessageSuccess.classList.add('hidden');
+    if (formMessageError) formMessageError.classList.add('hidden');
+    const target = isError ? formMessageError : formMessageSuccess;
+    const targetText = isError ? formMessageErrorText : formMessageSuccessText;
+    if (target && targetText) {
+      targetText.textContent = msg;
+      target.classList.remove('hidden');
+    }
   };
 
   // Subscribe to Email Octopus newsletter via Worker

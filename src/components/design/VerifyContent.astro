@@ -1,4 +1,7 @@
 ---
+import Card from "@/components/bearnie/card/Card.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+
 interface Props {
   status?: 'loading' | 'success' | 'error';
   errorMessage?: string;
@@ -9,50 +12,52 @@ const { status = 'loading', errorMessage = 'The magic link is invalid or has exp
 
 <div class="min-h-screen flex items-center justify-center px-4 py-12">
   <div class="w-full max-w-md">
-    <div id="status" class="card text-center">
-      {status === 'loading' && (
-        <div id="loading-state">
-          <div class="mb-6">
-            <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-violet-50">
-              <svg class="animate-spin w-8 h-8 text-violet-500" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+    <Card id="status">
+      <CardContent class="text-center pt-6">
+        {status === 'loading' && (
+          <div id="loading-state">
+            <div class="mb-6">
+              <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-violet-50">
+                <svg class="animate-spin w-8 h-8 text-violet-500" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
             </div>
+            <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Verifying your link</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Please wait while we sign you in...</p>
           </div>
-          <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Verifying your link</h2>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Please wait while we sign you in...</p>
-        </div>
-      )}
+        )}
 
-      {status === 'success' && (
-        <div class="text-center">
-          <div class="mb-6">
-            <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-green-50">
-              <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
+        {status === 'success' && (
+          <div>
+            <div class="mb-6">
+              <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-green-50">
+                <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              </div>
             </div>
+            <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Verified!</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Redirecting you...</p>
           </div>
-          <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Verified!</h2>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Redirecting you...</p>
-        </div>
-      )}
+        )}
 
-      {status === 'error' && (
-        <div class="text-center">
-          <div class="mb-6">
-            <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-red-50">
-              <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-              </svg>
+        {status === 'error' && (
+          <div>
+            <div class="mb-6">
+              <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-red-50">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
             </div>
+            <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Link Invalid</h2>
+            <p class="text-sm mb-4 text-gray-500 dark:text-gray-400">{errorMessage}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">Redirecting to login...</p>
           </div>
-          <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Link Invalid</h2>
-          <p class="text-sm mb-4 text-gray-500 dark:text-gray-400">{errorMessage}</p>
-          <p class="text-xs text-gray-400 dark:text-gray-500">Redirecting to login...</p>
-        </div>
-      )}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   </div>
 </div>

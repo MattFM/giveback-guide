@@ -1,9 +1,0 @@
----
-const { href, fullWidth, class: className = '', ...rest } = Astro.props;
-const classes = ['btn', 'not-prose', 'cursor-pointer', fullWidth && 'w-full', className].filter(Boolean).join(' ');
-const Tag = href ? 'a' : 'button';
----
-
-<Tag class={classes} href={href} {...rest}>
-  <slot />
-</Tag>

@@ -21,7 +21,6 @@
     "astro-embed": "^0.13.0",
     "astro-pagefind": "^2.0.0",
     "axios": "^1.18.1",
-    "basecoat-css": "^1.0.2",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "fs-extra": "^11.3.6",

@@ -1,13 +1,8 @@
 @import "tailwindcss";
-@import "basecoat-css";
 @import "bearnie.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
-
-.input-group {
-    @apply bg-white dark:bg-gray-900;
-}
 
 @theme {
     --color-primary-50: #eff6ff;
