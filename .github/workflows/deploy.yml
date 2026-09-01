@@ -41,6 +41,17 @@ jobs:
           echo "BLOG_NOTION_DATABASE_ID exists: ${{ secrets.BLOG_NOTION_DATABASE_ID != '' }}"
           echo "STAYS_NOTION_DATABASE_ID exists: ${{ secrets.STAYS_NOTION_DATABASE_ID != '' }}"
 
+      - name: Restore Astro content store
+        id: cache-content
+        uses: actions/cache@v4
+        with:
+          path: |
+            .astro/content.db
+            .astro/data-store.json
+          key: astro-content-db-${{ hashFiles('src/content.config.ts', 'src/lib/notion-loader.ts', 'astro.config.mjs', 'package.json') }}
+          restore-keys: |
+            astro-content-db-
+
       - name: Verify PUBLIC env (fail fast)
         env:
           PUBLIC_POCKETBASE_URL: ${{ vars.PUBLIC_POCKETBASE_URL }}

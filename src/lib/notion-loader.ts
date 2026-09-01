@@ -5,33 +5,127 @@ import notionRehype from "notion-rehype-k";
 import rehypeStringify from "rehype-stringify";
 
 /**
- * Retry wrapper around native Node.js fetch to bypass the node-fetch@2
- * "Premature close" bug and handle transient Notion API failures.
- *
- * The previous loader depended on
- * @notionhq/client v2 which defaults to node-fetch@2. By passing this
- * custom fetch to the Client constructor, we use native fetch (gzip-safe)
- * with exponential-backoff retries instead.
+ * Retry wrapper around native Node.js fetch with exponential backoff.
+ * Handles 429 (rate limited) and 5xx (transient server errors).
  */
 async function fetchWithRetry(
   url: string,
   init?: RequestInit,
-  retries = 3,
-  delayMs = 1000
+  retries = 5,
+  baseDelayMs = 1000
 ): Promise<Response> {
-  try {
-    const response = await fetch(url, init);
-    if (response.status >= 500) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  let lastError: Error | undefined;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, init);
+
+      // Rate limited — respect Retry-After header if available
+      if (response.status === 429) {
+        const retryAfter = response.headers.get("retry-after");
+        let delayMs = baseDelayMs * Math.pow(2, attempt);
+
+        if (retryAfter) {
+          const retryAfterSeconds = parseFloat(retryAfter);
+          if (!isNaN(retryAfterSeconds)) {
+            delayMs = Math.max(1000, retryAfterSeconds * 1000);
+          }
+        }
+
+        lastError = new Error(
+          `HTTP 429: Rate limited (Retry-After: ${retryAfter}).`
+        );
+
+        if (attempt < retries) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          continue;
+        }
+        break;
+      }
+
+      // Server errors — exponential backoff
+      if (response.status >= 500) {
+        lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (attempt < retries) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, baseDelayMs * Math.pow(2, attempt))
+          );
+          continue;
+        }
+        break;
+      }
+
+      return response;
+    } catch (error) {
+      // Network errors — exponential backoff
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt < retries) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, baseDelayMs * Math.pow(2, attempt))
+        );
+      }
     }
-    return response;
-  } catch (error) {
-    if (retries <= 0) {
-      throw error;
-    }
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
-    return fetchWithRetry(url, init, retries - 1, delayMs * 2);
   }
+
+  throw lastError ?? new Error("Unknown error in fetchWithRetry");
+}
+
+/**
+ * Execute a list of async tasks with a maximum concurrency limit.
+ * Rejects immediately if any task fails (like Promise.all).
+ */
+function pLimitAll<T>(
+  tasks: (() => Promise<T>)[],
+  limit: number
+): Promise<T[]> {
+  return new Promise((resolve, reject) => {
+    if (tasks.length === 0) {
+      resolve([]);
+      return;
+    }
+
+    let index = 0;
+    let activeCount = 0;
+    let completedCount = 0;
+    let rejected = false;
+    const results: T[] = new Array(tasks.length);
+
+    function runNext() {
+      if (rejected) return;
+      const current = index++;
+      if (current >= tasks.length) {
+        if (activeCount === 0 && completedCount === tasks.length) {
+          resolve(results);
+        }
+        return;
+      }
+
+      activeCount++;
+      tasks[current]().then(
+        (value) => {
+          if (rejected) return;
+          results[current] = value;
+          activeCount--;
+          completedCount++;
+          if (completedCount === tasks.length) {
+            resolve(results);
+          } else {
+            runNext();
+          }
+        },
+        (err) => {
+          if (!rejected) {
+            rejected = true;
+            reject(err);
+          }
+        }
+      );
+    }
+
+    for (let i = 0; i < Math.min(limit, tasks.length); i++) {
+      runNext();
+    }
+  });
 }
 
 /**
@@ -103,6 +197,8 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
     ? `notion-loader/${collectionName}`
     : "notion-loader";
 
+  const CONCURRENT_RENDERS = 5;
+
   return {
     name,
     async load(ctx) {
@@ -122,7 +218,7 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
 
       let pageCount = 0;
       let renderedCount = 0;
-      const renderPromises: Promise<void>[] = [];
+      const renderTasks: (() => Promise<void>)[] = [];
 
       for await (const page of pages) {
         if (!isFullPage(page)) {
@@ -146,7 +242,7 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
             filePath,
           });
 
-          const renderPromise = (async () => {
+          const task = async () => {
             try {
               const blocks = [];
               for await (const block of listBlocks(client, page.id)) {
@@ -176,9 +272,9 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
                 filePath,
               });
             }
-          })();
+          };
 
-          renderPromises.push(renderPromise);
+          renderTasks.push(task);
 
           log_db.info(
             `${isCached ? "Updated" : "Created"} page ${page.id.slice(0, 6)}`
@@ -188,10 +284,10 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
         }
       }
 
-      // Wait for all render operations to complete
-      if (renderPromises.length > 0) {
-        log_db.info(`Rendering ${renderPromises.length} updated pages`);
-        await Promise.all(renderPromises);
+      // Wait for all render operations to complete, with limited concurrency
+      if (renderTasks.length > 0) {
+        log_db.info(`Rendering ${renderTasks.length} updated pages`);
+        await pLimitAll(renderTasks, CONCURRENT_RENDERS);
         log_db.info(`Rendered ${renderedCount} pages`);
       }
 
