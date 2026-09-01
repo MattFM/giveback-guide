@@ -17,7 +17,7 @@ export const BLOG_TAGS: BlogTagEntry[] = [
     description: "Latest news and updates on the Give Back Guide platform.",
   },
   {
-    name: "Understanding the Problems",
+    name: "The Problem With Travel",
     description: "To fix the tourism industry, we must first understand the problems we are dealing with.",
   }
 ] as const;

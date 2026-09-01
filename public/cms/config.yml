@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+backend:
+  name: github
+  repo: MattFM/giveback-guide
+  branch: main
+
+publish_mode: editorial_workflow
+
+media_libraries:
+  cloudinary:
+    config:
+      cloud_name: dnxl7wsnx
+      api_key: 839393337544111
+
+slug:
+  encoding: unicode
+  clean_accents: false
+  sanitize_replacement: '-'
+  trim: true
+  lowercase: true
+
+collections:
+  - name: blog
+    label: Blog Posts
+    label_singular: Blog Post
+    folder: src/content/blog
+    identifier_field: slug
+    extension: mdx
+    format: yaml-frontmatter
+    preview_path: '/blog/{{fields.slug}}/'
+    sortable_fields:
+      fields: [title, published, lastUpdated, description, slug]
+      default:
+        field: published
+        direction: descending
+    fields:
+      - label: Title
+        name: title
+        widget: string
+        required: true
+      - label: Description
+        name: description
+        widget: string
+        required: true
+      - label: Slug
+        name: slug
+        widget: string
+        required: true
+      - label: Published Date
+        name: published
+        widget: datetime
+        type: date
+        required: true
+      - label: Last Updated
+        name: lastUpdated
+        widget: datetime
+        type: date
+        required: true
+      - label: Tags
+        name: tags
+        widget: select
+        multiple: true
+        required: false
+        options:
+          - Travel Guides
+          - Travel Advice
+          - News & Updates
+          - The Problem With Travel
+      - label: Cover Image
+        name: coverImage
+        widget: image
+        required: false
+      - label: Body
+        name: body
+        widget: richtext
+        required: true
+        modes:
+          - rich_text
+          - raw
+        editor_components:
+          - image
+          - code-block
