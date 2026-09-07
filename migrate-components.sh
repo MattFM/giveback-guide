@@ -192,10 +192,6 @@ if [ -f "src/components/Save/saveToList.client.js" ]; then
     echo -e "${GREEN}    ✓ saveToList.client.js${NC}"
 fi
 
-if [ -f "src/components/Ads/AdBox.astro" ]; then
-    mv src/components/Ads/AdBox.astro src/components/features/ads/AdBox.astro
-    echo -e "${GREEN}    ✓ AdBox${NC}"
-fi
 
 if [ -f "src/components/Popups/SubscribeDrawer.astro" ]; then
     mv src/components/Popups/SubscribeDrawer.astro src/components/features/popups/SubscribeDrawer.astro

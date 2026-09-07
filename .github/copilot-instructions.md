@@ -76,7 +76,7 @@
 - **Automatic image optimization**: Standard markdown images (`![alt](url)`) are automatically converted to `ResponsiveImage` components via remark plugin (`src/utils/remark-responsive-images.mjs`)
 - **Caption syntax**: Use hyphen separator in alt text: `![Alt - Caption](url)` automatically wraps in `<figure>` with `<figcaption>`
 - **Global MDX Components**: Components are available in all MDX files without imports via `src/mdx-components.ts`
-  - Currently available: `ResponsiveImage`, `AdBox`
+  - Currently available: `ResponsiveImage`
   - To add/remove components globally, edit `src/mdx-components.ts`
   - No need to import these in individual blog posts
 - Schema: `title`, `description`, `slug`, `published`, `lastUpdated`, `tags[]`, `coverImage` (optional)

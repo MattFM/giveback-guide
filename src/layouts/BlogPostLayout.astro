@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import MainLayout from "./MainLayout.astro";
-import AdBox from "../components/features/ads/AdBox.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import { getValidTags, getTagSlug } from "../lib/blog-tags";
@@ -160,11 +159,7 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
                 </article>
             </main>
 
-            <!-- Sidebar -->
-            <aside class="w-full px-4 lg:px-0">
-                <!-- Ad Box - positioned to align with cover image -->
-                <div class="lg:pt-[72px] sticky top-6"></div>
-            </aside>
+
         </div>
     </div>
 </MainLayout>

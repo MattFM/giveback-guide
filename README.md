@@ -70,7 +70,6 @@ Static assets served directly:
   - `SLocaleDropdown.astro` - Stay locales
 
 **Specialized Components:**
-- `/Ads/AdBox.astro` - Advertisement display
 - `/Homepage/` - Homepage-specific components:
   - `HomeHero.astro` - Hero section
   - `LatestPosts.astro` - Recent blog posts
