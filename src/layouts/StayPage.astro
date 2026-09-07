@@ -4,10 +4,8 @@ import { getCollection } from "astro:content";
 import MainLayout from "./MainLayout.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import StayCard from "../components/content/StayCard.astro";
-import AdBox from "../components/features/ads/AdBox.astro";
 import ActionBar from "../components/content/ActionBar.astro";
 import ImpactAreaCard from "../components/content/ImpactAreaCard.astro";
-import SupportBox from "../components/sections/SupportBox.astro";
 import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 import StayMetadata from "../components/content/StayMetadata.astro";
 import VerificationBox from "../components/content/VerificationBox.astro";
@@ -265,11 +263,6 @@ if (images.length === 0) {
                         )
                 }
 
-                <!-- Ad Box (in-content placement after Impact Areas) -->
-                <section class="py-6 px-4">
-                    <AdBox />
-                </section>
-
                 <!-- Facilities and Amenities Section -->
                 <section class="pt-6 pb-3 px-4">
                     <div class="bg-white rounded-lg p-6 dark:bg-gray-900">
@@ -353,8 +346,14 @@ if (images.length === 0) {
                                     properties.sCountry && (
                                         <span data-pagefind-meta="countries">
                                             {Array.isArray(properties.sCountry)
-                                                ? properties.sCountry.flatMap(c => getAllSearchTerms(c)).join(", ")
-                                                : getAllSearchTerms(properties.sCountry).join(", ")}
+                                                ? properties.sCountry
+                                                      .flatMap((c) =>
+                                                          getAllSearchTerms(c),
+                                                      )
+                                                      .join(", ")
+                                                : getAllSearchTerms(
+                                                      properties.sCountry,
+                                                  ).join(", ")}
                                         </span>
                                     )
                                 }

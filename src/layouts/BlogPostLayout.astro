@@ -2,7 +2,6 @@
 import type { CollectionEntry } from "astro:content";
 import MainLayout from "./MainLayout.astro";
 import AdBox from "../components/features/ads/AdBox.astro";
-import SupportBox from "../components/sections/SupportBox.astro";
 import ResponsiveImage from "../components/ui/Image/ResponsiveImage.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import { getValidTags, getTagSlug } from "../lib/blog-tags";
@@ -74,9 +73,7 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
                         {
                             validTags.map((tag) => (
                                 <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium border border-solid border-gray-300 bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-300 mt-4 mb-2 mr-2">
-                                    <a
-                                        href={`/blog/${getTagSlug(tag)}/`}
-                                    >
+                                    <a href={`/blog/${getTagSlug(tag)}/`}>
                                         {tag}
                                     </a>
                                 </span>
@@ -161,11 +158,6 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
                 >
                     <slot />
                 </article>
-
-                <!-- Support Box -->
-                <section class="px-4 py-6">
-                    <SupportBox />
-                </section>
             </main>
 
             <!-- Sidebar -->
@@ -176,4 +168,3 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
         </div>
     </div>
 </MainLayout>
-
