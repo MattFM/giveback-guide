@@ -417,15 +417,6 @@ import { SITE_TITLE } from "../consts";
 </MainLayout>
 
 <script>
-  // PostHog type declarations
-  declare global {
-    interface Window {
-      posthog?: {
-        capture: (event: string, properties?: Record<string, any>) => void;
-      };
-    }
-  }
-
   // Known canonical country names for display filtering
   const CANONICAL_COUNTRIES = new Set([
     "New Zealand", "Canada", "Scotland", "Wales", "Australia", 
@@ -554,15 +545,6 @@ import { SITE_TITLE } from "../consts";
         e.preventDefault();
         const query = searchInput?.value?.trim();
         if (query) {
-          // Track search event in PostHog
-          if (typeof window !== 'undefined' && window.posthog) {
-            window.posthog.capture('search_performed', {
-              query: query,
-              active_filters: Array.from(activeFilters),
-              has_filters: !activeFilters.has('all') || activeFilters.size > 1
-            });
-          }
-          
           // Hide virtual keyboard on mobile after search
           if (searchInput) {
             searchInput.blur();
@@ -602,15 +584,6 @@ import { SITE_TITLE } from "../consts";
     if (clearButton) {
       clearButton.addEventListener("click", () => {
         if (searchInput) {
-          // Track search clear event
-          if (typeof window !== 'undefined' && window.posthog) {
-            window.posthog.capture('search_cleared', {
-              previous_query: currentQuery,
-              active_filters: Array.from(activeFilters),
-              had_results: allResults.length > 0
-            });
-          }
-          
           searchInput.value = '';
           searchInput.focus(); // Keep focus on input for better UX
           clearButton.classList.add("hidden");
@@ -641,16 +614,6 @@ import { SITE_TITLE } from "../consts";
       updateURL(currentQuery);
       displayFilteredResults();
       closeFiltersModal();
-      
-      // Track filter application
-      if (typeof window !== 'undefined' && window.posthog) {
-        window.posthog.capture('filters_applied', {
-          content_types: Array.from(activeFilters),
-          impact_areas: Array.from(activeImpactAreas),
-          current_query: currentQuery || null,
-          trigger: 'overlay_click'
-        });
-      }
     }
 
     if (filtersBtn) {
@@ -723,16 +686,6 @@ import { SITE_TITLE } from "../consts";
         updateURL(currentQuery);
         displayFilteredResults();
         closeFiltersModal();
-        
-        // Track filter application
-        if (typeof window !== 'undefined' && window.posthog) {
-          window.posthog.capture('filters_applied', {
-            content_types: Array.from(activeFilters),
-            impact_areas: Array.from(activeImpactAreas),
-            current_query: currentQuery || null,
-            trigger: 'button_click'
-          });
-        }
       });
     }
 
@@ -770,13 +723,6 @@ import { SITE_TITLE } from "../consts";
         updateTotalFilterCount();
         updateURL(currentQuery);
         displayFilteredResults();
-        
-        // Track clear all
-        if (typeof window !== 'undefined' && window.posthog) {
-          window.posthog.capture('all_filters_cleared', {
-            current_query: currentQuery || null
-          });
-        }
       });
     }
 
@@ -787,12 +733,7 @@ import { SITE_TITLE } from "../consts";
 
     // Track URL changes for browser navigation
     window.addEventListener('popstate', () => {
-      if (typeof window !== 'undefined' && window.posthog) {
-        window.posthog.capture('search_navigation', {
-          type: 'browser_navigation',
-          url: window.location.href
-        });
-      }
+      // No-op: navigation handling removed
     });
 
     // Setup category toggles (collapsible sections)
@@ -858,16 +799,6 @@ import { SITE_TITLE } from "../consts";
         }
         
         updateTotalFilterCount();
-        
-        // Track impact filter change
-        if (typeof window !== 'undefined' && window.posthog) {
-          window.posthog.capture('impact_filter_applied', {
-            impact_area: impactArea,
-            action: target.checked ? 'add' : 'remove',
-            active_impact_areas: Array.from(activeImpactAreas),
-            current_query: currentQuery || null
-          });
-        }
         
         // Re-filter and display current results
         if (allResults.length > 0) {
@@ -995,17 +926,6 @@ import { SITE_TITLE } from "../consts";
         }
 
         updateFilterButtons();
-      }
-
-      // Track filter change in PostHog
-      if (typeof window !== 'undefined' && window.posthog) {
-        window.posthog.capture('filter_applied', {
-          filter_clicked: filterType,
-          active_filters: Array.from(activeFilters),
-          previous_filters: Array.from(previousFilters),
-          current_query: currentQuery || null,
-          total_results: allResults.length
-        });
       }
 
       // Update URL with current query and filters
@@ -1147,16 +1067,6 @@ import { SITE_TITLE } from "../consts";
     }
 
     function loadMoreResults() {
-      // Track load more event
-      if (typeof window !== 'undefined' && window.posthog) {
-        window.posthog.capture('search_load_more', {
-          query: currentQuery,
-          active_filters: Array.from(activeFilters),
-          current_displayed: displayedResults,
-          total_available: allResults.length
-        });
-      }
-      
       displayFilteredResults(false); // false means append, not replace
     }
 
@@ -1177,14 +1087,6 @@ import { SITE_TITLE } from "../consts";
         if (search.results.length === 0) {
           allResults = [];
           updateFilterButtons(); // Update button states when no results
-          
-          // Track no results event
-          if (typeof window !== 'undefined' && window.posthog) {
-            window.posthog.capture('search_no_results', {
-              query: query,
-              active_filters: Array.from(activeFilters)
-            });
-          }
           
           showNoResults(query);
           return;
@@ -1223,23 +1125,6 @@ import { SITE_TITLE } from "../consts";
         
         // Update filter button states
         updateFilterButtons();
-        
-        // Track successful search results
-        if (typeof window !== 'undefined' && window.posthog) {
-          const resultsByType = {
-            projects: allResults.filter(r => r.contentType === 'projects').length,
-            posts: allResults.filter(r => r.contentType === 'posts').length,
-            stays: allResults.filter(r => r.contentType === 'stays').length,
-            pages: allResults.filter(r => r.contentType === 'page').length
-          };
-          
-          window.posthog.capture('search_results_displayed', {
-            query: query,
-            total_results: allResults.length,
-            results_by_type: resultsByType,
-            active_filters: Array.from(activeFilters)
-          });
-        }
         
         // Display filtered results
         displayFilteredResults();
