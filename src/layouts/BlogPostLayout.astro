@@ -31,7 +31,7 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
 const hasBeenUpdated = published.toISOString() !== lastUpdated.toISOString();
 ---
 
-<MainLayout title={title} description={description} image={coverImage}>
+<MainLayout title={`${title} - Give Back Guide`} description={description} image={coverImage}>
     <SplitHero
         coverImage={coverImage}
         coverImageAlt={title}
