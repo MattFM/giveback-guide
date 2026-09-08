@@ -1,0 +1,12 @@
+---
+import Button from "../bearnie/button/Button.astro";
+import type { ComponentProps } from "astro/types";
+
+type Props = ComponentProps<typeof Button>;
+---
+
+<Button {...Astro.props} class={`not-prose ${Astro.props.class || ""}`.trim()}>
+  <slot name="left-icon" slot="left-icon" />
+  <slot />
+  <slot name="right-icon" slot="right-icon" />
+</Button>

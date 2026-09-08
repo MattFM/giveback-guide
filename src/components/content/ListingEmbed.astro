@@ -1,0 +1,129 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { createResponsiveImage, RESPONSIVE_PRESETS } from "../../utils/cloudinary";
+import Card from "../bearnie/card/Card.astro";
+import CardHeader from "../bearnie/card/CardHeader.astro";
+import CardTitle from "../bearnie/card/CardTitle.astro";
+import CardDescription from "../bearnie/card/CardDescription.astro";
+import CardContent from "../bearnie/card/CardContent.astro";
+import CardFooter from "../bearnie/card/CardFooter.astro";
+
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+
+// Parse the URL to determine type and slug
+const urlPath = new URL(url, "https://example.com").pathname;
+const segments = urlPath.split("/").filter(Boolean);
+const type = segments[0];
+const slug = segments[1];
+
+interface ListingData {
+  title: string;
+  imageUrl: string;
+  description: string;
+  ctaText: string;
+  href: string;
+}
+
+let listingData: ListingData | null = null;
+
+if (type === "projects" && slug) {
+  const allProjects = await getCollection("projects");
+  const listing = allProjects.find((p: CollectionEntry<"projects">) => p.data.properties.pSlug === slug);
+  if (listing) {
+    const props = listing.data.properties;
+    listingData = {
+      title: props.pTitle,
+      imageUrl: props.pImageURL ?? "/giveback-guide-placeholder.jpg",
+      description: props.pReview ? props.pReview.substring(0, 120) + (props.pReview.length > 120 ? "..." : "") : "",
+      ctaText: "Find out more about this project",
+      href: `/projects/${props.pSlug}/`,
+    };
+  }
+} else if (type === "stays" && slug) {
+  const allStays = await getCollection("stays");
+  const listing = allStays.find((s: CollectionEntry<"stays">) => s.data.properties.sSlug === slug);
+  if (listing) {
+    const props = listing.data.properties;
+    listingData = {
+      title: props.sTitle,
+      imageUrl: props.sImageURL1 ?? "/giveback-guide-placeholder.jpg",
+      description: props.sReview ? props.sReview.substring(0, 120) + (props.sReview.length > 120 ? "..." : "") : "",
+      ctaText: "Find out more about this stay",
+      href: `/stays/${props.sSlug}/`,
+    };
+  }
+}
+
+// Error handling: fail the build if the listing doesn't exist
+if (!listingData && (type === "projects" || type === "stays") && slug) {
+  throw new Error(
+    `Listing embed error: No ${type} found with slug "${slug}". ` +
+    `Please check the URL is correct and the listing is published in Notion.`
+  );
+}
+
+// If URL doesn't match expected patterns, render nothing gracefully
+if (!listingData) {
+  return;
+}
+
+const { title, imageUrl, description, ctaText, href } = listingData;
+
+const responsiveImage = createResponsiveImage(imageUrl, {
+  sizes: RESPONSIVE_PRESETS.card.sizes,
+  sizesAttribute: RESPONSIVE_PRESETS.card.sizesAttribute,
+  fallbackWidth: 600,
+  quality: 85,
+  format: "auto",
+});
+---
+
+<Card class="not-prose my-8 overflow-hidden cursor-pointer hover:border-gray-500 dark:hover:border-gray-400 hover:shadow-md transition-all duration-200">
+  <a href={href} class="grid grid-cols-1 sm:grid-cols-[192px_1fr]" style="text-decoration: none;" aria-label={`${ctaText}: ${title}`}>
+    <div class="relative overflow-hidden">
+      <img
+        src={responsiveImage.src}
+        srcset={responsiveImage.srcset}
+        sizes={responsiveImage.sizes}
+        alt=""
+        width={responsiveImage.width}
+        height={responsiveImage.height}
+        loading="lazy"
+        class="w-full h-48 sm:h-full object-cover"
+      />
+    </div>
+    <div class="flex flex-col p-6">
+      <CardHeader class="p-0 pb-3">
+        <CardTitle class="text-lg text-gray-900 dark:text-white">
+          {title}
+        </CardTitle>
+      </CardHeader>
+      {description && (
+        <CardContent class="p-0 pb-4">
+          <CardDescription class="text-sm line-clamp-2">
+            {description}
+          </CardDescription>
+        </CardContent>
+      )}
+      <CardFooter class="p-0 mt-auto">
+        <span class="inline-flex items-center text-sm font-medium text-gray-900 dark:text-white">
+          {ctaText}
+          <svg
+            class="ml-1 w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+      </CardFooter>
+    </div>
+  </a>
+</Card>

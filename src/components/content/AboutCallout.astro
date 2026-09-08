@@ -1,0 +1,35 @@
+---
+import Card from "../bearnie/card/Card.astro";
+import CardHeader from "../bearnie/card/CardHeader.astro";
+import CardTitle from "../bearnie/card/CardTitle.astro";
+import CardDescription from "../bearnie/card/CardDescription.astro";
+import CardContent from "../bearnie/card/CardContent.astro";
+import Button from "../bearnie/button/Button.astro";
+---
+
+<Card class="not-prose my-8">
+    <CardHeader class="pb-3">
+        <CardTitle
+            ><span aria-hidden="true">👋</span> Hey! Welcome to Give Back Guide</CardTitle
+        >
+    </CardHeader>
+    <CardContent>
+        <CardDescription class="mb-4 text-base">
+            Give Back Guide is a platform dedicated to helping travellers find
+            meaningful ways to give back to the places they visit. Our growing
+            directory is free to access and contains hundreds of regenerative
+            travel projects and responsible stays in over 60 countries.
+        </CardDescription>
+        <div class="flex flex-wrap gap-3">
+            <Button href="/" size="default" class="not-prose"
+                >Explore the directory</Button
+            >
+            <Button
+                href="/about/"
+                variant="outline"
+                size="default"
+                class="not-prose">More about us</Button
+            >
+        </div>
+    </CardContent>
+</Card>

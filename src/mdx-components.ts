@@ -22,19 +22,18 @@
  * - To add a component: Import it here and add to the components object
  * - To remove a component: Remove from the components object
  * - Changes apply to all blog posts immediately
- *
- * Note: SupportBox is intentionally excluded as it's part of the BlogPostLayout
- * template and shouldn't be called within post content.
  */
 
 import ResponsiveImage from './components/ui/Image/ResponsiveImage.astro';
-import ProjectEmbed from './components/content/ProjectEmbed.astro';
-import StayEmbed from './components/content/StayEmbed.astro';
-import Button from './components/ui/Button.astro';
+import MdxButton from './components/content/MdxButton.astro';
+import SupportCTA from './components/sections/SupportCTA.astro';
+import ListingEmbed from './components/content/ListingEmbed.astro';
+import TextAd from './components/features/ads/TextAd.astro';
 
 export const components = {
   ResponsiveImage,
-  ProjectEmbed,
-  StayEmbed,
-  Button,
+  Button: MdxButton,
+  SupportCTA,
+  ListingEmbed,
+  TextAd,
 };

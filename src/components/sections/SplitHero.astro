@@ -1,30 +1,45 @@
 ---
+import Skeleton from "../bearnie/skeleton/Skeleton.astro";
 import { createResponsiveImage, RESPONSIVE_PRESETS } from "../../utils/cloudinary";
 
 interface Props {
-  coverImage: string;
-  coverImageAlt: string;
+  coverImage?: string;
+  coverImageAlt?: string;
   backgroundColor?: string;
   coverImagePosition?: string;
+  pagefindImageMeta?: string;
+  short?: boolean;
 }
 
 const {
   coverImage,
-  coverImageAlt,
+  coverImageAlt = "",
   backgroundColor = "bg-gray-50",
   coverImagePosition = "center",
+  pagefindImageMeta,
+  short = false,
 } = Astro.props;
 
-const responsiveImage = createResponsiveImage(coverImage, {
-  sizes: RESPONSIVE_PRESETS.hero.sizes,
-  sizesAttribute: RESPONSIVE_PRESETS.hero.sizesAttribute,
-  fallbackWidth: 1200,
-  quality: 85,
-  format: "auto",
-});
+const responsiveImage = coverImage
+  ? createResponsiveImage(coverImage, {
+      sizes: RESPONSIVE_PRESETS.hero.sizes,
+      sizesAttribute: RESPONSIVE_PRESETS.hero.sizesAttribute,
+      fallbackWidth: 1200,
+      quality: 85,
+      format: "auto",
+    })
+  : null;
+
+const minHeightClasses = short
+  ? "min-h-[40vh] lg:min-h-[50vh]"
+  : "min-h-[60vh] lg:min-h-[80vh]";
+
+const gridCols = coverImage ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1";
+
+const skeletonId = `skeleton-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<section class="grid grid-cols-1 lg:grid-cols-2 min-h-[60vh] lg:min-h-[80vh]">
+<section class={`grid ${gridCols} ${minHeightClasses}`}>
   <!-- Left: Content -->
   <div
     class={`${backgroundColor} flex flex-col justify-center px-6 py-16 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24`}
@@ -35,18 +50,27 @@ const responsiveImage = createResponsiveImage(coverImage, {
   </div>
 
   <!-- Right: Cover Image -->
-  <div class="relative min-h-[300px] lg:min-h-full overflow-hidden">
-    <img
-      src={responsiveImage.src}
-      srcset={responsiveImage.srcset}
-      sizes={responsiveImage.sizes}
-      alt={coverImageAlt}
-      width={responsiveImage.width}
-      height={responsiveImage.height}
-      loading="eager"
-      fetchpriority="high"
-      class="absolute inset-0 w-full h-full object-cover"
-      style={`object-position: ${coverImagePosition};`}
-    />
-  </div>
+  {
+    responsiveImage && (
+      <div class="relative min-h-[300px] lg:min-h-full overflow-hidden">
+        <div id={skeletonId} class="absolute inset-0 z-10">
+          <Skeleton class="w-full h-full rounded-none" />
+        </div>
+        <img
+          src={responsiveImage.src}
+          srcset={responsiveImage.srcset}
+          sizes={responsiveImage.sizes}
+          alt={coverImageAlt}
+          width={responsiveImage.width}
+          height={responsiveImage.height}
+          loading="eager"
+          fetchpriority="high"
+          class="absolute inset-0 w-full h-full object-cover"
+          style={`object-position: ${coverImagePosition};`}
+          data-pagefind-meta={pagefindImageMeta}
+          onload={`document.getElementById('${skeletonId}').style.display = 'none';`}
+        />
+      </div>
+    )
+  }
 </section>

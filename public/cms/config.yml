@@ -81,3 +81,6 @@ collections:
         editor_components:
           - image
           - code-block
+          - text-ad
+          - support-cta
+          - listing-embed

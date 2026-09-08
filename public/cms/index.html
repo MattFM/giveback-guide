@@ -7,5 +7,41 @@
   </head>
   <body>
     <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+    <script>
+      CMS.registerEditorComponent({
+        id: 'text-ad',
+        label: 'Text Ad',
+        icon: 'campaign',
+        fields: [
+          { name: 'format', label: 'Format', widget: 'select', options: ['inline', 'sidebar'], default: 'inline' },
+        ],
+        pattern: /^<TextAd format="(?<format>.*?)" \/>$/m,
+        fromBlock: ({ groups: { format } = {} }) => ({ format: format || 'inline' }),
+        toBlock: ({ format = 'inline' }) => `<TextAd format="${format}" />`,
+        toPreview: ({ format = 'inline' }) => `<div style="padding: 1em; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #f9fafb;"><strong>Text Ad</strong><br>Format: ${format}</div>`,
+      });
+
+      CMS.registerEditorComponent({
+        id: 'support-cta',
+        label: 'Support CTA',
+        icon: 'favorite',
+        fields: [],
+        pattern: /^<SupportCTA \/>$/m,
+        toBlock: () => '<SupportCTA />',
+        toPreview: () => '<div style="padding: 1em; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #f9fafb;"><strong>Support CTA</strong><br>Donation callout will appear here.</div>',
+      });
+
+      CMS.registerEditorComponent({
+        id: 'listing-embed',
+        label: 'Listing Embed',
+        icon: 'link',
+        fields: [
+          { name: 'url', label: 'Listing URL', widget: 'string', required: true },
+        ],
+        pattern: /^<ListingEmbed url="(?<url>.*?)" \/>$/m,
+        toBlock: ({ url = '' }) => `<ListingEmbed url="${url}" />`,
+        toPreview: ({ url = '' }) => `<div style="padding: 1em; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #f9fafb;"><strong>Listing Embed</strong><br>URL: ${url}</div>`,
+      });
+    </script>
   </body>
 </html>
