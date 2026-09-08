@@ -41,13 +41,14 @@ jobs:
           echo "BLOG_NOTION_DATABASE_ID exists: ${{ secrets.BLOG_NOTION_DATABASE_ID != '' }}"
           echo "STAYS_NOTION_DATABASE_ID exists: ${{ secrets.STAYS_NOTION_DATABASE_ID != '' }}"
 
-      - name: Restore Astro content store
+      - name: Restore Astro content store and incremental build cache
         id: cache-content
         uses: actions/cache@v4
         with:
           path: |
             .astro/content.db
             .astro/data-store.json
+            node_modules/.astro/
           key: astro-content-db-${{ hashFiles('src/content.config.ts', 'src/lib/notion-loader.ts', 'astro.config.mjs', 'package.json') }}
           restore-keys: |
             astro-content-db-

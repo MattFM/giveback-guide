@@ -20,9 +20,14 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         return dateB - dateA;
     });
 
-    return paginate(sortedEntries, {
+    const paths = paginate(sortedEntries, {
         pageSize: 9, // Number of entries per page
     });
+
+    return paths.map((path) => ({
+        ...path,
+        cacheKey: path.props.page.data.map((post: any) => post.digest).join("."),
+    }));
 }
 
 const { page } = Astro.props;

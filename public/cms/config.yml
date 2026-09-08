@@ -4,6 +4,7 @@ backend:
   name: github
   repo: MattFM/giveback-guide
   branch: main
+  skip_ci: true
 
 publish_mode: editorial_workflow
 

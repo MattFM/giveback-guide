@@ -19,6 +19,9 @@ export default defineConfig({
   redirects: {
     '/blog/announcements/': '/blog/news-and-updates/',
   },
+  experimental: {
+    incrementalBuild: true,
+  },
   markdown: {
     processor: unified({
       remarkPlugins: [remarkResponsiveImages],

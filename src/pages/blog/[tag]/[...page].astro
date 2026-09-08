@@ -42,7 +42,10 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
       props: { tag }, // Pass the tag as a prop
     });
 
-    paths.push(...paginatedPaths);
+    paths.push(...paginatedPaths.map((path) => ({
+      ...path,
+      cacheKey: `${path.params.tag}:${path.props.page.data.map((post: any) => post.digest).join(".")}`,
+    })));
   }
 
   return paths;
