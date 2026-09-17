@@ -1,0 +1,133 @@
+---
+import { getCollection } from "astro:content";
+import ContentCard from "../content/ContentCard.astro";
+import Carousel from "@/components/bearnie/carousel/Carousel.astro";
+import CarouselContent from "@/components/bearnie/carousel/CarouselContent.astro";
+import CarouselItem from "@/components/bearnie/carousel/CarouselItem.astro";
+import BlogTagsDropdown from "../ui/Dropdown/BlogTagsDropdown.astro";
+import { getValidTags, getTagSlug } from "../../lib/blog-tags";
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 6 } = Astro.props;
+
+const entries = await getCollection("blog");
+
+const sortedEntries = entries.sort((a, b) => {
+  return b.data.published.getTime() - a.data.published.getTime();
+});
+
+const limitedEntries = sortedEntries.slice(0, limit);
+---
+
+<section class="bg-white dark:bg-gray-900 overflow-hidden py-8 sm:py-16">
+  <!-- Carousel: left edge aligned with header, runs to right edge -->
+  <div class="pl-4 sm:pl-6 lg:pl-8 pr-0 2xl:pl-[calc((100vw-1536px)/2+32px)]">
+    <Carousel
+      slidesPerView={1.5}
+      spacing={16}
+      breakpoints={{
+        "(min-width: 640px)": { slidesPerView: 2.2, spacing: 16 },
+        "(min-width: 1024px)": { slidesPerView: 3.2, spacing: 16 },
+        "(min-width: 1280px)": { slidesPerView: 4.2, spacing: 16 },
+      }}
+    >
+      <!-- Header + Controls in one row -->
+      <div class="max-w-screen-2xl mr-auto pr-4 sm:pr-6 lg:pr-8 2xl:pr-0 mb-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h2
+              class="text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white mb-2"
+            >
+              Latest Blog Posts
+            </h2>
+            <p class="text-gray-500 sm:text-xl dark:text-gray-400">
+              Read the latest travel guides and advice from our blog.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <BlogTagsDropdown />
+            <button
+              type="button"
+              data-carousel-prev
+              class="inline-flex items-center justify-center w-10 h-10 rounded border border-gray-300 bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors cursor-pointer"
+              aria-label="Previous blog posts"
+            >
+              <svg
+                class="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-carousel-next
+              class="inline-flex items-center justify-center w-10 h-10 rounded border border-gray-300 bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors cursor-pointer"
+              aria-label="Next blog posts"
+            >
+              <svg
+                class="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <CarouselContent>
+        {
+          limitedEntries.map((post) => {
+            const validTags = getValidTags(post.data.tags);
+
+            return (
+              <CarouselItem>
+                <ContentCard
+                  href={`/blog/${post.data.slug}/`}
+                  image={post.data.coverImage}
+                  imageAlt={post.data.title}
+                  title={post.data.title}
+                  subtitle={post.data.description}
+                  transitionName={`post-title-${post.data.slug}`}
+                >
+                  <div
+                    slot="meta"
+                    class="flex items-center flex-wrap gap-1.5"
+                  >
+                    {validTags.map((tag) => (
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                        <a href={`/blog/${getTagSlug(tag)}/`}>{tag}</a>
+                      </span>
+                    ))}
+                  </div>
+                </ContentCard>
+              </CarouselItem>
+            );
+          })
+        }
+      </CarouselContent>
+    </Carousel>
+  </div>
+</section>

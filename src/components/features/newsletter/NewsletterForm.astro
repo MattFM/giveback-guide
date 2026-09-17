@@ -22,7 +22,7 @@ const {
     id = "newsletter-form",
     size = "sm",
     showPrivacyText = true,
-    privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline" style="color: #1C2434;">Privacy Policy</a>.',
+    privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline text-inherit">Privacy Policy</a>.',
     placeholder = "Your email",
     buttonText = "Subscribe",
     submittingText = "Subscribing...",
@@ -71,6 +71,7 @@ const buttonSize = size === "default" ? undefined : size;
                 name="email"
                 placeholder={placeholder}
                 required
+                autocomplete="email"
                 class={`flex-1 bg-white ${inputSizeClass}`}
             />
             <Button
@@ -83,13 +84,12 @@ const buttonSize = size === "default" ? undefined : size;
         </div>
         {
             showPrivacyText && (
-                <p class="mt-2 text-xs" style="color: #7E827E;">
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     <Fragment set:html={privacyText} />
                 </p>
             )
         }
-        <p id={messageId} class="mt-2 text-xs hidden" style="color: #1C2434;">
-        </p>
+        <p id={messageId} class="mt-2 text-xs hidden"></p>
     </form>
 </div>
 
@@ -146,20 +146,20 @@ const buttonSize = size === "default" ? undefined : size;
                         messageEl.textContent = data.alreadySubscribed
                             ? "You are already subscribed!"
                             : "Done! Check your email to confirm your subscription.";
-                        messageEl.style.color = "#10B981";
+                        messageEl.className = "mt-2 text-xs text-emerald-500 dark:text-emerald-400";
                         emailInput.value = "";
                     } else {
                         messageEl.textContent =
                             data.error ||
                             "Subscription failed. Please try again.";
-                        messageEl.style.color = "#EF4444";
+                        messageEl.className = "mt-2 text-xs text-red-500 dark:text-red-400";
                     }
                     messageEl.classList.remove("hidden");
                 }
             } catch (error) {
                 if (messageEl) {
                     messageEl.textContent = "Network error. Please try again.";
-                    messageEl.style.color = "#EF4444";
+                    messageEl.className = "mt-2 text-xs text-red-500 dark:text-red-400";
                     messageEl.classList.remove("hidden");
                 }
             }

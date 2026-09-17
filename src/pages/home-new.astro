@@ -1,0 +1,24 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import HomeSplitHero from "../components/sections/HomeSplitHero.astro";
+import InfiniteScroll from "../components/ui/InfiniteScroll.astro";
+import LatestProjectsCarousel from "../components/sections/LatestProjectsCarousel.astro";
+import LatestStaysCarousel from "../components/sections/LatestStaysCarousel.astro";
+import LatestPostsNews from "../components/sections/LatestPostsNews.astro";
+import { SITE_TITLE } from "../consts";
+---
+
+<MainLayout
+    title={`${SITE_TITLE} - Discover amazing ways to give back to the places you visit`}
+    description="Giveback is a growing collection of animal sanctuaries, beach cleans, cultural exchanges, social impact projects, tours, tree planting, wellbeing experiences and more."
+    headerVariant="default"
+    headerTheme="light"
+>
+    <HomeSplitHero />
+    <InfiniteScroll speed="normal" direction="left" />
+<main>
+    <LatestProjectsCarousel limit={10} />
+    <LatestStaysCarousel limit={10} />
+    <LatestPostsNews limit={9} />
+</main>
+</MainLayout>

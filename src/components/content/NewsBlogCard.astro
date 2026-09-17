@@ -1,0 +1,46 @@
+---
+import ResponsiveImage from "../ui/Image/ResponsiveImage.astro";
+import BlogTags from "./BlogTags.astro";
+
+interface Props {
+  href: string;
+  image: string;
+  imageAlt?: string;
+  title: string;
+  tags?: string[];
+  transitionName?: string;
+}
+
+const { href, image, imageAlt = "", title, tags = [], transitionName } = Astro.props;
+---
+
+<div class="block">
+  <div class="relative aspect-video overflow-hidden rounded-lg mb-3">
+    <a href={href} class="block w-full h-full">
+      <ResponsiveImage
+        src={image}
+        alt={imageAlt}
+        class="w-full h-full object-cover rounded-lg"
+        wrapperClass="w-full h-full"
+        preset="card"
+        fallbackWidth={400}
+        transitionName={transitionName}
+      />
+    </a>
+  </div>
+
+  <div class="mb-1">
+    <BlogTags tags={tags} />
+  </div>
+
+  <h3
+    class="text-lg md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-3"
+  >
+    <a
+      href={href}
+      class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+    >
+      {title}
+    </a>
+  </h3>
+</div>

@@ -5,6 +5,7 @@ interface Props {
   src: string;
   alt: string;
   class?: string;
+  wrapperClass?: string;
   preset?: keyof typeof RESPONSIVE_PRESETS;
   sizes?: ResponsiveImageSizes[];
   sizesAttribute?: string[];
@@ -22,6 +23,7 @@ const {
   src,
   alt,
   class: className = '',
+  wrapperClass = '',
   preset,
   sizes,
   sizesAttribute,
@@ -53,7 +55,7 @@ const responsiveImage = createResponsiveImage(src, {
 });
 ---
 
-<div class="relative">
+<div class={`relative ${wrapperClass}`.trim()}>
   {showSkeleton && (
     <div 
       id={`skeleton-${imageId}`}

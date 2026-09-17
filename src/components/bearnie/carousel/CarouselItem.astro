@@ -9,6 +9,6 @@ const { class: className, ...props } = Astro.props;
 const classes = cn('keen-slider__slide', className);
 ---
 
-<div class={classes} data-carousel-item {...props}>
+<div class={classes} data-carousel-item style="min-height: 0;" {...props}>
   <slot />
 </div>

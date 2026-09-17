@@ -1,0 +1,74 @@
+---
+import Card from "@/components/bearnie/card/Card.astro";
+import ResponsiveImage from "../ui/Image/ResponsiveImage.astro";
+import VerificationPill from "./VerificationPill.astro";
+
+interface Props {
+  href: string;
+  image: string;
+  imageAlt?: string;
+  title: string;
+  subtitle?: string;
+  showVerification?: any;
+  transitionName?: string;
+}
+
+const {
+  href,
+  image,
+  imageAlt = "",
+  title,
+  subtitle,
+  showVerification,
+  transitionName,
+} = Astro.props;
+---
+
+<Card
+  class="border-0 bg-transparent shadow-none text-inherit overflow-hidden h-full"
+>
+  <div class="relative aspect-[4/3] overflow-hidden grid mb-4">
+    <a href={href} class="col-start-1 row-start-1 flex w-full h-full">
+      <ResponsiveImage
+        src={image}
+        alt={imageAlt}
+        class="w-full h-full object-cover rounded-lg"
+        wrapperClass="w-full h-full"
+        preset="card"
+        fallbackWidth={600}
+        transitionName={transitionName}
+      />
+    </a>
+
+    {
+      showVerification && (
+        <div class="absolute top-2 left-2 flex items-start gap-2 z-10 pointer-events-none">
+          <VerificationPill status={showVerification} />
+        </div>
+      )
+    }
+  </div>
+
+  <div class="mb-1.5">
+    <slot name="meta" />
+  </div>
+
+  <h2
+    class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white line-clamp-3"
+  >
+    <a
+      href={href}
+      style={transitionName ? `view-transition-name: ${transitionName}` : undefined}
+    >
+      {title}
+    </a>
+  </h2>
+
+  {
+    subtitle && (
+      <p class="mt-2 text-sm font-normal text-gray-400 dark:text-gray-400 line-clamp-2">
+        {subtitle}
+      </p>
+    )
+  }
+</Card>

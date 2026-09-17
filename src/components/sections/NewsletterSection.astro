@@ -1,0 +1,32 @@
+---
+import NewsletterForm from "../features/newsletter/NewsletterForm.astro";
+import Separator from "../bearnie/separator/Separator.astro";
+---
+
+<section
+    class="bg-gray-100 dark:bg-gray-900"
+    aria-labelledby="newsletter-heading"
+>
+    <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2
+                id="newsletter-heading"
+                class="mb-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white"
+            >
+                Get our news, updates and blog posts in your inbox.
+            </h2>
+            <p class="mb-8 text-base text-gray-600 dark:text-gray-400">
+                Subscribe to our newsletter to stay informed of new features,
+                campaigns and the latest additions to our directory.
+            </p>
+            <NewsletterForm
+                source="site-wide"
+                id="site-newsletter"
+                size="lg"
+                placeholder="Your email address"
+                wrapperClass="text-center max-w-lg mx-auto"
+            />
+        </div>
+    </div>
+    <Separator />
+</section>

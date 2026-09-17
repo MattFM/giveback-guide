@@ -1,0 +1,32 @@
+---
+import ResponsiveImage from "../ui/Image/ResponsiveImage.astro";
+
+interface Props {
+  href: string;
+  image: string;
+  imageAlt?: string;
+  title: string;
+  transitionName?: string;
+}
+
+const { href, image, imageAlt = "", title, transitionName } = Astro.props;
+---
+
+<a href={href} class="group flex gap-4 items-start">
+  <div class="relative aspect-video w-32 sm:w-40 flex-shrink-0 overflow-hidden rounded-lg">
+    <ResponsiveImage
+      src={image}
+      alt={imageAlt}
+      class="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+      wrapperClass="w-full h-full"
+      preset="card"
+      fallbackWidth={400}
+      transitionName={transitionName}
+    />
+  </div>
+  <h3
+    class="text-base font-medium tracking-tight text-gray-900 dark:text-white line-clamp-3 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors"
+  >
+    {title}
+  </h3>
+</a>

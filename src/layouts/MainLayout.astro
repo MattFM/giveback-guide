@@ -2,6 +2,7 @@
 import BaseHead from "../components/layout/BaseHead.astro";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
+import NewsletterSection from "../components/sections/NewsletterSection.astro";
 interface Props {
     title?: string; // Accept the title prop
     description?: string; // Accept the description prop
@@ -29,6 +30,7 @@ const {
     <body>
         <Header variant={headerVariant} theme={headerTheme} />
         <slot />
+        <NewsletterSection />
         <Footer />
     </body>
 </html>

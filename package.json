@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "fs-extra": "^11.3.6",
+    "keen-slider": "^6.8.6",
     "pocketbase": "^0.28.0",
     "sharp": "^0.35.2",
     "tailwind-merge": "^3.6.0",

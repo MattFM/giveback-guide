@@ -1,11 +1,16 @@
 ---
 import SplitHero from "./SplitHero.astro";
 import Button from "@/components/bearnie/button/Button.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+import Badge from "@/components/bearnie/badge/Badge.astro";
 
 const coverImage =
-    "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1760956856/two-travellers-stairs_jv3ixf.jpg";
-const coverImageAlt = "Woman standing on a bridge in a forest";
+    "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1789488274/taj-mahal-man_tngsmk.jpg";
+const coverImageAlt = "A man wearing a backpack looks across a river towards the Taj Mahal in India";
+
+const badge = {
+    text: "New: Indigenous and Endonym names",
+    url: "/blog/introducing-indigenous-endonym-names/",
+};
 ---
 
 <SplitHero
@@ -13,8 +18,32 @@ const coverImageAlt = "Woman standing on a bridge in a forest";
     coverImageAlt={coverImageAlt}
     backgroundColor="bg-gray-50"
 >
+    <Badge
+        href={badge.url}
+        variant="outline"
+        class="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium border-gray-500 text-gray-800 hover:bg-gray-100 hover:text-gray-900 mb-6 transition-colors duration-200"
+    >
+        <span>{badge.text}</span>
+        <svg
+            class="w-3.5 h-3.5 shrink-0"
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M5 12H19M19 12L12 5M19 12L12 19"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+            </path>
+        </svg>
+    </Badge>
+
     <h1
-        class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight mb-6"
+        class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-6"
     >
         Discover amazing ways to <span class="text-gbg-indigo-600"
             >give back</span
@@ -22,12 +51,15 @@ const coverImageAlt = "Woman standing on a bridge in a forest";
     </h1>
 
     <p
-        class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-10 max-w-prose"
+        class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8 max-w-prose"
     >
-        {SITE_DESCRIPTION}
+        Give Back Guide is a
+        growing collection of animal sanctuaries, beach cleans, cultural
+        exchanges, social impact projects, tours, tree planting, wellbeing
+        experiences and more.
     </p>
 
-    <div class="flex flex-wrap gap-4">
+    <div class="flex flex-wrap gap-4 mb-10">
         <Button size="lg" data-open-search-modal>
             <svg
                 slot="left-icon"
@@ -44,12 +76,39 @@ const coverImageAlt = "Woman standing on a bridge in a forest";
                     d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
                 ></path>
             </svg>
-            <span>Search 400+ projects & stays</span>
+            <span>Browse the directory</span>
         </Button>
 
         <Button href="/about/" variant="outline" size="lg">
             Learn more
         </Button>
+    </div>
+
+    <div class="flex flex-wrap gap-6 sm:gap-10">
+        <div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-gbg-indigo-600">
+                400+
+            </div>
+            <div class="text-sm text-gray-500 font-medium mt-0.5">
+                Projects, stays & tours
+            </div>
+        </div>
+        <div class="hidden sm:block w-px h-12 bg-gray-400"></div>
+        <div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-gbg-indigo-600">
+                60+
+            </div>
+            <div class="text-sm text-gray-500 font-medium mt-0.5">Countries</div>
+        </div>
+        <div class="hidden sm:block w-px h-12 bg-gray-400"></div>
+        <div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-gbg-indigo-600">
+                10+
+            </div>
+            <div class="text-sm text-gray-500 font-medium mt-0.5">
+                Impact Areas
+            </div>
+        </div>
     </div>
 </SplitHero>
 

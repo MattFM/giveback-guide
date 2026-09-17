@@ -1,0 +1,195 @@
+---
+import { getCollection } from "astro:content";
+import ContentCard from "../content/ContentCard.astro";
+import Carousel from "@/components/bearnie/carousel/Carousel.astro";
+import CarouselContent from "@/components/bearnie/carousel/CarouselContent.astro";
+import CarouselItem from "@/components/bearnie/carousel/CarouselItem.astro";
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 6 } = Astro.props;
+
+const entries = await getCollection("projects");
+
+const sortedEntries = entries
+  .map((entry) => ({
+    ...entry,
+    data: {
+      ...entry.data,
+      properties: {
+        ...entry.data.properties,
+        pImageURL: entry.data.properties.pImageURL || "",
+        pVerify: entry.data.properties.pVerify || "",
+      },
+    },
+  }))
+  .sort((a, b) => {
+    const dateA = a.data.properties.pPublished || new Date(0);
+    const dateB = b.data.properties.pPublished || new Date(0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+const limitedEntries = sortedEntries.slice(0, limit);
+
+function formatLocales(locales: string[]) {
+  if (!locales || locales.length === 0) return "";
+  if (locales.length === 1) return locales[0];
+  if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
+  if (locales.length === 3)
+    return `${locales[0]}, ${locales[1]} & ${locales[2]}`;
+  const remaining = locales.length - 2;
+  return `${locales[0]}, ${locales[1]} & ${remaining} more`;
+}
+---
+
+<section class="overflow-hidden py-8 sm:py-16">
+  <!-- Carousel: left edge aligned with header, runs to right edge -->
+  <div class="pl-4 sm:pl-6 lg:pl-8 pr-0 2xl:pl-[calc((100vw-1536px)/2+32px)]">
+    <Carousel
+      slidesPerView={1.5}
+      spacing={16}
+      breakpoints={{
+        "(min-width: 640px)": { slidesPerView: 2.2, spacing: 16 },
+        "(min-width: 1024px)": { slidesPerView: 3.2, spacing: 16 },
+        "(min-width: 1280px)": { slidesPerView: 4.2, spacing: 16 },
+      }}
+    >
+      <!-- Header + Controls in one row -->
+      <div class="max-w-screen-2xl mr-auto pr-4 sm:pr-6 lg:pr-8 2xl:pr-0 mb-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h2
+              class="text-3xl md:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white mb-2"
+            >
+              Explore Projects
+            </h2>
+            <p class="text-gray-500 sm:text-xl dark:text-gray-400">
+              Browse the latest additions or see all projects.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <a
+              href="/projects"
+              class="inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 text-gray-900 text-sm rounded-lg hover:bg-gray-100 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700 cursor-pointer"
+            >
+              View All
+              <svg
+                class="w-5 h-5 ml-2.5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 12H5m14 0-4 4m4-4-4-4"
+                />
+              </svg>
+            </a>
+            <button
+              type="button"
+              data-carousel-prev
+              class="inline-flex items-center justify-center w-10 h-10 rounded border border-gray-300 bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors cursor-pointer"
+              aria-label="Previous projects"
+            >
+              <svg
+                class="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-carousel-next
+              class="inline-flex items-center justify-center w-10 h-10 rounded border border-gray-300 bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors cursor-pointer"
+              aria-label="Next projects"
+            >
+              <svg
+                class="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <CarouselContent>
+        {
+          limitedEntries.map((project) => {
+            const props = project.data.properties;
+            const countries = Array.isArray(props.pCountry)
+              ? props.pCountry
+              : [props.pCountry];
+            const locales = Array.isArray(props.pLocale)
+              ? props.pLocale
+              : [props.pLocale];
+            const validCountries = countries.filter(
+              (c: string) => c && c !== "United Kingdom" && c !== "UK"
+            );
+
+            return (
+              <CarouselItem>
+                <ContentCard
+                  href={`/projects/${props.pSlug}/`}
+                  image={props.pImageURL}
+                  imageAlt=""
+                  title={props.pTitle}
+                  subtitle={props.pName}
+                  showVerification={props.pVerify}
+
+                  transitionName={`project-title-${props.pSlug}`}
+                >
+                  <div
+                    slot="meta"
+                    class="flex items-center flex-wrap gap-1.5"
+                  >
+                    {validCountries.map((country: string) => (
+                      <div class="inline-flex items-center gap-1.5">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                          {country}
+                        </span>
+                        {locales.length > 0 && locales[0] && (
+                          <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                            |&nbsp; {formatLocales(locales)}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ContentCard>
+              </CarouselItem>
+            );
+          })
+        }
+      </CarouselContent>
+    </Carousel>
+  </div>
+</section>
