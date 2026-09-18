@@ -7,7 +7,7 @@ import StayCountryDropdown from "../ui/Dropdown/StayCountryDropdown.astro";
 
 // Props: limit specifies the number of stays to display
 interface Props {
-  limit: number;
+    limit: number;
 }
 
 const { limit } = Astro.props;
@@ -17,82 +17,78 @@ const entries = await getCollection("stays");
 
 // Sort stays by sPublished date (descending order)
 const sortedEntries = entries
-  .map((entry) => ({
-    ...entry,
-    data: {
-      ...entry.data,
-      properties: {
-        ...entry.data.properties,
-        sImageURL1: entry.data.properties.sImageURL1 || "", // Ensure sImageURL1 is a string
-        sVerify: entry.data.properties.sVerify || "", // Ensure sVerify is a string
-      },
-    },
-  }))
-  .sort((a, b) => {
-    const dateA = a.data.properties.sPublished || new Date(0);
-    const dateB = b.data.properties.sPublished || new Date(0);
-    return dateB.getTime() - dateA.getTime(); // Most recent first
-  });
+    .map((entry) => ({
+        ...entry,
+        data: {
+            ...entry.data,
+            properties: {
+                ...entry.data.properties,
+                sImageURL1: entry.data.properties.sImageURL1 || "", // Ensure sImageURL1 is a string
+                sVerify: entry.data.properties.sVerify || "", // Ensure sVerify is a string
+            },
+        },
+    }))
+    .sort((a, b) => {
+        const dateA = a.data.properties.sPublished || new Date(0);
+        const dateB = b.data.properties.sPublished || new Date(0);
+        return dateB.getTime() - dateA.getTime(); // Most recent first
+    });
 
 // Limit the number of stays based on the limit prop
 const limitedEntries = sortedEntries.slice(0, limit);
 ---
 
 <section class="bg-white dark:bg-gray-900">
-  <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-    <div class="mb-8">
-      <h2
-        class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-      >
-        Explore Stays
-      </h2>
-      <div
-        class="flex flex-row flex-wrap"
-      >
-      <div class="w-full md:w-auto md:grow">
-        <p class="text-gray-500 sm:text-xl dark:text-gray-400 mb-4">Browse the latest additions, choose a country or see all stays.</p>
+    <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <div class="mb-8">
+            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+                Latest Stays
+            </h2>
+            <div class="flex flex-row flex-wrap">
+                <div class="w-full md:w-auto md:grow">
+                    <p class="text-gray-500 sm:text-xl dark:text-gray-400 mb-4">
+                        Browse the latest additions, choose a country or see all
+                        stays.
+                    </p>
+                </div>
+                <div class="flex w-full md:w-auto flex-row nowrap gap-4">
+                    <div class="grow md:grow-0">
+                        <StayCountryDropdown />
+                    </div>
+                    <div class="grow md:grow-0">
+                        <a
+                            href="/stays"
+                            class="inline-flex items-center w-full justify-center px-4 py-2.5 border border-gray-300 text-gray-900 text-sm rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                        >
+                            All Stays
+                            <svg
+                                class="w-5 h-5 ml-2.5"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 12H5m14 0-4 4m4-4-4-4"
+                                ></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex w-full md:w-auto flex-row nowrap gap-4">
-          <div class="grow md:grow-0">
-            <StayCountryDropdown />
-          </div>
-        <div class="grow md:grow-0">
-          <a
-            href="/stays"
-            class="inline-flex items-center w-full justify-center px-4 py-2.5 border border-gray-300 text-gray-900 text-sm rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-          >
-            All Stays
-            <svg
-              class="w-5 h-5 ml-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 12H5m14 0-4 4m4-4-4-4"></path>
-            </svg>
-          </a>
+        <div class="flex flex-row overflow-x-auto hide-scrollbar space-x-4 md:space-x-0 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12">
+            {limitedEntries.map((stay) => (
+                <div class="w-[70%] sm:w-[50%] md:w-auto flex-shrink-0 md:flex-shrink">
+                    <StayCard stay={stay} />
+                </div>
+            ))}
         </div>
-        </div>
-      </div>
     </div>
-    <div
-      class="flex flex-row overflow-x-auto hide-scrollbar space-x-4 md:space-x-0 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12"
-    >
-      {
-        limitedEntries.map((stay) => (
-          <div class="w-[70%] sm:w-[50%] md:w-auto flex-shrink-0 md:flex-shrink">
-            <StayCard stay={stay} />
-          </div>
-        ))
-      }
-    </div>
-  </div>
 </section>
