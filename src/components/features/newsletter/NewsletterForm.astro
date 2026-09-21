@@ -8,6 +8,7 @@ export interface Props {
     size?: "xs" | "sm" | "default" | "lg";
     showPrivacyText?: boolean;
     privacyText?: string;
+    privacyTextClass?: string;
     placeholder?: string;
     buttonText?: string;
     submittingText?: string;
@@ -23,6 +24,7 @@ const {
     size = "sm",
     showPrivacyText = true,
     privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline text-inherit">Privacy Policy</a>.',
+    privacyTextClass = "mt-2 text-xs text-gray-500 dark:text-gray-400",
     placeholder = "Your email",
     buttonText = "Subscribe",
     submittingText = "Subscribing...",
@@ -84,7 +86,7 @@ const buttonSize = size === "default" ? undefined : size;
         </div>
         {
             showPrivacyText && (
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p class={privacyTextClass}>
                     <Fragment set:html={privacyText} />
                 </p>
             )
