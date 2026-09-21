@@ -41,14 +41,12 @@ const animationDirection =
             class="infinite-scroll-content"
             data-direction={animationDirection}
         >
-            {
-                items.map((item, index) => (
-                    <>
-                        <span class="scroll-item">{item}</span>
-                        <span class="separator">|</span>
-                    </>
-                ))
-            }
+            {items.map((item, index) => (
+                <>
+                    <span class="scroll-item">{item}</span>
+                    <span class="separator">|</span>
+                </>
+            ))}
         </div>
         <!-- Duplicate for seamless loop -->
         <div
@@ -56,14 +54,12 @@ const animationDirection =
             data-direction={animationDirection}
             aria-hidden="true"
         >
-            {
-                items.map((item, index) => (
-                    <>
-                        <span class="scroll-item">{item}</span>
-                        <span class="separator">|</span>
-                    </>
-                ))
-            }
+            {items.map((item, index) => (
+                <>
+                    <span class="scroll-item">{item}</span>
+                    <span class="separator">|</span>
+                </>
+            ))}
         </div>
     </div>
 </div>
@@ -72,15 +68,11 @@ const animationDirection =
     .infinite-scroll-wrapper {
         width: 100%;
         overflow: hidden;
-        background: #141d2d;
+        background: #412bab;
     }
 
     :global(.dark) .infinite-scroll-wrapper {
-        background: linear-gradient(
-            90deg,
-            #111827 0%,
-            #1f2937 50%,
-            #111827 100%
+        background: #412bab;
         );
         border-top: 1px solid #374151;
         border-bottom: 1px solid #374151;

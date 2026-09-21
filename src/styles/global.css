@@ -68,6 +68,19 @@
     --color-gbg-lime-900: #111600;
     --color-gbg-lime-950: #0c0f00;
 
+    /* Brand Color Pairs */
+    --color-brand-primary-light: #C5BAF9;
+    --color-brand-primary-dark: #412BAB;
+
+    --color-brand-secondary-light: #78F1CF;
+    --color-brand-secondary-dark: #0E523F;
+
+    --color-brand-accent-light: #8DE1E9;
+    --color-brand-accent-dark: #0B545B;
+
+    --color-brand-highlight-light: #DBFF63;
+    --color-brand-highlight-dark: #384411;
+
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", ui-sans-serif, system-ui, "Ubuntu", "Cantarell", "Oxygen", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", ui-sans-serif, system-ui, "Ubuntu", "Cantarell", "Oxygen", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
