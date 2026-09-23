@@ -1,0 +1,84 @@
+---
+import Sheet from '../bearnie/sheet/Sheet.astro';
+import SheetTrigger from '../bearnie/sheet/SheetTrigger.astro';
+import SheetOverlay from '../bearnie/sheet/SheetOverlay.astro';
+import SheetContent from '../bearnie/sheet/SheetContent.astro';
+import Button from '../bearnie/button/Button.astro';
+
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'light' } = Astro.props;
+
+// Get current path for active link detection
+const currentPath = Astro.url.pathname;
+
+// Helper function to check if a link is active
+const isActive = (path: string) => {
+  if (path === '/') return currentPath === '/';
+  return currentPath.startsWith(path);
+};
+
+// Link styling based on theme and active state
+const getLinkClasses = (path: string) => {
+  const active = isActive(path);
+  const base = 'block px-4 py-3 text-base font-medium rounded-lg transition-colors';
+  
+  if (theme === 'dark') {
+    return `${base} ${active ? 'bg-white/10 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`;
+  }
+  
+  return `${base} ${active ? 'bg-gray-100 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}`;
+};
+---
+
+<Sheet>
+  <SheetTrigger>
+    <Button
+      variant="default"
+      size="lg"
+      class="bg-white text-black border-0 cursor-pointer hover:bg-white/90"
+      aria-label="Open menu"
+    >
+      <svg slot="left-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+      </svg>
+    </Button>
+  </SheetTrigger>
+  
+  <SheetOverlay />
+  
+  <SheetContent side="right" showCloseButton={false} class="w-80 bg-white dark:bg-gray-900">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Menu</h2>
+      <button
+        type="button"
+        data-sheet-close
+        class="cursor-pointer text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 inline-flex items-center transition-colors"
+        aria-label="Close menu"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <nav class="flex-1 overflow-y-auto">
+      <ul class="space-y-1">
+        <li>
+          <a href="/projects" class={getLinkClasses('/projects')}>Projects</a>
+        </li>
+        <li>
+          <a href="/stays" class={getLinkClasses('/stays')}>Stays</a>
+        </li>
+        <li>
+          <a href="/blog" class={getLinkClasses('/blog')}>Blog</a>
+        </li>
+        <li>
+          <a href="/submit" class={getLinkClasses('/submit')}>Submit</a>
+        </li>
+      </ul>
+    </nav>
+  </SheetContent>
+</Sheet>

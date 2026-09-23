@@ -4,24 +4,24 @@ import Button from "@/components/bearnie/button/Button.astro";
 import Badge from "@/components/bearnie/badge/Badge.astro";
 
 const coverImage =
-    "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1789488274/taj-mahal-man_tngsmk.jpg";
-const coverImageAlt = "A man wearing a backpack looks across a river towards the Taj Mahal in India";
+    "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1790166552/group-selfie_cmksrc.jpg";
+const coverImageAlt = "A group of young people of differing ethinic backgrounds smile at the camera.";
 
 const badge = {
-    text: "New: Indigenous and Endonym names",
-    url: "/blog/introducing-indigenous-endonym-names/",
+    text: "New: Tourism's Hidden Climate Impact",
+    url: "/blog/hidden-climate-impact-of-travel/",
 };
 ---
 
 <SplitHero
     coverImage={coverImage}
     coverImageAlt={coverImageAlt}
-    backgroundColor="bg-gray-50"
+    backgroundColor="bg-indigo-100"
 >
     <Badge
         href={badge.url}
         variant="outline"
-        class="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium border-gray-500 text-gray-800 hover:bg-gray-100 hover:text-gray-900 mb-6 transition-colors duration-200"
+        class="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium bg-white border-gray-500 text-gray-800 hover:bg-gray-100 hover:text-gray-900 mb-6 transition-colors duration-200"
     >
         <span>{badge.text}</span>
         <svg
@@ -45,7 +45,7 @@ const badge = {
     <h1
         class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-6"
     >
-        Discover amazing ways to <span class="text-gbg-indigo-600"
+        Discover amazing ways to <span class="text-brand-primary-dark"
             >give back</span
         > to the places you visit
     </h1>
@@ -71,7 +71,7 @@ const badge = {
 
     <div class="flex flex-wrap gap-6 sm:gap-10">
         <div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-gbg-indigo-600">
+            <div class="text-2xl sm:text-3xl font-extrabold text-brand-primary-dark">
                 400+
             </div>
             <div class="text-sm text-gray-500 font-medium mt-0.5">
@@ -80,14 +80,14 @@ const badge = {
         </div>
         <div class="hidden sm:block w-px h-12 bg-gray-400"></div>
         <div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-gbg-indigo-600">
+            <div class="text-2xl sm:text-3xl font-extrabold text-brand-primary-dark">
                 60+
             </div>
             <div class="text-sm text-gray-500 font-medium mt-0.5">Countries</div>
         </div>
         <div class="hidden sm:block w-px h-12 bg-gray-400"></div>
         <div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-gbg-indigo-600">
+            <div class="text-2xl sm:text-3xl font-extrabold text-brand-primary-dark">
                 10+
             </div>
             <div class="text-sm text-gray-500 font-medium mt-0.5">
