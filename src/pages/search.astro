@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import MainLayout from "../layouts/MainLayout.astro";
 import { SITE_TITLE } from "../consts";
 import Sheet from "../components/bearnie/sheet/Sheet.astro";
@@ -14,6 +15,7 @@ import Checkbox from "../components/bearnie/checkbox/Checkbox.astro";
 import Field from "../components/bearnie/field/Field.astro";
 import FieldLabel from "../components/bearnie/field/FieldLabel.astro";
 import Input from "../components/bearnie/input/Input.astro";
+import Switch from "../components/bearnie/switch/Switch.astro";
 import HugeIcon from "../components/bearnie/icon/HugeIcon.astro";
 import { Search01Icon, FilterHorizontalIcon } from "../components/bearnie/icon/icons";
 import Breadcrumb from "../components/bearnie/breadcrumb/Breadcrumb.astro";
@@ -22,6 +24,33 @@ import BreadcrumbItem from "../components/bearnie/breadcrumb/BreadcrumbItem.astr
 import BreadcrumbLink from "../components/bearnie/breadcrumb/BreadcrumbLink.astro";
 import BreadcrumbPage from "../components/bearnie/breadcrumb/BreadcrumbPage.astro";
 import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSeparator.astro";
+
+const projects = await getCollection("projects");
+const stays = await getCollection("stays");
+
+const allPTypes = [...new Set(
+  projects.flatMap((p) =>
+    Array.isArray(p.data.properties.pTypesNames)
+      ? p.data.properties.pTypesNames
+      : [p.data.properties.pTypesNames]
+  ).filter(Boolean)
+)].sort();
+
+const allSTypes = [...new Set(
+  stays.flatMap((s) =>
+    Array.isArray(s.data.properties.sType)
+      ? s.data.properties.sType
+      : [s.data.properties.sType]
+  ).filter(Boolean)
+)].sort();
+
+const allSFacilities = [...new Set(
+  stays.flatMap((s) =>
+    Array.isArray(s.data.properties.sFacilities)
+      ? s.data.properties.sFacilities
+      : [s.data.properties.sFacilities]
+  ).filter(Boolean)
+)].sort();
 ---
 
 <MainLayout title={`Search ${SITE_TITLE}`}>
@@ -75,7 +104,7 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
                   id="search-submit-btn"
                   type="submit"
                   variant="default"
-                  size="default"
+                  size="lg"
                   class="hidden md:inline-flex"
                 >
                   Search
@@ -87,7 +116,7 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
               <Button
                 id="filters-btn"
                 variant="outline"
-                size="default"
+                size="lg"
                 class="w-full md:w-auto"
               >
                 <HugeIcon icon={FilterHorizontalIcon} slot="left-icon" class="h-4 w-4" />
@@ -149,6 +178,15 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
                       >
                         Blog Posts <span id="modal-count-posts" class="ml-1 opacity-75"></span>
                       </Button>
+                    </div>
+                  </div>
+
+                  <!-- Verified -->
+                  <div class="mb-6">
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3">Verified</h4>
+                    <div class="flex items-center gap-3">
+                      <Switch id="verified-filter" />
+                      <label for="verified-filter" class="text-sm text-gray-700 dark:text-gray-300">Show verified listings only</label>
                     </div>
                   </div>
 
@@ -283,6 +321,55 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
                       </div>
                     </div>
                   </div>
+
+                  <!-- Type-specific filter info message -->
+                  <div id="type-filter-info" class="hidden mb-6">
+                    <div class="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                      <svg class="w-5 h-5 mt-0.5 text-gray-500 dark:text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <p class="text-sm text-gray-600 dark:text-gray-300">Select <strong>Projects</strong> or <strong>Stays</strong> above to see type-specific filters (Project Type / Stay Type / Facilities).</p>
+                    </div>
+                  </div>
+
+                  <!-- Project Type -->
+                  <div id="project-type-section" class="mb-6 hidden">
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3">Project Type</h4>
+                    <div class="space-y-2 pl-1">
+                      {allPTypes.map((type) => (
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                          <Checkbox class="ptype-checkbox h-4 w-4" data-ptype={type} />
+                          <span class="text-sm text-gray-700 dark:text-gray-300">{type}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <!-- Stay Type -->
+                  <div id="stay-type-section" class="mb-6 hidden">
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3">Stay Type</h4>
+                    <div class="space-y-2 pl-1">
+                      {allSTypes.map((type) => (
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                          <Checkbox class="stype-checkbox h-4 w-4" data-stype={type} />
+                          <span class="text-sm text-gray-700 dark:text-gray-300">{type}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <!-- Facilities -->
+                  <div id="facilities-section" class="mb-6 hidden">
+                    <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3">Facilities</h4>
+                    <div class="space-y-2 pl-1">
+                      {allSFacilities.map((facility) => (
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                          <Checkbox class="facility-checkbox h-4 w-4" data-facility={facility} />
+                          <span class="text-sm text-gray-700 dark:text-gray-300">{facility}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <SheetFooter>
@@ -367,11 +454,21 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
     // Add other countries as needed - this filters out aliases from display
   ]);
 
+  const CONTENT_TYPE_FILTERS: Record<string, string> = {
+    projects: 'project',
+    stays: 'stay',
+    posts: 'post',
+  };
+
   let pagefind: any = null;
   let currentQuery = '';
   let allResults: any[] = [];
   let activeFilters = new Set(['all']);
   let activeImpactAreas = new Set<string>();
+  let activeVerified = false;
+  let activePTypes = new Set<string>();
+  let activeSTypes = new Set<string>();
+  let activeSFacilities = new Set<string>();
   let displayedResults = 0;
   const resultsPerPage = 12;
   let isInitialized = false;
@@ -384,6 +481,10 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
       allResults = [];
       activeFilters = new Set(['all']);
       activeImpactAreas = new Set<string>();
+      activeVerified = false;
+      activePTypes = new Set<string>();
+      activeSTypes = new Set<string>();
+      activeSFacilities = new Set<string>();
       displayedResults = 0;
       // Refresh filter count so the badge doesn't carry stale text from before navigation
       updateTotalFilterCount();
@@ -437,7 +538,11 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
     const initialQuery = urlParams.get('q');
     const initialFilters = urlParams.get('filters');
     const initialImpacts = urlParams.get('impacts');
-    
+    const initialVerified = urlParams.get('verified') === 'true';
+    const initialPTypes = urlParams.get('pType');
+    const initialSTypes = urlParams.get('sType');
+    const initialSFacilities = urlParams.get('sFacilities');
+
     // Initialize filters from URL if present
     if (initialFilters) {
       const filterArray = initialFilters.split(',').filter(f => f.length > 0);
@@ -449,7 +554,7 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
         updateTotalFilterCount();
       }
     }
-    
+
     // Initialize impact areas from URL if present
     if (initialImpacts) {
       const impactArray = initialImpacts.split(',').filter(i => i.length > 0);
@@ -465,6 +570,64 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
         updateTotalFilterCount();
       }
     }
+
+    // Initialize verified switch from URL if present
+    if (initialVerified) {
+      activeVerified = true;
+      const verifiedSwitch = document.getElementById('verified-filter');
+      if (verifiedSwitch) {
+        verifiedSwitch.setAttribute('aria-checked', 'true');
+        verifiedSwitch.setAttribute('data-state', 'checked');
+        const thumb = verifiedSwitch.querySelector('span');
+        if (thumb) thumb.setAttribute('data-state', 'checked');
+      }
+      updateTotalFilterCount();
+    }
+
+    // Initialize pType checkboxes from URL if present
+    if (initialPTypes) {
+      const pTypeArray = initialPTypes.split(',').filter(t => t.length > 0);
+      if (pTypeArray.length > 0) {
+        pTypeArray.forEach(t => activePTypes.add(t));
+        document.querySelectorAll('.ptype-checkbox').forEach((cb) => {
+          const input = cb as HTMLInputElement;
+          const pType = input.getAttribute('data-ptype');
+          if (pType && activePTypes.has(pType)) input.checked = true;
+        });
+        updateTotalFilterCount();
+      }
+    }
+
+    // Initialize sType checkboxes from URL if present
+    if (initialSTypes) {
+      const sTypeArray = initialSTypes.split(',').filter(t => t.length > 0);
+      if (sTypeArray.length > 0) {
+        sTypeArray.forEach(t => activeSTypes.add(t));
+        document.querySelectorAll('.stype-checkbox').forEach((cb) => {
+          const input = cb as HTMLInputElement;
+          const sType = input.getAttribute('data-stype');
+          if (sType && activeSTypes.has(sType)) input.checked = true;
+        });
+        updateTotalFilterCount();
+      }
+    }
+
+    // Initialize facility checkboxes from URL if present
+    if (initialSFacilities) {
+      const sFacilitiesArray = initialSFacilities.split(',').filter(t => t.length > 0);
+      if (sFacilitiesArray.length > 0) {
+        sFacilitiesArray.forEach(t => activeSFacilities.add(t));
+        document.querySelectorAll('.facility-checkbox').forEach((cb) => {
+          const input = cb as HTMLInputElement;
+          const facility = input.getAttribute('data-facility');
+          if (facility && activeSFacilities.has(facility)) input.checked = true;
+        });
+        updateTotalFilterCount();
+      }
+    }
+
+    // Refresh filter section visibility based on initial state
+    updateFilterSections();
     
     if (initialQuery && searchInput) {
       searchInput.value = initialQuery;
@@ -567,8 +730,9 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
           
           updateModalFilterButtons();
         }
-        
+
         updateTotalFilterCount();
+        updateFilterSections();
       });
     });
 
@@ -577,10 +741,10 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
       modalContentFilterButtons.forEach(button => {
         const filter = button.getAttribute('data-filter');
         if (!filter) return;
-        
+
         const isActive = activeFilters.has(filter);
         button.setAttribute('data-active', isActive.toString());
-        
+
         if (isActive) {
           // Active state: default variant styling
           button.classList.remove('bg-background', 'text-foreground', 'border', 'border-input', 'hover:bg-accent', 'hover:text-accent-foreground');
@@ -593,12 +757,38 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
       });
     }
 
+    // Show / hide type-specific filter sections based on the active content type selection
+    function updateFilterSections() {
+      const projectTypeSection = document.getElementById('project-type-section');
+      const stayTypeSection = document.getElementById('stay-type-section');
+      const facilitiesSection = document.getElementById('facilities-section');
+      const typeFilterInfo = document.getElementById('type-filter-info');
+
+      const isProjectsOnly = activeFilters.size === 1 && activeFilters.has('projects');
+      const isStaysOnly = activeFilters.size === 1 && activeFilters.has('stays');
+
+      if (typeFilterInfo) {
+        typeFilterInfo.classList.toggle('hidden', isProjectsOnly || isStaysOnly);
+      }
+      if (projectTypeSection) {
+        projectTypeSection.classList.toggle('hidden', !isProjectsOnly);
+      }
+      if (stayTypeSection) {
+        stayTypeSection.classList.toggle('hidden', !isStaysOnly);
+      }
+      if (facilitiesSection) {
+        facilitiesSection.classList.toggle('hidden', !isStaysOnly);
+      }
+    }
+
     // Apply filters button (SheetClose handles closing, we just apply)
     const applyFiltersBtn = document.getElementById("apply-filters-btn");
     if (applyFiltersBtn) {
       applyFiltersBtn.addEventListener('click', () => {
         updateURL(currentQuery);
-        displayFilteredResults();
+        // Filters apply to Pagefind - re-run the search with current state so the client-side state
+        // matches the URL. performSearch handles an empty query (renders no results cleanly).
+        performSearch(currentQuery);
       });
     }
 
@@ -609,16 +799,45 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
         activeFilters.clear();
         activeFilters.add('all'); // Reset to "All"
         updateModalFilterButtons();
-        
+
         // Clear impact area filters
         activeImpactAreas.clear();
         impactAreaCheckboxes.forEach(checkbox => {
           (checkbox as HTMLInputElement).checked = false;
         });
-        
+
+        // Clear verified toggle
+        activeVerified = false;
+        const verifiedSwitchEl = document.getElementById('verified-filter');
+        if (verifiedSwitchEl) {
+          verifiedSwitchEl.setAttribute('aria-checked', 'false');
+          verifiedSwitchEl.setAttribute('data-state', 'unchecked');
+          const thumb = verifiedSwitchEl.querySelector('span');
+          if (thumb) thumb.setAttribute('data-state', 'unchecked');
+        }
+
+        // Clear pType checkboxes
+        activePTypes.clear();
+        document.querySelectorAll('.ptype-checkbox').forEach((checkbox) => {
+          (checkbox as HTMLInputElement).checked = false;
+        });
+
+        // Clear sType checkboxes
+        activeSTypes.clear();
+        document.querySelectorAll('.stype-checkbox').forEach((checkbox) => {
+          (checkbox as HTMLInputElement).checked = false;
+        });
+
+        // Clear facility checkboxes
+        activeSFacilities.clear();
+        document.querySelectorAll('.facility-checkbox').forEach((checkbox) => {
+          (checkbox as HTMLInputElement).checked = false;
+        });
+
+        updateFilterSections();
         updateTotalFilterCount();
         updateURL(currentQuery);
-        displayFilteredResults();
+        performSearch(currentQuery);
       });
     }
 
@@ -665,13 +884,81 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
       });
     });
 
+    // Setup verified switch
+    const verifiedSwitch = document.getElementById('verified-filter');
+    if (verifiedSwitch) {
+      verifiedSwitch.addEventListener('change', (e) => {
+        const customEvent = e as CustomEvent<{ checked: boolean }>;
+        activeVerified = customEvent.detail.checked;
+        updateTotalFilterCount();
+      });
+    }
+
+    // Setup project type checkboxes
+    document.querySelectorAll('.ptype-checkbox').forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const pType = target.getAttribute('data-ptype');
+
+        if (!pType) return;
+
+        if (target.checked) {
+          activePTypes.add(pType);
+        } else {
+          activePTypes.delete(pType);
+        }
+
+        updateTotalFilterCount();
+      });
+    });
+
+    // Setup stay type checkboxes
+    document.querySelectorAll('.stype-checkbox').forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const sType = target.getAttribute('data-stype');
+
+        if (!sType) return;
+
+        if (target.checked) {
+          activeSTypes.add(sType);
+        } else {
+          activeSTypes.delete(sType);
+        }
+
+        updateTotalFilterCount();
+      });
+    });
+
+    // Setup facility checkboxes
+    document.querySelectorAll('.facility-checkbox').forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const facility = target.getAttribute('data-facility');
+
+        if (!facility) return;
+
+        if (target.checked) {
+          activeSFacilities.add(facility);
+        } else {
+          activeSFacilities.delete(facility);
+        }
+
+        updateTotalFilterCount();
+      });
+    });
+
     // Update total filter count badge
     function updateTotalFilterCount() {
       if (!totalFilterCount) return;
 
       const contentTypeCount = activeFilters.has('all') ? 0 : activeFilters.size;
       const impactCount = activeImpactAreas.size;
-      const total = contentTypeCount + impactCount;
+      const verifiedCount = activeVerified ? 1 : 0;
+      const pTypeCount = activePTypes.size;
+      const sTypeCount = activeSTypes.size;
+      const sFacilitiesCount = activeSFacilities.size;
+      const total = contentTypeCount + impactCount + verifiedCount + pTypeCount + sTypeCount + sFacilitiesCount;
 
       // Always keep textContent in sync so the badge never carries a stale number.
       totalFilterCount.textContent = total > 0 ? total.toString() : '';
@@ -774,24 +1061,50 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
       } else {
         newUrl.searchParams.delete('q');
       }
-      
+
       // Add active filters to URL (excluding 'all' as it's the default)
       const filtersArray = Array.from(activeFilters);
       if (filtersArray.length === 1 && filtersArray[0] === 'all') {
-        // Remove filters param when only 'all' is selected (default state)
         newUrl.searchParams.delete('filters');
       } else {
-        // Add filters param when specific filters are selected
         newUrl.searchParams.set('filters', filtersArray.join(','));
       }
-      
+
       // Add active impact areas to URL
       if (activeImpactAreas.size > 0) {
         newUrl.searchParams.set('impacts', Array.from(activeImpactAreas).join(','));
       } else {
         newUrl.searchParams.delete('impacts');
       }
-      
+
+      // Add verified toggle to URL
+      if (activeVerified) {
+        newUrl.searchParams.set('verified', 'true');
+      } else {
+        newUrl.searchParams.delete('verified');
+      }
+
+      // Add active project types to URL
+      if (activePTypes.size > 0) {
+        newUrl.searchParams.set('pType', Array.from(activePTypes).join(','));
+      } else {
+        newUrl.searchParams.delete('pType');
+      }
+
+      // Add active stay types to URL
+      if (activeSTypes.size > 0) {
+        newUrl.searchParams.set('sType', Array.from(activeSTypes).join(','));
+      } else {
+        newUrl.searchParams.delete('sType');
+      }
+
+      // Add active facilities to URL
+      if (activeSFacilities.size > 0) {
+        newUrl.searchParams.set('sFacilities', Array.from(activeSFacilities).join(','));
+      } else {
+        newUrl.searchParams.delete('sFacilities');
+      }
+
       window.history.replaceState(null, '', newUrl.toString());
     }
 
@@ -861,16 +1174,46 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
     }
 
     async function performSearch(query: string) {
-      if (!pagefind || query === currentQuery) return;
-      
+      if (!pagefind) return;
+
       console.log('Performing search for:', query);
+      const queryChanged = query !== currentQuery;
       currentQuery = query;
       showLoading();
       showFiltersAndStatus(); // Show filters and status section when starting search
       clearResults();
 
       try {
-        const search = await pagefind.search(query);
+        // Build the Pagefind filter object from all the active sets/booleans
+        const filters: Record<string, any> = {};
+
+        // Content type filter: 'all' means no filter; otherwise map to Pagefind values
+        if (!activeFilters.has('all') && activeFilters.size > 0) {
+          const mappedTypes = Array.from(activeFilters)
+            .map((t) => CONTENT_TYPE_FILTERS[t])
+            .filter(Boolean);
+          if (mappedTypes.length > 0) {
+            filters['type'] = mappedTypes;
+          }
+        }
+
+        if (activeImpactAreas.size > 0) {
+          filters['impactAreas'] = Array.from(activeImpactAreas);
+        }
+        if (activeVerified) {
+          filters['verified'] = 'true';
+        }
+        if (activePTypes.size > 0) {
+          filters['pType'] = Array.from(activePTypes);
+        }
+        if (activeSTypes.size > 0) {
+          filters['sType'] = Array.from(activeSTypes);
+        }
+        if (activeSFacilities.size > 0) {
+          filters['sFacilities'] = Array.from(activeSFacilities);
+        }
+
+        const search = await pagefind.search(query || null, { filters });
         console.log('Search results:', search.results.length);
         hideLoading();
         
@@ -1004,56 +1347,26 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
     function displayFilteredResults(replace: boolean = true) {
       if (allResults.length === 0) return;
 
-      let filteredResults = allResults;
-      
-      // Apply content type filters unless "all" is selected
-      if (!activeFilters.has('all')) {
-        filteredResults = allResults.filter(result => 
-          activeFilters.has(result.contentType)
-        );
-      }
-      
-      // Apply impact area filters (only for projects and stays)
-      if (activeImpactAreas.size > 0) {
-        filteredResults = filteredResults.filter(result => {
-          // Blog posts and generic pages are not affected by impact filters
-          if (result.contentType === 'posts' || result.contentType === 'page') {
-            return true;
-          }
+      // Pagefind already filtered by content type, impact areas, verified, pType, sType, sFacilities.
+      // No further client-side filter loop is needed.
 
-          // impactAreas is a Pagefind filter (not meta) — values are an array
-          const impactAreas = (result.data.filters?.impactAreas as string[] | undefined) ?? [];
-          if (impactAreas.length === 0) return false;
-
-          return Array.from(activeImpactAreas).some(selectedImpact =>
-            impactAreas.includes(selectedImpact)
-          );
-        });
-      }
+      const filteredCount = allResults.length;
 
       // Update status
-      const totalCount = allResults.length;
-      const filteredCount = filteredResults.length;
-      
-      // Create status message
       let statusMessage = '';
-      if (activeFilters.has('all')) {
-        if (activeImpactAreas.size > 0) {
-          statusMessage = `Found ${filteredCount} result${filteredCount !== 1 ? 's' : ''} for "${currentQuery}" (Impact filters apply to Projects & Stays only)`;
-        } else {
-          statusMessage = `Found ${totalCount} result${totalCount !== 1 ? 's' : ''} for "${currentQuery}"`;
-        }
+      if (currentQuery) {
+        statusMessage = `Found ${filteredCount} result${filteredCount !== 1 ? 's' : ''} for "${currentQuery}"`;
       } else {
-        statusMessage = `Showing ${filteredCount} of ${totalCount} results for "${currentQuery}"`;
+        statusMessage = `Showing ${filteredCount} result${filteredCount !== 1 ? 's' : ''}`;
       }
       showStatus(statusMessage);
 
-      // Determine how many results to show
+      // Determine how many results to show (paginated)
       const startIndex = replace ? 0 : displayedResults;
       const endIndex = replace ? resultsPerPage : displayedResults + resultsPerPage;
-      const resultsToShow = filteredResults.slice(startIndex, endIndex);
+      const resultsToShow = allResults.slice(startIndex, endIndex);
       const resultCards = resultsToShow.map(result => result.card).filter(card => card !== null);
-      
+
       if (searchResults) {
         if (replace) {
           searchResults.innerHTML = resultCards.join('');
@@ -1066,17 +1379,11 @@ import BreadcrumbSeparator from "../components/bearnie/breadcrumb/BreadcrumbSepa
 
       // Show/hide load more button
       if (loadMoreContainer) {
-        if (displayedResults < filteredResults.length) {
+        if (displayedResults < allResults.length) {
           loadMoreContainer.classList.remove("hidden");
         } else {
           loadMoreContainer.classList.add("hidden");
         }
-      }
-
-      // Show message if no results after filtering
-      if (filteredResults.length === 0 && totalCount > 0) {
-        showStatus(`No results found for the selected filters. Try selecting different content types.`);
-        if (loadMoreContainer) loadMoreContainer.classList.add("hidden");
       }
     }
 
