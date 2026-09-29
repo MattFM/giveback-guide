@@ -4,6 +4,9 @@ import SheetTrigger from '../bearnie/sheet/SheetTrigger.astro';
 import SheetOverlay from '../bearnie/sheet/SheetOverlay.astro';
 import SheetContent from '../bearnie/sheet/SheetContent.astro';
 import Button from '../bearnie/button/Button.astro';
+import Collapsible from '../bearnie/collapsible/Collapsible.astro';
+import CollapsibleTrigger from '../bearnie/collapsible/CollapsibleTrigger.astro';
+import CollapsibleContent from '../bearnie/collapsible/CollapsibleContent.astro';
 
 interface Props {
   theme?: 'light' | 'dark';
@@ -11,24 +14,46 @@ interface Props {
 
 const { theme = 'light' } = Astro.props;
 
-// Get current path for active link detection
 const currentPath = Astro.url.pathname;
 
-// Helper function to check if a link is active
 const isActive = (path: string) => {
   if (path === '/') return currentPath === '/';
   return currentPath.startsWith(path);
 };
 
-// Link styling based on theme and active state
+// Helper to detect activity across multiple paths (used for parent rows)
+const isAnyActive = (paths: string[]) => paths.some((p) => isActive(p));
+
 const getLinkClasses = (path: string) => {
   const active = isActive(path);
-  const base = 'block px-4 py-3 text-base font-medium rounded-lg transition-colors';
-  
+  const base = 'block px-4 py-3 text-base font-medium rounded-lg transition-colors w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900';
+
   if (theme === 'dark') {
-    return `${base} ${active ? 'bg-white/10 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`;
+    return `${base} ${active ? 'bg-white/10 text-white font-semibold' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`;
   }
-  
+
+  return `${base} ${active ? 'bg-gray-100 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}`;
+};
+
+const getSubLinkClasses = (path: string) => {
+  const active = isActive(path);
+  const base = 'block pl-12 pr-4 py-2 text-sm rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900';
+
+  if (theme === 'dark') {
+    return `${base} ${active ? 'bg-white/10 text-white font-medium' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`;
+  }
+
+  return `${base} ${active ? 'bg-gray-100 text-black font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`;
+};
+
+const getParentRowClasses = (paths: string[]) => {
+  const active = isAnyActive(paths);
+  const base = 'flex items-center justify-between px-4 py-3 text-base font-medium rounded-lg transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900';
+
+  if (theme === 'dark') {
+    return `${base} ${active ? 'bg-white/10 text-white font-semibold' : 'text-gray-300 hover:bg-white/10 hover:text-white'}`;
+  }
+
   return `${base} ${active ? 'bg-gray-100 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'}`;
 };
 ---
@@ -46,10 +71,10 @@ const getLinkClasses = (path: string) => {
       </svg>
     </Button>
   </SheetTrigger>
-  
+
   <SheetOverlay />
-  
-  <SheetContent side="right" showCloseButton={false} class="w-80 bg-white dark:bg-gray-900">
+
+  <SheetContent side="right" showCloseButton={false} class="w-96 bg-white dark:bg-gray-900">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Menu</h2>
       <button
@@ -63,22 +88,90 @@ const getLinkClasses = (path: string) => {
         </svg>
       </button>
     </div>
-    
-    <nav class="flex-1 overflow-y-auto">
+
+    <nav class="flex-1 overflow-y-auto" aria-label="Site sections">
       <ul class="space-y-1">
         <li>
-          <a href="/projects" class={getLinkClasses('/projects')}>Projects</a>
+          <a href="/projects/" class={getLinkClasses('/projects')}>Projects</a>
         </li>
         <li>
-          <a href="/stays" class={getLinkClasses('/stays')}>Stays</a>
+          <a href="/stays/" class={getLinkClasses('/stays')}>Stays</a>
         </li>
         <li>
-          <a href="/blog" class={getLinkClasses('/blog')}>Blog</a>
-        </li>
-        <li>
-          <a href="/submit" class={getLinkClasses('/submit')}>Submit</a>
+          <a href="/blog/" class={getLinkClasses('/blog')}>News &amp; Updates</a>
         </li>
       </ul>
+
+      <div class="my-3 border-t border-gray-100 dark:border-gray-800"></div>
+
+      <Collapsible defaultOpen={true}>
+        <CollapsibleTrigger class={getParentRowClasses(['/submit'])}>
+          <span>Get Involved</span>
+          <svg
+            class="w-4 h-4 shrink-0 transition-transform duration-200"
+            data-collapsible-chevron
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <ul class="space-y-0.5 mt-1">
+            <li>
+              <a href="/submit/" class={getSubLinkClasses('/submit')}>Submit a listing</a>
+            </li>
+          </ul>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <div class="my-3 border-t border-gray-100 dark:border-gray-800"></div>
+
+      <Collapsible defaultOpen={true}>
+        <CollapsibleTrigger class={getParentRowClasses(['/about', '/contact'])}>
+          <span>About</span>
+          <svg
+            class="w-4 h-4 shrink-0 transition-transform duration-200"
+            data-collapsible-chevron
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <ul class="space-y-0.5 mt-1">
+            <li>
+              <a href="/about/" class={getSubLinkClasses('/about')}>About Us</a>
+            </li>
+            <li>
+              <a href="/contact/" class={getSubLinkClasses('/contact')}>Contact Us</a>
+            </li>
+            <li>
+              <a href="/about/impacts/" class={getSubLinkClasses('/about/impacts')}>Impact Areas</a>
+            </li>
+          </ul>
+        </CollapsibleContent>
+      </Collapsible>
     </nav>
   </SheetContent>
 </Sheet>
+
+<style>
+  [data-collapsible-chevron] {
+    transition: transform 200ms ease;
+  }
+  [data-state='open'] [data-collapsible-chevron] {
+    transform: rotate(180deg);
+  }
+</style>
