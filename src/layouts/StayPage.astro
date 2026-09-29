@@ -337,6 +337,11 @@ if (images.length === 0) {
                             >
                                 {
                                     properties.sName && (
+                                        <span data-pagefind-meta="name">{properties.sName}</span>
+                                    )
+                                }
+                                {
+                                    properties.sName && (
                                         <span data-pagefind-meta="organiser">
                                             {properties.sName}
                                         </span>
@@ -358,6 +363,30 @@ if (images.length === 0) {
                                     )
                                 }
                                 {
+                                    Array.isArray(properties.sCountry)
+                                        ? properties.sCountry.map(country => (
+                                            <span data-pagefind-filter={`country:${country}`}>{country}</span>
+                                        ))
+                                        : properties.sCountry ? <span data-pagefind-filter={`country:${properties.sCountry}`}>{properties.sCountry}</span> : null
+                                }
+                                {
+                                    properties.sVerify && <span data-pagefind-filter="verified:true">Verified</span>
+                                }
+                                {
+                                    Array.isArray(properties.sType)
+                                        ? properties.sType.map(type => (
+                                            <span data-pagefind-filter={`sType:${type}`}>{type}</span>
+                                        ))
+                                        : null
+                                }
+                                {
+                                    Array.isArray(properties.sFacilities)
+                                        ? properties.sFacilities.map(facility => (
+                                            <span data-pagefind-filter={`sFacilities:${facility}`}>{facility}</span>
+                                        ))
+                                        : null
+                                }
+                                {
                                     properties.sLocale && (
                                         <span data-pagefind-meta="locale">
                                             {Array.isArray(properties.sLocale)
@@ -367,18 +396,13 @@ if (images.length === 0) {
                                     )
                                 }
                                 {
-                                    properties.sImpactsNames && (
-                                        <span data-pagefind-meta="impactAreas">
-                                            {Array.isArray(
-                                                properties.sImpactsNames,
-                                            )
-                                                ? properties.sImpactsNames.join(
-                                                      ", ",
-                                                  )
-                                                : properties.sImpactsNames}
-                                        </span>
-                                    )
+                                    Array.isArray(properties.sImpactsNames)
+                                        ? properties.sImpactsNames.map(area => (
+                                            <span data-pagefind-filter={`impactAreas:${area}`}>{area}</span>
+                                        ))
+                                        : properties.sImpactsNames && <span data-pagefind-filter={`impactAreas:${properties.sImpactsNames}`}>{properties.sImpactsNames}</span>
                                 }
+                                <span data-pagefind-meta="date">{properties.sPublished?.toISOString()}</span>
                             </div>
                         </article>
                     </div>

@@ -273,6 +273,23 @@ const relatedProjects = allProjects
                                     )
                                 }
                                 {
+                                    Array.isArray(properties.pCountry)
+                                        ? properties.pCountry.map(country => (
+                                            <span data-pagefind-filter={`country:${country}`}>{country}</span>
+                                        ))
+                                        : <span data-pagefind-filter={`country:${properties.pCountry}`}>{properties.pCountry}</span>
+                                }
+                                {
+                                    properties.pVerify && <span data-pagefind-filter="verified:true">Verified</span>
+                                }
+                                {
+                                    Array.isArray(properties.pTypesNames)
+                                        ? properties.pTypesNames.map(type => (
+                                            <span data-pagefind-filter={`pType:${type}`}>{type}</span>
+                                        ))
+                                        : null
+                                }
+                                {
                                     properties.pLocale && (
                                         <span data-pagefind-meta="locale">
                                             {Array.isArray(properties.pLocale)
@@ -282,18 +299,13 @@ const relatedProjects = allProjects
                                     )
                                 }
                                 {
-                                    properties.pImpactsNames && (
-                                        <span data-pagefind-meta="impactAreas">
-                                            {Array.isArray(
-                                                properties.pImpactsNames,
-                                            )
-                                                ? properties.pImpactsNames.join(
-                                                      ", ",
-                                                  )
-                                                : properties.pImpactsNames}
-                                        </span>
-                                    )
+                                    Array.isArray(properties.pImpactsNames)
+                                        ? properties.pImpactsNames.map(area => (
+                                            <span data-pagefind-filter={`impactAreas:${area}`}>{area}</span>
+                                        ))
+                                        : properties.pImpactsNames && <span data-pagefind-filter={`impactAreas:${properties.pImpactsNames}`}>{properties.pImpactsNames}</span>
                                 }
+                                <span data-pagefind-meta="date">{properties.pPublished?.toISOString()}</span>
                             </div>
                         </article>
                     </div>

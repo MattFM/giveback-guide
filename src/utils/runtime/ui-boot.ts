@@ -4,6 +4,7 @@ import { initDialogs } from "@/utils/runtime/dialog";
 import { initDisclosureTriggers } from "@/utils/runtime/disclosure-triggers";
 import { initDropdowns } from "@/utils/runtime/dropdown-menu";
 import { initPopovers } from "@/utils/runtime/popover";
+import { initSheets } from "@/utils/runtime/sheet";
 import { initTabs } from "@/utils/runtime/tabs";
 
 let hasBoundPageLoadListener = false;
@@ -16,6 +17,7 @@ function runUiInit() {
   initComboboxes();
   initDialogs();
   initDropdowns();
+  initSheets();
   initTabs();
 }
 

@@ -179,3 +179,10 @@ select {
         font-size: 0.875rem;
     }
 }
+
+/* Suppress the native webkit / Edge cancel button on type=search; the search
+   page provides its own Clear control. */
+#search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}

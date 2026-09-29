@@ -5,13 +5,8 @@ import type { HTMLAttributes } from "astro/types";
 export interface Props extends HTMLAttributes<"div"> {}
 
 const { class: className, ...props } = Astro.props;
-
-const classes = cn(
-  "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-  className
-);
 ---
 
-<div class={classes} {...props}>
+<div class={cn("grid gap-6", className)} data-field-group {...props}>
   <slot />
 </div>

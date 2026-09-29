@@ -1,0 +1,1198 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import PageHeader from "../components/layout/PageHeader.astro";
+import { getCollection } from "astro:content";
+import { SITE_TITLE } from "../consts";
+import {
+  IMPACT_AREA_GROUPS,
+  SORT_OPTIONS,
+  RESULTS_PER_PAGE,
+} from "../lib/directory-config";
+import Sheet from "../components/bearnie/sheet/Sheet.astro";
+import SheetContent from "../components/bearnie/sheet/SheetContent.astro";
+import SheetHeader from "../components/bearnie/sheet/SheetHeader.astro";
+import SheetTitle from "../components/bearnie/sheet/SheetTitle.astro";
+import SheetTrigger from "../components/bearnie/sheet/SheetTrigger.astro";
+import SheetOverlay from "../components/bearnie/sheet/SheetOverlay.astro";
+import Switch from "../components/bearnie/switch/Switch.astro";
+import Select from "../components/bearnie/select/Select.astro";
+import SelectOption from "../components/bearnie/select/SelectOption.astro";
+import Button from "../components/bearnie/button/Button.astro";
+import Collapsible from "../components/bearnie/collapsible/Collapsible.astro";
+import CollapsibleTrigger from "../components/bearnie/collapsible/CollapsibleTrigger.astro";
+import CollapsibleContent from "../components/bearnie/collapsible/CollapsibleContent.astro";
+import Input from "../components/bearnie/input/Input.astro";
+import Popover from "../components/bearnie/popover/Popover.astro";
+import PopoverTrigger from "../components/bearnie/popover/PopoverTrigger.astro";
+import PopoverContent from "../components/bearnie/popover/PopoverContent.astro";
+import HugeIcon from "../components/bearnie/icon/HugeIcon.astro";
+import { Cancel01Icon, Filter02Icon, Search01Icon, ArrowUpDownIcon } from "../components/bearnie/icon/icons";
+
+const projects = await getCollection("projects");
+const stays = await getCollection("stays");
+
+const allCountries = [
+  ...new Set([
+    ...projects.flatMap((p) =>
+      Array.isArray(p.data.properties.pCountry) ? p.data.properties.pCountry : [p.data.properties.pCountry]
+    ),
+    ...stays.flatMap((s) =>
+      Array.isArray(s.data.properties.sCountry) ? s.data.properties.sCountry : [s.data.properties.sCountry]
+    ),
+  ]),
+].filter(Boolean).sort();
+
+const allPTypes = [
+  ...new Set(
+    projects.flatMap((p) =>
+      Array.isArray(p.data.properties.pTypesNames) ? p.data.properties.pTypesNames : [p.data.properties.pTypesNames]
+    ).filter(Boolean)
+  ),
+].sort();
+
+const allSTypes = [
+  ...new Set(
+    stays.flatMap((s) =>
+      Array.isArray(s.data.properties.sType) ? s.data.properties.sType : [s.data.properties.sType]
+    ).filter(Boolean)
+  ),
+].sort();
+
+const allSFacilities = [
+  ...new Set(
+    stays.flatMap((s) =>
+      Array.isArray(s.data.properties.sFacilities) ? s.data.properties.sFacilities : [s.data.properties.sFacilities]
+    ).filter(Boolean)
+  ),
+].sort();
+---
+
+<MainLayout title={`Directory | ${SITE_TITLE}`}>
+  <main>
+    <section class="bg-white dark:bg-gray-900">
+      <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <PageHeader
+          title="Directory"
+          subtitle="Browse projects, stays and blog posts"
+        />
+
+        <!-- Unified Search & Filter Bar -->
+        <div class="mb-6">
+          <form id="search-form" class="flex flex-wrap items-center gap-3" action="/directory" method="get">
+            <!-- Search Input -->
+            <div class="relative flex-1 min-w-[220px]">
+              <label for="search-input" class="sr-only">Search</label>
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <HugeIcon icon={Search01Icon} class="w-4 h-4 text-muted-foreground" />
+              </div>
+              <Input
+                type="text"
+                id="search-input"
+                name="q"
+                placeholder="Search directory..."
+                autocomplete="off"
+                class="h-10 pl-10 pr-20"
+              />
+              <Button
+                type="submit"
+                id="search-submit-btn"
+                variant="ghost"
+                size="xs"
+                class="absolute inset-y-0 right-8 flex items-center"
+                aria-label="Search"
+              >
+                <HugeIcon icon={Search01Icon} class="w-4 h-4" />
+              </Button>
+              <Button
+                type="button"
+                id="clear-search"
+                variant="ghost"
+                size="xs"
+                class="absolute inset-y-0 right-1 flex items-center hidden"
+                aria-label="Clear search"
+              >
+                <HugeIcon icon={Cancel01Icon} class="w-4 h-4" />
+              </Button>
+            </div>
+
+            <!-- Quick Filters (always visible) -->
+            <div class="flex flex-wrap items-center gap-3 ml-auto">
+              <!-- Country Filter -->
+              <Select id="country-filter" placeholder="Country" class="w-auto min-w-[140px]">
+                {allCountries.map((country) => (
+                  <SelectOption value={country}>{country}</SelectOption>
+                ))}
+              </Select>
+
+              <!-- Filters Button (opens sheet) -->
+              <Sheet>
+                <SheetTrigger>
+                  <Button id="filters-btn" type="button" variant="outline" size="lg" class="text-sm">
+                    Filters
+                    <span id="total-filter-count" class="hidden ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-900 text-white dark:bg-gray-700"></span>
+                  </Button>
+                </SheetTrigger>
+                <SheetOverlay />
+                <SheetContent side="right">
+                  <SheetHeader>
+                    <SheetTitle>Filters</SheetTitle>
+                  </SheetHeader>
+                  <div class="overflow-y-auto max-h-[calc(100vh-8rem)] pr-2">
+                    <!-- Impact Areas -->
+                    <div class="mb-6">
+                      <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">Impact Areas</h4>
+                      {Object.entries(IMPACT_AREA_GROUPS).map(([key, group]) => (
+                        <Collapsible data-category={key} class="mb-3">
+                          <CollapsibleTrigger>
+                            <button type="button" class="flex items-center justify-between w-full text-left text-sm font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer">
+                              <span>{group.label}</span>
+                              <svg class="w-4 h-4 transition-transform duration-200 rotate-0" data-collapsible-chevron fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                              </svg>
+                            </button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div class="space-y-2 pt-3">
+                              {group.areas.map((area) => (
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                  <input type="checkbox" id={`impact-${area.replace(/\s+/g, "-").toLowerCase()}`} class="impact-area-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-impact={area} />
+                                  <span class="text-sm text-gray-700 dark:text-gray-300">{area}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ))}
+                    </div>
+
+                    <!-- Type Toggle -->
+                    <div class="mb-6">
+                      <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">Type</h4>
+                      <div class="flex gap-2">
+                        <Button id="type-btn-all" type="button" variant="default" size="sm" class="flex-1 type-toggle-btn active" data-type-btn="all">All</Button>
+                        <Button id="type-btn-projects" type="button" variant="outline" size="sm" class="flex-1 type-toggle-btn" data-type-btn="projects">Projects</Button>
+                        <Button id="type-btn-stays" type="button" variant="outline" size="sm" class="flex-1 type-toggle-btn" data-type-btn="stays">Stays</Button>
+                      </div>
+                    </div>
+
+                    <!-- Verified Toggle -->
+                    <div class="mb-6">
+                      <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">Verified</h4>
+                      <div class="flex items-center gap-3">
+                        <Switch id="verified-filter" />
+                        <label for="verified-filter" class="text-sm text-gray-700 dark:text-gray-300">Show verified only</label>
+                      </div>
+                    </div>
+
+                    <!-- Type-specific filter info message -->
+                    <div id="type-filter-info" class="mb-6 hidden">
+                      <div class="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                        <svg class="w-5 h-5 mt-0.5 text-gray-500 dark:text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Select a single type above to see type-specific filters.</p>
+                      </div>
+                    </div>
+
+                    <!-- Project Type (conditional) -->
+                    <div id="project-type-section" class="mb-6 hidden">
+                      <Collapsible>
+                        <CollapsibleTrigger>
+                          <button type="button" class="flex items-center justify-between w-full text-left text-sm font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer">
+                            <span>Project Type</span>
+                            <svg class="w-4 h-4 transition-transform duration-200 rotate-0" data-collapsible-chevron fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                          </button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div id="pType-checkboxes" class="space-y-2 pt-3">
+                            {allPTypes.map((type) => (
+                              <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                                <input type="checkbox" class="ptype-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-ptype={type} />
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{type}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
+
+                    <!-- Stay Type (conditional) -->
+                    <div id="stay-type-section" class="mb-6 hidden">
+                      <Collapsible>
+                        <CollapsibleTrigger>
+                          <button type="button" class="flex items-center justify-between w-full text-left text-sm font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer">
+                            <span>Stay Type</span>
+                            <svg class="w-4 h-4 transition-transform duration-200 rotate-0" data-collapsible-chevron fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                          </button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div class="space-y-2 pt-3">
+                            {allSTypes.map((type) => (
+                              <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                                <input type="checkbox" class="stype-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-stype={type} />
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{type}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
+
+                    <!-- Facilities (conditional) -->
+                    <div id="facilities-section" class="mb-6 hidden">
+                      <Collapsible>
+                        <CollapsibleTrigger>
+                          <button type="button" class="flex items-center justify-between w-full text-left text-sm font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer">
+                            <span>Facilities</span>
+                            <svg class="w-4 h-4 transition-transform duration-200 rotate-0" data-collapsible-chevron fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                          </button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div id="facilities-checkboxes" class="space-y-2 pt-3">
+                            {allSFacilities.map((facility) => (
+                              <label class="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
+                                <input type="checkbox" class="facility-checkbox w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600" data-facility={facility} />
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{facility}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
+                  </div>
+                  <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <Button id="clear-all-filters-btn" variant="outline" size="default" class="sm:w-auto">
+                      Clear All
+                    </Button>
+                    <Button id="apply-filters-btn" variant="default" size="default" class="sm:ml-3 sm:w-auto">
+                      Apply Filters
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </form>
+
+          <!-- Active Filters Display -->
+          <div id="active-filters" class="flex flex-wrap gap-2 mb-4 hidden">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Status & Sort Toggle -->
+          <div id="status-bar" class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <p id="status-text"></p>
+            <span class="text-gray-300 dark:text-gray-600">|</span>
+            <Popover class="inline-block">
+              <PopoverTrigger>
+                <button type="button" id="sort-toggle-btn" class="inline-flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer">
+                  <HugeIcon icon={ArrowUpDownIcon} class="w-3.5 h-3.5" />
+                  <span id="sort-current-label">newest</span>
+                  <svg class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" class="w-44 p-1" side="bottom">
+                <button type="button" data-sort="newest" class="sort-option w-full text-left px-3 py-1.5 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                  <span class="sort-check w-4 text-center">✓</span>
+                  <span>Newest first</span>
+                </button>
+                <button type="button" data-sort="alphabetical" class="sort-option w-full text-left px-3 py-1.5 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                  <span class="sort-check w-4 text-center">○</span>
+                  <span>Alphabetical (A-Z)</span>
+                </button>
+                <button type="button" data-sort="relevance" class="sort-option w-full text-left px-3 py-1.5 text-sm rounded-md opacity-50 cursor-not-allowed flex items-center gap-2" disabled>
+                  <span class="sort-check w-4 text-center">○</span>
+                  <span>Relevance</span>
+                </button>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <!-- Loading Skeletons -->
+        <div id="loading-skeletons" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 12 }).map(() => (
+            <div class="space-y-4">
+              <div class="h-64 w-full rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg"></div>
+              <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+              <div class="h-8 w-full bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+              <div class="h-4 w-32 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Search Results -->
+        <div id="search-results" class="hidden space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
+        </div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden text-center py-12">
+          <div class="max-w-md mx-auto">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">No results found</h3>
+            <p id="no-results-message" class="mb-6 text-gray-500 dark:text-gray-400">Try adjusting your filters or search terms.</p>
+            <a href="/submit" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600">
+              Submit a project
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Load More -->
+        <div id="load-more-container" class="hidden text-center mt-8">
+          <Button id="load-more-btn" variant="outline" size="lg">
+            Load More
+          </Button>
+        </div>
+
+        <!-- Clear All Button -->
+        <div id="clear-all-container" class="hidden text-center mt-6">
+          <Button id="clear-all-btn" variant="outline" size="default">
+            Clear all filters
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<script>
+  import { createCard, getContentType } from "../lib/directory-card-templates";
+  import { IMPACT_AREA_GROUPS, RESULTS_PER_PAGE } from "../lib/directory-config";
+
+  declare global {
+    interface Window {
+      posthog?: {
+        capture: (event: string, properties?: Record<string, any>) => void;
+      };
+    }
+  }
+
+  let pagefind: any = null;
+  let currentQuery = "";
+  let allResults: any[] = [];
+  let activeContentTypes = new Set(["projects", "stays"]);
+  let activeCountry = "";
+  let activeVerified = false;
+  let activeImpactAreas = new Set<string>();
+  let activePTypes = new Set<string>();
+  let activeSTypes = new Set<string>();
+  let activeSFacilities = new Set<string>();
+  let activeSort = "newest";
+  let displayedResults = 0;
+  let isInitialized = false;
+  let hasRunInitialSearch = false;
+  let userOverrodeSort = false;
+
+  const CONTENT_TYPE_FILTERS: Record<string, string> = {
+    projects: "project",
+    stays: "stay",
+  };
+
+  async function initDirectory() {
+    if (isInitialized) return;
+    isInitialized = true;
+
+    const searchInput = document.getElementById("search-input") as HTMLInputElement | null;
+    const searchResults = document.getElementById("search-results");
+    const loadingSkeletons = document.getElementById("loading-skeletons");
+    const noResults = document.getElementById("no-results");
+    const noResultsMessage = document.getElementById("no-results-message");
+    const loadMoreContainer = document.getElementById("load-more-container");
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    const statusText = document.getElementById("status-text");
+    const clearSearchBtn = document.getElementById("clear-search");
+    const activeFiltersContainer = document.getElementById("active-filters");
+    const clearAllContainer = document.getElementById("clear-all-container");
+    const clearAllBtn = document.getElementById("clear-all-btn");
+    const filtersBtn = document.getElementById("filters-btn");
+    const totalFilterCount = document.getElementById("total-filter-count");
+    const countryFilter = document.getElementById("country-filter") as HTMLSelectElement | null;
+    const verifiedSwitch = document.getElementById("verified-filter");
+    const contentTypeTabs = document.querySelectorAll(".content-type-tab");
+    const projectTypeSection = document.getElementById("project-type-section");
+    const stayTypeSection = document.getElementById("stay-type-section");
+    const facilitiesSection = document.getElementById("facilities-section");
+    const applyFiltersBtn = document.getElementById("apply-filters-btn");
+    const clearAllFiltersBtn = document.getElementById("clear-all-filters-btn");
+
+    // Initialize Pagefind
+    try {
+      const importPath = "/pagefind/pagefind.js";
+      const dynamicImport = new Function("path", "return import(path)");
+      const pagefindModule = await dynamicImport(importPath);
+      pagefind = pagefindModule;
+      await pagefind.init();
+    } catch (error) {
+      console.error("Failed to initialize Pagefind:", error);
+      if (loadingSkeletons) loadingSkeletons.classList.add("hidden");
+      const bar = document.getElementById("status-bar");
+      if (bar) bar.classList.remove("hidden");
+      if (statusText) statusText.textContent = "Search is currently unavailable. Please try again later.";
+      return;
+    }
+
+    // Parse URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get("q") || "";
+    const initialType = urlParams.get("type");
+    const initialCountry = urlParams.get("country") || "";
+    const initialVerified = urlParams.get("verified") === "true";
+    const initialImpacts = urlParams.get("impacts");
+    const initialPTypes = urlParams.get("pType");
+    const initialSTypes = urlParams.get("sType");
+    const initialSFacilities = urlParams.get("sFacilities");
+    const initialSort = urlParams.get("sort") || "newest";
+    const initialShow = urlParams.get("show");
+
+    // Set initial state from URL
+    if (initialType) {
+      const types = initialType.split(",").filter(Boolean);
+      activeContentTypes = new Set(types.filter((t) => ["projects", "stays"].includes(t)));
+      if (activeContentTypes.size === 0) activeContentTypes = new Set(["projects", "stays"]);
+    }
+    activeCountry = initialCountry;
+    activeVerified = initialVerified;
+
+    // Set initial sort: default to "relevance" if query present, otherwise "newest"
+    // If user explicitly set sort via URL, mark as user-overridden
+    if (initialSort && initialSort !== "newest") {
+      userOverrodeSort = true;
+    }
+    if (initialQuery && !userOverrodeSort) {
+      activeSort = "relevance";
+    } else {
+      activeSort = ["newest", "alphabetical", "relevance"].includes(initialSort) ? initialSort : "newest";
+    }
+    if (initialImpacts) initialImpacts.split(",").filter(Boolean).forEach((i) => activeImpactAreas.add(i));
+    if (initialPTypes) initialPTypes.split(",").filter(Boolean).forEach((t) => activePTypes.add(t));
+    if (initialSTypes) initialSTypes.split(",").filter(Boolean).forEach((t) => activeSTypes.add(t));
+    if (initialSFacilities) initialSFacilities.split(",").filter(Boolean).forEach((f) => activeSFacilities.add(f));
+
+    // Set form controls
+    if (searchInput && initialQuery) {
+      searchInput.value = initialQuery;
+      currentQuery = initialQuery;
+      if (clearSearchBtn) clearSearchBtn.classList.remove("hidden");
+    }
+    if (countryFilter) countryFilter.value = activeCountry;
+
+    // Set initial verified switch state
+    if (verifiedSwitch) {
+      if (activeVerified) {
+        verifiedSwitch.setAttribute("aria-checked", "true");
+        verifiedSwitch.setAttribute("data-state", "checked");
+        const thumb = verifiedSwitch.querySelector("span");
+        if (thumb) thumb.setAttribute("data-state", "checked");
+      }
+    }
+
+    // Set initial type toggle state
+    updateTypeToggle();
+
+    // Set initial sort toggle state
+    updateSortToggle();
+
+    // Update filter sections visibility
+    updateFilterSections();
+
+    // Check impact area checkboxes
+    document.querySelectorAll(".impact-area-checkbox").forEach((cb) => {
+      const input = cb as HTMLInputElement;
+      const impact = input.getAttribute("data-impact");
+      if (impact && activeImpactAreas.has(impact)) input.checked = true;
+    });
+
+    // Check pType checkboxes
+    document.querySelectorAll(".ptype-checkbox").forEach((cb) => {
+      const input = cb as HTMLInputElement;
+      const pType = input.getAttribute("data-ptype");
+      if (pType && activePTypes.has(pType)) input.checked = true;
+    });
+
+    // Check sType checkboxes
+    document.querySelectorAll(".stype-checkbox").forEach((cb) => {
+      const input = cb as HTMLInputElement;
+      const sType = input.getAttribute("data-stype");
+      if (sType && activeSTypes.has(sType)) input.checked = true;
+    });
+
+    // Check facility checkboxes
+    document.querySelectorAll(".facility-checkbox").forEach((cb) => {
+      const input = cb as HTMLInputElement;
+      const facility = input.getAttribute("data-facility");
+      if (facility && activeSFacilities.has(facility)) input.checked = true;
+    });
+
+    // Impact area individual checkboxes
+    document.querySelectorAll("[data-impact]").forEach((cb) => {
+      const input = cb.tagName === "INPUT" ? cb as HTMLInputElement : (cb as HTMLElement).querySelector("input") as HTMLInputElement | null;
+      if (!input) return;
+
+      input.addEventListener("change", () => {
+        const impact = (cb as HTMLElement).getAttribute("data-impact");
+        if (!impact) return;
+        if (input.checked) activeImpactAreas.add(impact);
+        else activeImpactAreas.delete(impact);
+        updateFilterCount();
+      });
+    });
+
+    // pType checkboxes (OR logic)
+    document.querySelectorAll(".ptype-checkbox").forEach((cb) => {
+      cb.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        const pType = target.getAttribute("data-ptype");
+        if (!pType) return;
+        if (target.checked) activePTypes.add(pType);
+        else activePTypes.delete(pType);
+        updateFilterCount();
+      });
+    });
+
+    // sType checkboxes (OR logic)
+    document.querySelectorAll(".stype-checkbox").forEach((cb) => {
+      cb.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        const sType = target.getAttribute("data-stype");
+        if (!sType) return;
+        if (target.checked) activeSTypes.add(sType);
+        else activeSTypes.delete(sType);
+        updateFilterCount();
+      });
+    });
+
+    // Facility checkboxes (AND logic)
+    document.querySelectorAll(".facility-checkbox").forEach((cb) => {
+      cb.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        const facility = target.getAttribute("data-facility");
+        if (!facility) return;
+        if (target.checked) activeSFacilities.add(facility);
+        else activeSFacilities.delete(facility);
+        updateFilterCount();
+      });
+    });
+
+    // Type toggle buttons
+    document.querySelectorAll(".type-toggle-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const type = (btn as HTMLElement).getAttribute("data-type-btn");
+        if (!type) return;
+
+        if (type === "all") {
+          activeContentTypes = new Set(["projects", "stays"]);
+        } else {
+          activeContentTypes = new Set([type]);
+        }
+
+        updateTypeToggle();
+        updateFilterSections();
+        updateURL();
+        performSearch();
+      });
+    });
+
+    // Country filter change
+    if (countryFilter) {
+      countryFilter.addEventListener("change", () => {
+        activeCountry = countryFilter.value;
+        updateURL();
+        performSearch();
+      });
+    }
+
+    // Verified toggle (Bearnie Switch) - batched, no immediate search
+    if (verifiedSwitch) {
+      verifiedSwitch.addEventListener("change", (e) => {
+        const customEvent = e as CustomEvent<{ checked: boolean }>;
+        activeVerified = customEvent.detail.checked;
+        updateFilterCount();
+      });
+    }
+
+    // Sort toggle - apply filters and perform search
+    document.querySelectorAll(".sort-option").forEach((option) => {
+      option.addEventListener("click", () => {
+        const sort = (option as HTMLElement).getAttribute("data-sort");
+        if (!sort || (option as HTMLElement).hasAttribute("disabled")) return;
+        activeSort = sort;
+        userOverrodeSort = true;
+        updateSortToggle();
+        updateURL();
+        performSearch();
+      });
+    });
+
+    // Listen to search input changes to enable/disable relevance and auto-switch sort
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        const query = (searchInput as HTMLInputElement).value?.trim() || "";
+        if (!userOverrodeSort) {
+          if (query && activeSort !== "relevance") {
+            activeSort = "relevance";
+            updateSortToggle();
+          } else if (!query && activeSort === "relevance") {
+            activeSort = "newest";
+            updateSortToggle();
+          }
+        }
+        updateSortRelevanceState();
+      });
+    }
+
+    // Search input
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value?.trim() || "";
+        if (clearSearchBtn) clearSearchBtn.classList.toggle("hidden", query.length === 0);
+      });
+    }
+
+    // Search form submit
+    const searchForm = document.getElementById("search-form");
+    if (searchForm) {
+      searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (searchInput) {
+          currentQuery = searchInput.value?.trim() || "";
+          if (currentQuery && activeSort !== "relevance") {
+            activeSort = "relevance";
+            userOverrodeSort = true;
+            updateSortToggle();
+          }
+          // Close sheet if open
+          const sheet = document.querySelector("[data-sheet]") as HTMLElement | null;
+          if (sheet) (sheet as any).__closeSheet?.();
+          updateURL();
+          performSearch();
+        }
+      });
+    }
+
+    // Clear search
+    if (clearSearchBtn && searchInput) {
+      clearSearchBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        clearSearchBtn.classList.add("hidden");
+        currentQuery = "";
+        updateURL();
+        performSearch();
+        searchInput.focus();
+      });
+    }
+
+    // Apply filters button (inside Sheet)
+    if (applyFiltersBtn) {
+      applyFiltersBtn.addEventListener("click", () => {
+        updateURL();
+        performSearch();
+        // Close Sheet via Bearnie runtime
+        const sheet = document.querySelector("[data-sheet]") as HTMLElement | null;
+        if (sheet) (sheet as any).__closeSheet?.();
+      });
+    }
+
+    // Clear all filters
+    function clearAllFilters() {
+      activeContentTypes = new Set(["projects", "stays"]);
+      activeCountry = "";
+      activeVerified = false;
+      activeImpactAreas.clear();
+      activePTypes.clear();
+      activeSTypes.clear();
+      activeSFacilities.clear();
+      activeSort = "newest";
+      userOverrodeSort = false;
+
+      // Reset form controls
+      if (countryFilter) countryFilter.value = "";
+
+      // Reset verified switch
+      const vs = document.getElementById("verified-filter");
+      if (vs) {
+        vs.setAttribute("aria-checked", "false");
+        vs.setAttribute("data-state", "unchecked");
+        const thumb = vs.querySelector("span");
+        if (thumb) thumb.setAttribute("data-state", "unchecked");
+      }
+
+      // Reset checkboxes
+      document.querySelectorAll("[data-impact], .ptype-checkbox, .stype-checkbox, .facility-checkbox").forEach((cb) => {
+        if ((cb as HTMLElement).hasAttribute("data-impact")) {
+          const inp = cb.tagName === "INPUT" ? cb as HTMLInputElement : (cb as HTMLElement).querySelector("input") as HTMLInputElement | null;
+          if (inp) inp.checked = false;
+        } else {
+          (cb as HTMLInputElement).checked = false;
+        }
+      });
+
+      updateTypeToggle();
+      updateFilterSections();
+      updateSortToggle();
+      updateSortRelevanceState();
+      updateFilterCount();
+      updateActiveFiltersDisplay();
+      updateURL();
+      performSearch();
+    }
+
+    if (clearAllFiltersBtn) clearAllFiltersBtn.addEventListener("click", clearAllFilters);
+    if (clearAllBtn) clearAllBtn.addEventListener("click", clearAllFilters);
+
+    // Load more
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener("click", loadMoreResults);
+    }
+
+    // Initial search
+    if (!hasRunInitialSearch) {
+      hasRunInitialSearch = true;
+      performSearch();
+    }
+  }
+
+  function updateTypeToggle() {
+    document.querySelectorAll(".type-toggle-btn").forEach((btn) => {
+      const type = (btn as HTMLElement).getAttribute("data-type-btn");
+      const isActive = type === "all"
+        ? activeContentTypes.size === 2
+        : activeContentTypes.has(type || "");
+      btn.classList.toggle("active", isActive);
+    });
+  }
+
+  function updateFilterSections() {
+    const projectTypeSection = document.getElementById("project-type-section");
+    const stayTypeSection = document.getElementById("stay-type-section");
+    const facilitiesSection = document.getElementById("facilities-section");
+    const typeFilterInfo = document.getElementById("type-filter-info");
+
+    const showTypeSpecific = activeContentTypes.size === 1;
+
+    if (typeFilterInfo) {
+      typeFilterInfo.classList.toggle("hidden", showTypeSpecific);
+    }
+    if (projectTypeSection) {
+      projectTypeSection.classList.toggle("hidden", !activeContentTypes.has("projects") || !showTypeSpecific);
+    }
+    if (stayTypeSection) {
+      stayTypeSection.classList.toggle("hidden", !activeContentTypes.has("stays") || !showTypeSpecific);
+    }
+    if (facilitiesSection) {
+      facilitiesSection.classList.toggle("hidden", !activeContentTypes.has("stays") || !showTypeSpecific);
+    }
+  }
+
+  function updateSortToggle() {
+    const label = document.getElementById("sort-current-label");
+    if (label) label.textContent = activeSort === "alphabetical" ? "A-Z" : activeSort;
+    // Update checkmarks in popover
+    document.querySelectorAll(".sort-option").forEach((opt) => {
+      const sort = (opt as HTMLElement).getAttribute("data-sort");
+      const check = opt.querySelector(".sort-check") as HTMLElement | null;
+      if (check) {
+        check.textContent = sort === activeSort ? "✓" : "○";
+      }
+    });
+    updateSortRelevanceState();
+  }
+
+  function updateSortRelevanceState() {
+    const relevanceBtn = document.querySelector('[data-sort="relevance"]') as HTMLElement | null;
+    if (relevanceBtn) {
+      const hasQuery = currentQuery.length > 0;
+      relevanceBtn.toggleAttribute("disabled", !hasQuery);
+      relevanceBtn.classList.toggle("opacity-50", !hasQuery);
+      relevanceBtn.classList.toggle("cursor-not-allowed", !hasQuery);
+    }
+  }
+
+  function updateFilterCount() {
+    const totalFilterCount = document.getElementById("total-filter-count");
+    if (!totalFilterCount) return;
+
+    let count = 0;
+    if (activeCountry) count++;
+    if (activeVerified) count++;
+    count += activeImpactAreas.size;
+    count += activePTypes.size;
+    count += activeSTypes.size;
+    count += activeSFacilities.size;
+
+    if (count > 0) {
+      totalFilterCount.textContent = count.toString();
+      totalFilterCount.classList.remove("hidden");
+    } else {
+      totalFilterCount.classList.add("hidden");
+    }
+
+    updateActiveFiltersDisplay();
+  }
+
+  function updateActiveFiltersDisplay() {
+    const container = document.getElementById("active-filters");
+    const clearAllContainer = document.getElementById("clear-all-container");
+    if (!container) return;
+
+    const pills: string[] = [];
+
+    const allTypes = new Set(["projects", "stays"]);
+    if (activeContentTypes.size < 2) {
+      const typeLabels = [...activeContentTypes].map((t) => {
+        const label = t === "projects" ? "Projects" : "Stays";
+        return label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
+      }).join(", ");
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">Type: ${typeLabels} <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-type="type">&times;</button></span>`);
+    }
+    if (activeCountry) {
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">Country: ${activeCountry} <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-type="country">&times;</button></span>`);
+    }
+    if (activeVerified) {
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">Verified <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-type="verified">&times;</button></span>`);
+    }
+    activeImpactAreas.forEach((area) => {
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">${area} <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-impact="${area}">&times;</button></span>`);
+    });
+    activePTypes.forEach((type) => {
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">${type} <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-ptype="${type}">&times;</button></span>`);
+    });
+    activeSTypes.forEach((type) => {
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">${type} <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-stype="${type}">&times;</button></span>`);
+    });
+    activeSFacilities.forEach((facility) => {
+      pills.push(`<span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-900 text-white dark:bg-gray-700">${facility} <button type="button" class="ml-1.5 text-gray-300 hover:text-white remove-filter-pill" data-facility="${facility}">&times;</button></span>`);
+    });
+
+    if (pills.length > 0) {
+      container.innerHTML = pills.join("");
+      container.classList.remove("hidden");
+      if (clearAllContainer) clearAllContainer.classList.remove("hidden");
+
+      // Add click handlers to remove pills
+      container.querySelectorAll(".remove-filter-pill").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const type = btn.getAttribute("data-type");
+          const impact = btn.getAttribute("data-impact");
+          const pType = btn.getAttribute("data-ptype");
+          const sType = btn.getAttribute("data-stype");
+          const facility = btn.getAttribute("data-facility");
+
+          if (type === "type") {
+            activeContentTypes = new Set(["projects", "stays"]);
+            updateTypeToggle();
+          }
+          else if (type === "country") {
+            activeCountry = "";
+            const cf = document.getElementById("country-filter") as HTMLSelectElement | null;
+            if (cf) cf.value = "";
+          } else if (type === "verified") {
+            activeVerified = false;
+            const vs = document.getElementById("verified-filter");
+            if (vs) {
+              vs.setAttribute("aria-checked", "false");
+              vs.setAttribute("data-state", "unchecked");
+              const thumb = vs.querySelector("span");
+              if (thumb) thumb.setAttribute("data-state", "unchecked");
+            }
+          } else if (impact) {
+            activeImpactAreas.delete(impact);
+            const input = document.querySelector(`[data-impact="${impact}"]`) as HTMLInputElement | null;
+            if (input && input.tagName === "INPUT") input.checked = false;
+          } else if (pType) {
+            activePTypes.delete(pType);
+            const cb = document.querySelector(`.ptype-checkbox[data-ptype="${pType}"]`) as HTMLInputElement | null;
+            if (cb) cb.checked = false;
+          } else if (sType) {
+            activeSTypes.delete(sType);
+            const cb = document.querySelector(`.stype-checkbox[data-stype="${sType}"]`) as HTMLInputElement | null;
+            if (cb) cb.checked = false;
+          } else if (facility) {
+            activeSFacilities.delete(facility);
+            const cb = document.querySelector(`.facility-checkbox[data-facility="${facility}"]`) as HTMLInputElement | null;
+            if (cb) cb.checked = false;
+          }
+
+          updateTypeToggle();
+          updateFilterSections();
+          updateFilterCount();
+          updateURL();
+          performSearch();
+        });
+      });
+    } else {
+      container.classList.add("hidden");
+      if (clearAllContainer) clearAllContainer.classList.add("hidden");
+    }
+  }
+
+  function updateURL() {
+    const newUrl = new URL(window.location.href);
+    if (currentQuery) newUrl.searchParams.set("q", currentQuery);
+    else newUrl.searchParams.delete("q");
+
+    if (activeContentTypes.size < 2) newUrl.searchParams.set("type", Array.from(activeContentTypes).join(","));
+    else newUrl.searchParams.delete("type");
+
+    if (activeCountry) newUrl.searchParams.set("country", activeCountry);
+    else newUrl.searchParams.delete("country");
+
+    if (activeVerified) newUrl.searchParams.set("verified", "true");
+    else newUrl.searchParams.delete("verified");
+
+    if (activeImpactAreas.size > 0) newUrl.searchParams.set("impacts", Array.from(activeImpactAreas).join(","));
+    else newUrl.searchParams.delete("impacts");
+
+    if (activePTypes.size > 0) newUrl.searchParams.set("pType", Array.from(activePTypes).join(","));
+    else newUrl.searchParams.delete("pType");
+
+    if (activeSTypes.size > 0) newUrl.searchParams.set("sType", Array.from(activeSTypes).join(","));
+    else newUrl.searchParams.delete("sType");
+
+    if (activeSFacilities.size > 0) newUrl.searchParams.set("sFacilities", Array.from(activeSFacilities).join(","));
+    else newUrl.searchParams.delete("sFacilities");
+
+    if (activeSort !== "newest") newUrl.searchParams.set("sort", activeSort);
+    else newUrl.searchParams.delete("sort");
+
+    if (displayedResults > RESULTS_PER_PAGE) newUrl.searchParams.set("show", displayedResults.toString());
+    else newUrl.searchParams.delete("show");
+
+    window.history.replaceState(null, "", newUrl.toString());
+  }
+
+  async function performSearch() {
+    if (!pagefind) {
+      const skeletons = document.getElementById("loading-skeletons");
+      const status = document.getElementById("status-text");
+      const bar = document.getElementById("status-bar");
+      if (skeletons) skeletons.classList.add("hidden");
+      if (bar) bar.classList.remove("hidden");
+      if (status) status.textContent = "Search is currently unavailable.";
+      return;
+    }
+
+    console.log("performSearch called, query:", currentQuery, "sort:", activeSort);
+
+    const loadingSkeletons = document.getElementById("loading-skeletons");
+    const searchResults = document.getElementById("search-results");
+    const noResults = document.getElementById("no-results");
+    const noResultsMessage = document.getElementById("no-results-message");
+    const loadMoreContainer = document.getElementById("load-more-container");
+    const statusText = document.getElementById("status-text");
+    const statusBar = document.getElementById("status-bar");
+
+    if (loadingSkeletons) loadingSkeletons.classList.remove("hidden");
+    if (searchResults) {
+      searchResults.classList.add("hidden");
+      searchResults.innerHTML = "";
+    }
+    if (noResults) noResults.classList.add("hidden");
+    if (loadMoreContainer) loadMoreContainer.classList.add("hidden");
+    if (statusBar) statusBar.classList.remove("hidden");
+    if (statusText) statusText.textContent = "Loading...";
+    displayedResults = 0;
+
+    try {
+      const filters: Record<string, any> = {};
+
+      // Build type filter from active content types
+      if (activeContentTypes.size > 0 && activeContentTypes.size < 2) {
+        filters["type"] = Array.from(activeContentTypes).map((t) => CONTENT_TYPE_FILTERS[t]).filter(Boolean);
+      }
+      if (activeCountry) filters["country"] = activeCountry;
+      if (activeVerified) filters["verified"] = "true";
+      if (activeImpactAreas.size > 0) filters["impactAreas"] = Array.from(activeImpactAreas);
+      if (activePTypes.size > 0) filters["pType"] = Array.from(activePTypes);
+      if (activeSTypes.size > 0) filters["sType"] = Array.from(activeSTypes);
+      if (activeSFacilities.size > 0) filters["sFacilities"] = Array.from(activeSFacilities);
+
+      console.log("Calling pagefind.search with query:", currentQuery || "(none)", "filters:", filters);
+
+      const searchPromise = pagefind.search(currentQuery || null, { filters });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Search timed out")), 10000)
+      );
+      const search = await Promise.race([searchPromise, timeoutPromise]);
+
+      console.log("Pagefind returned", search?.results?.length || 0, "results");
+
+      if (!search || search.results.length === 0) {
+        allResults = [];
+        if (loadingSkeletons) loadingSkeletons.classList.add("hidden");
+        if (noResults) {
+          noResults.classList.remove("hidden");
+          if (noResultsMessage) {
+            noResultsMessage.textContent = currentQuery
+              ? `No results for "${currentQuery}". Try different keywords or adjust your filters.`
+              : "No listings match your current filters.";
+          }
+        }
+        if (statusText) statusText.textContent = "0 results";
+        updateFilterCount();
+        return;
+      }
+
+      // Process ALL results, then sort and paginate
+      const allProcessed = await Promise.all(
+        search.results.map(async (result: any) => {
+          try {
+            const data = await result.data();
+            if (data.url && data.url.includes("/docs/")) return null;
+            if (data.filters && data.filters.type && data.filters.type[0] === "doc") return null;
+            return {
+              data,
+              contentType: getContentType(data),
+            };
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      let sortedResults = allProcessed.filter(Boolean) as any[];
+      const totalCount = sortedResults.length;
+
+      // Debug: log first 5 date values for sorting analysis
+      console.log("Sort debug - first 5 results:", sortedResults.slice(0, 5).map((r: any) => ({
+        name: r.data.meta?.name || r.data.meta?.title || "unknown",
+        date: r.data.meta?.date,
+        dateType: typeof r.data.meta?.date,
+        parsed: r.data.meta?.date ? new Date(r.data.meta?.date).getTime() : "N/A"
+      })));
+
+      // Apply sorting
+      if (activeSort === "alphabetical") {
+        sortedResults.sort((a: any, b: any) => {
+          const nameA = a.data.meta?.name || a.data.meta?.title || "";
+          const nameB = b.data.meta?.name || b.data.meta?.title || "";
+          return nameA.localeCompare(nameB);
+        });
+      } else if (activeSort === "newest") {
+        sortedResults.sort((a: any, b: any) => {
+          const rawA = Array.isArray(a.data.meta?.date) ? a.data.meta.date[0] : a.data.meta?.date;
+          const rawB = Array.isArray(b.data.meta?.date) ? b.data.meta.date[0] : b.data.meta?.date;
+          const dateA = rawA ? new Date(rawA).getTime() : 0;
+          const dateB = rawB ? new Date(rawB).getTime() : 0;
+          if (!dateA || !dateB) return dateB - dateA;
+          return dateB - dateA;
+        });
+      }
+      // "relevance" keeps Pagefind's natural order — no sorting needed
+
+      if (loadingSkeletons) loadingSkeletons.classList.add("hidden");
+
+      if (sortedResults.length === 0) {
+        if (noResults) {
+          noResults.classList.remove("hidden");
+          if (noResultsMessage) noResultsMessage.textContent = "No results found for the selected filters.";
+        }
+        if (statusText) statusText.textContent = "0 results";
+        if (statusBar) statusBar.classList.remove("hidden");
+        return;
+      }
+
+      // Store sorted results for load more
+      (window as any)._directoryAllResults = sortedResults;
+      (window as any)._directoryTotalCount = totalCount;
+
+      // Take first page
+      allResults = sortedResults.slice(0, RESULTS_PER_PAGE);
+
+      if (searchResults) {
+        searchResults.classList.remove("hidden");
+        searchResults.innerHTML = allResults
+          .map((r: any) => createCard(r.data, r.contentType))
+          .join("");
+        displayedResults = allResults.length;
+      }
+
+      if (statusText) {
+        if (currentQuery) {
+          statusText.textContent = `${totalCount.toLocaleString()} result${totalCount !== 1 ? "s" : ""} for "${currentQuery}"`;
+        } else {
+          statusText.textContent = `${totalCount.toLocaleString()} result${totalCount !== 1 ? "s" : ""}`;
+        }
+      }
+      if (statusBar) statusBar.classList.remove("hidden");
+
+      if (displayedResults < totalCount && loadMoreContainer) {
+        loadMoreContainer.classList.remove("hidden");
+      }
+
+      updateFilterCount();
+      updateURL();
+    } catch (error) {
+      console.error("Search error:", error);
+      if (loadingSkeletons) loadingSkeletons.classList.add("hidden");
+      if (statusBar) statusBar.classList.remove("hidden");
+      if (statusText) statusText.textContent = error instanceof Error && error.message === "Search timed out"
+        ? "Search timed out. Please try again."
+        : "An error occurred. Please try again.";
+    }
+  }
+
+  async function loadMoreResults() {
+    const allStoredResults = (window as any)._directoryAllResults as any[] | undefined;
+    if (!allStoredResults) return;
+
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    const searchResults = document.getElementById("search-results");
+
+    const startIdx = displayedResults;
+    const endIdx = Math.min(displayedResults + RESULTS_PER_PAGE, allStoredResults.length);
+
+    for (let i = startIdx; i < endIdx; i++) {
+      const item = allStoredResults[i];
+      if (searchResults) {
+        searchResults.innerHTML += createCard(item.data, item.contentType);
+      }
+    }
+
+    displayedResults = endIdx;
+    updateURL();
+
+    if (displayedResults >= allStoredResults.length && loadMoreBtn) {
+      loadMoreBtn.closest("#load-more-container")?.classList.add("hidden");
+    }
+  }
+
+  // Initialize on load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDirectory);
+  } else {
+    initDirectory();
+  }
+  </script>
+
+  <style>
+    [data-collapsible][data-state="open"] [data-collapsible-chevron] {
+      transform: rotate(180deg);
+    }
+
+    .type-toggle-btn:not(.active) {
+      border: 1px solid var(--input) !important;
+      background: var(--background) !important;
+      color: var(--foreground) !important;
+    }
+    .type-toggle-btn.active {
+      border: 1px solid var(--primary) !important;
+      background: var(--primary) !important;
+      color: var(--primary-foreground) !important;
+    }
+    .type-toggle-btn:hover:not(.active) {
+      background: var(--accent) !important;
+      color: var(--accent-foreground) !important;
+    }
+  </style>

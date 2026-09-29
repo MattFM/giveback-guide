@@ -1,7 +1,10 @@
 ---
 import { cn } from '@/utils/cn';
 import type { HTMLAttributes } from 'astro/types';
-import HugeIcon from "@/components/fundations/icons/HugeIcon.astro";
+// Bearnie's curated path `@/components/fundations/icons/HugeIcon.astro` doesn't exist
+// in this project. Use the working relative path so this component still resolves.
+// If/when the upstream path is created, this local tweak can be reverted.
+import HugeIcon from "../icon/HugeIcon.astro";
 import { MoreHorizontalIcon } from "@/lib/hugeicons";
 
 export interface Props extends HTMLAttributes<'div'> {}
