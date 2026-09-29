@@ -1,0 +1,284 @@
+---
+import CommandDialog from "../bearnie/command/CommandDialog.astro";
+import CommandDialogTrigger from "../bearnie/command/CommandDialogTrigger.astro";
+import CommandDialogOverlay from "../bearnie/command/CommandDialogOverlay.astro";
+import CommandDialogContent from "../bearnie/command/CommandDialogContent.astro";
+import Command from "../bearnie/command/Command.astro";
+import CommandList from "../bearnie/command/CommandList.astro";
+import CommandGroup from "../bearnie/command/CommandGroup.astro";
+import CommandItem from "../bearnie/command/CommandItem.astro";
+import CommandSeparator from "../bearnie/command/CommandSeparator.astro";
+import Kbd from "../bearnie/kbd/Kbd.astro";
+import Separator from "../bearnie/separator/Separator.astro";
+import HugeIcon from "../bearnie/icon/HugeIcon.astro";
+import { Search01Icon } from "@/lib/hugeicons";
+
+interface Props {
+    theme?: "light" | "dark";
+}
+
+const { theme = "light" } = Astro.props;
+---
+
+<CommandDialog>
+    <CommandDialogTrigger aria-label="Open search">
+        <button
+            id="search-button"
+            type="button"
+            class="cursor-pointer font-medium rounded-lg text-sm text-center inline-flex items-center me-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors lg:px-5 lg:py-2.5 w-10 h-10 lg:w-auto lg:h-auto justify-center text-foreground"
+        >
+            <HugeIcon
+                icon={Search01Icon}
+                size={20}
+                class="lg:me-2 text-foreground"
+                aria-hidden="true"
+            />
+            <span class="hidden lg:flex lg:items-center lg:space-x-2">
+                <span>Search</span>
+                <span class="flex items-center ml-2 text-xs text-muted-foreground">
+                    <Kbd id="search-kbd">⌘K</Kbd>
+                </span>
+            </span>
+        </button>
+    </CommandDialogTrigger>
+
+    <CommandDialogOverlay />
+    <CommandDialogContent class="max-w-2xl p-0 gap-0 overflow-hidden">
+        <Command>
+            <div class="flex items-center gap-2 border-b px-3">
+                <HugeIcon
+                    icon={Search01Icon}
+                    class="size-4 shrink-0 text-muted-foreground"
+                    aria-hidden="true"
+                />
+                <input
+                    type="text"
+                    id="modal-search-input"
+                    name="q"
+                    placeholder="Search projects, stays, or blog posts"
+                    autocomplete="off"
+                    class="flex h-10 w-full border-0 bg-transparent text-sm outline-none focus:ring-0 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                />
+            </div>
+
+            <CommandList>
+                <CommandGroup heading="Content type">
+                    <CommandItem data-content-type="all" data-active="true">
+                        <span class="flex-1">All</span>
+                        <span class="text-xs text-muted-foreground">projects, stays, posts</span>
+                    </CommandItem>
+                    <CommandItem data-content-type="projects" data-active="false">
+                        <span class="flex-1">Projects</span>
+                    </CommandItem>
+                    <CommandItem data-content-type="stays" data-active="false">
+                        <span class="flex-1">Stays</span>
+                    </CommandItem>
+                    <CommandItem data-content-type="posts" data-active="false">
+                        <span class="flex-1">Blog Posts</span>
+                    </CommandItem>
+                </CommandGroup>
+
+                <CommandSeparator />
+
+                <CommandGroup heading="Verification">
+                    <div
+                        class="flex items-center justify-between gap-3 rounded-sm px-2 py-1.5 text-sm"
+                    >
+                        <label for="verified-filter" class="cursor-pointer select-none">
+                            Verified listings only
+                        </label>
+                        <button
+                            type="button"
+                            role="switch"
+                            aria-checked="false"
+                            data-state="unchecked"
+                            id="verified-filter"
+                            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+                        >
+                            <span
+                                class="pointer-events-none block size-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+                                data-state="unchecked"
+                            ></span>
+                        </button>
+                    </div>
+                </CommandGroup>
+            </CommandList>
+        </Command>
+
+        <Separator />
+
+        <div
+            class="hidden flex-wrap items-center justify-between gap-3 px-3 py-2 text-xs text-muted-foreground lg:flex"
+        >
+            <div class="flex flex-wrap items-center gap-4">
+                <span class="flex items-center gap-1">
+                    <Kbd>↵</Kbd> to search
+                </span>
+                <span class="flex items-center gap-1">
+                    <Kbd>esc</Kbd> to close
+                </span>
+            </div>
+            <span class="flex items-center gap-1">
+                <Kbd>⌘K</Kbd> to open anywhere
+            </span>
+        </div>
+    </CommandDialogContent>
+</CommandDialog>
+
+<style is:global>
+    [data-content-type][data-active="true"],
+    [data-content-type][data-active="true"]:hover {
+        background-color: var(--primary);
+        color: var(--primary-foreground);
+    }
+</style>
+
+<script is:inline>
+    (function () {
+        var isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+        var kbd = document.getElementById("search-kbd");
+        if (kbd && !isMac) {
+            kbd.textContent = "Ctrl K";
+        }
+    })();
+</script>
+
+<script>
+    type FilterSet = Set<string>;
+
+    const searchInput = document.getElementById(
+        "modal-search-input"
+    ) as HTMLInputElement | null;
+
+    const activeFilters: FilterSet = new Set(["all"]);
+    let activeVerified = false;
+
+    function buildSearchUrl(
+        params: Record<string, string | undefined>
+    ): string {
+        const url = new URL("/search/", window.location.origin);
+        Object.entries(params).forEach(([key, value]) => {
+            if (value) url.searchParams.set(key, value);
+        });
+        return url.pathname + url.search;
+    }
+
+    function submitToSearch(
+        params: Record<string, string | undefined>
+    ): void {
+        window.location.href = buildSearchUrl(params);
+    }
+
+    function collectFiltersParam(): string | undefined {
+        if (activeFilters.size === 0) return undefined;
+        if (activeFilters.size === 1 && activeFilters.has("all")) {
+            return undefined;
+        }
+        return Array.from(activeFilters).join(",");
+    }
+
+    function refreshContentTypeVisual(): void {
+        const items = document.querySelectorAll<HTMLElement>(
+            "[data-content-type]"
+        );
+        items.forEach((el) => {
+            const type = el.dataset.contentType;
+            if (!type) return;
+            const isActive = activeFilters.has(type);
+            el.dataset.active = String(isActive);
+            el.setAttribute(
+                "aria-selected",
+                isActive ? "true" : "false"
+            );
+        });
+    }
+
+    document
+        .querySelectorAll<HTMLElement>("[data-content-type]")
+        .forEach((el) => {
+            el.addEventListener("click", () => {
+                const type = el.dataset.contentType;
+                if (!type) return;
+                if (type === "all") {
+                    activeFilters.clear();
+                    activeFilters.add("all");
+                } else {
+                    if (activeFilters.has("all")) {
+                        activeFilters.delete("all");
+                    }
+                    if (activeFilters.has(type)) {
+                        activeFilters.delete(type);
+                    } else {
+                        activeFilters.add(type);
+                    }
+                    if (activeFilters.size === 0) {
+                        activeFilters.add("all");
+                    }
+                }
+                refreshContentTypeVisual();
+            });
+        });
+
+    const verifiedSwitch = document.getElementById(
+        "verified-filter"
+    ) as HTMLButtonElement | null;
+    if (verifiedSwitch) {
+        verifiedSwitch.addEventListener("click", () => {
+            const current =
+                verifiedSwitch.getAttribute("aria-checked") === "true";
+            const next = !current;
+            verifiedSwitch.setAttribute("aria-checked", String(next));
+            verifiedSwitch.setAttribute(
+                "data-state",
+                next ? "checked" : "unchecked"
+            );
+            const thumb = verifiedSwitch.querySelector("span");
+            if (thumb) {
+                thumb.setAttribute(
+                    "data-state",
+                    next ? "checked" : "unchecked"
+                );
+            }
+            activeVerified = next;
+        });
+    }
+
+    // Restore auto-focus on the search input whenever the dialog opens.
+    // Bearnie's runtime looks for `[data-command-input]` to focus —
+    // that selector intentionally doesn't exist in this modal so the
+    // command palette's typing-to-filter behaviour is disabled, so we
+    // focus our plain input ourselves via a MutationObserver on the
+    // overlay's `hidden` attribute (which Bearnie toggles on open/close).
+    const overlayEl = document.querySelector<HTMLElement>(
+        "[data-command-dialog-overlay]"
+    );
+    if (overlayEl && searchInput) {
+        const observer = new MutationObserver(() => {
+            if (!overlayEl.hidden) {
+                searchInput.focus();
+            }
+        });
+        observer.observe(overlayEl, {
+            attributes: true,
+            attributeFilter: ["hidden"],
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.key !== "Enter") return;
+            const query = searchInput.value.trim();
+            if (!query) {
+                e.preventDefault();
+                return;
+            }
+            const params: Record<string, string | undefined> = {
+                q: query,
+            };
+            const filtersParam = collectFiltersParam();
+            if (filtersParam) params.filters = filtersParam;
+            if (activeVerified) params.verified = "true";
+            submitToSearch(params);
+        });
+    }
+</script>

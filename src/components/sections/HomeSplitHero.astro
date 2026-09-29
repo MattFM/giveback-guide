@@ -5,7 +5,8 @@ import Badge from "@/components/bearnie/badge/Badge.astro";
 
 const coverImage =
     "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1790166552/group-selfie_cmksrc.jpg";
-const coverImageAlt = "A group of young people of differing ethinic backgrounds smile at the camera.";
+const coverImageAlt =
+    "A group of young people of differing ethinic backgrounds smile at the camera.";
 
 const badge = {
     text: "New: Tourism's Hidden Climate Impact",
@@ -37,31 +38,25 @@ const badge = {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-            >
-            </path>
+            ></path>
         </svg>
     </Badge>
 
-    <h1
-        class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-6"
-    >
-        Discover amazing ways to <span class="text-brand-primary-dark"
-            >give back</span
-        > to the places you visit
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-6">
+        Discover amazing ways to{" "}
+        <span class="text-brand-primary-dark">give back</span> to the places you
+        visit
     </h1>
 
-    <p
-        class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8 max-w-prose"
-    >
-        Give Back Guide is a
-        growing collection of animal sanctuaries, beach cleans, cultural
-        exchanges, social impact projects, tours, tree planting, wellbeing
-        experiences and more.
+    <p class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8 max-w-prose">
+        Give Back Guide is a growing collection of animal sanctuaries, beach
+        cleans, cultural exchanges, social impact projects, tours, tree
+        planting, wellbeing experiences and more.
     </p>
 
     <div class="flex flex-wrap gap-4 mb-10">
         <Button size="lg" data-open-search-modal>
-            <span>Browse directory</span>
+            <span>Search directory</span>
         </Button>
 
         <Button href="/about/" variant="outline" size="lg">
@@ -74,16 +69,16 @@ const badge = {
             <div class="text-2xl sm:text-3xl font-extrabold text-brand-primary-dark">
                 400+
             </div>
-            <div class="text-sm text-gray-500 font-medium mt-0.5">
-                Listings
-            </div>
+            <div class="text-sm text-gray-500 font-medium mt-0.5">Listings</div>
         </div>
         <div class="hidden sm:block w-px h-12 bg-gray-400"></div>
         <div>
             <div class="text-2xl sm:text-3xl font-extrabold text-brand-primary-dark">
                 60+
             </div>
-            <div class="text-sm text-gray-500 font-medium mt-0.5">Countries</div>
+            <div class="text-sm text-gray-500 font-medium mt-0.5">
+                Countries
+            </div>
         </div>
         <div class="hidden sm:block w-px h-12 bg-gray-400"></div>
         <div>
@@ -101,11 +96,13 @@ const badge = {
     (function () {
         const buttons = document.querySelectorAll("[data-open-search-modal]");
         buttons.forEach(function (btn) {
-            btn.addEventListener("click", function (e: MouseEvent) {
+            btn.addEventListener("click", function (e) {
                 e.preventDefault();
-                const searchBtn = document.getElementById("search-button");
-                if (searchBtn) {
-                    searchBtn.click();
+                const trigger = document.querySelector(
+                    "[data-command-dialog-trigger]",
+                );
+                if (trigger) {
+                    trigger.click();
                 }
             });
         });

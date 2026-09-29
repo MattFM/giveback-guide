@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import ResponsiveImage from '../ui/Image/ResponsiveImage.astro';
 import VerificationPill from './VerificationPill.astro';
+import { excludeUkDuplicates, formatLocales, getExcerpt, parseCountryList } from '@/lib/card-rendering';
 
 interface Props {
   slug: string;
@@ -24,25 +25,8 @@ if (!project) {
 
 const props = project.data.properties;
 
-// Format location display
-const countries = Array.isArray(props.pCountry) ? props.pCountry : [props.pCountry];
-const locales = Array.isArray(props.pLocale) ? props.pLocale : [props.pLocale];
-
-const formatLocales = (locales: string[]) => {
-  if (locales.length === 0) return '';
-  if (locales.length === 1) return locales[0];
-  if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
-  return `${locales[0]}, ${locales[1]} & ${locales.length - 2} more`;
-};
-
-// Truncate description for excerpt
-const getExcerpt = (text: string | null | undefined, maxLength: number = 120) => {
-  if (!text) return '';
-  const cleanText = text.trim();
-  if (cleanText.length <= maxLength) return cleanText;
-  return cleanText.substring(0, maxLength).trim() + '...';
-};
-
+const countries = excludeUkDuplicates(parseCountryList(props.pCountry));
+const locales = parseCountryList(props.pLocale);
 const excerpt = getExcerpt(props.pReview);
 ---
 

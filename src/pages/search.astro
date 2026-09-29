@@ -446,13 +446,11 @@ const allSFacilities = [...new Set(
 </MainLayout>
 
 <script>
-  // Known canonical country names for display filtering
-  const CANONICAL_COUNTRIES = new Set([
-    "New Zealand", "Canada", "Scotland", "Wales", "Australia", 
-    "United Kingdom", "UK", "England", "Northern Ireland",
-    "USA", "United States", "Türkiye",
-    // Add other countries as needed - this filters out aliases from display
-  ]);
+  import {
+    formatLocales,
+    canonicalCountryNames,
+    parseCountryList,
+  } from "../lib/card-rendering";
 
   const CONTENT_TYPE_FILTERS: Record<string, string> = {
     projects: 'project',
@@ -1428,52 +1426,17 @@ const allSFacilities = [...new Set(
 
       // Get additional metadata
       const organiser = data.meta?.organiser || '';
-      const locale = data.meta?.locale || '';
-      const countries = data.meta?.countries || '';
       const categories = data.meta?.categories || '';
-
-      // Helper function to format locales
-      const formatLocales = (locales: string[]) => {
-        if (locales.length === 0) return "";
-        if (locales.length === 1) return locales[0];
-        if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
-        if (locales.length === 3) return `${locales[0]}, ${locales[1]} & ${locales[2]}`;
-        // For 4+, show first two and count remaining
-        const remaining = locales.length - 2;
-        return `${locales[0]}, ${locales[1]} & ${remaining} more`;
-      };
 
       // Create countries/tags badges for projects, stays and posts (matching existing card design)
       let badgesLine = '';
-      if (contentTypeSlug === 'projects' && countries) {
-        // Filter to only show canonical country names (not aliases)
-        const allCountries = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
-        // Take only canonical country names (filter out aliases like Aotearoa, Alba, Turkey, etc.)
-        const countryArray = allCountries.filter((c: string) => CANONICAL_COUNTRIES.has(c) || !['Aotearoa', 'Alba', 'Cymru', 'Turtle Island', 'Kanata', 'Turkey'].includes(c));
-        const localeArray = locale ? locale.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
-        
+      if ((contentTypeSlug === 'projects' || contentTypeSlug === 'stays') && data.meta?.countries) {
+        const countryArray = canonicalCountryNames(parseCountryList(data.meta?.countries));
+        const localeArray = parseCountryList(data.meta?.locale);
+
         if (countryArray.length > 0) {
           badgesLine = `<div class="mb-2 flex items-center flex-wrap gap-1.5">
-            ${countryArray.map((country: string) => 
-              `<div class="inline-flex items-center gap-1.5">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
-                  ${country}
-                </span>
-                ${localeArray.length > 0 ? `<span class="text-xs font-medium text-gray-700 dark:text-gray-300">|&nbsp; ${formatLocales(localeArray)}</span>` : ''}
-              </div>`
-            ).join('')}
-          </div>`;
-        }
-      } else if (contentTypeSlug === 'stays' && countries) {
-        // Filter to only show canonical country names (not aliases)
-        const allCountries = countries.split(',').map((c: string) => c.trim()).filter((c: string) => c !== 'United Kingdom' && c !== 'UK');
-        // Take only canonical country names (filter out aliases like Aotearoa, Alba, Turkey, etc.)
-        const countryArray = allCountries.filter((c: string) => CANONICAL_COUNTRIES.has(c) || !['Aotearoa', 'Alba', 'Cymru', 'Turtle Island', 'Kanata', 'Turkey'].includes(c));
-        const localeArray = locale ? locale.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
-        
-        if (countryArray.length > 0) {
-          badgesLine = `<div class="mb-2 flex items-center flex-wrap gap-1.5">
-            ${countryArray.map((country: string) => 
+            ${countryArray.map((country: string) =>
               `<div class="inline-flex items-center gap-1.5">
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300">
                   ${country}
@@ -1488,7 +1451,7 @@ const allSFacilities = [...new Set(
         const categoryArray = categories.split(',').map((cat: string) => cat.trim()).filter((cat: string) => cat.length > 0);
         if (categoryArray.length > 0) {
           badgesLine = `<div class="mb-2">
-            ${categoryArray.map((category: string) => 
+            ${categoryArray.map((category: string) =>
               `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300 mr-1.5">
                 ${category}
               </span>`

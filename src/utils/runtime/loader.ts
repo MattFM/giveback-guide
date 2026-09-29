@@ -1,3 +1,5 @@
+import { bootUiRuntime } from "./ui-boot";
+
 type UiInit = () => void;
 
 declare global {
@@ -30,4 +32,13 @@ export function registerUiInit(init: UiInit) {
       window.__bearnieUiInits?.forEach((fn) => fn());
     });
   }
+}
+
+/**
+ * Boots the Bearnie UI runtime as a whole. Used by Bearnie components
+ * (Command.astro, CommandDialog.astro, etc.) that want the full subsystem
+ * ready even though they themselves only depend on a subset.
+ */
+export function ensureUiBootLoaded(): void {
+  bootUiRuntime();
 }

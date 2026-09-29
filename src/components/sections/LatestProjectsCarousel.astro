@@ -4,6 +4,7 @@ import ContentCard from "../content/ContentCard.astro";
 import Carousel from "@/components/bearnie/carousel/Carousel.astro";
 import CarouselContent from "@/components/bearnie/carousel/CarouselContent.astro";
 import CarouselItem from "@/components/bearnie/carousel/CarouselItem.astro";
+import { excludeUkDuplicates, formatLocales, parseCountryList } from "@/lib/card-rendering";
 
 interface Props {
     limit?: number;
@@ -32,16 +33,6 @@ const sortedEntries = entries
     });
 
 const limitedEntries = sortedEntries.slice(0, limit);
-
-function formatLocales(locales: string[]) {
-    if (!locales || locales.length === 0) return "";
-    if (locales.length === 1) return locales[0];
-    if (locales.length === 2) return `${locales[0]} & ${locales[1]}`;
-    if (locales.length === 3)
-        return `${locales[0]}, ${locales[1]} & ${locales[2]}`;
-    const remaining = locales.length - 2;
-    return `${locales[0]}, ${locales[1]} & ${remaining} more`;
-}
 ---
 
 <section class="overflow-hidden py-8 sm:py-16">
@@ -139,19 +130,11 @@ function formatLocales(locales: string[]) {
                 </div>
             </div>
 
-            <CarouselContent>
+<CarouselContent>
                 {limitedEntries.map((project) => {
                     const props = project.data.properties;
-                    const countries = Array.isArray(props.pCountry)
-                        ? props.pCountry
-                        : [props.pCountry];
-                    const locales = Array.isArray(props.pLocale)
-                        ? props.pLocale
-                        : [props.pLocale];
-                    const validCountries = countries.filter(
-                        (c: string) =>
-                            c && c !== "United Kingdom" && c !== "UK",
-                    );
+                    const validCountries = excludeUkDuplicates(parseCountryList(props.pCountry));
+                    const locales = parseCountryList(props.pLocale);
 
                     return (
                         <CarouselItem>
