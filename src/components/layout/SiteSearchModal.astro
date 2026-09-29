@@ -11,7 +11,7 @@ import CommandSeparator from "../bearnie/command/CommandSeparator.astro";
 import Kbd from "../bearnie/kbd/Kbd.astro";
 import Separator from "../bearnie/separator/Separator.astro";
 import HugeIcon from "../bearnie/icon/HugeIcon.astro";
-import { Search01Icon } from "@/lib/hugeicons";
+import { Search01Icon, ArrowRight01Icon } from "@/lib/hugeicons";
 
 interface Props {
     theme?: "light" | "dark";
@@ -59,6 +59,14 @@ const { theme = "light" } = Astro.props;
                     autocomplete="off"
                     class="flex h-10 w-full border-0 bg-transparent text-sm outline-none focus:ring-0 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 />
+                <button
+                    type="button"
+                    id="modal-search-submit"
+                    aria-label="Submit search"
+                    class="inline-flex items-center justify-center rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                >
+                    <HugeIcon icon={ArrowRight01Icon} class="size-4" aria-hidden="true" />
+                </button>
             </div>
 
             <CommandList>
@@ -272,6 +280,21 @@ const { theme = "light" } = Astro.props;
                 e.preventDefault();
                 return;
             }
+            const params: Record<string, string | undefined> = {
+                q: query,
+            };
+            const filtersParam = collectFiltersParam();
+            if (filtersParam) params.filters = filtersParam;
+            if (activeVerified) params.verified = "true";
+            submitToSearch(params);
+        });
+    }
+
+    const submitBtn = document.getElementById("modal-search-submit");
+    if (submitBtn && searchInput) {
+        submitBtn.addEventListener("click", () => {
+            const query = searchInput.value.trim();
+            if (!query) return;
             const params: Record<string, string | undefined> = {
                 q: query,
             };
