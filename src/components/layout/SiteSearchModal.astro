@@ -43,7 +43,7 @@ const { theme = "light" } = Astro.props;
     </CommandDialogTrigger>
 
     <CommandDialogOverlay />
-    <CommandDialogContent class="max-w-2xl p-0 gap-0 overflow-hidden">
+    <CommandDialogContent class="max-w-2xl p-0 gap-0 overflow-hidden max-lg:!top-4 max-lg:!translate-y-0">
         <Command>
             <div class="flex items-center gap-2 border-b px-3">
                 <HugeIcon
@@ -63,7 +63,7 @@ const { theme = "light" } = Astro.props;
                     type="button"
                     id="modal-search-submit"
                     aria-label="Submit search"
-                    class="inline-flex items-center justify-center rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                    class="inline-flex items-center justify-center rounded border border-border p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 >
                     <HugeIcon icon={ArrowRight01Icon} class="size-4" aria-hidden="true" />
                 </button>
