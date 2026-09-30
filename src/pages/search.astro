@@ -1185,13 +1185,20 @@ const allSFacilities = [...new Set(
         // Build the Pagefind filter object from all the active sets/booleans
         const filters: Record<string, any> = {};
 
-        // Content type filter: 'all' means no filter; otherwise map to Pagefind values
+        // Content type filter: 'all' means no filter; otherwise map to Pagefind values.
+        // For a single category, pass the value directly. For multiple categories,
+        // wrap in Pagefind's `any` keyword — the default array semantics is AND
+        // ("must match every value"), but content type wants OR / union
+        // ("projects OR stays"). Impact areas, pType, sType, sFacilities keep AND
+        // because their multi-select legitimately means intersection.
         if (!activeFilters.has('all') && activeFilters.size > 0) {
           const mappedTypes = Array.from(activeFilters)
             .map((t) => CONTENT_TYPE_FILTERS[t])
             .filter(Boolean);
-          if (mappedTypes.length > 0) {
-            filters['type'] = mappedTypes;
+          if (mappedTypes.length === 1) {
+            filters['type'] = mappedTypes[0];
+          } else if (mappedTypes.length > 1) {
+            filters['type'] = { any: mappedTypes };
           }
         }
 

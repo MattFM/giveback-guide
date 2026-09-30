@@ -6,10 +6,10 @@ import CommandDialogContent from "../bearnie/command/CommandDialogContent.astro"
 import Command from "../bearnie/command/Command.astro";
 import CommandList from "../bearnie/command/CommandList.astro";
 import CommandGroup from "../bearnie/command/CommandGroup.astro";
-import CommandItem from "../bearnie/command/CommandItem.astro";
 import CommandSeparator from "../bearnie/command/CommandSeparator.astro";
 import Kbd from "../bearnie/kbd/Kbd.astro";
 import Separator from "../bearnie/separator/Separator.astro";
+import Switch from "../bearnie/switch/Switch.astro";
 import HugeIcon from "../bearnie/icon/HugeIcon.astro";
 import { Search01Icon, ArrowRight01Icon } from "@/lib/hugeicons";
 
@@ -71,19 +71,24 @@ const { theme = "light" } = Astro.props;
 
             <CommandList>
                 <CommandGroup heading="Content type">
-                    <CommandItem data-content-type="all" data-active="true">
-                        <span class="flex-1">All</span>
-                        <span class="text-xs text-muted-foreground">projects, stays, posts</span>
-                    </CommandItem>
-                    <CommandItem data-content-type="projects" data-active="false">
-                        <span class="flex-1">Projects</span>
-                    </CommandItem>
-                    <CommandItem data-content-type="stays" data-active="false">
-                        <span class="flex-1">Stays</span>
-                    </CommandItem>
-                    <CommandItem data-content-type="posts" data-active="false">
-                        <span class="flex-1">Blog Posts</span>
-                    </CommandItem>
+                    <div class="flex items-center justify-between gap-3 rounded-sm px-2 py-1.5 text-sm">
+                        <label for="content-projects" class="cursor-pointer select-none">
+                            Projects
+                        </label>
+                        <Switch id="content-projects" data-content-filter="projects" checked={true} />
+                    </div>
+                    <div class="flex items-center justify-between gap-3 rounded-sm px-2 py-1.5 text-sm">
+                        <label for="content-stays" class="cursor-pointer select-none">
+                            Stays
+                        </label>
+                        <Switch id="content-stays" data-content-filter="stays" checked={true} />
+                    </div>
+                    <div class="flex items-center justify-between gap-3 rounded-sm px-2 py-1.5 text-sm">
+                        <label for="content-posts" class="cursor-pointer select-none">
+                            Blog Posts
+                        </label>
+                        <Switch id="content-posts" data-content-filter="posts" checked={false} />
+                    </div>
                 </CommandGroup>
 
                 <CommandSeparator />
@@ -133,14 +138,6 @@ const { theme = "light" } = Astro.props;
     </CommandDialogContent>
 </CommandDialog>
 
-<style is:global>
-    [data-content-type][data-active="true"],
-    [data-content-type][data-active="true"]:hover {
-        background-color: var(--primary);
-        color: var(--primary-foreground);
-    }
-</style>
-
 <script is:inline>
     (function () {
         var isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
@@ -152,13 +149,22 @@ const { theme = "light" } = Astro.props;
 </script>
 
 <script>
-    type FilterSet = Set<string>;
-
     const searchInput = document.getElementById(
         "modal-search-input"
     ) as HTMLInputElement | null;
 
-    const activeFilters: FilterSet = new Set(["all"]);
+    // Initialise content-type filter state from SSR markup. Each switch's
+    // initial `aria-checked` reflects the default we want at first paint.
+    const contentFilterState: Record<string, boolean> = {};
+    document
+        .querySelectorAll<HTMLElement>("[data-content-filter]")
+        .forEach((el) => {
+            const name = el.dataset.contentFilter;
+            if (!name) return;
+            contentFilterState[name] =
+                el.getAttribute("aria-checked") === "true";
+        });
+
     let activeVerified = false;
 
     function buildSearchUrl(
@@ -177,53 +183,30 @@ const { theme = "light" } = Astro.props;
         window.location.href = buildSearchUrl(params);
     }
 
-    function collectFiltersParam(): string | undefined {
-        if (activeFilters.size === 0) return undefined;
-        if (activeFilters.size === 1 && activeFilters.has("all")) {
-            return undefined;
-        }
-        return Array.from(activeFilters).join(",");
+    function collectContentFiltersParam(): string | undefined {
+        // Build a comma-separated list of categories whose switches are on.
+        // If zero are on, fall back to "show everything" (no filter param),
+        // matching how multi-filter UIs typically handle the no-filter case.
+        const enabled = Object.entries(contentFilterState)
+            .filter(([, on]) => on)
+            .map(([name]) => name);
+        if (enabled.length === 0) return undefined;
+        return enabled.join(",");
     }
 
-    function refreshContentTypeVisual(): void {
-        const items = document.querySelectorAll<HTMLElement>(
-            "[data-content-type]"
-        );
-        items.forEach((el) => {
-            const type = el.dataset.contentType;
-            if (!type) return;
-            const isActive = activeFilters.has(type);
-            el.dataset.active = String(isActive);
-            el.setAttribute(
-                "aria-selected",
-                isActive ? "true" : "false"
-            );
-        });
-    }
-
+    // Keep contentFilterState in sync with each switch's live state.
+    // Bearnie's Switch component already handles the visual toggle (thumb
+    // shift, aria-checked, data-state) and dispatches a custom `change`
+    // event. We just listen for the click event AFTER Bearnie's own
+    // click listener has updated aria-checked, then read the new value.
     document
-        .querySelectorAll<HTMLElement>("[data-content-type]")
+        .querySelectorAll<HTMLElement>("[data-content-filter]")
         .forEach((el) => {
             el.addEventListener("click", () => {
-                const type = el.dataset.contentType;
-                if (!type) return;
-                if (type === "all") {
-                    activeFilters.clear();
-                    activeFilters.add("all");
-                } else {
-                    if (activeFilters.has("all")) {
-                        activeFilters.delete("all");
-                    }
-                    if (activeFilters.has(type)) {
-                        activeFilters.delete(type);
-                    } else {
-                        activeFilters.add(type);
-                    }
-                    if (activeFilters.size === 0) {
-                        activeFilters.add("all");
-                    }
-                }
-                refreshContentTypeVisual();
+                const name = el.dataset.contentFilter;
+                if (!name) return;
+                contentFilterState[name] =
+                    el.getAttribute("aria-checked") === "true";
             });
         });
 
@@ -283,7 +266,7 @@ const { theme = "light" } = Astro.props;
             const params: Record<string, string | undefined> = {
                 q: query,
             };
-            const filtersParam = collectFiltersParam();
+            const filtersParam = collectContentFiltersParam();
             if (filtersParam) params.filters = filtersParam;
             if (activeVerified) params.verified = "true";
             submitToSearch(params);
@@ -298,7 +281,7 @@ const { theme = "light" } = Astro.props;
             const params: Record<string, string | undefined> = {
                 q: query,
             };
-            const filtersParam = collectFiltersParam();
+            const filtersParam = collectContentFiltersParam();
             if (filtersParam) params.filters = filtersParam;
             if (activeVerified) params.verified = "true";
             submitToSearch(params);
