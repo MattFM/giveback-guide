@@ -1,14 +1,15 @@
 ---
 import BaseHead from "../components/layout/BaseHead.astro";
-import Header from "../components/layout/Header.astro";
+import HeaderUnified from "../components/layout/HeaderUnified.astro";
 import Footer from "../components/layout/Footer.astro";
 import NewsletterSection from "../components/sections/NewsletterSection.astro";
+
 interface Props {
-    title?: string; // Accept the title prop
-    description?: string; // Accept the description prop
-    image?: string; // Accept the image prop
-    headerVariant?: "default" | "transparent"; // Header display mode
-    headerTheme?: "light" | "dark"; // Header text/icon color theme
+    title?: string;
+    description?: string;
+    image?: string;
+    headerVariant?: "default" | "transparent";
+    headerTheme?: "light" | "dark";
     noindex?: boolean;
 }
 
@@ -28,7 +29,7 @@ const {
         <BaseHead title={title} description={description} image={image} noindex={noindex} />
     </head>
     <body>
-        <Header variant={headerVariant} theme={headerTheme} />
+        <HeaderUnified variant={headerVariant} theme={headerTheme} />
         <slot />
         <NewsletterSection />
         <Footer />
@@ -37,7 +38,6 @@ const {
 
 <script is:inline>
     (function () {
-        // Adjust header top offset when announcement is present and header is absolutely positioned
         function adjustHeaderTop() {
             try {
                 var ann = document.getElementById("site-announcement");
@@ -66,7 +66,6 @@ const {
         }
 
         window.addEventListener("resize", function () {
-            // debounce
             if (window.__adjustHeaderTopTimeout)
                 clearTimeout(window.__adjustHeaderTopTimeout);
             window.__adjustHeaderTopTimeout = setTimeout(function () {
@@ -74,7 +73,6 @@ const {
             }, 120);
         });
 
-        // Observe DOM changes so removal/dismissal of announcement updates header
         var observer = new MutationObserver(function () {
             adjustHeaderTop();
         });

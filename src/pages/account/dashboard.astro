@@ -2,10 +2,8 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 ---
 
-<MainLayout 
+<MainLayout
   title="Dashboard"
-  headerVariant="transparent"
-  headerTheme="dark"
   transition:persist={false}
 >
   <!-- Early client-side heuristic: if no PocketBase token, redirect fast to login (keeps site static) -->
@@ -33,7 +31,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
   </noscript>
 
   <!-- Hero/Header Section -->
-  <section style="background-color: #1C2434; padding: 6rem 1rem 3rem;">
+  <section style="background-color: #1C2434; padding: 4rem 1rem 3rem;">
     <div
       id="dashGuard"
       aria-busy="true"
