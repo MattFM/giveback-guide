@@ -1,0 +1,249 @@
+---
+import Button from '../bearnie/button/Button.astro';
+import Avatar from '../bearnie/avatar/Avatar.astro';
+import AvatarFallback from '../bearnie/avatar/AvatarFallback.astro';
+import DropdownMenu from '../bearnie/dropdown-menu/DropdownMenu.astro';
+import DropdownMenuTrigger from '../bearnie/dropdown-menu/DropdownMenuTrigger.astro';
+import DropdownMenuContent from '../bearnie/dropdown-menu/DropdownMenuContent.astro';
+import DropdownMenuItem from '../bearnie/dropdown-menu/DropdownMenuItem.astro';
+import DropdownMenuLabel from '../bearnie/dropdown-menu/DropdownMenuLabel.astro';
+import DropdownMenuSeparator from '../bearnie/dropdown-menu/DropdownMenuSeparator.astro';
+import AlertDialog from '../bearnie/alert-dialog/AlertDialog.astro';
+import AlertDialogOverlay from '../bearnie/alert-dialog/AlertDialogOverlay.astro';
+import AlertDialogContent from '../bearnie/alert-dialog/AlertDialogContent.astro';
+import AlertDialogHeader from '../bearnie/alert-dialog/AlertDialogHeader.astro';
+import AlertDialogTitle from '../bearnie/alert-dialog/AlertDialogTitle.astro';
+import AlertDialogDescription from '../bearnie/alert-dialog/AlertDialogDescription.astro';
+import AlertDialogFooter from '../bearnie/alert-dialog/AlertDialogFooter.astro';
+import AlertDialogAction from '../bearnie/alert-dialog/AlertDialogAction.astro';
+import AlertDialogCancel from '../bearnie/alert-dialog/AlertDialogCancel.astro';
+import HugeIcon from '../bearnie/icon/HugeIcon.astro';
+import UserIcon from '@hugeicons/core-free-icons/UserIcon';
+import Logout01Icon from '@hugeicons/core-free-icons/Logout01Icon';
+import { SITE_TITLE } from '../../consts';
+
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'light' } = Astro.props;
+---
+
+<div data-user-menu data-state="loading" data-theme={theme} hidden class="me-2">
+  <div data-user-menu-logged-out hidden>
+    <Button
+      href="/login/"
+      variant="default"
+      size="lg"
+      class="bg-black hover:bg-gray-800"
+      aria-label="Join / Log in"
+    >
+      Join / Log in
+    </Button>
+  </div>
+
+  <div data-user-menu-logged-in hidden>
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="Open account menu">
+        <Avatar size="default">
+          <AvatarFallback
+            data-user-menu-avatar-fallback
+            class="bg-gradient-to-br from-[#A98FFA] to-[#7353D4] text-white"
+          >
+            ··
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent side="bottom" align="end" class="min-w-56">
+        <DropdownMenuLabel data-user-menu-label>Signed in</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem href="/account/dashboard/">
+          <span class="flex items-center gap-2">
+            <HugeIcon icon={UserIcon} size="sm" />
+            <span>Dashboard</span>
+          </span>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem data-logout-trigger destructive>
+          <span class="flex items-center gap-2">
+            <HugeIcon icon={Logout01Icon} size="sm" />
+            <span>Log out</span>
+          </span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
+
+  <AlertDialog data-logout-dialog>
+    <button
+      data-alert-dialog-trigger
+      type="button"
+      style="display:none;"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      Open logout confirm
+    </button>
+    <AlertDialogOverlay />
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Log out of {SITE_TITLE}?</AlertDialogTitle>
+        <AlertDialogDescription>
+          You'll need to sign back in to view your saved projects and stays.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction variant="destructive" data-logout-confirm>
+          Log out
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+</div>
+
+<script>
+  import { logout } from '../../lib/auth';
+
+  interface PocketBaseRecord {
+    id: string;
+    email?: string;
+    name?: string;
+    [key: string]: unknown;
+  }
+
+  interface PocketBaseStored {
+    record?: PocketBaseRecord;
+    model?: PocketBaseRecord;
+    [key: string]: unknown;
+  }
+
+  interface AuthUser {
+    id: string;
+    email: string | null;
+    name: string | null;
+  }
+
+  type BranchName = 'loading' | 'logged-out' | 'logged-in';
+
+  function readUser(): AuthUser | null {
+    try {
+      if (typeof window === 'undefined' || !('localStorage' in window)) {
+        return null;
+      }
+      const raw = window.localStorage.getItem('pocketbase_auth');
+      if (!raw || raw === 'null' || raw === 'undefined') {
+        return null;
+      }
+      const data = JSON.parse(raw) as PocketBaseStored;
+      const record = data.record ?? data.model;
+      if (!record || typeof record.id !== 'string') {
+        return null;
+      }
+      return {
+        id: record.id,
+        email: typeof record.email === 'string' ? record.email : null,
+        name: typeof record.name === 'string' ? record.name : null,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function computeInitials(user: AuthUser): string {
+    if (user.name) {
+      const parts = user.name.trim().split(/\s+/).filter(Boolean);
+      const first = parts[0]?.[0] ?? '';
+      const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : '';
+      const combined = (first + last).toUpperCase();
+      if (combined) return combined;
+    }
+    const emailChar = user.email?.[0] ?? '';
+    return (emailChar || '?').toUpperCase();
+  }
+
+  function computeDisplay(user: AuthUser): string {
+    return user.name || user.email || 'Member';
+  }
+
+  function applyBranch(root: HTMLElement, branch: BranchName): void {
+    root.dataset.state = branch;
+    const out = root.querySelector<HTMLElement>('[data-user-menu-logged-out]');
+    const inn = root.querySelector<HTMLElement>('[data-user-menu-logged-in]');
+    if (!out || !inn) return;
+    if (root.hidden) {
+      root.hidden = false;
+    }
+    out.hidden = branch === 'logged-in';
+    inn.hidden = branch !== 'logged-in';
+  }
+
+  function hydrate(root: HTMLElement): void {
+    const inn = root.querySelector<HTMLElement>('[data-user-menu-logged-in]');
+    const label = root.querySelector<HTMLElement>('[data-user-menu-label]');
+    const trigger = root.querySelector<HTMLElement>('[data-dropdown-trigger]');
+    const fallback = inn?.querySelector<HTMLElement>('[data-user-menu-avatar-fallback]');
+    if (!inn || !label || !trigger) return;
+
+    const user = readUser();
+    if (!user) {
+      applyBranch(root, 'logged-out');
+      return;
+    }
+
+    applyBranch(root, 'logged-in');
+
+    const initials = computeInitials(user);
+    const display = computeDisplay(user);
+
+    if (fallback) {
+      fallback.textContent = initials;
+    }
+
+    label.textContent = `Signed in as ${display}`;
+    trigger.setAttribute('aria-label', `Account menu for ${display}`);
+  }
+
+  function initAll(): void {
+    document.querySelectorAll<HTMLElement>('[data-user-menu]').forEach(hydrate);
+  }
+
+  initAll();
+  document.addEventListener('astro:page-load', initAll);
+
+  window.addEventListener('storage', (event: StorageEvent) => {
+    const key = event.key ?? '';
+    if (key !== 'pocketbase_auth') return;
+    document.querySelectorAll<HTMLElement>('[data-user-menu]').forEach(hydrate);
+  });
+
+  document.addEventListener('click', (event: MouseEvent) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const logoutItem = target.closest('[data-logout-trigger]');
+    if (logoutItem) {
+      event.preventDefault();
+      event.stopPropagation();
+      const root = logoutItem.closest<HTMLElement>('[data-user-menu]');
+      const alertTrigger = root?.querySelector<HTMLButtonElement>('[data-alert-dialog-trigger]');
+      alertTrigger?.click();
+      return;
+    }
+
+    if (target.closest('[data-logout-confirm]')) {
+      void (async () => {
+        try {
+          await logout();
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
+        window.location.href = '/login/';
+      })();
+    }
+  });
+</script>

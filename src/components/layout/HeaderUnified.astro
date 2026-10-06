@@ -1,7 +1,7 @@
 ---
 import NavDrawerUnified from './NavDrawerUnified.astro';
 import SiteSearchModal from './SiteSearchModal.astro';
-import Button from '../bearnie/button/Button.astro';
+import UserMenu from './UserMenu.astro';
 import { SITE_TITLE } from '../../consts';
 
 interface Props {
@@ -120,96 +120,8 @@ const logoFillClass = theme === 'dark' ? 'fill-white' : 'fill-black';
         <!-- Search modal trigger + dialog -->
         <SiteSearchModal theme={theme} />
 
-        <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
-        <Button
-          id="header-dashboard-link"
-          href="/account/dashboard"
-          variant="default"
-          size="lg"
-          class="me-2 bg-black hover:bg-gray-800"
-          style="display:none;"
-          aria-hidden="true"
-        >
-          Dashboard
-        </Button>
-        <Button
-          id="header-join-link"
-          href="/login/"
-          variant="default"
-          size="lg"
-          class="me-2 bg-black hover:bg-gray-800"
-          style="display:none;"
-          aria-hidden="true"
-          aria-label="Join / Log in"
-        >
-          Join / Log in
-        </Button>
-
-        <!-- Auth-aware CTAs: zero-flicker, both hidden until detection runs -->
-        <script is:inline>
-          (function() {
-            function setVisible(el, visible) {
-              if (!el) return;
-              el.style.display = visible ? "inline-flex" : "none";
-              el.setAttribute("aria-hidden", visible ? "false" : "true");
-            }
-            
-            function getCurrentUser() {
-              try {
-                if (typeof window !== "undefined" && "localStorage" in window) {
-                  const authToken = localStorage.getItem('pocketbase_auth');
-                  if (authToken && authToken !== "null" && authToken !== "undefined") {
-                    try {
-                      const sessionData = JSON.parse(authToken);
-                      const user = sessionData?.record || sessionData?.model;
-                      return user || null;
-                    } catch (parseError) {
-                      console.error('Header: Failed to parse auth token:', parseError);
-                    }
-                  }
-                }
-                return null;
-              } catch {
-                return null;
-              }
-            }
-            
-            function updateButtons() {
-              try {
-                const dash = document.getElementById("header-dashboard-link");
-                const join = document.getElementById("header-join-link");
-                
-                if (!dash || !join) {
-                  console.log('Header: Buttons not found in DOM yet');
-                  return;
-                }
-                
-                const user = getCurrentUser();
-                const loggedIn = !!user;
-                console.log('Header auth check:', { hasUser: loggedIn, userId: user?.id, timestamp: Date.now() });
-                
-                setVisible(dash, loggedIn);
-                setVisible(join, !loggedIn);
-              } catch (error) {
-                console.error('Header auth check failed:', error);
-                const dash = document.getElementById("header-dashboard-link");
-                const join = document.getElementById("header-join-link");
-                setVisible(dash, false);
-                setVisible(join, true);
-              }
-            }
-            
-            updateButtons();
-            
-            window.addEventListener("storage", (e) => {
-              const k = (e && e.key) || "";
-              if (k === 'pocketbase_auth') {
-                console.log('Header: Storage event detected, updating buttons');
-                updateButtons();
-              }
-            });
-          })();
-        </script>
+        <!-- Auth-aware region: CTA when signed out, avatar dropdown when signed in -->
+        <UserMenu theme={theme} />
 
         <!-- Unified Navigation Drawer Trigger (all screen sizes) -->
         <NavDrawerUnified theme={theme} />
