@@ -28,11 +28,6 @@ export const VISIT_SLICES: Slice[] = [
   { label: '10+', min: 10, max: Number.MAX_SAFE_INTEGER },
 ];
 
-export const FREE_TIER = {
-  maxLists: 3,
-  maxSaves: 100,
-} as const;
-
 export interface Counts {
   total: number;
 }
@@ -110,6 +105,14 @@ async function fetchCount(collection: string): Promise<number> {
 
 export async function getUserCounts(): Promise<Counts> {
   return { total: await fetchCount('users') };
+}
+
+export async function getListCount(): Promise<Counts> {
+  return { total: await fetchCount('lists') };
+}
+
+export async function getSaveCount(): Promise<Counts> {
+  return { total: await fetchCount('list_items') };
 }
 
 export async function getListsDistribution(): Promise<Distribution> {

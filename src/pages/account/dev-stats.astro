@@ -242,8 +242,9 @@ if (!import.meta.env.DEV) {
     LIST_SLICES,
     SAVE_SLICES,
     VISIT_SLICES,
-    FREE_TIER,
     getUserCounts,
+    getListCount,
+    getSaveCount,
     getListsDistribution,
     getSavesDistribution,
     getVisitsDistribution,
@@ -251,6 +252,7 @@ if (!import.meta.env.DEV) {
     type Distribution,
     type Funnel,
   } from "../../lib/admin-stats";
+  import { FREE_TIER } from "../../lib/tier-limits";
   import { pbAdmin, signInAsAdmin, signOutAdmin } from "../../lib/pocketbase";
 
   type Metric = "lists" | "saves" | "visits";
@@ -433,13 +435,16 @@ if (!import.meta.env.DEV) {
   async function load(): Promise<void> {
     clearError();
     try {
-      const [userCount, lists, saves, visits, funnel] = await Promise.all([
-        getUserCounts(),
-        getListsDistribution(),
-        getSavesDistribution(),
-        getVisitsDistribution(),
-        getOnboardingFunnel(),
-      ]);
+      const [userCount, listCount, saveCount, lists, saves, visits, funnel] =
+        await Promise.all([
+          getUserCounts(),
+          getListCount(),
+          getSaveCount(),
+          getListsDistribution(),
+          getSavesDistribution(),
+          getVisitsDistribution(),
+          getOnboardingFunnel(),
+        ]);
 
       cached.userCount = userCount.total;
       cached.dist.lists = lists;
@@ -448,14 +453,8 @@ if (!import.meta.env.DEV) {
       cached.funnel = funnel;
 
       fillKPI("kpiUsers", userCount.total);
-      fillKPI(
-        "kpiLists",
-        Object.values(lists.buckets).reduce((a, b) => a + b, 0)
-      );
-      fillKPI(
-        "kpiSaves",
-        Object.values(saves.buckets).reduce((a, b) => a + b, 0)
-      );
+      fillKPI("kpiLists", listCount.total);
+      fillKPI("kpiSaves", saveCount.total);
 
       renderRecommendations(cached.dist);
       renderDistribution(currentMetric);
