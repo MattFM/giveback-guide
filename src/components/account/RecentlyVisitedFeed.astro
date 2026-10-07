@@ -1,0 +1,59 @@
+---
+export interface RecentlyVisitedItem {
+  item_type: 'project' | 'stay';
+  item_id: string;
+  title: string;
+  url: string;
+  image?: string | null;
+  location?: string | null;
+  completed_at: string;
+}
+
+interface Props {
+  items: RecentlyVisitedItem[];
+  emptyLabel?: string;
+}
+
+const { items, emptyLabel = "Nothing yet — mark visits from a project or stay page and they'll show up here." } = Astro.props;
+---
+
+{items.length === 0 ? (
+  <p class="text-sm text-muted-foreground py-8 text-center">{emptyLabel}</p>
+) : (
+  <div class="relative">
+    <div class="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-px-4 -mx-4 px-4">
+      {items.map((item) => (
+        <a
+          href={item.url}
+          class="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg w-[70%] sm:w-[45%] md:w-[30%] lg:w-[22%] shrink-0 snap-start"
+        >
+          <div class="aspect-[4/3] bg-muted overflow-hidden rounded-lg">
+            {item.image ? (
+              <img
+                src={item.image}
+                alt={item.title}
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center text-muted-foreground">
+                <span class="text-xs">No image</span>
+              </div>
+            )}
+          </div>
+          <div class="mt-3 space-y-1">
+            <p class="text-xs uppercase tracking-wide text-muted-foreground">
+              {item.item_type === 'stay' ? 'Stay' : 'Project'}
+            </p>
+            <p class="font-medium text-sm leading-snug line-clamp-2 group-hover:underline">
+              {item.title}
+            </p>
+            {item.location && (
+              <p class="text-xs text-muted-foreground">{item.location}</p>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+)}

@@ -1,0 +1,36 @@
+---
+import Breadcrumb from "@/components/bearnie/breadcrumb/Breadcrumb.astro";
+import BreadcrumbList from "@/components/bearnie/breadcrumb/BreadcrumbList.astro";
+import BreadcrumbItem from "@/components/bearnie/breadcrumb/BreadcrumbItem.astro";
+import BreadcrumbLink from "@/components/bearnie/breadcrumb/BreadcrumbLink.astro";
+import BreadcrumbSeparator from "@/components/bearnie/breadcrumb/BreadcrumbSeparator.astro";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+const lastIndex = crumbs.length - 1;
+---
+
+<Breadcrumb>
+  <BreadcrumbList>
+    {crumbs.map((crumb, i) => (
+      <>
+        <BreadcrumbItem>
+          {i < lastIndex && crumb.href ? (
+            <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
+          ) : (
+            <span aria-current="page">{crumb.label}</span>
+          )}
+        </BreadcrumbItem>
+        {i < lastIndex && <BreadcrumbSeparator />}
+      </>
+    ))}
+  </BreadcrumbList>
+</Breadcrumb>

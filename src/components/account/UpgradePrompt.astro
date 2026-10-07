@@ -1,0 +1,26 @@
+---
+import Alert from "@/components/bearnie/alert/Alert.astro";
+import AlertTitle from "@/components/bearnie/alert/AlertTitle.astro";
+import AlertDescription from "@/components/bearnie/alert/AlertDescription.astro";
+
+interface Props {
+  variant?: 'default' | 'warning' | 'success';
+}
+
+const { variant = 'default' } = Astro.props;
+---
+
+<Alert variant={variant}>
+  <AlertTitle>Support the platform</AlertTitle>
+  <AlertDescription>
+    <p>
+      Pro keeps the platform free for everyone who can't pay. £12 a year supports the people behind the scenes + unlocks unlimited lists and unlimited saves.
+    </p>
+    <p class="mt-2">
+      <a
+        href="/pricing/"
+        class="font-semibold underline hover:no-underline"
+      >See what Pro includes →</a>
+    </p>
+  </AlertDescription>
+</Alert>

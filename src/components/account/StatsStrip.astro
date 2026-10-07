@@ -1,0 +1,33 @@
+---
+import Card from "@/components/bearnie/card/Card.astro";
+
+interface Kpi {
+  label: string;
+  value: string;
+  caption?: string;
+}
+
+interface Props {
+  kpis: Kpi[];
+}
+
+const { kpis } = Astro.props;
+---
+
+<div class="grid gap-4 sm:grid-cols-3">
+  {kpis.map((kpi) => (
+    <Card size="sm">
+      <div class="p-4 space-y-1">
+        <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          {kpi.label}
+        </p>
+        <p class="text-3xl font-semibold tracking-tight tabular-nums">
+          {kpi.value}
+        </p>
+        {kpi.caption && (
+          <p class="text-xs text-muted-foreground">{kpi.caption}</p>
+        )}
+      </div>
+    </Card>
+  ))}
+</div>

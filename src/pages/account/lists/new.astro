@@ -1,0 +1,182 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Input from "@/components/bearnie/input/Input.astro";
+import Textarea from "@/components/bearnie/textarea/Textarea.astro";
+import Label from "@/components/bearnie/label/Label.astro";
+import Alert from "@/components/bearnie/alert/Alert.astro";
+import AlertDescription from "@/components/bearnie/alert/AlertDescription.astro";
+---
+
+<MainLayout
+  title="New list"
+  description="Create a new list to save projects, stays and trips."
+  noindex={true}
+>
+  <main class="container mx-auto max-w-screen-md px-4 py-8 sm:py-12">
+    <header class="mb-8 space-y-2">
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">New list</h1>
+      <p class="text-sm text-muted-foreground">
+        Group projects, stays and trips around a theme — Portugal, weekend ideas, things to revisit later.
+      </p>
+    </header>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>List details</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form id="newListForm" class="space-y-6">
+          <div class="space-y-2">
+            <Label for="listTitle" required>Title</Label>
+            <Input
+              id="listTitle"
+              name="title"
+              type="text"
+              required
+              maxlength={120}
+              placeholder="e.g. Portugal trip 2026"
+              autocomplete="off"
+            />
+            <p id="titleHint" class="text-xs text-muted-foreground hidden">
+              Title is required.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="listDescription">Description</Label>
+            <Textarea
+              id="listDescription"
+              name="description"
+              maxlength={500}
+              placeholder="Optional. A few words about what this list is for."
+              rows={4}
+            />
+            <p class="text-xs text-muted-foreground">Optional. Up to 500 characters.</p>
+          </div>
+
+          <Alert id="formError" variant="destructive" class="hidden">
+            <AlertDescription id="formErrorText"></AlertDescription>
+          </Alert>
+
+          <div class="flex flex-col sm:flex-row gap-3 sm:justify-end pt-2">
+            <Button type="button" variant="outline" id="cancelBtn">
+              Cancel
+            </Button>
+            <Button type="submit" id="submitBtn">
+              Save list
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  </main>
+</MainLayout>
+
+<script>
+  import { getCurrentUser } from "@/lib/pocketbase";
+  import { createList } from "@/lib/lists";
+
+  const DASHBOARD = "/account/dashboard/";
+  const LOGIN = "/login/";
+
+  async function isSignedIn(): Promise<boolean> {
+    try {
+      const auth = localStorage.getItem("pocketbase_auth");
+      if (!auth || auth === "null" || auth === "undefined") {
+        window.location.href = LOGIN;
+        return false;
+      }
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = LOGIN;
+        return false;
+      }
+      return true;
+    } catch {
+      window.location.href = LOGIN;
+      return false;
+    }
+  }
+
+  function showError(message: string): void {
+    const alert = document.getElementById("formError");
+    const text = document.getElementById("formErrorText");
+    if (!alert || !text) return;
+    text.textContent = message;
+    alert.classList.remove("hidden");
+  }
+
+  function clearError(): void {
+    const alert = document.getElementById("formError");
+    if (!alert) return;
+    alert.classList.add("hidden");
+  }
+
+  async function handleSubmit(event: SubmitEvent): Promise<void> {
+    event.preventDefault();
+    clearError();
+
+    const form = event.currentTarget as HTMLFormElement | null;
+    if (!form) return;
+
+    const data = new FormData(form);
+    const title = String(data.get("title") ?? "").trim();
+    const description = String(data.get("description") ?? "").trim();
+
+    if (!title) {
+      showError("Title is required.");
+      const titleHint = document.getElementById("titleHint");
+      if (titleHint) titleHint.classList.remove("hidden");
+      return;
+    }
+
+    const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement | null;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Saving…";
+    }
+
+    try {
+      await createList(title, description || null, false);
+      window.location.href = DASHBOARD;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Could not save list: ${message}`);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save list";
+      }
+    }
+  }
+
+  function wireForm(): void {
+    const form = document.getElementById("newListForm");
+    if (!form) return;
+    form.addEventListener("submit", (event) => {
+      void handleSubmit(event as SubmitEvent);
+    });
+
+    const cancel = document.getElementById("cancelBtn");
+    if (cancel) {
+      cancel.addEventListener("click", () => {
+        window.location.href = DASHBOARD;
+      });
+    }
+
+    const input = document.getElementById("listTitle");
+    if (input) {
+      input.addEventListener("input", () => {
+        const titleHint = document.getElementById("titleHint");
+        if (titleHint) titleHint.classList.add("hidden");
+      });
+    }
+  }
+
+  void isSignedIn();
+  wireForm();
+</script>

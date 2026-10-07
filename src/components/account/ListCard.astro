@@ -1,0 +1,87 @@
+---
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import CardAction from "@/components/bearnie/card/CardAction.astro";
+import Badge from "@/components/bearnie/badge/Badge.astro";
+import DropdownMenu from "@/components/bearnie/dropdown-menu/DropdownMenu.astro";
+import DropdownMenuTrigger from "@/components/bearnie/dropdown-menu/DropdownMenuTrigger.astro";
+import DropdownMenuContent from "@/components/bearnie/dropdown-menu/DropdownMenuContent.astro";
+import DropdownMenuItem from "@/components/bearnie/dropdown-menu/DropdownMenuItem.astro";
+import DropdownMenuSeparator from "@/components/bearnie/dropdown-menu/DropdownMenuSeparator.astro";
+
+export interface ListCardData {
+  id: string;
+  title: string;
+  itemCount: number;
+  isDefault: boolean;
+  lastUpdatedLabel: string;
+}
+
+interface Props {
+  list: ListCardData;
+}
+
+const { list } = Astro.props;
+const href = `/account/lists/${list.id}/`;
+---
+
+<Card class="hover:border-foreground/30 transition-colors" data-list-id={list.id}>
+  <a
+    href={href}
+    class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+    data-list-link
+  >
+    <CardHeader>
+      <div class="flex flex-col gap-1.5">
+        <p class="font-semibold leading-tight line-clamp-2">{list.title}</p>
+        {list.isDefault && (
+          <Badge variant="secondary" class="self-start">Default</Badge>
+        )}
+      </div>
+    </CardHeader>
+    <CardContent>
+      <p class="text-2xl font-semibold tabular-nums">{list.itemCount}</p>
+      <p class="text-xs text-muted-foreground mt-1">
+        {list.itemCount === 1 ? "item saved" : "items saved"}
+      </p>
+      <p class="text-xs text-muted-foreground mt-2">
+        {list.lastUpdatedLabel}
+      </p>
+    </CardContent>
+  </a>
+  <CardAction class="absolute">
+    <span
+      data-stop-nav
+      onclick="event.preventDefault(); event.stopPropagation();"
+      class="inline-block"
+    >
+      <DropdownMenu>
+        <DropdownMenuTrigger aria-label={`Actions for ${list.title}`}>
+          <span
+            class="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground"
+            aria-hidden="true"
+          >
+            ⋯
+          </span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem data-list-action="rename" data-list-id={list.id}>
+            Rename
+          </DropdownMenuItem>
+          {list.isDefault ? (
+            <DropdownMenuItem disabled>Set as default</DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem data-list-action="set-default" data-list-id={list.id}>
+              Set as default
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem destructive data-list-action="delete" data-list-id={list.id}>
+            Delete list
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </span>
+  </CardAction>
+</Card>

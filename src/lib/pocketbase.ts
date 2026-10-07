@@ -15,6 +15,7 @@ function getPB(): PocketBase {
     throw new Error('Pocketbase client not configured: PUBLIC_POCKETBASE_URL is missing');
   }
   _pb = new PocketBase(url);
+  _pb.autoCancellation(false);
   return _pb;
 }
 

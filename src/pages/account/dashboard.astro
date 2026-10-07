@@ -1,1452 +1,587 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
+import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
+import StatsStrip from "@/components/account/StatsStrip.astro";
+import UpgradePrompt from "@/components/account/UpgradePrompt.astro";
+import Empty from "@/components/bearnie/empty/Empty.astro";
+import EmptyHeader from "@/components/bearnie/empty/EmptyHeader.astro";
+import EmptyTitle from "@/components/bearnie/empty/EmptyTitle.astro";
+import EmptyDescription from "@/components/bearnie/empty/EmptyDescription.astro";
+import EmptyMedia from "@/components/bearnie/empty/EmptyMedia.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import Button from "@/components/bearnie/button/Button.astro";
 ---
 
 <MainLayout
   title="Dashboard"
-  transition:persist={false}
+  description="Your lists, saves and recently visited projects and stays."
+  noindex={true}
 >
-  <!-- Early client-side heuristic: if no PocketBase token, redirect fast to login (keeps site static) -->
-  <script is:inline>
-    try {
-      const hasToken = (() => {
-        if (typeof window === "undefined" || !("localStorage" in window))
-          return false;
-        const v = localStorage.getItem('pocketbase_auth');
-        return !!(v && v !== "null" && v !== "undefined");
-      })();
-      if (!hasToken) {
-        window.location.replace("/login/");
-      }
-    } catch {}
-  </script>
-
-  <noscript>
-    <div
-      class="max-w-3xl mx-auto my-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800"
-    >
-      JavaScript is required to view the dashboard. Please enable JavaScript and
-      refresh.
-    </div>
-  </noscript>
-
-  <!-- Hero/Header Section -->
-  <section style="background-color: #1C2434; padding: 4rem 1rem 3rem;">
-    <div
-      id="dashGuard"
-      aria-busy="true"
-      class="max-w-7xl mx-auto"
-    >
-      <div class="flex items-start justify-between gap-4 mb-8">
-        <div class="flex items-center gap-5 flex-1 min-w-0">
-          <div
-            class="rounded-full overflow-hidden w-16 h-16 flex items-center justify-center shadow-lg flex-shrink-0"
-            style="background: linear-gradient(135deg, #A98FFA, #7353D4);"
-          >
-            <img
-              id="userAvatar"
-              alt="avatar"
-              class="w-full h-full object-cover hidden"
-            />
-            <svg
-              class="w-8 h-8 text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"
-                clip-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div class="min-w-0 flex-1">
-            <h1 class="text-3xl sm:text-4xl font-black text-white mb-1 truncate" id="dashTitle">Dashboard</h1>
-            <a
-              id="dashSubtitle"
-              href="/account/profile/"
-              class="text-sm font-medium hover:underline cursor-pointer transition-colors duration-300"
-              style="color: #C4B3FC;"
-              >Edit your profile</a
-            >
-          </div>
-        </div>
-
-        <button
-          id="logoutBtn"
-          aria-label="Logout"
-          title="Logout"
-          class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 hover:shadow-lg cursor-pointer"
-          style="background-color: rgba(220, 38, 38, 0.9); color: white;"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true">
-            <path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"></path>
-          </svg>
-        </button>
+  <main class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-8">
+    <header class="flex flex-wrap items-center gap-4">
+      <div class="flex-1 min-w-0 space-y-2">
+        <h1 id="headerGreeting" class="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Welcome back
+        </h1>
+        <p class="text-sm text-muted-foreground">
+          <AccountBreadcrumb crumbs={[{ label: "Dashboard" }]} />
+        </p>
       </div>
+    </header>
 
-      <!-- Stats Cards Skeleton (shown while loading) -->
-      <div id="statsSkeleton" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="bg-white rounded-lg p-4 animate-pulse" style="border: 1px solid #E8EAE8;">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex-1">
-              <div class="h-3 rounded mb-2" style="background-color: #E8EAE8; width: 70%;"></div>
-              <div class="h-7 rounded" style="background-color: #F6F7F6; width: 50%;"></div>
-            </div>
-            <div class="w-12 h-12 rounded" style="background-color: #F6F7F6;"></div>
+    <div id="errorBanner" class="hidden"></div>
+
+    <section id="statsSection" class="hidden">
+      <StatsStrip kpis={[]} />
+    </section>
+
+    <section id="emptySection" class="hidden">
+      <Card size="sm">
+        <CardContent>
+          <div class="py-12">
+            <Empty>
+              <EmptyMedia variant="icon">
+                <span aria-hidden="true" class="text-3xl text-muted-foreground">+</span>
+              </EmptyMedia>
+              <EmptyHeader>
+                <EmptyTitle>No lists yet</EmptyTitle>
+                <EmptyDescription>
+                  Create your first list to start saving projects and stays.
+                </EmptyDescription>
+              </EmptyHeader>
+              <div class="mt-2">
+                <Button href="/account/lists/new/">Create your first list</Button>
+              </div>
+            </Empty>
           </div>
-        </div>
-        <div class="bg-white rounded-lg p-4 animate-pulse" style="border: 1px solid #E8EAE8;">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex-1">
-              <div class="h-3 rounded mb-2" style="background-color: #E8EAE8; width: 55%;"></div>
-              <div class="h-7 rounded" style="background-color: #F6F7F6; width: 50%;"></div>
-            </div>
-            <div class="w-12 h-12 rounded" style="background-color: #F6F7F6;"></div>
-          </div>
-        </div>
-        <div class="bg-white rounded-lg p-4 animate-pulse col-span-2 sm:col-span-1" style="border: 1px solid #E8EAE8;">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex-1">
-              <div class="h-3 rounded mb-2" style="background-color: #E8EAE8; width: 60%;"></div>
-              <div class="h-7 rounded" style="background-color: #F6F7F6; width: 50%;"></div>
-            </div>
-            <div class="w-12 h-12 rounded" style="background-color: #F6F7F6;"></div>
-          </div>
-        </div>
+        </CardContent>
+      </Card>
+    </section>
+
+    <section id="listsSection" class="hidden">
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="text-lg font-semibold">My lists</h2>
+        <span id="listsCount" class="text-sm text-muted-foreground"></span>
       </div>
+      <div id="listsGrid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
 
-      <!-- Stats Cards (shown after loading) -->
-      <div id="statsContent" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 hidden">
-        <!-- Saved Items Card -->
-        <div class="rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5" style="background: white; border: 1px solid #E8EAE8;">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-semibold mb-1.5" style="color: #7E827E;">Saved Items</p>
-              <div class="text-2xl sm:text-3xl font-black" style="color: #1C2434;" id="savedCount">—</div>
-            </div>
-            <svg class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14" style="color: #A98FFA; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-          </div>
-        </div>
+    <section id="atCapSection" class="hidden">
+      <UpgradePrompt variant="warning" />
+    </section>
 
-        <!-- Lists Card -->
-        <div class="rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5" style="background: white; border: 1px solid #E8EAE8;">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-semibold mb-1.5" style="color: #7E827E;">Lists</p>
-              <div class="text-2xl sm:text-3xl font-black" style="color: #1C2434;" id="listsCount">—</div>
-            </div>
-            <svg class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14" style="color: #A98FFA; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-          </div>
-        </div>
-
-        <!-- Visited Card -->
-        <div class="rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 col-span-2 sm:col-span-1" style="background: white; border: 1px solid #E8EAE8;">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-semibold mb-1.5" style="color: #7E827E;">Visited</p>
-              <div class="text-2xl sm:text-3xl font-black" style="color: #1C2434;" id="completedCount">—</div>
-            </div>
-            <svg class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14" style="color: #A98FFA; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-        </div>
+    <section id="recentSection" class="hidden">
+      <div class="flex items-baseline justify-between mb-4">
+        <h2 class="text-lg font-semibold">Recently visited</h2>
+        <span class="text-sm text-muted-foreground inline-flex items-center gap-1">
+          <span aria-hidden="true">↔</span>
+          <span>Scroll</span>
+        </span>
       </div>
-    </div>
-  </section>
+      <div id="recentFeed"></div>
+    </section>
 
-  <!-- Main Content Section -->
-  <section style="background-color: #F6F7F6; padding: 3rem 1rem;">
-    <div class="max-w-7xl mx-auto">
-      <div id="dashGuardContent" aria-busy="true">
-
-        <!-- Beta Message Banner -->
-        <div class="rounded-xl p-4 sm:p-5 relative overflow-hidden mb-6" style="background: linear-gradient(135deg, #A98FFA, #7353D4); border: 1px solid #7353D4;">
-          <div class="relative z-10">
-            <div class="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold" style="background: rgba(255, 255, 255, 0.25); color: white;">
-                    BETA
-                  </span>
-                  <h3 class="text-lg font-black text-white">Welcome to your dashboard</h3>
-                </div>
-                <p class="text-sm text-white/90 leading-relaxed">
-                  We're actively developing the dashboard to help you manage your saved items and lists. Some features may not work as expected. If you have any feedback or suggestions, we'd love to hear from you!
-                </p>
-              </div>
-              <a
-                href="/feedback"
-                class="px-4 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg whitespace-nowrap flex-shrink-0"
-                style="background: white; color: #7353D4;"
-              >
-                Send Feedback
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- My Lists section header (no box) -->
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mt-6 mb-4 gap-4">
-          <div class="flex-1">
-            <h2 class="text-2xl font-black mb-2" style="color: #1C2434;">My Lists</h2>
-            <p class="text-base mb-4 sm:mb-0" style="color: #7E827E;">
-              Create lists to save projects and stays for later.
-            </p>
-            <div class="sm:hidden flex items-center gap-3">
-              <button
-                id="createListBtn"
-                aria-label="Create new list"
-                title="Create new list"
-                class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
-                style="background-color: #1C2434;"
-              >
-                <svg
-                  class="w-4 h-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 4.5v15m7.5-7.5h-15"></path>
-                </svg>
-                <span>New List</span>
-              </button>
-              <button
-                id="hideDoneChipMobile"
-                aria-pressed="false"
-                class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
-                style="border-color: #E8EAE8; color: #1C2434; background: white;"
-                >Hide visited</button
-              >
-            </div>
-          </div>
-          <div class="hidden sm:flex items-center gap-3">
-            <button
-              id="hideDoneChip"
-              aria-pressed="false"
-              class="inline-flex items-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-all duration-300"
-              style="border-color: #E8EAE8; color: #1C2434; background: white;"
-              >Hide visited</button
-            >
-            <button
-              id="createListBtnDesktop"
-              aria-label="Create new list"
-              title="Create new list"
-              class="px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer inline-flex items-center gap-2 transition-all duration-300 hover:shadow-lg hover:translate-y-0.5"
-              style="background-color: #1C2434;"
-            >
-              <svg
-                class="w-4 h-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"></path>
-              </svg>
-              <span>New List</span>
-            </button>
-          </div>
-        </div>
-
-          <!-- New List Modal / Bottom Sheet -->
-          <div id="newListModal" class="fixed inset-0 z-50 hidden">
-            <div id="newListOverlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-            <div
-              class="absolute inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center p-4"
-            >
-              <div
-                class="bg-white rounded-2xl shadow-2xl w-full sm:max-w-md p-6 sm:p-8 border border-gray-100"
-              >
-                <div class="mb-6">
-                  <h3 class="text-xl font-black mb-2" style="color: #1C2434;">Create New List</h3>
-                  <p class="text-sm" style="color: #7E827E;">
-                    Give your list a name to organize your saved items.
-                  </p>
-                </div>
-                <div class="space-y-4">
-                  <input
-                    id="newListNameInput"
-                    type="text"
-                    placeholder="E.g., Weekend Adventures"
-                    class="w-full px-4 py-3 text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
-                    style="border: 2px solid #E8EAE8; background: #FFFFFF;"
-                  />
-                  <div class="flex gap-3 pt-2">
-                    <button
-                      id="newListCancelBtn"
-                      class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300"
-                      style="background: #F6F7F6; color: #1C2434;"
-                      >Cancel</button
-                    >
-                    <button
-                      id="newListCreateBtn"
-                      class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm text-white cursor-pointer transition-all duration-300 hover:shadow-lg"
-                      style="background-color: #1C2434;"
-                      >Create List</button
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        <!-- Lists Skeleton (shown while loading) -->
-        <div id="listsSkeleton" class="space-y-4">
-          <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100 animate-pulse">
-            <div class="flex items-center justify-between mb-4">
-              <div class="h-6 rounded" style="background-color: #E8EAE8; width: 30%;"></div>
-              <div class="flex gap-2">
-                <div class="w-6 h-6 rounded-lg" style="background-color: #E8EAE8;"></div>
-                <div class="w-6 h-6 rounded-lg" style="background-color: #E8EAE8;"></div>
-              </div>
-            </div>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3 p-4 rounded-lg" style="background-color: #F6F7F6;">
-                <div class="w-5 h-5 rounded" style="background-color: #E8EAE8;"></div>
-                <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
-                <div class="flex-1 space-y-2">
-                  <div class="h-4 rounded" style="background-color: #E8EAE8; width: 60%;"></div>
-                  <div class="h-3 rounded" style="background-color: #E8EAE8; width: 40%;"></div>
-                </div>
-              </div>
-              <div class="flex items-center gap-3 p-4 rounded-lg" style="background-color: #F6F7F6;">
-                <div class="w-5 h-5 rounded" style="background-color: #E8EAE8;"></div>
-                <div class="w-10 h-10 rounded" style="background-color: #E8EAE8;"></div>
-                <div class="flex-1 space-y-2">
-                  <div class="h-4 rounded" style="background-color: #E8EAE8; width: 50%;"></div>
-                  <div class="h-3 rounded" style="background-color: #E8EAE8; width: 35%;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Lists container (populated by JS) -->
-        <div id="listsContainer" class="space-y-4 hidden"></div>
-
-        <!-- Most recent visits -->
-        <div
-          class="bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100 mt-6"
-          id="recentCompletedBox"
-          hidden
-        >
-          <div class="flex items-center justify-between mb-6">
-            <h2
-              id="recentCompletedTitle"
-              class="text-2xl font-black cursor-pointer"
-              style="color: #1C2434;"
-            >
-              Most Recent Visits
-            </h2>
-            <button
-              id="recentCompletedToggle"
-              aria-expanded="false"
-              aria-label="Expand section"
-              class="p-2 rounded-lg cursor-pointer transition-colors duration-300"
-              style="color: #7E827E;"
-            >
-              <svg
-                class="w-4 h-4 transition-transform rotate-180"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                  clip-rule="evenodd"></path>
-              </svg>
-            </button>
-          </div>
-          <div id="recentCompletedContent" class="hidden">
-            <div
-              id="recentCompleted"
-              class="grid grid-cols-1 sm:grid-cols-2 gap-3"
-            >
-            </div>
-          </div>
-        </div>
-
-        <!-- User Info Skeleton -->
-        <div id="userInfoSkeleton" class="mt-6">
-          <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 animate-pulse">
-            <div class="flex items-center justify-between">
-              <div class="space-y-3 flex-1">
-                <div class="h-3 rounded" style="background-color: #E8EAE8; width: 25%;"></div>
-                <div class="h-5 rounded" style="background-color: #F6F7F6; width: 40%;"></div>
-                <div class="h-4 rounded" style="background-color: #E8EAE8; width: 50%;"></div>
-              </div>
-              <div class="w-24 h-10 rounded-lg" style="background-color: #F6F7F6;"></div>
-            </div>
-          </div>
-        </div>
-
-        <div id="userInfo" class="mt-6 hidden">
-          <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <p class="text-base" style="color: #7E827E;">Loading...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <style>
-    /* Skeleton loading animation */
-    @keyframes skeleton-pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    .animate-pulse {
-      animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    /* Hide done button active state */
-    button[aria-pressed="true"] {
-      background: linear-gradient(135deg, #A98FFA, #7353D4) !important;
-      color: white !important;
-      border-color: #7353D4 !important;
-    }
-
-    /* Input focus state */
-    #newListNameInput:focus {
-      border-color: #A98FFA !important;
-      ring-color: #A98FFA !important;
-    }
-
-    /* Dashboard guard visibility - controlled by opacity instead of display */
-    #dashGuard[aria-busy="true"],
-    #dashGuardContent[aria-busy="true"] {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #dashGuard[aria-busy="false"],
-    #dashGuardContent[aria-busy="false"] {
-      opacity: 1;
-      pointer-events: auto;
-      transition: opacity 0.2s ease-in;
-    }
-  </style>
-
-  <script>
-    import { getCurrentUser, logout } from "../../lib/auth";
-    import {
-      getListsWithItems,
-      getSavedCounts,
-      createList,
-      removeItemFromList,
-      deleteList,
-      renameList,
-      setDefaultList,
-      saveItemToList,
-    } from "../../lib/lists";
-    import {
-      getCompletedCount,
-      getRecentCompleted,
-      getStatusesForItems,
-      setCompleted,
-    } from "../../lib/completed";
-
-    // Initialize dashboard
-    const initDashboard = () => {
-    // Check if user is logged in
-    const checkAuth = async () => {
-      const user = await getCurrentUser().catch(() => null);
-      console.debug("Dashboard auth check user:", user);
-      if (!user) {
-        console.debug("No user found - redirecting to login");
-        window.location.href = "/login/?expired=1";
-        return;
-      }
-
-      const userInfo = document.getElementById("userInfo");
-      const guard = document.getElementById("dashGuard");
-      const guardContent = document.getElementById("dashGuardContent");
-      // Reveal guarded content now that we have a user
-      if (guard) {
-        guard.setAttribute("aria-busy", "false");
-      }
-      if (guardContent) {
-        guardContent.setAttribute("aria-busy", "false");
-      }
-      if (userInfo) {
-        // populate profile summary and header greeting
-        const dashSubtitle = document.getElementById("dashSubtitle");
-        const dashTitle = document.getElementById("dashTitle");
-
-        // Title: personalise when we have a name
-        if (dashTitle)
-          dashTitle.textContent = user.name ? `Hi, ${user.name}` : "Dashboard";
-
-        // Subtitle: ensure it links to profile (markup already set)
-        if (dashSubtitle) dashSubtitle.textContent = "Edit profile";
-
-        // Fill userInfo with useful summary and a profile action
-        userInfo.innerHTML = `
-                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div class="space-y-1">
-                            <p class="text-xs font-medium" style="color: #7E827E;">Signed in as</p>
-                            <p class="text-lg font-bold" style="color: #1C2434;">${user.name || user.email || "Member"}</p>
-                            <p class="text-sm" style="color: #A8ACA8;">${user.email || ""}</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <a href="/account/profile/" class="px-4 py-2.5 text-sm font-semibold text-white rounded-lg cursor-pointer transition-all duration-300 hover:shadow-lg" style="background-color: #1C2434;">Edit profile</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-        // Edit moved to the dedicated profile page; no inline edit here.
-
-        // Danger zone moved to profile page; no delete handlers here.
-      }
-    };
-
-    // Handle logout with confirmation
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async () => {
-        if (confirm("Are you sure you want to logout?")) {
-          try {
-            await logout();
-        window.location.href = "/login/";
-          } catch (error) {
-            console.error("Logout failed:", error);
-          }
-        }
-      });
-    }
-
-    // (profile and delete handlers attached after DOM is populated in checkAuth)
-
-    // Check auth on page load
-    checkAuth();
-
-    // --- Client-side lists UI (real data) ---
-    const createListBtn = document.getElementById("createListBtn");
-    let modalKeydownHandler: ((e: KeyboardEvent) => void) | null = null;
-    let lastFocusedBeforeModal: HTMLElement | null = null;
-    const newListModal = document.getElementById("newListModal");
-    const newListOverlay = document.getElementById("newListOverlay");
-    const newListNameInput = document.getElementById(
-      "newListNameInput"
-    ) as HTMLInputElement | null;
-    const newListCreateBtn = document.getElementById("newListCreateBtn");
-    const newListCancelBtn = document.getElementById("newListCancelBtn");
-    const listsContainer = document.getElementById("listsContainer");
-    const listsCount = document.getElementById("listsCount");
-    const savedCount = document.getElementById("savedCount");
-    const completedCountEl = document.getElementById("completedCount");
-    const recentCompletedBox = document.getElementById("recentCompletedBox");
-    const recentCompletedContent = document.getElementById(
-      "recentCompletedContent"
-    );
-    const recentCompletedEl = document.getElementById("recentCompleted");
-    const recentCompletedToggle = document.getElementById(
-      "recentCompletedToggle"
-    );
-    const recentCompletedTitle = document.getElementById(
-      "recentCompletedTitle"
-    );
-    const hideDoneChip = document.getElementById("hideDoneChip");
-    const hideDoneChipMobile = document.getElementById("hideDoneChipMobile");
-
-    // State
-    let lists = [] as any[];
-    let indexByKey: Record<string, any> = {};
-    let statusByKey: Record<string, any> = {};
-    const HIDE_COMPLETED_LS = "dashHideCompleted";
-    let hideCompleted = false;
-    try {
-      hideCompleted = localStorage.getItem(HIDE_COMPLETED_LS) === "1";
-    } catch (_) {}
-
-    function applyHideDoneVisual() {
-      const on =
-        "bg-primary-600 text-white border border-primary-600 hover:bg-primary-700";
-      const off =
-        "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50";
-      // Desktop chip: only visible at sm+; never include plain inline-flex so it stays hidden on mobile
-      if (hideDoneChip) {
-        hideDoneChip.setAttribute(
-          "aria-pressed",
-          hideCompleted ? "true" : "false"
-        );
-        hideDoneChip.className = `hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-sm cursor-pointer ${hideCompleted ? on : off}`;
-      }
-      // Mobile chip: only visible below sm
-      if (hideDoneChipMobile) {
-        hideDoneChipMobile.setAttribute(
-          "aria-pressed",
-          hideCompleted ? "true" : "false"
-        );
-        hideDoneChipMobile.className = `inline-flex sm:hidden items-center px-3 py-1.5 rounded-full text-sm cursor-pointer ${hideCompleted ? on : off}`;
-      }
-    }
-    applyHideDoneVisual();
-
-    function idKeysFor(type: "project" | "stay", id: string) {
-      return [`${type}:${id}`];
-    }
-
-    function renderLists() {
-      if (!listsContainer) return;
-      if (!lists || lists.length === 0) {
-        listsContainer.innerHTML = `
-          <div class="p-8 rounded-xl border-2 border-dashed text-center bg-white" style="border-color: #E8EAE8;">
-            <svg class="w-12 h-12 mx-auto mb-3" style="color: #D1D4D1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <p class="text-base font-semibold mb-1" style="color: #1C2434;">No lists yet</p>
-            <p class="text-sm" style="color: #7E827E;">Create your first list to start organizing your saved items.</p>
-          </div>
-        `;
-        if (listsCount) listsCount.textContent = "0";
-        if (savedCount) savedCount.textContent = "0";
-        return;
-      }
-      listsContainer.innerHTML = "";
-      let totalItems = 0;
-      lists.forEach((l) => {
-        totalItems += l.items?.length || 0;
-      });
-      if (listsCount) listsCount.textContent = String(lists.length);
-      if (savedCount) savedCount.textContent = String(totalItems);
-
-      const frag = document.createDocumentFragment();
-      lists.forEach((l) => {
-        const wrap = document.createElement("div");
-        wrap.className = "bg-white rounded-xl shadow-lg p-6 sm:p-8 border border-gray-100";
-        wrap.setAttribute("data-list-id", l.id);
-        const count = l.items?.length || 0;
-        const lsKey = `dashListCollapsed:${l.id}`;
-        let initialCollapsed = false;
-        if (typeof localStorage !== "undefined") {
-          const saved = localStorage.getItem(lsKey);
-          if (saved !== null) {
-            initialCollapsed = saved === "1";
-          } else {
-            // Default collapsed on small screens on first visit
-            try {
-              initialCollapsed =
-                window.matchMedia &&
-                window.matchMedia("(max-width: 640px)").matches;
-            } catch {}
-          }
-        }
-        wrap.innerHTML = `
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <div class="font-bold text-lg cursor-pointer" data-list-title style="color: #1C2434;">${l.title}${l.is_default ? ' <span class="text-xs font-normal" style="color: #7E827E;">(default)</span>' : ""}</div>
-                        <div class="text-sm" style="color: #7E827E;">${count} item${count === 1 ? "" : "s"}</div>
-                    </div>
-                    <div class="flex items-center gap-1 sm:gap-2 relative">
-                        <div class="relative">
-                            <button data-menu-toggle="${l.id}" aria-haspopup="menu" aria-expanded="false" aria-label="List options" class="p-2 rounded-lg cursor-pointer transition-all duration-300" style="color: #7E827E; background: transparent;" onmouseover="this.style.backgroundColor='#F6F7F6'" onmouseout="this.style.backgroundColor='transparent'">
-                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
-                                </svg>
-                            </button>
-                            <div data-menu="${l.id}" role="menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl z-10 py-2" style="border: 1px solid #E8EAE8;">
-                                <button role="menuitem" data-action-rename="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">Rename</button>
-                                ${l.is_default ? "" : `<button role="menuitem" data-action-default="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">Set as default</button>`}
-                                <div class="my-2" style="border-top: 1px solid #E8EAE8;"></div>
-                                <button role="menuitem" data-action-delete="${l.id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-red-50" style="color: #EF4444;">Delete</button>
-                            </div>
-                        </div>
-                        <button data-toggle-list="${l.id}" aria-expanded="${initialCollapsed ? "false" : "true"}" aria-label="${initialCollapsed ? "Expand list" : "Collapse list"}" class="p-2 rounded-lg cursor-pointer transition-all duration-300" style="color: #7E827E; background: transparent;" onmouseover="this.style.backgroundColor='#F6F7F6'" onmouseout="this.style.backgroundColor='transparent'">
-                            <svg class="w-4 h-4 transition-transform ${initialCollapsed ? "rotate-180" : ""}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-        <div class="space-y-3 ${initialCollapsed ? "hidden" : ""}" data-items></div>
-            `;
-        const itemsHost = wrap.querySelector("[data-items]");
-        const todo: any[] = [];
-        const done: any[] = [];
-        (l.items || []).forEach((item: any) => {
-          const key = `${item.item_type}:${item.item_id}`;
-          const st = statusByKey[key];
-          st && st.is_completed ? done.push(item) : todo.push(item);
-        });
-
-        const renderRow = (item: any, isDone: boolean) => {
-          const meta = indexByKey[`${item.item_type}:${item.item_id}`] || null;
-          const title = meta?.title || `${item.item_type} ${item.item_id}`;
-          const url =
-            meta?.url ||
-            (item.item_type === "project"
-              ? `/projects/${item.item_id}/`
-              : `/stays/${item.item_id}/`);
-          const row = document.createElement("div");
-          row.className = `flex items-center justify-between rounded-lg p-4 transition-all duration-300 hover:shadow-md cursor-pointer ${isDone ? "opacity-60" : ""}`;
-          row.style.backgroundColor = "white";
-          row.style.border = "1px solid #E8EAE8";
-          const key = `${item.item_type}:${item.item_id}`;
-          row.innerHTML = `
-                    <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <input type="checkbox" data-toggle-done data-type="${item.item_type}" data-id="${item.item_id}" ${isDone ? "checked" : ""}
-                               aria-label="Mark as visited: ${title}"
-                               class="w-5 h-5 shrink-0 rounded cursor-pointer transition-all duration-300" style="accent-color: #A98FFA;" />
-                        ${
-                          meta?.image
-                            ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover shrink-0"/>`
-                            : `<div class="w-10 h-10 rounded flex items-center justify-center text-xs shrink-0" style="background-color: #F6F7F6; color: #7E827E;">${item.item_type}</div>`
-                        }
-                        <div class="flex-1 min-w-0">
-                            <a class="font-semibold hover:underline block truncate cursor-pointer" style="color: ${isDone ? '#A8ACA8' : '#1C2434'};" href="${url}">${title}</a>
-                            ${meta?.location ? `<div class="text-xs mt-0.5 truncate" style="color: #A8ACA8;">${meta.location}</div>` : ''}
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 relative shrink-0 ml-2">
-                        <span class="hidden sm:inline text-xs" style="color: #A8ACA8;">${new Date(item.added_at).toLocaleDateString?.() || ""}</span>
-                        <div class="relative">
-                            <button data-item-menu-toggle="${key}" aria-haspopup="menu" aria-expanded="false" aria-label="Item options" class="p-2 rounded-lg cursor-pointer transition-all duration-300" style="color: #7E827E; background: transparent;" onmouseover="this.style.backgroundColor='#F6F7F6'" onmouseout="this.style.backgroundColor='transparent'">
-                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
-                                </svg>
-                            </button>
-                            <div data-item-menu="${key}" role="menu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl z-10 py-2" style="border: 1px solid #E8EAE8;">
-                                <button role="menuitem" data-item-action-visit="${key}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">View details</button>
-                                <button role="menuitem" data-item-action-move-toggle="${key}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-gray-50" style="color: #1C2434;">Move to…</button>
-                                <div data-item-move-menu="${key}" class="hidden mt-1 pt-2 space-y-1" style="border-top: 1px solid #E8EAE8;"></div>
-                                <div class="my-2" style="border-top: 1px solid #E8EAE8;"></div>
-                                <button role="menuitem" data-item-action-remove data-list="${l.id}" data-type="${item.item_type}" data-id="${item.item_id}" class="w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-red-50" style="color: #EF4444;">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-          // Bind item menu handlers
-          const menuToggle = row.querySelector(
-            `button[data-item-menu-toggle="${key}"]`
-          );
-          const menu = row.querySelector(`div[data-item-menu="${key}"]`);
-          if (menuToggle && menu) {
-            const closeMenu = () => {
-              (menu as HTMLElement).classList.add("hidden");
-              (menuToggle as HTMLButtonElement).setAttribute(
-                "aria-expanded",
-                "false"
-              );
-            };
-            const openMenu = () => {
-              (menu as HTMLElement).classList.remove("hidden");
-              (menuToggle as HTMLButtonElement).setAttribute(
-                "aria-expanded",
-                "true"
-              );
-            };
-            menuToggle.addEventListener("click", (e) => {
-              e.stopPropagation();
-              const isOpen = !(menu as HTMLElement).classList.contains(
-                "hidden"
-              );
-              
-              // Close all other menus (both list menus and item menus)
-              if (!isOpen) {
-                document.querySelectorAll('[data-menu], [data-item-menu]').forEach((otherMenu) => {
-                  if (otherMenu !== menu) {
-                    otherMenu.classList.add("hidden");
-                    const otherId = otherMenu.getAttribute('data-menu') || otherMenu.getAttribute('data-item-menu');
-                    const otherToggle = document.querySelector(`[data-menu-toggle="${otherId}"], [data-item-menu-toggle="${otherId}"]`);
-                    if (otherToggle) {
-                      otherToggle.setAttribute("aria-expanded", "false");
-                    }
-                  }
-                });
-              }
-              
-              isOpen ? closeMenu() : openMenu();
-            });
-            const onDocClick = (evt: MouseEvent) => {
-              if ((menu as HTMLElement).classList.contains("hidden")) return;
-              if (!row.contains(evt.target as Node)) closeMenu();
-            };
-            document.addEventListener("click", onDocClick);
-            row.addEventListener("keydown", (ke: KeyboardEvent) => {
-              if (ke.key === "Escape") closeMenu();
-            });
-
-            // View details
-            const visitBtn = row.querySelector(
-              `button[data-item-action-visit="${key}"]`
-            );
-            if (visitBtn)
-              visitBtn.addEventListener("click", () => {
-                closeMenu();
-                window.location.href = url;
-              });
-
-            // Move to… submenu
-            const moveToggle = row.querySelector(
-              `button[data-item-action-move-toggle="${key}"]`
-            );
-            const moveMenu = row.querySelector(
-              `div[data-item-move-menu="${key}"]`
-            );
-            if (moveToggle && moveMenu) {
-              const others = (lists || []).filter((ol: any) => ol.id !== l.id);
-              if (!others.length) {
-                (moveToggle as HTMLButtonElement).disabled = true;
-                (moveToggle as HTMLButtonElement).classList.add(
-                  "text-gray-300",
-                  "cursor-not-allowed"
-                );
-              } else {
-                // build buttons
-                (moveMenu as HTMLElement).innerHTML = "";
-                others.forEach((ol: any) => {
-                  const b = document.createElement("button");
-                  b.setAttribute("role", "menuitem");
-                  b.className =
-                    "w-full text-left px-4 py-2.5 text-sm font-medium cursor-pointer transition-all duration-300 hover:bg-purple-50 rounded-lg";
-                  b.style.color = "#7E827E";
-                  b.textContent = ol.title || "Untitled";
-                  b.addEventListener("click", async () => {
-                    closeMenu();
-                    try {
-                      await saveItemToList(ol.id, item.item_type, item.item_id);
-                      await removeItemFromList(
-                        l.id,
-                        item.item_type,
-                        item.item_id
-                      );
-                      await loadAndRender();
-                    } catch (e) {
-                      console.error("Move failed", e);
-                    }
-                  });
-                  (moveMenu as HTMLElement).appendChild(b);
-                });
-                // toggle visibility
-                let moveMenuOpen = false;
-                (moveToggle as HTMLButtonElement).addEventListener(
-                  "click",
-                  (evt) => {
-                    evt.stopPropagation();
-                    moveMenuOpen = !moveMenuOpen;
-                    (moveMenu as HTMLElement).classList.toggle("hidden");
-                    // Update button styling to show active state
-                    if (moveMenuOpen) {
-                      (moveToggle as HTMLButtonElement).style.backgroundColor = "#F6F7F6";
-                    } else {
-                      (moveToggle as HTMLButtonElement).style.backgroundColor = "";
-                    }
-                  }
-                );
-              }
-            }
-
-            // Remove
-            const removeBtn = row.querySelector(
-              "button[data-item-action-remove]"
-            );
-            if (removeBtn) {
-              removeBtn.addEventListener("click", async () => {
-                closeMenu();
-                const listId = (removeBtn as HTMLButtonElement).getAttribute(
-                  "data-list"
-                );
-                const type = (removeBtn as HTMLButtonElement).getAttribute(
-                  "data-type"
-                ) as "project" | "stay" | null;
-                const id = (removeBtn as HTMLButtonElement).getAttribute(
-                  "data-id"
-                );
-                if (!listId || !type || !id) return;
-                const ok = window.confirm("Remove this item from the list?");
-                if (!ok) return;
-                try {
-                  await removeItemFromList(listId, type, id);
-                  await loadAndRender();
-                } catch (e) {
-                  console.error("Remove item failed", e);
-                }
-              });
-            }
-          }
-          return row;
-        };
-
-        // Saved section
-        if (todo.length) {
-          const sec = document.createElement("div");
-          sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">Saved <span class="text-gray-400">(${todo.length})</span></div>`;
-          const list = document.createElement("div");
-          list.className = "mt-2 space-y-2";
-          todo.forEach((it: any) => list.appendChild(renderRow(it, false)));
-          sec.appendChild(list);
-          itemsHost?.appendChild(sec);
-        }
-
-        // Visited section (optional)
-        if (!hideCompleted && done.length) {
-          const sec = document.createElement("div");
-          sec.innerHTML = `<div class="text-sm font-semibold text-gray-700">Visited <span class="text-gray-400">(${done.length})</span></div>`;
-          const list = document.createElement("div");
-          list.className = "mt-2 space-y-2";
-          done.forEach((it: any) => list.appendChild(renderRow(it, true)));
-          sec.appendChild(list);
-          itemsHost?.appendChild(sec);
-        }
-
-        // Empty state when list has no items
-        if (todo.length === 0 && done.length === 0) {
-          const emptyState = document.createElement("div");
-          emptyState.className = "p-6 text-center rounded-lg";
-          emptyState.style.backgroundColor = "#F6F7F6";
-          emptyState.innerHTML = `
-            <svg class="w-10 h-10 mx-auto mb-3" style="color: #A98FFA; opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            <p class="text-sm font-semibold mb-1" style="color: #1C2434;">Your list is empty</p>
-            <p class="text-xs mb-3" style="color: #7E827E;">
-              Browse <a href="/projects/" class="underline hover:no-underline" style="color: #7353D4;">projects</a> 
-              or <a href="/stays/" class="underline hover:no-underline" style="color: #7353D4;">stays</a> 
-              and click the Save button to add them here.
-            </p>
-          `;
-          itemsHost?.appendChild(emptyState);
-        }
-        // menu toggle
-        const menuToggle = wrap.querySelector(
-          `button[data-menu-toggle="${l.id}"]`
-        );
-        const menu = wrap.querySelector(`div[data-menu="${l.id}"]`);
-        const closeMenu = () => {
-          menu?.classList.add("hidden");
-          (menuToggle as HTMLButtonElement)?.setAttribute(
-            "aria-expanded",
-            "false"
-          );
-        };
-        const openMenu = () => {
-          menu?.classList.remove("hidden");
-          (menuToggle as HTMLButtonElement)?.setAttribute(
-            "aria-expanded",
-            "true"
-          );
-        };
-        if (menuToggle && menu) {
-          menuToggle.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const isOpen = !(menu as HTMLElement).classList.contains("hidden");
-            
-            // Close all other menus first
-            if (!isOpen) {
-              document.querySelectorAll('[data-menu]').forEach((otherMenu) => {
-                if (otherMenu !== menu) {
-                  otherMenu.classList.add("hidden");
-                  const otherId = otherMenu.getAttribute('data-menu');
-                  const otherToggle = document.querySelector(`[data-menu-toggle="${otherId}"]`);
-                  if (otherToggle) {
-                    otherToggle.setAttribute("aria-expanded", "false");
-                  }
-                }
-              });
-            }
-            
-            isOpen ? closeMenu() : openMenu();
-          });
-          // click outside to close
-          document.addEventListener("click", (evt) => {
-            if (!menu || (menu as HTMLElement).classList.contains("hidden"))
-              return;
-            if (!(wrap as HTMLElement).contains(evt.target as Node))
-              closeMenu();
-          });
-          // escape to close
-          wrap.addEventListener("keydown", (ke: KeyboardEvent) => {
-            if (ke.key === "Escape") {
-              closeMenu();
-            }
-          });
-        }
-
-        // menu actions
-        const renameBtn = wrap.querySelector(
-          `button[data-action-rename="${l.id}"]`
-        );
-        if (renameBtn) {
-          renameBtn.addEventListener("click", async () => {
-            closeMenu();
-            const current = l.title || "";
-            const next = window.prompt("Rename list", current);
-            if (next === null) return;
-            const title = next.trim();
-            if (!title || title === current) return;
-            try {
-              await renameList(l.id, title);
-              await loadAndRender();
-            } catch (e) {
-              console.error("Rename failed", e);
-            }
-          });
-        }
-        const defaultBtn = wrap.querySelector(
-          `button[data-action-default="${l.id}"]`
-        );
-        if (defaultBtn) {
-          defaultBtn.addEventListener("click", async () => {
-            closeMenu();
-            try {
-              await setDefaultList(l.id);
-              await loadAndRender();
-            } catch (e) {
-              console.error("Set default failed", e);
-            }
-          });
-        }
-        const delBtn = wrap.querySelector(
-          `button[data-action-delete="${l.id}"]`
-        );
-        if (delBtn) {
-          delBtn.addEventListener("click", async () => {
-            closeMenu();
-            const ok = window.confirm(
-              "Delete this list? All items in it will also be removed. This cannot be undone."
-            );
-            if (!ok) return;
-            try {
-              await deleteList(l.id);
-              await loadAndRender();
-            } catch (e) {
-              console.error("Delete list failed", e);
-            }
-          });
-        }
-
-        // bind collapse/expand toggle
-        const toggleBtn = wrap.querySelector("button[data-toggle-list]");
-        const titleEl = wrap.querySelector("[data-list-title]");
-        const doToggle = () => {
-          const isHidden = itemsHost?.classList.contains("hidden");
-          const icon = toggleBtn?.querySelector("svg");
-          if (isHidden) {
-            itemsHost?.classList.remove("hidden");
-            (toggleBtn as HTMLButtonElement)?.setAttribute(
-              "aria-expanded",
-              "true"
-            );
-            (toggleBtn as HTMLButtonElement)?.setAttribute(
-              "aria-label",
-              "Collapse list"
-            );
-            icon?.classList.remove("rotate-180");
-            try {
-              localStorage.setItem(lsKey, "0");
-            } catch (_) {}
-          } else {
-            itemsHost?.classList.add("hidden");
-            (toggleBtn as HTMLButtonElement)?.setAttribute(
-              "aria-expanded",
-              "false"
-            );
-            (toggleBtn as HTMLButtonElement)?.setAttribute(
-              "aria-label",
-              "Expand list"
-            );
-            icon?.classList.add("rotate-180");
-            try {
-              localStorage.setItem(lsKey, "1");
-            } catch (_) {}
-          }
-        };
-        if (toggleBtn) {
-          toggleBtn.addEventListener("click", doToggle);
-        }
-        if (titleEl) {
-          titleEl.addEventListener("click", doToggle);
-        }
-        frag.appendChild(wrap);
-      });
-      listsContainer.appendChild(frag);
-
-      // (remove handled via per-item menu above)
-
-      // delegate toggle done via checkbox
-      listsContainer
-        .querySelectorAll('input[type="checkbox"][data-toggle-done]')
-        .forEach((cb) => {
-          cb.addEventListener("change", async () => {
-            const type = (cb as HTMLInputElement).getAttribute("data-type") as
-              | "project"
-              | "stay"
-              | null;
-            const id = (cb as HTMLInputElement).getAttribute("data-id");
-            const next = (cb as HTMLInputElement).checked;
-            if (!type || !id) return;
-            try {
-              await setCompleted(type, id, next, "dashboard");
-            } catch (e) {
-              console.error("Toggle done failed", e);
-            }
-            await loadAndRender();
-          });
-        });
-    }
-
-    async function fetchIndex() {
-      try {
-        const res = await fetch("/api/items.json");
-        if (!res.ok) throw new Error("Failed to load item index");
-        const data = await res.json();
-        const idx: Record<string, any> = {};
-        (data.items || []).forEach((it: any) => {
-          idx[`${it.type}:${it.id}`] = it;
-          (it.altIds || []).forEach((aid: string) => {
-            idx[`${it.type}:${aid}`] = it;
-          });
-        });
-        indexByKey = idx;
-      } catch (e) {
-        console.warn("Item index load failed", e);
-        indexByKey = {};
-      }
-    }
-
-    function isAuthError(err: any): boolean {
-      return err && (err.status === 401 || err.status === 403);
-    }
-
-    async function handleAuthFailure() {
-      console.warn("[Dashboard] Authentication failed during data load — redirecting to login");
-      try {
-        await logout();
-      } catch {}
-      window.location.href = "/login/?expired=1";
-    }
-
-    async function loadAndRender() {
-      try {
-        // Ensure auth first
-        const user = await getCurrentUser();
-        if (!user) return; // redirect already handled earlier
-        
-        // Fetch data while skeletons are visible
-        await fetchIndex();
-
-        let counts: { lists: number; items: number };
-        try {
-          counts = await getSavedCounts();
-        } catch (err: any) {
-          if (isAuthError(err)) {
-            return handleAuthFailure();
-          }
-          counts = { lists: 0, items: 0 };
-        }
-        
-        // Lists and completed statuses
-        try {
-          lists = await getListsWithItems();
-        } catch (err: any) {
-          if (isAuthError(err)) {
-            return handleAuthFailure();
-          }
-          lists = [];
-        }
-
-        const pairs: any[] = [];
-        lists.forEach((l: any) =>
-          (l.items || []).forEach((it: any) => {
-            pairs.push({
-              item_type: it.item_type,
-              item_id: String(it.item_id),
-            });
-          })
-        );
-        try {
-          statusByKey = await getStatusesForItems(pairs);
-        } catch (err: any) {
-          if (isAuthError(err)) {
-            return handleAuthFailure();
-          }
-          statusByKey = {};
-        }
-        
-        // Completed count
-        let completedCount = 0;
-        try {
-          completedCount = await getCompletedCount();
-        } catch (err: any) {
-          if (isAuthError(err)) {
-            return handleAuthFailure();
-          }
-        }
-        
-        // Now hide skeletons and show stats/user info
-        const statsSkeleton = document.getElementById("statsSkeleton");
-        const statsContent = document.getElementById("statsContent");
-        const listsSkeleton = document.getElementById("listsSkeleton");
-        const userInfoSkeleton = document.getElementById("userInfoSkeleton");
-        const userInfo = document.getElementById("userInfo");
-        
-        if (statsSkeleton) statsSkeleton.classList.add("hidden");
-        if (statsContent) statsContent.classList.remove("hidden");
-        if (userInfoSkeleton) userInfoSkeleton.classList.add("hidden");
-        if (userInfo) userInfo.classList.remove("hidden");
-        
-        // Update stats
-        if (listsCount) listsCount.textContent = String(counts.lists);
-        if (savedCount) savedCount.textContent = String(counts.items);
-        if (completedCountEl) completedCountEl.textContent = String(completedCount);
-        
-        // Recent completed
-        try {
-          const rec = await getRecentCompleted(6);
-          if (rec && rec.length && recentCompletedBox && recentCompletedEl) {
-            recentCompletedBox.hidden = false;
-            recentCompletedEl.innerHTML = "";
-            const rf = document.createDocumentFragment();
-            rec.forEach((r: any) => {
-              const mk = `${r.item_type}:${r.item_id}`;
-              const meta = indexByKey[mk] || {};
-              const url =
-                meta?.url ||
-                (r.item_type === "project"
-                  ? `/projects/${r.item_id}/`
-                  : `/stays/${r.item_id}/`);
-              const card = document.createElement("a");
-              card.href = url;
-              card.className =
-                "flex items-center gap-3 p-4 rounded-lg transition-all duration-300 hover:shadow-md cursor-pointer";
-              card.style.cssText = "background: white; border: 1px solid #E8EAE8;";
-              card.innerHTML = `
-                            ${
-                              meta?.image
-                                ? `<img src="${meta.image}" alt="" class="w-10 h-10 rounded object-cover"/>`
-                                : `<div class="w-10 h-10 rounded flex items-center justify-center text-xs" style="background-color: #F6F7F6; color: #7E827E;">${r.item_type}</div>`
-                            }
-                            <div class="min-w-0 flex-1">
-                                <div class="font-semibold truncate" style="color: #1C2434;">${meta?.title || `${r.item_type} ${r.item_id}`}</div>
-                                <div class="text-xs space-y-0.5">
-                                    ${meta?.location ? `<div style="color: #A8ACA8;">${meta.location}</div>` : ''}
-                                    <div style="color: #A8ACA8;">Marked as visited ${new Date(r.completed_at).toLocaleDateString?.() || ""}</div>
-                                </div>
-                            </div>
-                        `;
-              rf.appendChild(card);
-            });
-            recentCompletedEl.appendChild(rf);
-            // Collapse state (hidden by default)
-            const lsKey = "dashRecentCollapsed";
-            let collapsed = true;
-            try {
-              const v = localStorage.getItem(lsKey);
-              collapsed = v === null ? true : v === "1";
-            } catch {}
-            const apply = (isCollapsed: boolean) => {
-              const icon = recentCompletedToggle?.querySelector("svg");
-              if (isCollapsed) {
-                recentCompletedContent?.classList.add("hidden");
-                (recentCompletedToggle as HTMLButtonElement)?.setAttribute(
-                  "aria-expanded",
-                  "false"
-                );
-                (recentCompletedToggle as HTMLButtonElement)?.setAttribute(
-                  "aria-label",
-                  "Expand section"
-                );
-                icon?.classList.add("rotate-180");
-              } else {
-                recentCompletedContent?.classList.remove("hidden");
-                (recentCompletedToggle as HTMLButtonElement)?.setAttribute(
-                  "aria-expanded",
-                  "true"
-                );
-                (recentCompletedToggle as HTMLButtonElement)?.setAttribute(
-                  "aria-label",
-                  "Collapse section"
-                );
-                icon?.classList.remove("rotate-180");
-              }
-            };
-            apply(collapsed);
-            if (recentCompletedToggle) {
-              (recentCompletedToggle as HTMLButtonElement).onclick = () => {
-                collapsed = !collapsed;
-                try {
-                  localStorage.setItem(lsKey, collapsed ? "1" : "0");
-                } catch {}
-                apply(collapsed);
-              };
-            }
-            if (recentCompletedTitle) {
-              recentCompletedTitle.setAttribute("tabindex", "0");
-              recentCompletedTitle.addEventListener("click", () => {
-                collapsed = !collapsed;
-                try {
-                  localStorage.setItem(lsKey, collapsed ? "1" : "0");
-                } catch {}
-                apply(collapsed);
-              });
-              recentCompletedTitle.addEventListener(
-                "keydown",
-                (e: KeyboardEvent) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    collapsed = !collapsed;
-                    try {
-                      localStorage.setItem(lsKey, collapsed ? "1" : "0");
-                    } catch {}
-                    apply(collapsed);
-                  }
-                }
-              );
-            }
-          } else if (recentCompletedBox) {
-            recentCompletedBox.hidden = true;
-          }
-        } catch {}
-        
-        // Render the lists (this populates listsContainer with content)
-        renderLists();
-        
-        // Now show the lists container and hide its skeleton
-        if (listsSkeleton) listsSkeleton.classList.add("hidden");
-        if (listsContainer) listsContainer.classList.remove("hidden");
-      } catch (e) {
-        console.error("Failed loading lists", e);
-      }
-    }
-
-    function openNewListModal() {
-      if (!newListModal) return;
-      lastFocusedBeforeModal = (document.activeElement as HTMLElement) || null;
-      newListModal.classList.remove("hidden");
-      // autofocus after paint
-      setTimeout(() => {
-        newListNameInput?.focus();
-      }, 0);
-      modalKeydownHandler = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          closeNewListModal();
-        }
-      };
-      window.addEventListener("keydown", modalKeydownHandler);
-    }
-
-    function closeNewListModal() {
-      if (!newListModal) return;
-      newListModal.classList.add("hidden");
-      if (newListNameInput) newListNameInput.value = "";
-      if (modalKeydownHandler) {
-        window.removeEventListener("keydown", modalKeydownHandler);
-        modalKeydownHandler = null;
-      }
-      if (lastFocusedBeforeModal) {
-        try {
-          lastFocusedBeforeModal.focus();
-        } catch {}
-        lastFocusedBeforeModal = null;
-      }
-    }
-
-    async function handleCreateNewList() {
-      try {
-        let name = (newListNameInput?.value || "").trim();
-        if (!name) name = "New list"; // quick-add default
-        const created = await createList(name, null, false);
-        closeNewListModal();
-        await loadAndRender();
-        // Expand and scroll to the new list
-        try {
-          try {
-            localStorage.setItem(`dashListCollapsed:${created.id}`, "0");
-          } catch {}
-          const listEl = document.querySelector(
-            `[data-list-id="${created.id}"]`
-          );
-          if (listEl) {
-            const container = listEl.querySelector("[data-items]");
-            if (container && container.classList.contains("hidden")) {
-              container.classList.remove("hidden");
-            }
-            listEl.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        } catch {}
-      } catch (err) {
-        console.error("Create list failed", err);
-      }
-    }
-
-    const createListBtnDesktop = document.getElementById("createListBtnDesktop");
-    
-    // Attach event listeners
-    if (createListBtn)
-      createListBtn.addEventListener("click", openNewListModal);
-    if (createListBtnDesktop)
-      createListBtnDesktop.addEventListener("click", openNewListModal);
-      if (newListOverlay)
-        newListOverlay.addEventListener("click", closeNewListModal);
-      if (newListCancelBtn)
-        newListCancelBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          closeNewListModal();
-        });
-      if (newListCreateBtn)
-        newListCreateBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          handleCreateNewList();
-        });
-      if (newListNameInput)
-        newListNameInput.addEventListener("keydown", (e: KeyboardEvent) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handleCreateNewList();
-          } else if (e.key === "Escape") {
-            e.preventDefault();
-            closeNewListModal();
-          }
-        });
-
-      const onToggleHideDone = () => {
-        hideCompleted = !hideCompleted;
-        try {
-          localStorage.setItem(HIDE_COMPLETED_LS, hideCompleted ? "1" : "0");
-        } catch (_) {}
-        applyHideDoneVisual();
-        renderLists();
-      };
-      if (hideDoneChip) hideDoneChip.addEventListener("click", onToggleHideDone);
-      if (hideDoneChipMobile)
-        hideDoneChipMobile.addEventListener("click", onToggleHideDone);
-
-    // Initial load
-    loadAndRender();
-    }; // end initDashboard
-
-    // Run on page load
-    initDashboard();
-  </script>
+    <section id="loadingSection">
+      <Card>
+        <CardHeader>
+          <CardTitle>Loading your dashboard…</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">Fetching your lists, saves and recently visited entries.</p>
+        </CardContent>
+      </Card>
+    </section>
+  </main>
 </MainLayout>
+
+<script>
+  import { getCurrentUser } from "@/lib/pocketbase";
+  import {
+    getListsWithItems,
+    deleteList,
+    renameList,
+    setDefaultList,
+  } from "@/lib/lists";
+  import { getRecentCompleted, getCompletedCount } from "@/lib/completed";
+  import { getAccountTier } from "@/lib/billing";
+  import { canCreateList, FREE_TIER } from "@/lib/tier-limits";
+
+  const LOGIN = "/login/";
+
+  interface ListRow {
+    id: string;
+    title: string;
+    isDefault: boolean;
+    itemCount: number;
+    lastUpdatedLabel: string;
+  }
+
+  interface ItemIndexEntry {
+    type: "project" | "stay";
+    id: string;
+    altIds: string[];
+    title: string;
+    slug: string;
+    url: string;
+    image?: string | null;
+    location?: string | null;
+  }
+
+  type AnyElement = HTMLElement | null;
+  function $id<T extends HTMLElement = HTMLElement>(id: string): T {
+    return document.getElementById(id) as T;
+  }
+
+  function fmtNum(n: number): string {
+    return Number.isFinite(n) ? n.toLocaleString("en-GB") : "—";
+  }
+
+  function relativeTime(iso: string | null | undefined): string {
+    if (!iso) return "—";
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) return "—";
+    const diff = Date.now() - then;
+    const sec = Math.floor(diff / 1000);
+    if (sec < 60) return "just now";
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h ago`;
+    const day = Math.floor(hr / 24);
+    if (day < 7) return `${day}d ago`;
+    const week = Math.floor(day / 7);
+    if (week < 4) return `${week}w ago`;
+    const month = Math.floor(day / 30);
+    if (month < 12) return `${month}mo ago`;
+    return `${Math.floor(day / 365)}y ago`;
+  }
+
+  function showError(message: string): void {
+    const banner = $id("errorBanner");
+    if (!banner) return;
+    banner.className =
+      "rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive";
+    banner.textContent = message;
+    banner.classList.remove("hidden");
+  }
+
+  function clearError(): void {
+    const banner = $id("errorBanner");
+    if (!banner) return;
+    banner.textContent = "";
+    banner.classList.add("hidden");
+  }
+
+  function sectionsFadeIn(): void {
+    for (const id of [
+      "statsSection",
+      "atCapSection",
+      "recentSection",
+    ]) {
+      const el = $id(id);
+      if (el) el.classList.remove("hidden");
+    }
+    const loading = $id("loadingSection");
+    if (loading) loading.classList.add("hidden");
+  }
+
+  function buildKpis(totalSaved: number, listCount: number, visitedCount: number): { label: string; value: string; caption?: string }[] {
+    return [
+      { label: "Saved", value: fmtNum(totalSaved), caption: "Items across all lists" },
+      { label: "Lists", value: fmtNum(listCount), caption: listCount === 1 ? "1 list" : `${listCount} lists` },
+      { label: "Visited", value: fmtNum(visitedCount), caption: "Items marked visited" },
+    ];
+  }
+
+  function buildListsGrid(lists: ListRow[], atCap: boolean, tier: "free" | "pro"): string {
+    const cards = lists
+      .map((list) => renderListCard(list))
+      .join("");
+    const newCard = renderNewListCard(atCap);
+    return cards + newCard;
+  }
+
+  function renderListCard(list: ListRow): string {
+    const countLabel =
+      list.itemCount === 1 ? "item saved" : "items saved";
+    const defaultBadge = list.isDefault
+      ? `<span class="inline-flex items-center gap-1 rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground self-start">Default</span>`
+      : "";
+    const disabledDefault =
+      list.isDefault
+        ? `<button class="w-full text-left px-2 py-1.5 text-sm rounded-sm opacity-50 cursor-not-allowed" disabled aria-disabled="true">Set as default</button>`
+        : `<button data-list-action="set-default" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Set as default</button>`;
+    const safeTitle = list.title.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
+    return `
+      <div class="relative rounded-lg border bg-card text-card-foreground p-6 hover:border-foreground/30 transition-colors" data-list-id="${list.id}">
+        <a href="/account/lists/${list.id}/" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg" data-list-link>
+          <div class="space-y-1.5">
+            <p class="font-semibold leading-tight line-clamp-2">${safeTitle}</p>
+            ${defaultBadge}
+          </div>
+          <div class="mt-4">
+            <p class="text-2xl font-semibold tabular-nums">${list.itemCount}</p>
+            <p class="text-xs text-muted-foreground mt-1">${countLabel}</p>
+            <p class="text-xs text-muted-foreground mt-2">${list.lastUpdatedLabel}</p>
+          </div>
+        </a>
+        <button
+          type="button"
+          class="absolute top-3 right-3 inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          data-list-kebab
+          data-list-id="${list.id}"
+          aria-label="List actions"
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >⋯</button>
+        <div
+          class="absolute top-12 right-3 z-10 min-w-[180px] rounded-md border bg-popover p-1 shadow-md hidden"
+          data-list-menu
+          data-list-id="${list.id}"
+          role="menu"
+        >
+          <button data-list-action="rename" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Rename</button>
+          ${disabledDefault}
+          <div class="my-1 h-px bg-border"></div>
+          <button data-list-action="delete" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none">Delete list</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderNewListCard(atCap: boolean): string {
+    if (atCap) {
+      return `
+        <div class="rounded-lg border-2 border-dashed border-border bg-card/30 flex flex-col items-center justify-center p-6 min-h-[180px] cursor-not-allowed opacity-60" aria-disabled="true">
+          <span class="text-3xl text-muted-foreground mb-2" aria-hidden="true">+</span>
+          <p class="text-sm font-medium text-foreground">New list</p>
+          <p class="text-xs text-muted-foreground mt-1 text-center">
+            Free tier limit reached — <a href="/pricing/" class="underline hover:no-underline">see Pro</a>
+          </p>
+        </div>
+      `;
+    }
+    return `
+      <a
+        href="/account/lists/new/"
+        class="block rounded-lg border-2 border-dashed border-border bg-card/30 hover:border-foreground/40 hover:bg-card/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        <div class="flex flex-col items-center justify-center p-6 min-h-[180px]">
+          <span class="text-3xl text-muted-foreground mb-2" aria-hidden="true">+</span>
+          <p class="text-sm font-medium text-foreground">New list</p>
+          <p class="text-xs text-muted-foreground mt-1">Create another list</p>
+        </div>
+      </a>
+    `;
+  }
+
+  function renderStatsKpis(kpis: { label: string; value: string; caption?: string }[]): string {
+    return kpis
+      .map(
+        (kpi) => `
+        <div class="rounded-lg border bg-card text-card-foreground">
+          <div class="p-4 space-y-1">
+            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">${kpi.label}</p>
+            <p class="text-3xl font-semibold tracking-tight tabular-nums">${kpi.value}</p>
+            ${kpi.caption ? `<p class="text-xs text-muted-foreground">${kpi.caption}</p>` : ""}
+          </div>
+        </div>
+      `
+      )
+      .join("");
+  }
+
+  function escapeHtml(value: string): string {
+    return value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
+  }
+
+  async function loadItemsIndex(): Promise<Map<string, ItemIndexEntry>> {
+    try {
+      const response = await fetch("/api/items.json");
+      if (!response.ok) return new Map();
+      const payload = (await response.json()) as { items?: ItemIndexEntry[] };
+      const items = payload.items ?? [];
+      const map = new Map<string, ItemIndexEntry>();
+      for (const item of items) {
+        map.set(item.id, item);
+        for (const alt of item.altIds ?? []) {
+          map.set(alt, item);
+        }
+      }
+      return map;
+    } catch {
+      return new Map();
+    }
+  }
+
+  function joinRecent(
+    rows: Array<{ item_type: "project" | "stay"; item_id: string; completed_at: string }>,
+    index: Map<string, ItemIndexEntry>
+  ): Array<{
+    item_type: "project" | "stay";
+    item_id: string;
+    completed_at: string;
+    title: string;
+    url: string;
+    image?: string | null;
+    location?: string | null;
+  }> {
+    const result: Array<{
+      item_type: "project" | "stay";
+      item_id: string;
+      completed_at: string;
+      title: string;
+      url: string;
+      image?: string | null;
+      location?: string | null;
+    }> = [];
+    for (const row of rows) {
+      const meta = index.get(String(row.item_id));
+      if (!meta) continue;
+      result.push({
+        item_type: row.item_type,
+        item_id: row.item_id,
+        completed_at: row.completed_at,
+        title: meta.title,
+        url: meta.url,
+        image: meta.image ?? null,
+        location: meta.location ?? null,
+      });
+    }
+    return result;
+  }
+
+  function renderRecentlyVisited(items: ReturnType<typeof joinRecent>): string {
+    if (items.length === 0) {
+      return `<p class="text-sm text-muted-foreground py-8 text-center">Nothing yet — mark visits from a project or stay page and they'll show up here.</p>`;
+    }
+    const slides = items
+      .map((item) => {
+        const safeTitle = escapeHtml(item.title ?? "");
+        const imageBlock = item.image
+          ? `<img src="${escapeHtml(item.image)}" alt="${safeTitle}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />`
+          : `<div class="w-full h-full flex items-center justify-center text-muted-foreground"><span class="text-xs">No image</span></div>`;
+        const location = item.location
+          ? `<p class="text-xs text-muted-foreground">${escapeHtml(item.location)}</p>`
+          : "";
+        return `
+          <a href="${escapeHtml(item.url)}" class="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg w-[70%] sm:w-[45%] md:w-[30%] lg:w-[22%] shrink-0 snap-start">
+            <div class="aspect-[4/3] bg-muted overflow-hidden rounded-lg">
+              ${imageBlock}
+            </div>
+            <div class="mt-3 space-y-1">
+              <p class="text-xs uppercase tracking-wide text-muted-foreground">${item.item_type === "stay" ? "Stay" : "Project"}</p>
+              <p class="font-medium text-sm leading-snug line-clamp-2 group-hover:underline">${safeTitle}</p>
+              ${location}
+            </div>
+          </a>
+        `;
+      })
+      .join("");
+    return `<div class="relative"><div class="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-px-4 -mx-4 px-4">${slides}</div></div>`;
+  }
+
+  function wireKebabMenus(): void {
+    const buttons = document.querySelectorAll<HTMLElement>("[data-list-kebab]");
+    buttons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const listId = button.getAttribute("data-list-id");
+        if (!listId) return;
+        const menu = document.querySelector<HTMLElement>(`[data-list-menu][data-list-id="${CSS.escape(listId)}"]`);
+        if (!menu) return;
+        const open = !menu.classList.contains("hidden");
+        closeAllMenus();
+        if (!open) {
+          menu.classList.remove("hidden");
+          button.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+
+    const actions = document.querySelectorAll<HTMLElement>("[data-list-action]");
+    actions.forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const action = button.getAttribute("data-list-action");
+        const listId = button.getAttribute("data-list-id");
+        const title = button.closest("[data-list-id]")?.querySelector<HTMLElement>(".font-semibold")?.textContent ?? "";
+        if (!action || !listId) return;
+        closeAllMenus();
+        await handleListAction(action, listId, title);
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (!target.closest("[data-list-menu]") && !target.closest("[data-list-kebab]")) {
+        closeAllMenus();
+      }
+    });
+  }
+
+  function closeAllMenus(): void {
+    document.querySelectorAll<HTMLElement>("[data-list-menu]").forEach((menu) => {
+      menu.classList.add("hidden");
+    });
+    document.querySelectorAll<HTMLElement>("[data-list-kebab]").forEach((button) => {
+      button.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  async function handleListAction(
+    action: string,
+    listId: string,
+    currentTitle: string
+  ): Promise<void> {
+    try {
+      if (action === "rename") {
+        const next = window.prompt("Rename list", currentTitle);
+        if (next === null) return;
+        const trimmed = next.trim();
+        if (!trimmed) return;
+        await renameList(listId, trimmed);
+        await load();
+      } else if (action === "set-default") {
+        await setDefaultList(listId);
+        await load();
+      } else if (action === "delete") {
+        const confirmed = window.confirm(
+          `Delete "${currentTitle}"? This removes the list and its saved items. This cannot be undone.`
+        );
+        if (!confirmed) return;
+        await deleteList(listId);
+        await load();
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Could not update list: ${message}`);
+    }
+  }
+
+  function renderRecent(items: ReturnType<typeof joinRecent>): void {
+    const target = $id("recentFeed");
+    if (!target) return;
+    target.innerHTML = renderRecentlyVisited(items);
+  }
+
+  function renderStats(kpis: ReturnType<typeof buildKpis>): void {
+    const section = $id("statsSection");
+    if (!section) return;
+    section.innerHTML =
+      `<div class="grid gap-4 sm:grid-cols-3">${renderStatsKpis(kpis)}</div>`;
+    section.classList.remove("hidden");
+  }
+
+  function renderLists(rows: ListRow[], atCap: boolean, tier: "free" | "pro"): void {
+    const section = $id("listsSection");
+    if (section) section.classList.remove("hidden");
+    const target = $id("listsGrid");
+    if (!target) return;
+    target.innerHTML = buildListsGrid(rows, atCap, atCap);
+    wireKebabMenus();
+    const countEl = $id("listsCount");
+    if (countEl) countEl.textContent = tier === "pro" ? "Unlimited" : `${rows.length} of ${FREE_TIER.maxLists} (free)`;
+  }
+
+  function renderEmpty(): void {
+    const empty = $id("emptySection");
+    if (empty) empty.classList.remove("hidden");
+    const lists = $id("listsSection");
+    if (lists) lists.classList.add("hidden");
+  }
+
+  function renderAtCap(): void {
+    const target = $id("atCapSection");
+    if (target) target.classList.remove("hidden");
+  }
+
+  function renderGreeting(firstName: string | null): void {
+    const target = $id("headerGreeting");
+    if (!target) return;
+    const name = firstName ? `, ${firstName}` : "";
+    target.textContent = `Welcome back${name}`;
+  }
+
+  async function ensureSignedIn(): Promise<boolean> {
+    try {
+      const auth = localStorage.getItem("pocketbase_auth");
+      if (!auth || auth === "null" || auth === "undefined") {
+        window.location.href = LOGIN;
+        return false;
+      }
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = LOGIN;
+        return false;
+      }
+      return true;
+    } catch {
+      window.location.href = LOGIN;
+      return false;
+    }
+  }
+
+  async function load(): Promise<void> {
+    clearError();
+    try {
+      const signedIn = await ensureSignedIn();
+      if (!signedIn) return;
+
+      const [user, tier, listsWithItems, recent, visitedCount] = await Promise.all([
+        getCurrentUser(),
+        getAccountTier(),
+        getListsWithItems(),
+        getRecentCompleted(8),
+        getCompletedCount(),
+      ]);
+
+      renderGreeting((user?.name ?? "").split(" ")[0] || null);
+
+      const totalSaved = listsWithItems.reduce((acc, l) => acc + (l.items?.length ?? 0), 0);
+      renderStats(buildKpis(totalSaved, listsWithItems.length, visitedCount));
+
+      const rows: ListRow[] = listsWithItems.map((list) => {
+        const itemsTs = (list.items ?? []).map((it: any) => new Date(it.added_at).getTime()).filter((t) => !Number.isNaN(t));
+        const lastUpdatedMs = itemsTs.length ? Math.max(...itemsTs) : (list.created_at ? new Date(list.created_at).getTime() : null);
+        const lastUpdatedLabel = lastUpdatedMs ? relativeTime(new Date(lastUpdatedMs).toISOString()) : "—";
+        return {
+          id: list.id,
+          title: list.title,
+          isDefault: !!list.is_default,
+          itemCount: (list.items ?? []).length,
+          lastUpdatedLabel,
+        };
+      });
+
+      const limit = canCreateList(listsWithItems.length, tier);
+      const atCap = !limit.allowed && tier === "free";
+
+      if (rows.length === 0) {
+        renderEmpty();
+      } else {
+        renderLists(rows, atCap, tier);
+        if (atCap) renderAtCap();
+      }
+
+      const itemsIndex = await loadItemsIndex();
+      const enriched = joinRecent(recent, itemsIndex);
+      renderRecent(enriched);
+
+      sectionsFadeIn();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Failed to load dashboard: ${message}`);
+      const loading = $id("loadingSection");
+      if (loading) loading.classList.add("hidden");
+    }
+  }
+
+  void load();
+</script>
