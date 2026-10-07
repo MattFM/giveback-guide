@@ -1,4 +1,4 @@
-import PocketBase from 'pocketbase';
+import PocketBase, { LocalAuthStore } from 'pocketbase';
 
 // Lazy-initialize PocketBase to avoid crashing at module import time if envs are missing.
 let _pb: PocketBase | null = null;
@@ -280,3 +280,36 @@ export const deleteAccount = async () => {
 
 // Remove default export that conflicts with named exports
 // export default pb;
+
+let _pbAdmin: PocketBase | null = null;
+
+export function pbAdmin(): PocketBase {
+  if (!import.meta.env.DEV) {
+    throw new Error(
+      'pbAdmin() is only available in development. The dev-stats page guards itself with import.meta.env.DEV and should not be called from production code.'
+    );
+  }
+  if (_pbAdmin) return _pbAdmin;
+  const url = readPublicEnv();
+  if (!url) throw new Error('PUBLIC_POCKETBASE_URL is missing');
+  _pbAdmin = new PocketBase(url, new LocalAuthStore('pocketbase_admin_auth'));
+  _pbAdmin.autoCancellation(false);
+  return _pbAdmin;
+}
+
+export async function initAdminAuth(): Promise<PocketBase> {
+  const client = pbAdmin();
+  if (!client.authStore.isSuperuser) {
+    throw new Error('Not signed in as admin. Use the sign-in form.');
+  }
+  return client;
+}
+
+export async function signInAsAdmin(email: string, password: string): Promise<void> {
+  const client = pbAdmin();
+  await client.admins.authWithPassword(email, password);
+}
+
+export function signOutAdmin(): void {
+  pbAdmin().authStore.clear();
+}

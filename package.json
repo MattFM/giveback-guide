@@ -12,6 +12,7 @@
     "blog:validate": "node scripts/validate-blog-posts.js"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.10",
     "@astrojs/mdx": "^8.0.0",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
@@ -31,6 +32,7 @@
     "tailwind-merge": "^3.6.0",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4.3.2",
+    "typescript": "^7.0.2",
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {

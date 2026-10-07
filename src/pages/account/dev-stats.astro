@@ -1,0 +1,605 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import Table from "@/components/bearnie/table/Table.astro";
+import TableHeader from "@/components/bearnie/table/TableHeader.astro";
+import TableBody from "@/components/bearnie/table/TableBody.astro";
+import TableRow from "@/components/bearnie/table/TableRow.astro";
+import TableHead from "@/components/bearnie/table/TableHead.astro";
+import TableCell from "@/components/bearnie/table/TableCell.astro";
+import Badge from "@/components/bearnie/badge/Badge.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
+import Alert from "@/components/bearnie/alert/Alert.astro";
+import AlertTitle from "@/components/bearnie/alert/AlertTitle.astro";
+import AlertDescription from "@/components/bearnie/alert/AlertDescription.astro";
+import Input from "@/components/bearnie/input/Input.astro";
+import {
+  LIST_SLICES,
+  SAVE_SLICES,
+  VISIT_SLICES,
+  FREE_TIER,
+} from "@/lib/admin-stats";
+
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/");
+}
+---
+
+<MainLayout
+  title="Dev stats (dev only)"
+  description="Anonymous aggregate usage stats for the giveback.guide platform"
+  noindex={true}
+>
+  <main class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12">
+    <header class="flex flex-wrap items-center gap-4 mb-8">
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Dev stats
+        </h1>
+        <Badge variant="warning">DEV-ONLY</Badge>
+      </div>
+      <div class="ml-auto flex flex-wrap items-center gap-3">
+        <span id="signedInAs" class="hidden text-sm text-muted-foreground">
+          Signed in as <strong id="signedInEmail"></strong>
+        </span>
+        <span id="lastRefreshed" class="hidden text-sm text-muted-foreground"></span>
+        <Button id="signOutBtn" variant="ghost" size="sm" class="hidden">
+          Sign out
+        </Button>
+        <Button id="refreshBtn" variant="outline" size="sm" class="hidden">
+          Refresh
+        </Button>
+      </div>
+    </header>
+
+    <section id="signInSection">
+      <Card>
+        <CardHeader>
+          <CardTitle>Sign in as admin</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground mb-4">
+            Sign in with your Pocketbase superuser credentials. Stats stay
+            anonymous — no per-user lookup, no exports, no time-series. Admin
+            auth uses a separate localStorage key
+            (<code class="font-mono">pocketbase_admin_auth</code>) so signing
+            in here does not affect your user session.
+          </p>
+          <form id="adminSignInForm" class="space-y-4">
+            <div class="space-y-2">
+              <label for="adminEmail" class="text-sm font-medium">Email</label>
+              <Input
+                id="adminEmail"
+                type="email"
+                name="email"
+                required
+                placeholder="superuser@example.com"
+              />
+            </div>
+            <div class="space-y-2">
+              <label for="adminPassword" class="text-sm font-medium">Password</label>
+              <Input
+                id="adminPassword"
+                type="password"
+                name="password"
+                required
+              />
+            </div>
+            <Button type="submit" size="lg">Sign in</Button>
+            <Alert id="adminSignInError" variant="destructive" class="hidden">
+              <AlertDescription id="adminSignInErrorText"></AlertDescription>
+            </Alert>
+          </form>
+        </CardContent>
+      </Card>
+    </section>
+
+    <section id="statsSection" class="hidden space-y-8">
+      <div id="errorBanner" class="hidden"></div>
+
+      <section class="grid gap-4 sm:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Skeleton id="kpiUsers" class="h-9 w-24" />
+            <p class="text-xs text-muted-foreground mt-2">Registered accounts</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Lists</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Skeleton id="kpiLists" class="h-9 w-24" />
+            <p class="text-xs text-muted-foreground mt-2">
+              Total lists across all users
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Saves</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Skeleton id="kpiSaves" class="h-9 w-24" />
+            <p class="text-xs text-muted-foreground mt-2">
+              Total list-items across all lists
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Free-tier caps vs actual usage</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground mb-4">
+            Counts of users whose current data already sits at or above the
+            planned free-tier cap.
+          </p>
+          <div id="recommendations" class="grid gap-4 sm:grid-cols-2">
+            <Skeleton class="h-24 w-full" />
+            <Skeleton class="h-24 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle class="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            <span>Per-user distribution</span>
+            <span class="ml-auto flex items-center gap-4 font-normal text-sm">
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="metric"
+                  value="lists"
+                  checked
+                  class="size-4 cursor-pointer"
+                />
+                <span>Lists</span>
+              </label>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="metric"
+                  value="saves"
+                  class="size-4 cursor-pointer"
+                />
+                <span>Saves</span>
+              </label>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="metric"
+                  value="visits"
+                  class="size-4 cursor-pointer"
+                />
+                <span>Visits</span>
+              </label>
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table id="distTable">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Bucket</TableHead>
+                <TableHead class="text-right">Users</TableHead>
+                <TableHead class="text-right">Cumulative %</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody id="distTableBody">
+              <TableRow>
+                <TableCell>Loading…</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <p id="distStats" class="text-xs text-muted-foreground mt-4"></p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Onboarding funnel</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table id="funnelTable">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Step</TableHead>
+                <TableHead class="text-right">Users</TableHead>
+                <TableHead class="text-right">From start</TableHead>
+                <TableHead class="text-right">From previous</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody id="funnelTableBody">
+              <TableRow>
+                <TableCell>Loading…</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </section>
+  </main>
+</MainLayout>
+
+<script>
+  import {
+    LIST_SLICES,
+    SAVE_SLICES,
+    VISIT_SLICES,
+    FREE_TIER,
+    getUserCounts,
+    getListsDistribution,
+    getSavesDistribution,
+    getVisitsDistribution,
+    getOnboardingFunnel,
+    type Distribution,
+    type Funnel,
+  } from "../../lib/admin-stats";
+  import { pbAdmin, signInAsAdmin, signOutAdmin } from "../../lib/pocketbase";
+
+  type Metric = "lists" | "saves" | "visits";
+
+  const SLICES: Record<Metric, typeof LIST_SLICES> = {
+    lists: LIST_SLICES,
+    saves: SAVE_SLICES,
+    visits: VISIT_SLICES,
+  };
+
+  const cached: {
+    userCount: number;
+    dist: Record<Metric, Distribution>;
+    funnel: Funnel;
+  } = {
+    userCount: 0,
+    dist: {
+      lists: { buckets: {}, p50: 0, p75: 0, p90: 0, p99: 0, max: 0, mean: 0, totalUsersWithAtLeastOne: 0 },
+      saves: { buckets: {}, p50: 0, p75: 0, p90: 0, p99: 0, max: 0, mean: 0, totalUsersWithAtLeastOne: 0 },
+      visits: { buckets: {}, p50: 0, p75: 0, p90: 0, p99: 0, max: 0, mean: 0, totalUsersWithAtLeastOne: 0 },
+    },
+    funnel: { signedUp: 0, completedName: 0, optedNewsletter: 0, savedFirstItem: 0, markedFirstVisit: 0 },
+  };
+
+  let currentMetric: Metric = "lists";
+
+  function fmt(n: number): string {
+    return Number.isFinite(n) ? n.toLocaleString("en-GB") : "—";
+  }
+
+  function fmtPct(n: number, total: number): string {
+    if (!total) return "—";
+    return ((n / total) * 100).toFixed(1) + "%";
+  }
+
+  function badgeForShare(share: number): {
+    variant: "success" | "warning" | "destructive";
+    label: string;
+  } {
+    if (share < 5) return { variant: "success", label: "OK (<5%)" };
+    if (share < 15) return { variant: "warning", label: "Watch (5–15%)" };
+    return { variant: "destructive", label: "Many hit it (>15%)" };
+  }
+
+  function showError(message: string): void {
+    const banner = document.getElementById("errorBanner");
+    if (!banner) return;
+    banner.className =
+      "rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm";
+    banner.textContent = message;
+    banner.classList.remove("hidden");
+  }
+
+  function clearError(): void {
+    const banner = document.getElementById("errorBanner");
+    if (!banner) return;
+    banner.textContent = "";
+    banner.classList.add("hidden");
+  }
+
+  function fillKPI(id: string, value: number): void {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.removeAttribute("class");
+    el.setAttribute("class", "text-3xl font-semibold tracking-tight");
+    el.textContent = fmt(value);
+  }
+
+  function renderRecommendations(dist: Record<Metric, Distribution>): void {
+    const target = document.getElementById("recommendations");
+    if (!target) return;
+
+    const totalUsers = cached.userCount || 1;
+
+    const listsAtOrAbove = (() => {
+      const idx = LIST_SLICES.findIndex((s) => s.max >= FREE_TIER.maxLists);
+      return LIST_SLICES
+        .slice(idx)
+        .reduce((acc, s) => acc + (dist.lists.buckets[s.label] ?? 0), 0);
+    })();
+
+    const savesAtOrAbove = (() => {
+      const idx = SAVE_SLICES.findIndex((s) => s.max >= FREE_TIER.maxSaves);
+      return SAVE_SLICES
+        .slice(idx)
+        .reduce((acc, s) => acc + (dist.saves.buckets[s.label] ?? 0), 0);
+    })();
+
+    const listsBadge = badgeForShare(listsAtOrAbove / totalUsers);
+    const savesBadge = badgeForShare(savesAtOrAbove / totalUsers);
+
+    const card = (
+      title: string,
+      capValue: number,
+      capUnit: string,
+      atOrAbove: number,
+      badge: { variant: "success" | "warning" | "destructive"; label: string }
+    ): string => `
+      <div class="rounded-lg border bg-card p-4 space-y-2">
+        <div class="flex items-baseline justify-between">
+          <p class="text-sm font-medium">${title}</p>
+          <span class="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-medium ${
+            badge.variant === "success"
+              ? "bg-success/10 text-success-foreground"
+              : badge.variant === "warning"
+              ? "bg-warning/10 text-warning-foreground"
+              : "bg-destructive/10 text-destructive-foreground"
+          }">${badge.label}</span>
+        </div>
+        <p class="text-2xl font-semibold tracking-tight">${fmt(atOrAbove)} <span class="text-sm font-normal text-muted-foreground">/ ${fmt(totalUsers)} users (${fmtPct(atOrAbove, totalUsers)})</span></p>
+        <p class="text-xs text-muted-foreground">At or above the cap of <strong>${capValue} ${capUnit}</strong>.</p>
+      </div>`;
+
+    target.innerHTML =
+      card("List cap", FREE_TIER.maxLists, "lists", listsAtOrAbove, listsBadge) +
+      card(
+        "Save cap",
+        FREE_TIER.maxSaves,
+        "saves per user",
+        savesAtOrAbove,
+        savesBadge
+      );
+  }
+
+  function renderDistribution(metric: Metric): void {
+    const target = document.getElementById("distTableBody");
+    const stats = document.getElementById("distStats");
+    if (!target || !stats) return;
+
+    const dist = cached.dist[metric];
+    const slices = SLICES[metric];
+    const totalUsers = cached.userCount || 1;
+
+    let cumulative = 0;
+    target.innerHTML = slices
+      .map((slice) => {
+        const count = dist.buckets[slice.label] ?? 0;
+        cumulative += count;
+        const cumulativePct = totalUsers ? (cumulative / totalUsers) * 100 : 0;
+        return `<tr class="border-b transition-colors hover:bg-muted/50">
+          <td class="p-4 align-middle font-medium">${slice.label}</td>
+          <td class="p-4 align-middle text-right tabular-nums">${fmt(count)}</td>
+          <td class="p-4 align-middle text-right tabular-nums text-muted-foreground">${cumulativePct.toFixed(1)}%</td>
+        </tr>`;
+      })
+      .join("");
+
+    stats.textContent = `p50 ${dist.p50} · p75 ${dist.p75} · p90 ${dist.p90} · p99 ${dist.p99} · max ${dist.max} · mean ${dist.mean.toFixed(1)} · users with ≥1: ${fmt(dist.totalUsersWithAtLeastOne)}`;
+  }
+
+  function renderFunnel(funnel: Funnel): void {
+    const target = document.getElementById("funnelTableBody");
+    if (!target) return;
+
+    const steps: Array<{ label: string; count: number }> = [
+      { label: "Signed up", count: funnel.signedUp },
+      { label: "Completed name", count: funnel.completedName },
+      { label: "Opted in to newsletter", count: funnel.optedNewsletter },
+      { label: "Saved first item", count: funnel.savedFirstItem },
+      { label: "Marked first visit", count: funnel.markedFirstVisit },
+    ];
+    const start = steps[0]?.count ?? 0;
+    let prev = start;
+
+    target.innerHTML = steps
+      .map((step, i) => {
+        const fromStart = start ? fmtPct(step.count, start) : "—";
+        const fromPrev = i === 0 || !prev ? "—" : fmtPct(step.count, prev);
+        prev = step.count;
+        return `<tr class="border-b transition-colors hover:bg-muted/50">
+          <td class="p-4 align-middle font-medium">${step.label}</td>
+          <td class="p-4 align-middle text-right tabular-nums">${fmt(step.count)}</td>
+          <td class="p-4 align-middle text-right tabular-nums text-muted-foreground">${fromStart}</td>
+          <td class="p-4 align-middle text-right tabular-nums text-muted-foreground">${fromPrev}</td>
+        </tr>`;
+      })
+      .join("");
+  }
+
+  async function load(): Promise<void> {
+    clearError();
+    try {
+      const [userCount, lists, saves, visits, funnel] = await Promise.all([
+        getUserCounts(),
+        getListsDistribution(),
+        getSavesDistribution(),
+        getVisitsDistribution(),
+        getOnboardingFunnel(),
+      ]);
+
+      cached.userCount = userCount.total;
+      cached.dist.lists = lists;
+      cached.dist.saves = saves;
+      cached.dist.visits = visits;
+      cached.funnel = funnel;
+
+      fillKPI("kpiUsers", userCount.total);
+      fillKPI(
+        "kpiLists",
+        Object.values(lists.buckets).reduce((a, b) => a + b, 0)
+      );
+      fillKPI(
+        "kpiSaves",
+        Object.values(saves.buckets).reduce((a, b) => a + b, 0)
+      );
+
+      renderRecommendations(cached.dist);
+      renderDistribution(currentMetric);
+      renderFunnel(funnel);
+
+      const last = document.getElementById("lastRefreshed");
+      if (last) {
+        const now = new Date();
+        last.textContent = `Updated ${now.toLocaleTimeString("en-GB")}`;
+        last.classList.remove("hidden");
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Failed to load stats: ${message}`);
+      const last = document.getElementById("lastRefreshed");
+      if (last) last.textContent = "Failed to load";
+    }
+  }
+
+  function showStats(): void {
+    const signIn = document.getElementById("signInSection");
+    const stats = document.getElementById("statsSection");
+    const signedInAs = document.getElementById("signedInAs");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const signOutBtn = document.getElementById("signOutBtn");
+    if (signIn) signIn.classList.add("hidden");
+    if (stats) stats.classList.remove("hidden");
+    if (signedInAs) signedInAs.classList.remove("hidden");
+    if (refreshBtn) refreshBtn.classList.remove("hidden");
+    if (signOutBtn) signOutBtn.classList.remove("hidden");
+  }
+
+  function showSignIn(): void {
+    const signIn = document.getElementById("signInSection");
+    const stats = document.getElementById("statsSection");
+    const signedInAs = document.getElementById("signedInAs");
+    const lastRefreshed = document.getElementById("lastRefreshed");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const signOutBtn = document.getElementById("signOutBtn");
+    if (signIn) signIn.classList.remove("hidden");
+    if (stats) stats.classList.add("hidden");
+    if (signedInAs) signedInAs.classList.add("hidden");
+    if (lastRefreshed) lastRefreshed.classList.add("hidden");
+    if (refreshBtn) refreshBtn.classList.add("hidden");
+    if (signOutBtn) signOutBtn.classList.add("hidden");
+    clearError();
+  }
+
+  function showSignInError(message: string): void {
+    const alert = document.getElementById("adminSignInError");
+    const text = document.getElementById("adminSignInErrorText");
+    if (!alert || !text) return;
+    text.textContent = message;
+    alert.classList.remove("hidden");
+  }
+
+  function clearSignInError(): void {
+    const alert = document.getElementById("adminSignInError");
+    if (!alert) return;
+    alert.classList.add("hidden");
+  }
+
+  async function handleSignIn(event: SubmitEvent): Promise<void> {
+    event.preventDefault();
+    clearSignInError();
+    const form = event.currentTarget as HTMLFormElement | null;
+    if (!form) return;
+    const data = new FormData(form);
+    const email = String(data.get("email") ?? "");
+    const password = String(data.get("password") ?? "");
+    if (!email || !password) {
+      showSignInError("Email and password are required.");
+      return;
+    }
+    try {
+      await signInAsAdmin(email, password);
+      const emailEl = document.getElementById("signedInEmail");
+      if (emailEl) emailEl.textContent = email;
+      showStats();
+      await load();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showSignInError(message);
+    }
+  }
+
+  function handleSignOut(): void {
+    signOutAdmin();
+    const form = document.getElementById("adminSignInForm") as HTMLFormElement | null;
+    if (form) form.reset();
+    showSignIn();
+  }
+
+  function wireSignInForm(): void {
+    const form = document.getElementById("adminSignInForm");
+    if (!form) return;
+    form.addEventListener("submit", (event) => {
+      void handleSignIn(event as SubmitEvent);
+    });
+  }
+
+  function wireSignOut(): void {
+    const btn = document.getElementById("signOutBtn");
+    if (!btn) return;
+    btn.addEventListener("click", handleSignOut);
+  }
+
+  function wireRefresh(): void {
+    const btn = document.getElementById("refreshBtn");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      void load();
+    });
+  }
+
+  function wireMetricSwitcher(): void {
+    const radios = document.querySelectorAll<HTMLInputElement>('input[name="metric"]');
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (!radio.checked) return;
+        const next = radio.value as Metric;
+        currentMetric = next;
+        renderDistribution(next);
+      });
+    });
+  }
+
+  function init(): void {
+    const admin = pbAdmin();
+    if (admin.authStore.isSuperuser) {
+      const emailEl = document.getElementById("signedInEmail");
+      if (emailEl) {
+        emailEl.textContent = admin.authStore.record?.email ?? "admin";
+      }
+      showStats();
+      void load();
+    } else {
+      showSignIn();
+    }
+  }
+
+  init();
+  wireSignInForm();
+  wireSignOut();
+  wireRefresh();
+  wireMetricSwitcher();
+</script>
