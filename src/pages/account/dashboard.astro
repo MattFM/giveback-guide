@@ -1,7 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
-import UpgradePrompt from "@/components/account/UpgradePrompt.astro";
 import Empty from "@/components/bearnie/empty/Empty.astro";
 import EmptyHeader from "@/components/bearnie/empty/EmptyHeader.astro";
 import EmptyTitle from "@/components/bearnie/empty/EmptyTitle.astro";
@@ -17,87 +16,78 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
 
 <MainLayout
   title="Dashboard"
-  description="Your lists, saves and recently visited projects and stays."
+  description="Your saved lists."
   noindex={true}
 >
-  <main id="main-content" class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-8">
-    <header class="flex flex-wrap items-center gap-4">
-      <div class="flex-1 min-w-0 space-y-2">
-        <h1 id="headerGreeting" class="text-2xl sm:text-3xl font-semibold tracking-tight">
-          Welcome back
-        </h1>
-        <p class="text-sm text-muted-foreground">
-          <AccountBreadcrumb crumbs={[{ label: "Dashboard" }]} />
-        </p>
-      </div>
-    </header>
-
-    <div id="errorBanner" class="hidden"></div>
-
-    <section id="statsSection" class="hidden">
-      <div class="grid gap-4 sm:grid-cols-3">
-        <Skeleton class="h-24 w-full" />
-        <Skeleton class="h-24 w-full" />
-        <Skeleton class="h-24 w-full" />
-      </div>
-    </section>
-
-    <section id="emptySection" class="hidden">
-      <Card size="sm">
-        <CardContent>
-          <div class="py-12">
-            <Empty>
-              <EmptyMedia variant="icon">
-                <span aria-hidden="true" class="text-3xl text-muted-foreground">+</span>
-              </EmptyMedia>
-              <EmptyHeader>
-                <EmptyTitle>No lists yet</EmptyTitle>
-                <EmptyDescription>
-                  Create your first list to start saving projects and stays.
-                </EmptyDescription>
-              </EmptyHeader>
-              <div class="mt-2">
-                <Button href="/account/lists/new/">Create your first list</Button>
-              </div>
-            </Empty>
+  <main id="main-content" class="space-y-0">
+    <section id="bandedHeader" class="bg-indigo-100 dark:bg-indigo-950">
+      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-8">
+        <header class="flex flex-wrap items-center gap-4 mb-4 sm:mb-6">
+          <div class="flex-1 min-w-0 space-y-2">
+            <h1 id="headerGreeting" class="text-2xl sm:text-3xl font-semibold tracking-tight">
+              Welcome back
+            </h1>
+            <p class="text-sm text-muted-foreground">
+              <AccountBreadcrumb crumbs={[{ label: "Dashboard" }]} />
+            </p>
           </div>
-        </CardContent>
-      </Card>
-    </section>
+        </header>
 
-    <section id="listsSection" class="hidden">
-      <div class="flex items-baseline justify-between mb-4">
-        <h2 class="text-lg font-semibold">My lists</h2>
-        <span id="listsCount" class="text-sm text-muted-foreground"></span>
+        <div id="errorBanner" class="hidden mb-4"></div>
+
+        <section id="statsSection" class="hidden">
+          <div class="grid gap-4 sm:grid-cols-3">
+            <Skeleton class="h-24 w-full" />
+            <Skeleton class="h-24 w-full" />
+            <Skeleton class="h-24 w-full" />
+          </div>
+        </section>
       </div>
-      <div id="listsGrid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
     </section>
 
-    <section id="atCapSection" class="hidden">
-      <UpgradePrompt variant="warning" />
-    </section>
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-8 sm:py-12 space-y-8">
+      <section id="emptySection" class="hidden">
+        <Card size="sm">
+          <CardContent>
+            <div class="py-12">
+              <Empty>
+                <EmptyMedia variant="icon">
+                  <span aria-hidden="true" class="text-3xl text-muted-foreground">+</span>
+                </EmptyMedia>
+                <EmptyHeader>
+                  <EmptyTitle>No lists yet</EmptyTitle>
+                  <EmptyDescription>
+                    Create your first list to start saving projects and stays.
+                  </EmptyDescription>
+                </EmptyHeader>
+                <div class="mt-2">
+                  <Button href="/account/lists/new/">Create your first list</Button>
+                </div>
+              </Empty>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
 
-    <section id="recentSection" class="hidden">
-      <div class="flex items-baseline justify-between mb-4">
-        <h2 class="text-lg font-semibold">Recently visited</h2>
-        <span class="text-sm text-muted-foreground inline-flex items-center gap-1">
-          <span aria-hidden="true">↔</span>
-          <span>Scroll</span>
-        </span>
-      </div>
-      <div id="recentFeed"></div>
-    </section>
+      <section id="listsSection" class="hidden">
+        <div class="flex items-baseline justify-between mb-4">
+          <h2 class="text-lg font-semibold">My lists</h2>
+          <span id="listsCount" class="text-sm text-muted-foreground"></span>
+        </div>
+        <div id="listsGrid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+      </section>
 
-    <section id="loadingSection">
-      <Card>
-        <CardHeader>
-          <CardTitle>Loading your dashboard…</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-sm text-muted-foreground">Fetching your lists, saves and recently visited entries.</p>
-        </CardContent>
-      </Card>
-    </section>
+      <section id="loadingSection" class="hidden">
+        <Card>
+          <CardHeader>
+            <CardTitle>Loading your dashboard…</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">Fetching your lists and saves.</p>
+          </CardContent>
+        </Card>
+      </section>
+    </div>
   </main>
 </MainLayout>
 
@@ -109,10 +99,10 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     renameList,
     setDefaultList,
   } from "@/lib/lists";
-  import { getRecentCompleted, getCompletedCount } from "@/lib/completed";
+  import { getCompletedCount } from "@/lib/completed";
   import { getAccountTier } from "@/lib/billing";
   import { canCreateList, FREE_TIER } from "@/lib/tier-limits";
-  import { showInlineRename, showInlineConfirm } from "@/lib/inline-dialogs";
+  import { showInlineTextInput, showInlineConfirm } from "@/lib/inline-dialogs";
   import { showToast } from "@/lib/toast-manager";
 
   const LOGIN = "/login/";
@@ -123,6 +113,53 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     isDefault: boolean;
     itemCount: number;
     lastUpdatedLabel: string;
+    coverKey: string | null;
+  }
+
+  interface ListPalette {
+    coverFrom: string;
+    coverTo: string;
+    avatarBg: string;
+    avatarText: string;
+  }
+
+  const PALETTES: ListPalette[] = [
+    {
+      coverFrom: "from-indigo-100",
+      coverTo: "to-indigo-200",
+      avatarBg: "bg-indigo-100",
+      avatarText: "text-indigo-700",
+    },
+    {
+      coverFrom: "from-emerald-100",
+      coverTo: "to-emerald-200",
+      avatarBg: "bg-emerald-100",
+      avatarText: "text-emerald-700",
+    },
+    {
+      coverFrom: "from-amber-100",
+      coverTo: "to-amber-200",
+      avatarBg: "bg-amber-100",
+      avatarText: "text-amber-700",
+    },
+    {
+      coverFrom: "from-rose-100",
+      coverTo: "to-rose-200",
+      avatarBg: "bg-rose-100",
+      avatarText: "text-rose-700",
+    },
+  ];
+
+  function hashString(input: string): number {
+    let h = 0;
+    for (let i = 0; i < input.length; i++) {
+      h = (h * 31 + input.charCodeAt(i)) | 0;
+    }
+    return h;
+  }
+
+  function pickPalette(input: string): ListPalette {
+    return PALETTES[Math.abs(hashString(input ?? "")) % PALETTES.length];
   }
 
   interface ItemIndexEntry {
@@ -135,6 +172,8 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     image?: string | null;
     location?: string | null;
   }
+
+  let itemsIndex: Map<string, ItemIndexEntry> = new Map();
 
   type AnyElement = HTMLElement | null;
   function $id<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -182,14 +221,8 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
   }
 
   function sectionsFadeIn(): void {
-    for (const id of [
-      "statsSection",
-      "atCapSection",
-      "recentSection",
-    ]) {
-      const el = $id(id);
-      if (el) el.classList.remove("hidden");
-    }
+    const stats = $id("statsSection");
+    if (stats) stats.classList.remove("hidden");
     const loading = $id("loadingSection");
     if (loading) loading.classList.add("hidden");
   }
@@ -211,32 +244,27 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
   }
 
   function renderListCard(list: ListRow): string {
+    const safeTitle = escapeHtml(list.title);
     const countLabel =
       list.itemCount === 1 ? "item saved" : "items saved";
     const defaultBadge = list.isDefault
       ? `<span class="inline-flex items-center gap-1 rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground self-start">Default</span>`
       : "";
-    const disabledDefault =
-      list.isDefault
-        ? `<button class="w-full text-left px-2 py-1.5 text-sm rounded-sm opacity-50 cursor-not-allowed" disabled aria-disabled="true">Set as default</button>`
-        : `<button data-list-action="set-default" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Set as default</button>`;
-    const safeTitle = list.title.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
+    const disabledDefault = list.isDefault
+      ? `<button class="w-full text-left px-2 py-1.5 text-sm rounded-sm opacity-50 cursor-not-allowed" disabled aria-disabled="true">Set as default</button>`
+      : `<button data-list-action="set-default" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Set as default</button>`;
+
+    const palette = pickPalette(list.title);
+    const firstLetter = ((safeTitle || "?").trim().charAt(0) || "?").toUpperCase();
+    const cover = renderCover(list, safeTitle, palette);
+    const avatar = `<span class="inline-flex items-center justify-center size-12 rounded-full ${palette.avatarBg} ${palette.avatarText} text-lg font-semibold shrink-0">${firstLetter}</span>`;
+
     return `
-      <div class="relative rounded-lg border bg-card text-card-foreground p-6 hover:border-foreground/30 transition-colors" data-list-id="${list.id}">
-        <a href="/account/list/?id=${encodeURIComponent(list.id)}" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg" data-list-link>
-          <div class="space-y-1.5">
-            <p class="font-semibold leading-tight line-clamp-2">${safeTitle}</p>
-            ${defaultBadge}
-          </div>
-          <div class="mt-4">
-            <p class="text-2xl font-semibold tabular-nums">${list.itemCount}</p>
-            <p class="text-xs text-muted-foreground mt-1">${countLabel}</p>
-            <p class="text-xs text-muted-foreground mt-2">${list.lastUpdatedLabel}</p>
-          </div>
-        </a>
+      <div class="relative rounded-lg border bg-card overflow-hidden" data-list-id="${list.id}">
+        ${cover}
         <button
           type="button"
-          class="absolute top-3 right-3 inline-flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          class="absolute top-3 right-3 inline-flex items-center justify-center size-10 rounded-md bg-background/80 text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring backdrop-blur-sm"
           data-list-kebab
           data-list-id="${list.id}"
           aria-label="List actions"
@@ -244,7 +272,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
           aria-expanded="false"
         >⋯</button>
         <div
-          class="absolute top-12 right-3 z-10 min-w-[180px] rounded-md border bg-popover p-1 shadow-md hidden"
+          class="hidden absolute right-3 top-14 z-10 min-w-[180px] rounded-md border bg-popover p-1 shadow-md"
           data-list-menu
           data-list-id="${list.id}"
           role="menu"
@@ -254,28 +282,63 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
           <div class="my-1 h-px bg-border"></div>
           <button data-list-action="delete" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none">Delete list</button>
         </div>
+        <a
+          href="/account/list/?id=${encodeURIComponent(list.id)}"
+          class="block p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          data-list-link
+        >
+          <div class="flex items-center gap-3 mb-3">
+            ${avatar}
+            <div class="flex-1 min-w-0 space-y-1.5">
+              <p class="font-semibold text-lg leading-tight line-clamp-2">${safeTitle}</p>
+              ${defaultBadge}
+            </div>
+          </div>
+          <p class="text-4xl font-semibold tabular-nums leading-none">${list.itemCount}</p>
+          <p class="text-sm text-muted-foreground mt-1">${countLabel} · ${list.lastUpdatedLabel}</p>
+        </a>
       </div>
     `;
   }
 
+  function renderCover(
+    list: ListRow,
+    _safeTitle: string,
+    palette: ListPalette,
+  ): string {
+    if (list.coverKey) {
+      const meta = itemsIndex.get(list.coverKey);
+      if (meta?.image) {
+        return `<div class="aspect-[16/9] bg-muted"><img src="${escapeHtml(meta.image)}" alt="" loading="lazy" class="w-full h-full object-cover" /></div>`;
+      }
+    }
+    return `<div class="aspect-[16/9] bg-gradient-to-br ${palette.coverFrom} ${palette.coverTo}"></div>`;
+  }
+
   function renderNewListCard(atCap: boolean): string {
+    const placeholder =
+      `<div class="aspect-[16/9] border-b border-dashed border-border bg-muted/40"></div>`;
     if (atCap) {
       return `
-        <div class="rounded-lg border-2 border-dashed border-border bg-card/30 flex flex-col items-center justify-center p-6 min-h-[180px] cursor-not-allowed opacity-60" aria-disabled="true">
-          <span class="text-3xl text-muted-foreground mb-2" aria-hidden="true">+</span>
-          <p class="text-sm font-medium text-foreground">New list</p>
-          <p class="text-xs text-muted-foreground mt-1 text-center">
-            Free tier limit reached — <a href="/pricing/" class="underline hover:no-underline">see Pro</a>
-          </p>
+        <div class="rounded-lg border-2 border-dashed border-border bg-card/30 overflow-hidden cursor-not-allowed opacity-60" aria-disabled="true">
+          ${placeholder}
+          <div class="flex flex-col items-center justify-center p-6">
+            <span class="text-3xl text-muted-foreground mb-2" aria-hidden="true">+</span>
+            <p class="text-sm font-medium text-foreground">New list</p>
+            <p class="text-xs text-muted-foreground mt-1 text-center">
+              Adding more lists is on the road.
+            </p>
+          </div>
         </div>
       `;
     }
     return `
       <a
         href="/account/lists/new/"
-        class="block rounded-lg border-2 border-dashed border-border bg-card/30 hover:border-foreground/40 hover:bg-card/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        class="block rounded-lg border-2 border-dashed border-border bg-card/30 hover:border-foreground/40 hover:bg-card/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 overflow-hidden"
       >
-        <div class="flex flex-col items-center justify-center p-6 min-h-[180px]">
+        ${placeholder}
+        <div class="flex flex-col items-center justify-center p-6">
           <span class="text-3xl text-muted-foreground mb-2" aria-hidden="true">+</span>
           <p class="text-sm font-medium text-foreground">New list</p>
           <p class="text-xs text-muted-foreground mt-1">Create another list</p>
@@ -321,73 +384,6 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     } catch {
       return new Map();
     }
-  }
-
-  function joinRecent(
-    rows: Array<{ item_type: "project" | "stay"; item_id: string; completed_at: string }>,
-    index: Map<string, ItemIndexEntry>
-  ): Array<{
-    item_type: "project" | "stay";
-    item_id: string;
-    completed_at: string;
-    title: string;
-    url: string;
-    image?: string | null;
-    location?: string | null;
-  }> {
-    const result: Array<{
-      item_type: "project" | "stay";
-      item_id: string;
-      completed_at: string;
-      title: string;
-      url: string;
-      image?: string | null;
-      location?: string | null;
-    }> = [];
-    for (const row of rows) {
-      const meta = index.get(String(row.item_id));
-      if (!meta) continue;
-      result.push({
-        item_type: row.item_type,
-        item_id: row.item_id,
-        completed_at: row.completed_at,
-        title: meta.title,
-        url: meta.url,
-        image: meta.image ?? null,
-        location: meta.location ?? null,
-      });
-    }
-    return result;
-  }
-
-  function renderRecentlyVisited(items: ReturnType<typeof joinRecent>): string {
-    if (items.length === 0) {
-      return `<p class="text-sm text-muted-foreground py-8 text-center">Nothing yet — mark visits from a project or stay page and they'll show up here.</p>`;
-    }
-    const slides = items
-      .map((item) => {
-        const safeTitle = escapeHtml(item.title ?? "");
-        const imageBlock = item.image
-          ? `<img src="${escapeHtml(item.image)}" alt="${safeTitle}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />`
-          : `<div class="w-full h-full flex items-center justify-center text-muted-foreground"><span class="text-xs">No image</span></div>`;
-        const location = item.location
-          ? `<p class="text-xs text-muted-foreground">${escapeHtml(item.location)}</p>`
-          : "";
-        return `
-          <a href="${escapeHtml(item.url)}" class="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg w-[70%] sm:w-[45%] md:w-[30%] lg:w-[22%] shrink-0 snap-start">
-            <div class="aspect-[4/3] bg-muted overflow-hidden rounded-lg">
-              ${imageBlock}
-            </div>
-            <div class="mt-3 space-y-1">
-              <p class="text-xs uppercase tracking-wide text-muted-foreground">${item.item_type === "stay" ? "Stay" : "Project"}</p>
-              <p class="font-medium text-sm leading-snug line-clamp-2 group-hover:underline">${safeTitle}</p>
-              ${location}
-            </div>
-          </a>
-        `;
-      })
-      .join("");
-    return `<div class="relative"><div class="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-px-4 -mx-4 px-4">${slides}</div></div>`;
   }
 
   function wireKebabMenus(): void {
@@ -453,16 +449,19 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
   ): Promise<void> {
     try {
       if (action === "rename") {
-        if (!cardEl) return;
-        const titleEl = cardEl.querySelector<HTMLElement>(
-          "[data-list-link] .font-semibold"
-        );
-        if (!titleEl) return;
-        const next = await showInlineRename({
-          container: titleEl,
+        const next = await showInlineTextInput({
+          title: "Rename list",
+          label: "List name",
           initialValue: currentTitle,
           maxLength: 120,
           placeholder: "List name",
+          confirmLabel: "Save",
+          validate: (candidate: string) => {
+            const trimmed = candidate.trim();
+            if (!trimmed) return "Please enter a name.";
+            if (trimmed.length > 120) return "List name must be 120 characters or fewer.";
+            return null;
+          },
         });
         if (next === null) return;
         const trimmed = next.trim();
@@ -493,12 +492,6 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     }
   }
 
-  function renderRecent(items: ReturnType<typeof joinRecent>): void {
-    const target = $id("recentFeed");
-    if (!target) return;
-    target.innerHTML = renderRecentlyVisited(items);
-  }
-
   function renderStats(kpis: ReturnType<typeof buildKpis>): void {
     const section = $id("statsSection");
     if (!section) return;
@@ -512,10 +505,10 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     if (section) section.classList.remove("hidden");
     const target = $id("listsGrid");
     if (!target) return;
-    target.innerHTML = buildListsGrid(rows, atCap, atCap);
+    target.innerHTML = buildListsGrid(rows, atCap, tier);
     wireKebabMenus();
     const countEl = $id("listsCount");
-    if (countEl) countEl.textContent = tier === "pro" ? "Unlimited" : `${rows.length} of ${FREE_TIER.maxLists} (free)`;
+    if (countEl) countEl.textContent = tier === "pro" ? "Unlimited" : `${rows.length} of ${FREE_TIER.maxLists}`;
   }
 
   function renderEmpty(): void {
@@ -523,11 +516,6 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     if (empty) empty.classList.remove("hidden");
     const lists = $id("listsSection");
     if (lists) lists.classList.add("hidden");
-  }
-
-  function renderAtCap(): void {
-    const target = $id("atCapSection");
-    if (target) target.classList.remove("hidden");
   }
 
   function renderGreeting(firstName: string | null): void {
@@ -562,11 +550,10 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
       const signedIn = await ensureSignedIn();
       if (!signedIn) return;
 
-      const [user, tier, listsWithItems, recent, visitedCount] = await Promise.all([
+      const [user, tier, listsWithItems, visitedCount] = await Promise.all([
         getCurrentUser(),
         getAccountTier(),
         getListsWithItems(),
-        getRecentCompleted(8),
         getCompletedCount(),
       ]);
 
@@ -575,16 +562,24 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
       const totalSaved = listsWithItems.reduce((acc, l) => acc + (l.items?.length ?? 0), 0);
       renderStats(buildKpis(totalSaved, listsWithItems.length, visitedCount));
 
+      itemsIndex = await loadItemsIndex();
+
       const rows: ListRow[] = listsWithItems.map((list) => {
-        const itemsTs = (list.items ?? []).map((it: any) => new Date(it.added_at).getTime()).filter((t) => !Number.isNaN(t));
+        const items = list.items ?? [];
+        const itemsTs = items.map((it: any) => new Date(it.added_at).getTime()).filter((t) => !Number.isNaN(t));
         const lastUpdatedMs = itemsTs.length ? Math.max(...itemsTs) : (list.created_at ? new Date(list.created_at).getTime() : null);
         const lastUpdatedLabel = lastUpdatedMs ? relativeTime(new Date(lastUpdatedMs).toISOString()) : "—";
+        const firstItem = items[0];
+        const coverKey = firstItem
+          ? `${firstItem.item_type}:${String(firstItem.item_id)}`
+          : null;
         return {
           id: list.id,
           title: list.title,
           isDefault: !!list.is_default,
-          itemCount: (list.items ?? []).length,
+          itemCount: items.length,
           lastUpdatedLabel,
+          coverKey,
         };
       });
 
@@ -595,12 +590,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
         renderEmpty();
       } else {
         renderLists(rows, atCap, tier);
-        if (atCap) renderAtCap();
       }
-
-      const itemsIndex = await loadItemsIndex();
-      const enriched = joinRecent(recent, itemsIndex);
-      renderRecent(enriched);
 
       sectionsFadeIn();
     } catch (err) {

@@ -20,164 +20,171 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
   description="View and manage items saved to a list."
   noindex={true}
 >
-  <main id="main-content" class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-6">
-    <header class="flex flex-wrap items-start gap-3">
-      <div class="flex-1 min-w-0">
-        <AccountBreadcrumb
-          crumbs={[
-            { label: "Dashboard", href: "/account/dashboard/" },
-            { label: "List" },
-          ]}
-        />
-      </div>
-    </header>
-
-    <div id="listErrorBanner" class="hidden"></div>
-
-    <section id="listHeaderSection" class="hidden">
-      <div class="relative flex flex-wrap items-start gap-3 mb-4">
-        <div class="flex-1 min-w-0 space-y-1.5">
-          <h1
-            id="listTitle"
-            class="text-2xl sm:text-3xl font-semibold tracking-tight"
-          >
-            Loading…
-          </h1>
-          <div id="listDefaultBadge" class="hidden">
-            <Badge variant="secondary">Default list</Badge>
-          </div>
-          <div
-            id="listMeta"
-            class="text-sm text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1"
-          >
-          </div>
-        </div>
-        <button
-          id="kebab"
-          type="button"
-          class="inline-flex items-center justify-center h-10 w-10 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
-          aria-label="List actions"
-          aria-haspopup="menu"
-          aria-expanded="false"
-        >
-          ⋯
-        </button>
-        <div
-          id="kebabMenu"
-          class="hidden absolute right-0 top-12 z-20 min-w-[180px] rounded-md border bg-popover p-1 shadow-md"
-          role="menu"
-        >
-          <button
-            data-list-action="rename"
-            class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none"
-          >
-            Rename
-          </button>
-          <button
-            data-list-action="set-default"
-            id="kebabSetDefault"
-            class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none disabled:opacity-50 cursor-not-allowed"
-            disabled
-          >
-            Set as default
-          </button>
-          <div class="my-1 h-px bg-border"></div>
-          <button
-            data-list-action="delete"
-            class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none"
-          >
-            Delete list
-          </button>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-3 mb-3">
-        <Button id="markAllBtn" variant="outline" size="sm" type="button">
-          Mark all visited
-        </Button>
-        <div
-          id="filterGroup"
-          class="inline-flex items-center rounded-md border bg-card overflow-hidden"
-          role="tablist"
-          aria-label="Filter items"
-        >
-          <button
-            type="button"
-            data-filter="all"
-            class="px-3 py-1.5 text-xs font-medium border-r last:border-r-0"
-            role="tab"
-            aria-selected="true"
-          >All</button>
-          <button
-            type="button"
-            data-filter="visited"
-            class="px-3 py-1.5 text-xs font-medium border-r last:border-r-0"
-            role="tab"
-            aria-selected="false"
-          >Visited</button>
-          <button
-            type="button"
-            data-filter="unvisited"
-            class="px-3 py-1.5 text-xs font-medium"
-            role="tab"
-            aria-selected="false"
-          >Not visited</button>
-        </div>
-        <label class="ml-auto inline-flex items-center gap-2 cursor-pointer select-none">
-          <span class="text-xs text-muted-foreground">Bulk select</span>
-          <input
-            id="bulkToggle"
-            type="checkbox"
-            class="size-4 cursor-pointer"
-            aria-label="Toggle bulk select mode"
+  <main id="main-content" class="space-y-0">
+    <section id="bandedHeader" class="bg-indigo-100 dark:bg-indigo-950">
+      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-8">
+        <header class="mb-4 sm:mb-6">
+          <AccountBreadcrumb
+            crumbs={[
+              { label: "Dashboard", href: "/account/dashboard/" },
+              { label: "List" },
+            ]}
           />
-        </label>
-      </div>
+        </header>
 
-      <div
-        id="bulkBar"
-        class="hidden flex flex-wrap items-center gap-3 p-3 rounded-md border bg-card"
-      >
-        <span id="bulkCount" class="text-sm font-medium">0 selected</span>
-        <span class="text-muted-foreground">·</span>
-        <button
-          data-bulk-action="visit"
-          type="button"
-          class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-accent"
-        >
-          Mark visited
-        </button>
-        <button
-          data-bulk-action="move"
-          type="button"
-          class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-accent"
-        >
-          Move to list…
-        </button>
-        <button
-          data-bulk-action="remove"
-          type="button"
-          class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-destructive/10 text-destructive"
-        >
-          Remove
-        </button>
+        <section id="listHeaderSection" class="hidden">
+          <div class="flex flex-wrap items-start gap-3">
+            <div class="flex-1 min-w-0 space-y-1.5">
+              <h1
+                id="listTitle"
+                class="text-2xl sm:text-3xl font-semibold tracking-tight"
+              >
+                Loading…
+              </h1>
+              <div id="listDefaultBadge" class="hidden">
+                <Badge variant="secondary">Default list</Badge>
+              </div>
+              <div
+                id="listMeta"
+                class="text-sm text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1"
+              >
+              </div>
+            </div>
+            <div class="relative">
+              <button
+                id="kebab"
+                type="button"
+                class="inline-flex items-center justify-center h-10 w-10 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="List actions"
+                aria-haspopup="menu"
+                aria-expanded="false"
+              >
+                ⋯
+              </button>
+              <div
+                id="kebabMenu"
+                class="hidden absolute right-0 top-12 z-20 min-w-[180px] rounded-md border bg-popover p-1 shadow-md"
+                role="menu"
+              >
+                <button
+                  data-list-action="rename"
+                  class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none"
+                >
+                  Rename
+                </button>
+                <button
+                  data-list-action="set-default"
+                  id="kebabSetDefault"
+                  class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none disabled:opacity-50 cursor-not-allowed"
+                  disabled
+                >
+                  Set as default
+                </button>
+                <div class="my-1 h-px bg-border"></div>
+                <button
+                  data-list-action="delete"
+                  class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none"
+                >
+                  Delete list
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
-    <section id="itemsSection" class="hidden">
-      <ul
-        id="itemsList"
-        class="divide-y rounded-lg border bg-card overflow-visible"
-      >
-        <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <div id="listErrorBanner" class="hidden"></div>
+
+      <section id="listControlsSection" class="hidden">
+        <div class="flex flex-wrap items-center gap-3">
+          <div
+            id="filterGroup"
+            class="inline-flex items-center gap-1 rounded-md border bg-card p-1 text-muted-foreground"
+            role="tablist"
+            aria-label="Filter items"
+          >
+            <button
+              type="button"
+              data-filter="all"
+              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              role="tab"
+              aria-selected="true"
+            >All</button>
+            <button
+              type="button"
+              data-filter="visited"
+              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              role="tab"
+              aria-selected="false"
+            >Visited</button>
+            <button
+              type="button"
+              data-filter="unvisited"
+              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              role="tab"
+              aria-selected="false"
+            >Not visited</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 ml-auto">
+            <button
+              data-bulk-action="visit"
+              type="button"
+              disabled
+              class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Mark visited
+            </button>
+            <button
+              data-bulk-action="move"
+              type="button"
+              disabled
+              class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Move to list…
+            </button>
+            <button
+              data-bulk-action="remove"
+              type="button"
+              disabled
+              class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-destructive/10 text-destructive disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="itemsSection" class="hidden">
+        <div class="flex items-center justify-between gap-3 px-3 sm:px-4 py-2 border bg-muted/30 rounded-t-lg">
+          <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+            <input
+              id="selectAllTop"
+              type="checkbox"
+              class="size-4 cursor-pointer"
+              aria-label="Select all visible items"
+            />
+            <span class="text-xs font-medium text-muted-foreground">Select all</span>
+          </label>
+          <span id="bulkCount" class="text-sm font-medium text-muted-foreground">0 selected</span>
+        </div>
+        <ul
+          id="itemsList"
+          class="divide-y rounded-b-lg border border-t-0 bg-card overflow-visible"
+        >
+<li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
           <Skeleton class="size-4 shrink-0 mt-1" />
           <Skeleton class="size-14 sm:size-16 shrink-0" />
           <div class="flex-1 min-w-0 space-y-2">
             <Skeleton class="h-4 w-3/4" />
             <Skeleton class="h-3 w-1/3" />
           </div>
-          <Skeleton class="size-4 shrink-0 mt-1" />
-          <Skeleton class="h-8 w-8 shrink-0" />
+          <div class="shrink-0 flex items-center gap-2 mt-0.5">
+            <Skeleton class="h-3 w-20 rounded-sm" />
+            <Skeleton class="h-6 w-11 rounded-full" />
+          </div>
         </li>
         <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
           <Skeleton class="size-4 shrink-0 mt-1" />
@@ -186,8 +193,10 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
             <Skeleton class="h-4 w-2/3" />
             <Skeleton class="h-3 w-1/2" />
           </div>
-          <Skeleton class="size-4 shrink-0 mt-1" />
-          <Skeleton class="h-8 w-8 shrink-0" />
+          <div class="shrink-0 flex items-center gap-2 mt-0.5">
+            <Skeleton class="h-3 w-20 rounded-sm" />
+            <Skeleton class="h-6 w-11 rounded-full" />
+          </div>
         </li>
         <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
           <Skeleton class="size-4 shrink-0 mt-1" />
@@ -196,54 +205,57 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
             <Skeleton class="h-4 w-1/2" />
             <Skeleton class="h-3 w-1/4" />
           </div>
-          <Skeleton class="size-4 shrink-0 mt-1" />
-          <Skeleton class="h-8 w-8 shrink-0" />
-        </li>
-      </ul>
-      <div
-        id="filterEmpty"
-        class="hidden text-center text-sm text-muted-foreground py-6"
-      >
-        No items match this filter.
-      </div>
-    </section>
-
-    <section id="emptySection" class="hidden">
-      <Card size="sm">
-        <CardContent>
-          <div class="py-12">
-            <Empty>
-              <EmptyMedia variant="icon">
-                <span aria-hidden="true" class="text-2xl text-muted-foreground">∅</span>
-              </EmptyMedia>
-              <EmptyHeader>
-                <EmptyTitle>This list is empty</EmptyTitle>
-                <EmptyDescription>
-                  Save projects or stays from any item page to add them here.
-                </EmptyDescription>
-              </EmptyHeader>
-              <div class="mt-2 flex gap-3 justify-center">
-                <Button href="/projects/" variant="outline">Browse projects</Button>
-                <Button href="/stays/" variant="outline">Browse stays</Button>
-              </div>
-            </Empty>
+          <div class="shrink-0 flex items-center gap-2 mt-0.5">
+            <Skeleton class="h-3 w-20 rounded-sm" />
+            <Skeleton class="h-6 w-11 rounded-full" />
           </div>
-        </CardContent>
-      </Card>
-    </section>
+        </li>
+        </ul>
+        <div
+          id="filterEmpty"
+          class="hidden text-center text-sm text-muted-foreground py-6"
+        >
+          No items match this filter.
+        </div>
+      </section>
 
-    <section id="loadingSection">
-      <Card>
-        <CardHeader>
-          <CardTitle>Loading list…</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-sm text-muted-foreground">
-            Fetching your saved items.
-          </p>
-        </CardContent>
-      </Card>
-    </section>
+      <section id="emptySection" class="hidden">
+        <Card size="sm">
+          <CardContent>
+            <div class="py-12">
+              <Empty>
+                <EmptyMedia variant="icon">
+                  <span aria-hidden="true" class="text-2xl text-muted-foreground">∅</span>
+                </EmptyMedia>
+                <EmptyHeader>
+                  <EmptyTitle>This list is empty</EmptyTitle>
+                  <EmptyDescription>
+                    Save projects or stays from any item page to add them here.
+                  </EmptyDescription>
+                </EmptyHeader>
+                <div class="mt-2 flex gap-3 justify-center">
+                  <Button href="/projects/" variant="outline">Browse projects</Button>
+                  <Button href="/stays/" variant="outline">Browse stays</Button>
+                </div>
+              </Empty>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section id="loadingSection">
+        <Card>
+          <CardHeader>
+            <CardTitle>Loading list…</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">
+              Fetching your saved items.
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+    </div>
   </main>
 
   <!-- Move-to-list dialog (custom; Bearnie dialog runtime is a stub in this project). -->
@@ -315,10 +327,9 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     deleteList,
     setDefaultList,
   } from "@/lib/lists";
-  import { showInlineRename, showInlineConfirm } from "@/lib/inline-dialogs";
+  import { showInlineTextInput, showInlineConfirm } from "@/lib/inline-dialogs";
   import { showToast } from "@/lib/toast-manager";
-  import { setCompleted, getStatusesForItems, type ItemStatus } from "@/lib/completed";
-  import { getAccountTier } from "@/lib/billing";
+  import { setCompleted, getStatusesForItems } from "@/lib/completed";
 
   const DASHBOARD = "/account/dashboard/";
   const LOGIN = "/login/";
@@ -376,7 +387,6 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     items: EnrichedItem[];
     otherLists: OtherList[];
     filter: Filter;
-    bulkMode: boolean;
     moveItems: Array<{ recId: string; item_type: ItemType; item_id: string }>;
     selectedIds: Set<string>;
     dialogReturnFocus: HTMLElement | null;
@@ -385,7 +395,6 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     items: [],
     otherLists: [],
     filter: "all",
-    bulkMode: false,
     moveItems: [],
     dialogReturnFocus: null,
     selectedIds: new Set<string>(),
@@ -532,6 +541,11 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     const headerSection = $id("listHeaderSection");
     if (headerSection) headerSection.classList.remove("hidden");
 
+    const controlsSection = $id("listControlsSection");
+    if (controlsSection) controlsSection.classList.remove("hidden");
+
+    updateBulkCount();
+
     const breadcrumb = document.querySelector<HTMLElement>("nav[aria-label='breadcrumb']");
     if (breadcrumb) {
       const lastSpan = breadcrumb.querySelector<HTMLElement>("[aria-current='page']");
@@ -554,8 +568,8 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
       ? `<img src="${escapeHtml(item.image)}" alt="${safeTitle}" loading="lazy" class="size-14 sm:size-16 rounded object-cover" />`
       : `<div class="size-14 sm:size-16 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">No image</div>`;
     const typeTag = item.item_type === "stay" ? "Stay" : "Project";
-    const checked = item.visited ? "checked" : "";
-    const bulkHidden = state.bulkMode ? "" : "hidden";
+    const visitedState = item.visited ? "checked" : "unchecked";
+    const visitedLabel = item.visited ? "Visited" : "Mark visited";
     const location = item.location
       ? `<span>${escapeHtml(item.location)}</span>`
       : "";
@@ -563,7 +577,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
 
     return `
       <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0 hover:bg-muted/40 transition-colors" data-item-row data-rec-id="${escapeHtml(item.recId)}" data-item-id="${escapeHtml(item.item_id)}" data-item-type="${item.item_type}">
-        <input type="checkbox" data-row-bulk class="shrink-0 size-4 cursor-pointer mt-1 ${bulkHidden}" aria-label="Select ${safeTitle} for bulk actions" />
+        <input type="checkbox" data-row-bulk class="shrink-0 size-4 cursor-pointer mt-1" aria-label="Select ${safeTitle} for bulk actions" />
         <div class="shrink-0">${image}</div>
         <div class="flex-1 min-w-0 space-y-1.5">
           <a href="${itemUrl}" class="font-medium hover:underline line-clamp-2 text-sm">${safeTitle}</a>
@@ -572,15 +586,22 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
             ${location}
           </div>
         </div>
-        <label class="shrink-0 inline-flex items-center gap-2 cursor-pointer mt-1">
-          <input type="checkbox" data-row-visited ${checked} class="size-4 cursor-pointer" aria-label="Mark ${safeTitle} as visited" />
-        </label>
-        <button type="button" class="shrink-0 h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent" data-row-kebab aria-label="Actions for ${safeTitle}" aria-haspopup="menu" aria-expanded="false">⋯</button>
-        <div class="hidden absolute right-0 z-20 min-w-[180px] rounded-md border bg-popover p-1 shadow-md" data-row-menu role="menu">
-          <button data-row-action="view" data-item-url="${itemUrl}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">View</button>
-          <button data-row-action="move" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Move to list…</button>
-          <div class="my-1 h-px bg-border"></div>
-          <button data-row-action="remove" class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none">Remove from list</button>
+        <div class="shrink-0 flex items-center gap-2 mt-0.5">
+          <span
+            class="text-xs text-muted-foreground font-medium select-none"
+            data-row-visited-label
+          >${visitedLabel}</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked="${item.visited}"
+            data-state="${visitedState}"
+            data-row-visited-switch
+            aria-label="Mark ${safeTitle} as visited"
+            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+          >
+            <span class="pointer-events-none block size-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0" data-state="${visitedState}"></span>
+          </button>
         </div>
       </li>
     `;
@@ -620,36 +641,28 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
   function wireItemRows(): void {
     const rows = document.querySelectorAll<HTMLLIElement>("#itemsList [data-item-row]");
     rows.forEach((row) => {
-      row.style.position = "relative";
-
-      const kebab = row.querySelector<HTMLElement>("[data-row-kebab]");
-      const menu = row.querySelector<HTMLElement>("[data-row-menu]");
-      if (kebab && menu) {
-        kebab.addEventListener("click", (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-          closeAllRowMenus();
-          const open = !menu.classList.contains("hidden");
-          if (!open) {
-            menu.classList.remove("hidden");
-            kebab.setAttribute("aria-expanded", "true");
-            menu.style.top = kebab.offsetTop + kebab.offsetHeight + "px";
-            menu.style.right = "0";
-            menu.style.position = "absolute";
-          }
-        });
-      }
-
-      const visited = row.querySelector<HTMLInputElement>("[data-row-visited]");
-      if (visited) {
-        visited.addEventListener("change", async () => {
+      const visitedSwitch = row.querySelector<HTMLButtonElement>("[data-row-visited-switch]");
+      if (visitedSwitch) {
+        visitedSwitch.addEventListener("click", async () => {
           const item = state.items.find(
             (it) =>
               it.recId === row.dataset.recId ||
               (it.item_type === row.dataset.itemType && it.item_id === row.dataset.itemId),
           );
           if (!item) return;
-          await toggleVisited(item, visited.checked);
+          const previous = item.visited;
+          const next = !previous;
+          applySwitchVisualState(visitedSwitch, next);
+          syncRowVisitedLabel(row, next);
+          try {
+            await setCompleted(item.item_type, item.item_id, next);
+            item.visited = next;
+          } catch (err) {
+            applySwitchVisualState(visitedSwitch, previous);
+            syncRowVisitedLabel(row, previous);
+            const message = err instanceof Error ? err.message : String(err);
+            showError(`Could not mark visited: ${message}`);
+          }
         });
       }
 
@@ -663,69 +676,12 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
           updateBulkCount();
         });
       }
-
-      row.querySelectorAll<HTMLButtonElement>("[data-row-action]").forEach((button) => {
-        button.addEventListener("click", async (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-          const action = button.dataset.rowAction;
-          const item = state.items.find(
-            (it) =>
-              it.recId === row.dataset.recId ||
-              (it.item_type === row.dataset.itemType && it.item_id === row.dataset.itemId),
-          );
-          if (!item || !action) return;
-          await handleRowAction(action, item, button.dataset.itemUrl ?? "");
-        });
-      });
     });
   }
 
-  function closeAllRowMenus(): void {
-    document.querySelectorAll<HTMLElement>("[data-row-menu]").forEach((menu) => {
-      menu.classList.add("hidden");
-    });
-    document.querySelectorAll<HTMLElement>("[data-row-kebab]").forEach((button) => {
-      button.setAttribute("aria-expanded", "false");
-    });
-  }
-
-  async function handleRowAction(
-    action: string,
-    item: EnrichedItem,
-    itemUrl: string,
-  ): Promise<void> {
-    if (!state.list) return;
-    closeAllRowMenus();
-    try {
-      if (action === "view") {
-        window.open(itemUrl, "_blank", "noopener,noreferrer");
-        return;
-      }
-      if (action === "move") {
-        openMoveDialog([{ recId: item.recId, item_type: item.item_type, item_id: item.item_id }], 1);
-        return;
-      }
-      if (action === "remove") {
-        await removeItemFromList(state.list.id, item.item_type, item.item_id);
-        await load();
-        return;
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      showError(`Could not update item: ${message}`);
-    }
-  }
-
-  async function toggleVisited(item: EnrichedItem, to: boolean): Promise<void> {
-    try {
-      await setCompleted(item.item_type, item.item_id, to);
-      item.visited = to;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      showError(`Could not mark visited: ${message}`);
-      renderRows();
-    }
+  function syncRowVisitedLabel(row: HTMLElement, visited: boolean): void {
+    const label = row.querySelector<HTMLElement>("[data-row-visited-label]");
+    if (label) label.textContent = visited ? "Visited" : "Mark visited";
   }
 
   function setFilter(next: Filter): void {
@@ -737,11 +693,9 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     document.querySelectorAll<HTMLButtonElement>("#filterGroup [data-filter]").forEach((button) => {
       const isActive = button.dataset.filter === next;
       button.setAttribute("aria-selected", isActive ? "true" : "false");
-      button.classList.toggle("bg-accent", isActive);
-      button.classList.toggle("text-foreground", isActive);
-      button.classList.toggle("text-muted-foreground", !isActive);
     });
     renderRows();
+    updateBulkCount();
   }
 
   function wireFilter(): void {
@@ -775,16 +729,51 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     });
   }
 
-  function setBulkMode(on: boolean): void {
-    state.bulkMode = on;
-    state.selectedIds.clear();
-    const bar = $id("bulkBar");
-    if (bar) {
-      if (on) bar.classList.remove("hidden");
-      else bar.classList.add("hidden");
+  function applySwitchVisualState(switchEl: HTMLElement, checked: boolean): void {
+    const stateStr = checked ? "checked" : "unchecked";
+    switchEl.setAttribute("aria-checked", String(checked));
+    switchEl.setAttribute("data-state", stateStr);
+    switchEl.querySelector("span")?.setAttribute("data-state", stateStr);
+  }
+
+  function selectAllVisible(checked: boolean): void {
+    const view = getItemsForCurrentView();
+    for (const item of view) {
+      const id = item.item_id;
+      if (!id) continue;
+      if (checked) state.selectedIds.add(id);
+      else state.selectedIds.delete(id);
     }
-    renderRows();
+    syncBulkChecks();
     updateBulkCount();
+  }
+
+  function syncSelectAllTop(): void {
+    const selectAll = $id<HTMLInputElement>("selectAllTop");
+    if (!selectAll) return;
+    const view = getItemsForCurrentView();
+    const total = view.length;
+    if (total === 0) {
+      selectAll.checked = false;
+      selectAll.indeterminate = false;
+      selectAll.disabled = true;
+      return;
+    }
+    selectAll.disabled = false;
+    const selectedCount = view.reduce(
+      (acc, item) => acc + (state.selectedIds.has(item.item_id) ? 1 : 0),
+      0,
+    );
+    if (selectedCount === 0) {
+      selectAll.checked = false;
+      selectAll.indeterminate = false;
+    } else if (selectedCount === total) {
+      selectAll.checked = true;
+      selectAll.indeterminate = false;
+    } else {
+      selectAll.checked = false;
+      selectAll.indeterminate = true;
+    }
   }
 
   function syncBulkChecks(): void {
@@ -798,13 +787,27 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
   function updateBulkCount(): void {
     const el = $id("bulkCount");
     if (el) el.textContent = `${state.selectedIds.size} selected`;
+    syncSelectAllTop();
+    syncBulkControls();
+  }
+
+  function syncBulkControls(): void {
+    const canApply = !!state.list && state.selectedIds.size > 0;
+    document.querySelectorAll<HTMLButtonElement>(
+      "#listControlsSection [data-bulk-action]",
+    ).forEach((button) => {
+      button.disabled = !canApply;
+    });
+  }
+
+  function wireSelectAll(): void {
+    const selectAll = $id<HTMLInputElement>("selectAllTop");
+    if (selectAll) {
+      selectAll.addEventListener("change", () => selectAllVisible(selectAll.checked));
+    }
   }
 
   function wireBulk(): void {
-    const toggle = $id<HTMLInputElement>("bulkToggle");
-    if (toggle) {
-      toggle.addEventListener("change", () => setBulkMode(toggle.checked));
-    }
     document.querySelectorAll<HTMLButtonElement>("[data-bulk-action]").forEach((button) => {
       button.addEventListener("click", async () => {
         const action = button.dataset.bulkAction;
@@ -841,45 +844,15 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
           item_id: it.item_id,
         }));
         openMoveDialog(payload, items.length);
+        state.selectedIds.clear();
         return;
       }
-      if (action !== "visit") {
-        await load();
-        return;
-      }
+      state.selectedIds.clear();
       await load();
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       showError(`Bulk action failed: ${message}`);
     }
-  }
-
-  async function markAllVisited(): Promise<void> {
-    if (!state.list) return;
-    const view = getItemsForCurrentView().filter((it) => !it.visited);
-    if (view.length === 0) return;
-    const ok = await showInlineConfirm({
-      title: "Mark all visible as visited?",
-      body: `${view.length} item(s) under the current filter will be marked visited. You can un-do this by clicking their visited checkbox again.`,
-      confirmLabel: "Mark visited",
-    });
-    if (!ok) return;
-    try {
-      for (const item of view) {
-        await setCompleted(item.item_type, item.item_id, true);
-      }
-      showToast("success", `${view.length} item(s) marked visited.`);
-      await load();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      showError(`Could not mark visited: ${message}`);
-    }
-  }
-
-  function wireMarkAll(): void {
-    const btn = $id<HTMLButtonElement>("markAllBtn");
-    if (!btn) return;
-    btn.addEventListener("click", () => void markAllVisited());
   }
 
   function openMoveDialog(
@@ -973,6 +946,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
         await removeItemFromList(state.list.id, item.item_type, item.item_id);
       }
       closeMoveDialog();
+      state.selectedIds.clear();
       await load();
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -1002,17 +976,20 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
       event.stopPropagation();
       event.preventDefault();
       const open = !menu.classList.contains("hidden");
-      closeAllRowMenus();
       if (!open) {
         menu.classList.remove("hidden");
         kebab.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.add("hidden");
+        kebab.setAttribute("aria-expanded", "false");
       }
     });
     menu.querySelectorAll<HTMLButtonElement>("[data-list-action]").forEach((button) => {
       button.addEventListener("click", async () => {
         const action = button.dataset.listAction;
         if (!action) return;
-        closeAllRowMenus();
+        menu.classList.add("hidden");
+        kebab.setAttribute("aria-expanded", "false");
         await handleListAction(action);
       });
     });
@@ -1022,13 +999,19 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     if (!state.list) return;
     try {
       if (action === "rename") {
-        const titleEl = $id("listTitle");
-        if (!titleEl) return;
-        const next = await showInlineRename({
-          container: titleEl,
+        const next = await showInlineTextInput({
+          title: "Rename list",
+          label: "List name",
           initialValue: state.list.title,
           maxLength: 120,
           placeholder: "List name",
+          confirmLabel: "Save",
+          validate: (candidate: string) => {
+            const trimmed = candidate.trim();
+            if (!trimmed) return "Please enter a name.";
+            if (trimmed.length > 120) return "List name must be 120 characters or fewer.";
+            return null;
+          },
         });
         if (next === null) return;
         const trimmed = next.trim();
@@ -1064,14 +1047,8 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     document.addEventListener("click", (event) => {
       const target = event.target as HTMLElement | null;
       if (!target) return;
-      if (
-        !target.closest("[data-row-menu]") &&
-        !target.closest("[data-row-kebab]") &&
-        !target.closest("#kebabMenu") &&
-        !target.closest("#kebab")
-      ) {
-        closeAllRowMenus();
-        const kebab = $id("kebab");
+      if (!target.closest("#kebabMenu") && !target.closest("#kebab")) {
+        const kebab = $id<HTMLButtonElement>("kebab");
         const menu = $id("kebabMenu");
         if (kebab && menu && !menu.classList.contains("hidden")) {
           menu.classList.add("hidden");
@@ -1166,16 +1143,13 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     buttons.forEach((button) => {
       const isActive = button.dataset.filter === state.filter;
       button.setAttribute("aria-selected", isActive ? "true" : "false");
-      button.classList.toggle("bg-accent", isActive);
-      button.classList.toggle("text-foreground", isActive);
-      button.classList.toggle("text-muted-foreground", !isActive);
     });
   }
 
   void getCurrentUser();
   wireFilter();
   wireBulk();
-  wireMarkAll();
+  wireSelectAll();
   wireMoveDialog();
   wireListKebab();
   wireGlobalDismiss();
