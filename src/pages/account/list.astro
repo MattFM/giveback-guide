@@ -1,0 +1,1101 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Badge from "@/components/bearnie/badge/Badge.astro";
+import Empty from "@/components/bearnie/empty/Empty.astro";
+import EmptyHeader from "@/components/bearnie/empty/EmptyHeader.astro";
+import EmptyTitle from "@/components/bearnie/empty/EmptyTitle.astro";
+import EmptyDescription from "@/components/bearnie/empty/EmptyDescription.astro";
+import EmptyMedia from "@/components/bearnie/empty/EmptyMedia.astro";
+import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
+---
+
+<MainLayout
+  title="List"
+  description="View and manage items saved to a list."
+  noindex={true}
+>
+  <main class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-6">
+    <header class="flex flex-wrap items-start gap-3">
+      <div class="flex-1 min-w-0">
+        <AccountBreadcrumb
+          crumbs={[
+            { label: "Dashboard", href: "/account/dashboard/" },
+            { label: "List" },
+          ]}
+        />
+      </div>
+    </header>
+
+    <div id="listErrorBanner" class="hidden"></div>
+
+    <section id="listHeaderSection" class="hidden">
+      <div class="relative flex flex-wrap items-start gap-3 mb-4">
+        <div class="flex-1 min-w-0 space-y-1.5">
+          <h1
+            id="listTitle"
+            class="text-2xl sm:text-3xl font-semibold tracking-tight"
+          >
+            Loading…
+          </h1>
+          <div id="listDefaultBadge" class="hidden">
+            <Badge variant="secondary">Default list</Badge>
+          </div>
+          <div
+            id="listMeta"
+            class="text-sm text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1"
+          >
+          </div>
+        </div>
+        <button
+          id="kebab"
+          type="button"
+          class="inline-flex items-center justify-center h-10 w-10 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
+          aria-label="List actions"
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >
+          ⋯
+        </button>
+        <div
+          id="kebabMenu"
+          class="hidden absolute right-0 top-12 z-20 min-w-[180px] rounded-md border bg-popover p-1 shadow-md"
+          role="menu"
+        >
+          <button
+            data-list-action="rename"
+            class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none"
+          >
+            Rename
+          </button>
+          <button
+            data-list-action="set-default"
+            id="kebabSetDefault"
+            class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none disabled:opacity-50 cursor-not-allowed"
+            disabled
+          >
+            Set as default
+          </button>
+          <div class="my-1 h-px bg-border"></div>
+          <button
+            data-list-action="delete"
+            class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none"
+          >
+            Delete list
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 mb-3">
+        <Button id="markAllBtn" variant="outline" size="sm" type="button">
+          Mark all visited
+        </Button>
+        <div
+          id="filterGroup"
+          class="inline-flex items-center rounded-md border bg-card overflow-hidden"
+          role="tablist"
+          aria-label="Filter items"
+        >
+          <button
+            type="button"
+            data-filter="all"
+            class="px-3 py-1.5 text-xs font-medium border-r last:border-r-0"
+            role="tab"
+            aria-selected="true"
+          >All</button>
+          <button
+            type="button"
+            data-filter="visited"
+            class="px-3 py-1.5 text-xs font-medium border-r last:border-r-0"
+            role="tab"
+            aria-selected="false"
+          >Visited</button>
+          <button
+            type="button"
+            data-filter="unvisited"
+            class="px-3 py-1.5 text-xs font-medium"
+            role="tab"
+            aria-selected="false"
+          >Not visited</button>
+        </div>
+        <label class="ml-auto inline-flex items-center gap-2 cursor-pointer select-none">
+          <span class="text-xs text-muted-foreground">Bulk select</span>
+          <input
+            id="bulkToggle"
+            type="checkbox"
+            class="size-4 cursor-pointer"
+            aria-label="Toggle bulk select mode"
+          />
+        </label>
+      </div>
+
+      <div
+        id="bulkBar"
+        class="hidden flex flex-wrap items-center gap-3 p-3 rounded-md border bg-card"
+      >
+        <span id="bulkCount" class="text-sm font-medium">0 selected</span>
+        <span class="text-muted-foreground">·</span>
+        <button
+          data-bulk-action="visit"
+          type="button"
+          class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-accent"
+        >
+          Mark visited
+        </button>
+        <button
+          data-bulk-action="move"
+          type="button"
+          class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-accent"
+        >
+          Move to list…
+        </button>
+        <button
+          data-bulk-action="remove"
+          type="button"
+          class="px-3 py-1.5 text-xs font-medium rounded-md border bg-background hover:bg-destructive/10 text-destructive"
+        >
+          Remove
+        </button>
+      </div>
+    </section>
+
+    <section id="itemsSection" class="hidden">
+      <ul
+        id="itemsList"
+        class="divide-y rounded-lg border bg-card overflow-visible"
+      ></ul>
+      <div
+        id="filterEmpty"
+        class="hidden text-center text-sm text-muted-foreground py-6"
+      >
+        No items match this filter.
+      </div>
+    </section>
+
+    <section id="emptySection" class="hidden">
+      <Card size="sm">
+        <CardContent>
+          <div class="py-12">
+            <Empty>
+              <EmptyMedia variant="icon">
+                <span aria-hidden="true" class="text-2xl text-muted-foreground">∅</span>
+              </EmptyMedia>
+              <EmptyHeader>
+                <EmptyTitle>This list is empty</EmptyTitle>
+                <EmptyDescription>
+                  Save projects or stays from any item page to add them here.
+                </EmptyDescription>
+              </EmptyHeader>
+              <div class="mt-2 flex gap-3 justify-center">
+                <Button href="/projects/" variant="outline">Browse projects</Button>
+                <Button href="/stays/" variant="outline">Browse stays</Button>
+              </div>
+            </Empty>
+          </div>
+        </CardContent>
+      </Card>
+    </section>
+
+    <section id="loadingSection">
+      <Card>
+        <CardHeader>
+          <CardTitle>Loading list…</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">
+            Fetching your saved items.
+          </p>
+        </CardContent>
+      </Card>
+    </section>
+  </main>
+
+  <!-- Move-to-list dialog (custom; Bearnie dialog runtime is a stub in this project). -->
+  <div id="moveDialog" class="hidden fixed inset-0 z-50">
+    <div
+      id="moveDialogOverlay"
+      class="fixed inset-0 bg-black/50"
+      data-move-close
+    ></div>
+    <div
+      id="moveDialogContent"
+      class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md rounded-lg border bg-background p-6 shadow-lg"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="moveDialogTitle"
+    >
+      <h3
+        id="moveDialogTitle"
+        class="text-lg font-semibold mb-2 leading-none tracking-tight"
+      >
+        Move to list
+      </h3>
+      <p
+        id="moveDialogCaption"
+        class="text-sm text-muted-foreground mb-4"
+      >
+        Pick a destination list.
+      </p>
+      <div id="moveDialogTargets" class="space-y-2 mb-4"></div>
+      <div
+        id="moveDialogEmpty"
+        class="hidden text-sm text-muted-foreground mb-4 text-center py-6 border rounded-md"
+      >
+        <p>You don't have another list to move items into.</p>
+        <a
+          href="/account/lists/new/"
+          class="inline-block mt-3 text-primary font-medium underline hover:no-underline"
+        >Create one →</a>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button
+          data-move-close
+          type="button"
+          class="px-4 py-2 text-sm font-medium rounded-md border bg-background hover:bg-accent"
+        >
+          Cancel
+        </button>
+        <button
+          id="moveDialogConfirm"
+          type="button"
+          class="px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          disabled
+        >
+          Move
+        </button>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  import { getCurrentUser } from "@/lib/pocketbase";
+  import {
+    getLists,
+    getListsWithItems,
+    saveItemToList,
+    removeItemFromList,
+    renameList,
+    deleteList,
+    setDefaultList,
+  } from "@/lib/lists";
+  import { setCompleted, getStatusesForItems, type ItemStatus } from "@/lib/completed";
+  import { getAccountTier } from "@/lib/billing";
+
+  const DASHBOARD = "/account/dashboard/";
+  const LOGIN = "/login/";
+
+  type Filter = "all" | "visited" | "unvisited";
+  type ItemType = "project" | "stay";
+
+  interface ListItemRecord {
+    id: string;
+    list: string;
+    item_type: ItemType;
+    item_id: string;
+    added_at: string;
+  }
+
+  interface ListMeta {
+    id: string;
+    title: string;
+    isDefault: boolean;
+    description: string | null;
+    created_at: string;
+    items: ListItemRecord[];
+  }
+
+  interface IndexEntry {
+    type: ItemType;
+    id: string;
+    altIds: string[];
+    title: string;
+    slug: string;
+    url: string;
+    image?: string | null;
+    location?: string | null;
+  }
+
+  interface EnrichedItem {
+    recId: string;
+    item_type: ItemType;
+    item_id: string;
+    added_at: string;
+    title: string;
+    url: string;
+    image?: string | null;
+    location?: string | null;
+    visited: boolean;
+  }
+
+  interface OtherList {
+    id: string;
+    title: string;
+  }
+
+  const state: {
+    list: ListMeta | null;
+    items: EnrichedItem[];
+    otherLists: OtherList[];
+    filter: Filter;
+    bulkMode: boolean;
+    moveItems: Array<{ recId: string; item_type: ItemType; item_id: string }>;
+    selectedIds: Set<string>;
+  } = {
+    list: null,
+    items: [],
+    otherLists: [],
+    filter: "all",
+    bulkMode: false,
+    moveItems: [],
+    selectedIds: new Set<string>(),
+  };
+
+  function $id<T extends HTMLElement = HTMLElement>(id: string): T {
+    return document.getElementById(id) as T;
+  }
+
+  function escapeHtml(value: string | null | undefined): string {
+    return (value ?? "").replace(/[&<>"']/g, (c) => {
+      const map: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return map[c] ?? c;
+    });
+  }
+
+  function fmtNum(n: number): string {
+    return Number.isFinite(n) ? n.toLocaleString("en-GB") : "—";
+  }
+
+  function relativeTime(iso: string | null | undefined): string {
+    if (!iso) return "—";
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) return "—";
+    const diff = Date.now() - then;
+    const sec = Math.floor(diff / 1000);
+    if (sec < 60) return "just now";
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h ago`;
+    const day = Math.floor(hr / 24);
+    if (day < 7) return `${day}d ago`;
+    const week = Math.floor(day / 7);
+    if (week < 4) return `${week}w ago`;
+    const month = Math.floor(day / 30);
+    if (month < 12) return `${month}mo ago`;
+    return `${Math.floor(day / 365)}y ago`;
+  }
+
+  function getListIdFromQuery(): string | null {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("id");
+    if (!raw) return null;
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  }
+
+  function showError(message: string): void {
+    const banner = document.getElementById("listErrorBanner");
+    if (!banner) return;
+    banner.className =
+      "rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive";
+    banner.textContent = message;
+    banner.classList.remove("hidden");
+  }
+
+  function clearError(): void {
+    const banner = document.getElementById("listErrorBanner");
+    if (!banner) return;
+    banner.textContent = "";
+    banner.classList.add("hidden");
+  }
+
+  async function ensureSignedIn(): Promise<boolean> {
+    try {
+      const auth = localStorage.getItem("pocketbase_auth");
+      if (!auth || auth === "null" || auth === "undefined") {
+        window.location.href = LOGIN;
+        return false;
+      }
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = LOGIN;
+        return false;
+      }
+      return true;
+    } catch {
+      window.location.href = LOGIN;
+      return false;
+    }
+  }
+
+  async function loadItemsIndex(): Promise<Map<string, IndexEntry>> {
+    try {
+      const response = await fetch("/api/items.json");
+      if (!response.ok) return new Map();
+      const payload = (await response.json()) as { items?: IndexEntry[] };
+      const items = payload.items ?? [];
+      const map = new Map<string, IndexEntry>();
+      for (const item of items) {
+        map.set(item.id, item);
+        for (const alt of item.altIds ?? []) {
+          map.set(alt, item);
+        }
+      }
+      return map;
+    } catch {
+      return new Map();
+    }
+  }
+
+  function renderHeader(): void {
+    if (!state.list) return;
+    const titleEl = $id("listTitle");
+    if (titleEl) titleEl.textContent = state.list.title;
+
+    const defaultBadge = $id("listDefaultBadge");
+    if (defaultBadge) {
+      if (state.list.isDefault) defaultBadge.classList.remove("hidden");
+      else defaultBadge.classList.add("hidden");
+    }
+
+    const setDefault = document.getElementById<HTMLButtonElement>("kebabSetDefault");
+    if (setDefault) {
+      setDefault.disabled = state.list.isDefault;
+    }
+
+    const meta = $id("listMeta");
+    if (meta) {
+      const count = state.list.items.length;
+      const label = count === 1 ? "item" : "items";
+      const lastTs = state.list.items
+        .map((it) => new Date(it.added_at).getTime())
+        .filter((t) => !Number.isNaN(t));
+      const lastMs = lastTs.length ? Math.max(...lastTs) : null;
+      const lastLabel = lastMs ? relativeTime(new Date(lastMs).toISOString()) : "never";
+      meta.innerHTML = `
+        <span>${count} ${label}</span>
+        <span>·</span>
+        <span>Last update ${lastLabel}</span>
+      `;
+    }
+
+    const headerSection = $id("listHeaderSection");
+    if (headerSection) headerSection.classList.remove("hidden");
+
+    const breadcrumb = document.querySelector<HTMLElement>("nav[aria-label='breadcrumb']");
+    if (breadcrumb) {
+      const lastSpan = breadcrumb.querySelector<HTMLElement>("[aria-current='page']");
+      if (lastSpan) lastSpan.textContent = state.list.title;
+    }
+  }
+
+  function getItemsForCurrentView(): EnrichedItem[] {
+    if (!state.list) return [];
+    return state.items.filter((item) => {
+      if (state.filter === "visited") return item.visited;
+      if (state.filter === "unvisited") return !item.visited;
+      return true;
+    });
+  }
+
+  function renderRow(item: EnrichedItem): string {
+    const safeTitle = escapeHtml(item.title);
+    const image = item.image
+      ? `<img src="${escapeHtml(item.image)}" alt="${safeTitle}" loading="lazy" class="size-14 sm:size-16 rounded object-cover" />`
+      : `<div class="size-14 sm:size-16 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">No image</div>`;
+    const typeTag = item.item_type === "stay" ? "Stay" : "Project";
+    const checked = item.visited ? "checked" : "";
+    const bulkHidden = state.bulkMode ? "" : "hidden";
+    const location = item.location
+      ? `<span>${escapeHtml(item.location)}</span>`
+      : "";
+    const itemUrl = escapeHtml(item.url);
+
+    return `
+      <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0 hover:bg-muted/40 transition-colors" data-item-row data-rec-id="${escapeHtml(item.recId)}" data-item-id="${escapeHtml(item.item_id)}" data-item-type="${item.item_type}">
+        <input type="checkbox" data-row-bulk class="shrink-0 size-4 cursor-pointer mt-1 ${bulkHidden}" aria-label="Select ${safeTitle} for bulk actions" />
+        <div class="shrink-0">${image}</div>
+        <div class="flex-1 min-w-0 space-y-1.5">
+          <a href="${itemUrl}" class="font-medium hover:underline line-clamp-2 text-sm">${safeTitle}</a>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span class="inline-flex items-center rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">${typeTag}</span>
+            ${location}
+          </div>
+        </div>
+        <label class="shrink-0 inline-flex items-center gap-2 cursor-pointer mt-1">
+          <input type="checkbox" data-row-visited ${checked} class="size-4 cursor-pointer" aria-label="Mark ${safeTitle} as visited" />
+        </label>
+        <button type="button" class="shrink-0 h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent" data-row-kebab aria-label="Actions for ${safeTitle}" aria-haspopup="menu" aria-expanded="false">⋯</button>
+        <div class="hidden absolute right-0 z-20 min-w-[180px] rounded-md border bg-popover p-1 shadow-md" data-row-menu role="menu">
+          <button data-row-action="view" data-item-url="${itemUrl}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">View</button>
+          <button data-row-action="move" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Move to list…</button>
+          <div class="my-1 h-px bg-border"></div>
+          <button data-row-action="remove" class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none">Remove from list</button>
+        </div>
+      </li>
+    `;
+  }
+
+  function renderRows(): void {
+    if (!state.list) return;
+    const itemsSection = $id("itemsSection");
+    const itemsList = $id("itemsList");
+    const emptySection = $id("emptySection");
+    const filterEmpty = $id("filterEmpty");
+    if (!itemsList) return;
+
+    if (state.list.items.length === 0) {
+      if (itemsSection) itemsSection.classList.add("hidden");
+      if (emptySection) emptySection.classList.remove("hidden");
+      if (filterEmpty) filterEmpty.classList.add("hidden");
+      return;
+    }
+
+    if (itemsSection) itemsSection.classList.remove("hidden");
+    if (emptySection) emptySection.classList.add("hidden");
+
+    const view = getItemsForCurrentView();
+    itemsList.innerHTML = view.map(renderRow).join("");
+
+    if (view.length === 0 && filterEmpty) {
+      filterEmpty.classList.remove("hidden");
+    } else if (filterEmpty) {
+      filterEmpty.classList.add("hidden");
+    }
+
+    wireItemRows();
+    syncBulkChecks();
+  }
+
+  function wireItemRows(): void {
+    const rows = document.querySelectorAll<HTMLLIElement>("#itemsList [data-item-row]");
+    rows.forEach((row) => {
+      row.style.position = "relative";
+
+      const kebab = row.querySelector<HTMLElement>("[data-row-kebab]");
+      const menu = row.querySelector<HTMLElement>("[data-row-menu]");
+      if (kebab && menu) {
+        kebab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          closeAllRowMenus();
+          const open = !menu.classList.contains("hidden");
+          if (!open) {
+            menu.classList.remove("hidden");
+            kebab.setAttribute("aria-expanded", "true");
+            menu.style.top = kebab.offsetTop + kebab.offsetHeight + "px";
+            menu.style.right = "0";
+            menu.style.position = "absolute";
+          }
+        });
+      }
+
+      const visited = row.querySelector<HTMLInputElement>("[data-row-visited]");
+      if (visited) {
+        visited.addEventListener("change", async () => {
+          const item = state.items.find(
+            (it) =>
+              it.recId === row.dataset.recId ||
+              (it.item_type === row.dataset.itemType && it.item_id === row.dataset.itemId),
+          );
+          if (!item) return;
+          await toggleVisited(item, visited.checked);
+        });
+      }
+
+      const bulk = row.querySelector<HTMLInputElement>("[data-row-bulk]");
+      if (bulk) {
+        bulk.checked = state.selectedIds.has(row.dataset.itemId ?? "");
+        bulk.addEventListener("change", () => {
+          const id = row.dataset.itemId ?? "";
+          if (bulk.checked) state.selectedIds.add(id);
+          else state.selectedIds.delete(id);
+          updateBulkCount();
+        });
+      }
+
+      row.querySelectorAll<HTMLButtonElement>("[data-row-action]").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          const action = button.dataset.rowAction;
+          const item = state.items.find(
+            (it) =>
+              it.recId === row.dataset.recId ||
+              (it.item_type === row.dataset.itemType && it.item_id === row.dataset.itemId),
+          );
+          if (!item || !action) return;
+          await handleRowAction(action, item, button.dataset.itemUrl ?? "");
+        });
+      });
+    });
+  }
+
+  function closeAllRowMenus(): void {
+    document.querySelectorAll<HTMLElement>("[data-row-menu]").forEach((menu) => {
+      menu.classList.add("hidden");
+    });
+    document.querySelectorAll<HTMLElement>("[data-row-kebab]").forEach((button) => {
+      button.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  async function handleRowAction(
+    action: string,
+    item: EnrichedItem,
+    itemUrl: string,
+  ): Promise<void> {
+    if (!state.list) return;
+    closeAllRowMenus();
+    try {
+      if (action === "view") {
+        window.open(itemUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+      if (action === "move") {
+        openMoveDialog([{ recId: item.recId, item_type: item.item_type, item_id: item.item_id }], 1);
+        return;
+      }
+      if (action === "remove") {
+        await removeItemFromList(state.list.id, item.item_type, item.item_id);
+        await load();
+        return;
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Could not update item: ${message}`);
+    }
+  }
+
+  async function toggleVisited(item: EnrichedItem, to: boolean): Promise<void> {
+    try {
+      await setCompleted(item.item_type, item.item_id, to);
+      item.visited = to;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Could not mark visited: ${message}`);
+      renderRows();
+    }
+  }
+
+  function setFilter(next: Filter): void {
+    state.filter = next;
+    if (state.list) {
+      const key = `dashboard_${state.list.id}_visitFilter`;
+      localStorage.setItem(key, next);
+    }
+    document.querySelectorAll<HTMLButtonElement>("#filterGroup [data-filter]").forEach((button) => {
+      const isActive = button.dataset.filter === next;
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.classList.toggle("bg-accent", isActive);
+      button.classList.toggle("text-foreground", isActive);
+      button.classList.toggle("text-muted-foreground", !isActive);
+    });
+    renderRows();
+  }
+
+  function wireFilter(): void {
+    document.querySelectorAll<HTMLButtonElement>("#filterGroup [data-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const filter = button.dataset.filter as Filter;
+        if (filter) setFilter(filter);
+      });
+    });
+  }
+
+  function setBulkMode(on: boolean): void {
+    state.bulkMode = on;
+    state.selectedIds.clear();
+    const bar = $id("bulkBar");
+    if (bar) {
+      if (on) bar.classList.remove("hidden");
+      else bar.classList.add("hidden");
+    }
+    renderRows();
+    updateBulkCount();
+  }
+
+  function syncBulkChecks(): void {
+    document.querySelectorAll<HTMLInputElement>("#itemsList [data-row-bulk]").forEach((checkbox) => {
+      const row = checkbox.closest<HTMLElement>("[data-item-row]");
+      if (!row) return;
+      checkbox.checked = state.selectedIds.has(row.dataset.itemId ?? "");
+    });
+  }
+
+  function updateBulkCount(): void {
+    const el = $id("bulkCount");
+    if (el) el.textContent = `${state.selectedIds.size} selected`;
+  }
+
+  function wireBulk(): void {
+    const toggle = $id<HTMLInputElement>("bulkToggle");
+    if (toggle) {
+      toggle.addEventListener("change", () => setBulkMode(toggle.checked));
+    }
+    document.querySelectorAll<HTMLButtonElement>("[data-bulk-action]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const action = button.dataset.bulkAction;
+        if (!action || state.selectedIds.size === 0) return;
+        await runBulk(action);
+      });
+    });
+  }
+
+  async function runBulk(action: string): Promise<void> {
+    if (!state.list || state.selectedIds.size === 0) return;
+    const items = state.items.filter((it) => state.selectedIds.has(it.item_id));
+    if (items.length === 0) return;
+    try {
+      if (action === "visit") {
+        for (const item of items) {
+          await setCompleted(item.item_type, item.item_id, true);
+        }
+      } else if (action === "remove") {
+        const ok = window.confirm(
+          `Remove ${items.length} item(s) from this list? They stay on your account; only this list is affected.`,
+        );
+        if (!ok) return;
+        for (const item of items) {
+          await removeItemFromList(state.list.id, item.item_type, item.item_id);
+        }
+      } else if (action === "move") {
+        const payload = items.map((it) => ({
+          recId: it.recId,
+          item_type: it.item_type,
+          item_id: it.item_id,
+        }));
+        openMoveDialog(payload, items.length);
+        return;
+      }
+      if (action !== "visit") {
+        await load();
+        return;
+      }
+      await load();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Bulk action failed: ${message}`);
+    }
+  }
+
+  async function markAllVisited(): Promise<void> {
+    if (!state.list) return;
+    const view = getItemsForCurrentView().filter((it) => !it.visited);
+    if (view.length === 0) return;
+    const ok = window.confirm(
+      `Mark ${view.length} item(s) visible under this filter as visited?`,
+    );
+    if (!ok) return;
+    try {
+      for (const item of view) {
+        await setCompleted(item.item_type, item.item_id, true);
+      }
+      await load();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Could not mark visited: ${message}`);
+    }
+  }
+
+  function wireMarkAll(): void {
+    const btn = $id<HTMLButtonElement>("markAllBtn");
+    if (!btn) return;
+    btn.addEventListener("click", () => void markAllVisited());
+  }
+
+  function openMoveDialog(
+    items: typeof state.moveItems,
+    count: number
+  ): void {
+    state.moveItems = items.slice();
+    const dialog = $id("moveDialog");
+    const overlay = $id("moveDialogOverlay");
+    const content = $id("moveDialogContent");
+    const targets = $id("moveDialogTargets");
+    const empty = $id("moveDialogEmpty");
+    const caption = $id("moveDialogCaption");
+    const confirm = $id<HTMLButtonElement>("moveDialogConfirm");
+
+    if (caption) {
+      caption.textContent =
+        `Move ${count === 1 ? "this item" : `${count} items`} to:`;
+    }
+
+    if (state.otherLists.length === 0) {
+      if (targets) targets.classList.add("hidden");
+      if (empty) empty.classList.remove("hidden");
+      if (confirm) {
+        confirm.disabled = true;
+        confirm.classList.add("hidden");
+      }
+    } else {
+      if (targets) {
+        targets.classList.remove("hidden");
+        targets.innerHTML = state.otherLists
+          .map(
+            (l, i) => `
+            <label class="flex items-center gap-2 p-2 rounded-md border bg-card cursor-pointer hover:bg-accent" data-target-list-id="${escapeHtml(l.id)}">
+              <input type="radio" name="moveTarget" value="${escapeHtml(l.id)}" class="size-4 cursor-pointer" ${i === 0 ? "checked" : ""} />
+              <span class="text-sm font-medium">${escapeHtml(l.title)}</span>
+            </label>
+          `,
+          )
+          .join("");
+      }
+      if (empty) empty.classList.add("hidden");
+      if (confirm) {
+        confirm.disabled = false;
+        confirm.classList.remove("hidden");
+      }
+    }
+
+    if (dialog) dialog.classList.remove("hidden");
+    if (overlay) overlay.classList.remove("hidden");
+    if (content) {
+      content.classList.remove("hidden");
+      // Focus the first focusable element inside the dialog.
+      requestAnimationFrame(() => {
+        const first = content.querySelector<HTMLElement>(
+          "input, button, [tabindex]:not([tabindex='-1'])",
+        );
+        first?.focus();
+      });
+    }
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMoveDialog(): void {
+    const dialog = $id("moveDialog");
+    const overlay = $id("moveDialogOverlay");
+    const content = $id("moveDialogContent");
+    if (dialog) dialog.classList.add("hidden");
+    if (overlay) overlay.classList.add("hidden");
+    if (content) content.classList.add("hidden");
+    document.body.style.overflow = "";
+    state.moveItems = [];
+  }
+
+  async function confirmMove(): Promise<void> {
+    if (!state.list) return;
+    const checked = document.querySelector<HTMLInputElement>(
+      '#moveDialogTargets input[name="moveTarget"]:checked',
+    );
+    const targetId = checked?.value;
+    if (!targetId) return;
+    const items = state.moveItems.slice();
+    if (items.length === 0) return;
+    try {
+      for (const item of items) {
+        await saveItemToList(targetId, item.item_type, item.item_id);
+        await removeItemFromList(state.list.id, item.item_type, item.item_id);
+      }
+      closeMoveDialog();
+      await load();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Move failed: ${message}`);
+    }
+  }
+
+  function wireMoveDialog(): void {
+    document
+      .querySelectorAll<HTMLElement>("[data-move-close]")
+      .forEach((el) => el.addEventListener("click", closeMoveDialog));
+    const confirmBtn = $id<HTMLButtonElement>("moveDialogConfirm");
+    if (confirmBtn) confirmBtn.addEventListener("click", () => void confirmMove());
+    document.addEventListener("keydown", (event) => {
+      const dialog = $id("moveDialog");
+      if (event.key === "Escape" && dialog && !dialog.classList.contains("hidden")) {
+        closeMoveDialog();
+      }
+    });
+  }
+
+  function wireListKebab(): void {
+    const kebab = $id("kebab");
+    const menu = $id("kebabMenu");
+    if (!kebab || !menu) return;
+    kebab.addEventListener("click", (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      const open = !menu.classList.contains("hidden");
+      closeAllRowMenus();
+      if (!open) {
+        menu.classList.remove("hidden");
+        kebab.setAttribute("aria-expanded", "true");
+      }
+    });
+    menu.querySelectorAll<HTMLButtonElement>("[data-list-action]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const action = button.dataset.listAction;
+        if (!action) return;
+        closeAllRowMenus();
+        await handleListAction(action);
+      });
+    });
+  }
+
+  async function handleListAction(action: string): Promise<void> {
+    if (!state.list) return;
+    try {
+      if (action === "rename") {
+        const next = window.prompt("Rename list", state.list.title);
+        if (next === null) return;
+        const trimmed = next.trim();
+        if (!trimmed) return;
+        await renameList(state.list.id, trimmed);
+        await load();
+      } else if (action === "set-default") {
+        if (state.list.isDefault) return;
+        await setDefaultList(state.list.id);
+        await load();
+      } else if (action === "delete") {
+        const ok = window.confirm(
+          `Delete "${state.list.title}"? This removes the list and its saved items. This cannot be undone.`,
+        );
+        if (!ok) return;
+        await deleteList(state.list.id);
+        window.location.href = DASHBOARD;
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Could not update list: ${message}`);
+    }
+  }
+
+  function wireGlobalDismiss(): void {
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (
+        !target.closest("[data-row-menu]") &&
+        !target.closest("[data-row-kebab]") &&
+        !target.closest("#kebabMenu") &&
+        !target.closest("#kebab")
+      ) {
+        closeAllRowMenus();
+        const kebab = $id("kebab");
+        const menu = $id("kebabMenu");
+        if (kebab && menu && !menu.classList.contains("hidden")) {
+          menu.classList.add("hidden");
+          kebab.setAttribute("aria-expanded", "false");
+        }
+      }
+    });
+  }
+
+  async function load(): Promise<void> {
+    clearError();
+    try {
+      const signedIn = await ensureSignedIn();
+      if (!signedIn) return;
+
+      const listId = getListIdFromQuery();
+      if (!listId) {
+        window.location.href = DASHBOARD;
+        return;
+      }
+
+      const [listsWithItems, allLists, itemsIndex] = await Promise.all([
+        getListsWithItems(),
+        getLists(),
+        loadItemsIndex(),
+      ]);
+
+      const listMatch = (listsWithItems as any[]).find((l: any) => l.id === listId);
+      if (!listMatch) {
+        window.location.href = DASHBOARD;
+        return;
+      }
+
+      state.list = {
+        id: listMatch.id,
+        title: listMatch.title,
+        isDefault: !!listMatch.is_default,
+        description: listMatch.description ?? null,
+        created_at: listMatch.created_at,
+        items: (listMatch.items ?? []) as ListItemRecord[],
+      };
+      state.otherLists = ((allLists as any[]) ?? [])
+        .filter((l: any) => l.id !== listId)
+        .map((l: any) => ({ id: l.id, title: l.title }));
+
+      const pairs = state.list.items.map((it) => ({
+        item_type: it.item_type,
+        item_id: String(it.item_id),
+      }));
+      const statuses = await getStatusesForItems(pairs);
+
+      state.items = state.list.items.map((it) => {
+        const meta = itemsIndex.get(String(it.item_id));
+        const key = `${it.item_type}:${String(it.item_id)}`;
+        return {
+          recId: it.id,
+          item_type: it.item_type,
+          item_id: String(it.item_id),
+          added_at: it.added_at,
+          title: meta?.title ?? "(unknown item)",
+          url: meta?.url ?? "#",
+          image: meta?.image ?? null,
+          location: meta?.location ?? null,
+          visited: key in statuses ? !!statuses[key].is_completed : false,
+        };
+      });
+
+      const filterKey = `dashboard_${listId}_visitFilter`;
+      const savedFilter = localStorage.getItem(filterKey);
+      const next: Filter =
+        savedFilter === "visited" || savedFilter === "unvisited" || savedFilter === "all"
+          ? (savedFilter as Filter)
+          : "all";
+      state.filter = next;
+
+      applyFilterStyle();
+      renderHeader();
+      renderRows();
+
+      const loading = $id("loadingSection");
+      if (loading) loading.classList.add("hidden");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Failed to load list: ${message}`);
+      const loading = $id("loadingSection");
+      if (loading) loading.classList.add("hidden");
+    }
+  }
+
+  function applyFilterStyle(): void {
+    const buttons = document.querySelectorAll<HTMLButtonElement>("#filterGroup [data-filter]");
+    buttons.forEach((button) => {
+      const isActive = button.dataset.filter === state.filter;
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+      button.classList.toggle("bg-accent", isActive);
+      button.classList.toggle("text-foreground", isActive);
+      button.classList.toggle("text-muted-foreground", !isActive);
+    });
+  }
+
+  void getCurrentUser();
+  wireFilter();
+  wireBulk();
+  wireMarkAll();
+  wireMoveDialog();
+  wireListKebab();
+  wireGlobalDismiss();
+  void load();
+</script>

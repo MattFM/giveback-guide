@@ -217,7 +217,7 @@ import Button from "@/components/bearnie/button/Button.astro";
     const safeTitle = list.title.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
     return `
       <div class="relative rounded-lg border bg-card text-card-foreground p-6 hover:border-foreground/30 transition-colors" data-list-id="${list.id}">
-        <a href="/account/lists/${list.id}/" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg" data-list-link>
+        <a href="/account/list/?id=${encodeURIComponent(list.id)}" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg" data-list-link>
           <div class="space-y-1.5">
             <p class="font-semibold leading-tight line-clamp-2">${safeTitle}</p>
             ${defaultBadge}

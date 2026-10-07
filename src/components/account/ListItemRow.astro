@@ -1,0 +1,85 @@
+---
+import Badge from "@/components/bearnie/badge/Badge.astro";
+---
+
+export interface RowItem {
+  recId: string;
+  item_type: 'project' | 'stay';
+  item_id: string;
+  title: string;
+  url: string;
+  image?: string | null;
+  location?: string | null;
+  visited: boolean;
+}
+
+interface Props {
+  row: RowItem;
+  bulkMode?: boolean;
+}
+
+const { row, bulkMode = false } = Astro.props;
+---
+
+<li
+  class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0 hover:bg-muted/40 transition-colors"
+  data-item-row
+  data-rec-id={row.recId}
+  data-item-id={row.item_id}
+  data-item-type={row.item_type}
+>
+  <input
+    type="checkbox"
+    data-row-bulk
+    class:list={[ "shrink-0 size-4 cursor-pointer mt-1", !bulkMode && "hidden" ]}
+    aria-label={`Select ${row.title} for bulk actions`}
+  />
+  <div class="shrink-0">
+    {row.image ? (
+      <img
+        src={row.image}
+        alt={row.title}
+        loading="lazy"
+        class="size-14 sm:size-16 rounded object-cover"
+      />
+    ) : (
+      <div class="size-14 sm:size-16 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
+        No image
+      </div>
+    )}
+  </div>
+  <div class="flex-1 min-w-0 space-y-1.5">
+    <a href={row.url} class="font-medium hover:underline line-clamp-2 text-sm">{row.title}</a>
+    <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <Badge variant="secondary">{row.item_type === 'stay' ? 'Stay' : 'Project'}</Badge>
+      {row.location && <span>{row.location}</span>}
+    </div>
+  </div>
+  <label class="shrink-0 inline-flex items-center gap-2 cursor-pointer">
+    <input
+      type="checkbox"
+      data-row-visited
+      checked={row.visited}
+      class="size-4 cursor-pointer"
+      aria-label={`Mark ${row.title} as visited`}
+    />
+  </label>
+  <button
+    type="button"
+    class="shrink-0 h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
+    data-row-kebab
+    aria-label={`Actions for ${row.title}`}
+    aria-haspopup="menu"
+    aria-expanded="false"
+  >⋯</button>
+  <div
+    class="hidden absolute right-0 mt-1 z-20 min-w-[180px] rounded-md border bg-popover p-1 shadow-md"
+    data-row-menu
+    role="menu"
+  >
+    <button data-row-action="view" data-item-url={row.url} class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">View</button>
+    <button data-row-action="move" class="w-full text-left px-2 py-1.5 text-sm rounded-sm hover:bg-accent focus:bg-accent focus:outline-none">Move to list…</button>
+    <div class="my-1 h-px bg-border"></div>
+    <button data-row-action="remove" class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none">Remove from list</button>
+  </div>
+</li>
