@@ -66,6 +66,13 @@ const { theme = 'light' } = Astro.props;
           </span>
         </DropdownMenuItem>
 
+        <DropdownMenuItem href="/account/settings/">
+          <span class="flex items-center gap-2">
+            <HugeIcon icon={UserIcon} size="sm" />
+            <span>Settings</span>
+          </span>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         <DropdownMenuItem data-logout-trigger destructive>

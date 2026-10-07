@@ -1,0 +1,319 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Button from '@/components/bearnie/button/Button.astro';
+import Input from '@/components/bearnie/input/Input.astro';
+import Label from '@/components/bearnie/label/Label.astro';
+import Tabs from '@/components/bearnie/tabs/Tabs.astro';
+import TabsList from '@/components/bearnie/tabs/TabsList.astro';
+import TabsTrigger from '@/components/bearnie/tabs/TabsTrigger.astro';
+import TabsContent from '@/components/bearnie/tabs/TabsContent.astro';
+import Alert from '@/components/bearnie/alert/Alert.astro';
+import AlertTitle from '@/components/bearnie/alert/AlertTitle.astro';
+import AlertDescription from '@/components/bearnie/alert/AlertDescription.astro';
+---
+
+<MainLayout
+  title="Settings"
+  description="Manage your account name, notification preferences, and account deletion."
+  noindex={true}
+>
+  <main
+    id="main-content"
+    class="container mx-auto max-w-screen-md px-4 py-8 sm:py-12 space-y-8"
+  >
+    <header class="space-y-1">
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Settings</h1>
+      <p class="text-sm text-muted-foreground">Manage your account settings.</p>
+    </header>
+
+    <div id="settingsErrorBanner" class="hidden"></div>
+
+    <Tabs defaultValue="account">
+      <TabsList>
+        <TabsTrigger value="account">Account</TabsTrigger>
+        <TabsTrigger value="notifications">Notifications</TabsTrigger>
+        <TabsTrigger value="danger">Danger zone</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="account">
+        <div id="accountContent" class="space-y-6 mt-4">
+          <p class="text-sm text-muted-foreground">Loading…</p>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="notifications">
+        <div id="notificationsContent" class="space-y-6 mt-4">
+          <p class="text-sm text-muted-foreground">Loading…</p>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="danger">
+        <div class="mt-4">
+          <Alert variant="destructive">
+            <AlertTitle>Delete account</AlertTitle>
+            <AlertDescription>
+              <p>
+                Account deletion is permanent. All your saved lists, projects, stays, and visit history are removed. This cannot be undone.
+              </p>
+              <div class="mt-4 space-y-2">
+                <Label for="deleteConfirm">Type <code class="font-mono">DELETE</code> to confirm</Label>
+                <Input id="deleteConfirm" name="deleteConfirm" type="text" autocomplete="off" placeholder="DELETE" />
+              </div>
+              <div class="mt-4 flex justify-end">
+                <Button id="deleteBtn" variant="destructive" disabled>
+                  Delete account
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </div>
+      </TabsContent>
+    </Tabs>
+  </main>
+</MainLayout>
+
+<script>
+  import {
+    getCurrentUser,
+    updateAccountName,
+    updateAccountPreference,
+    deleteAccount,
+  } from "../../lib/auth";
+  import { showToast } from "../../lib/toast-manager";
+
+  const state: {
+    user: any;
+    originalName: string;
+    originalNewsletter: boolean;
+  } = {
+    user: null,
+    originalName: "",
+    originalNewsletter: false,
+  };
+
+  function $id<T extends HTMLElement = HTMLElement>(id: string): T {
+    return document.getElementById(id) as T;
+  }
+
+  function escapeHtml(value: string | null | undefined): string {
+    return (value ?? "").replace(/[&<>"']/g, (c) => {
+      const map: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return map[c] ?? c;
+    });
+  }
+
+  function showError(message: string): void {
+    const banner = $id("settingsErrorBanner");
+    if (!banner) return;
+    banner.className =
+      "rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive";
+    banner.textContent = message;
+    banner.classList.remove("hidden");
+  }
+
+  function clearError(): void {
+    const banner = $id("settingsErrorBanner");
+    if (!banner) return;
+    banner.textContent = "";
+    banner.classList.add("hidden");
+  }
+
+  function renderAccount(user: any): void {
+    const target = $id("accountContent");
+    if (!target) return;
+
+    const safeName = escapeHtml(user.name ?? "");
+    const safeEmail = escapeHtml(user.email ?? "");
+
+    target.innerHTML = `
+      <div class="space-y-2">
+        <label for="nameInput" class="block text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Name</label>
+        <input
+          id="nameInput"
+          name="name"
+          type="text"
+          value="${safeName}"
+          autocomplete="name"
+          maxlength="120"
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+        />
+      </div>
+      <div class="space-y-2">
+        <label for="emailInput" class="block text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+        <input
+          id="emailInput"
+          name="email"
+          type="email"
+          value="${safeEmail}"
+          disabled
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+        />
+        <p class="text-xs text-muted-foreground">Email cannot be changed.</p>
+      </div>
+      <div class="flex items-center gap-4 pt-2">
+        <button
+          id="saveNameBtn"
+          type="button"
+          disabled
+          class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 gap-2 text-sm [&_svg]:size-4 rounded-md"
+        >Save changes</button>
+      </div>
+    `;
+
+    const nameInput = $id<HTMLInputElement>("nameInput");
+    const saveBtn = $id<HTMLButtonElement>("saveNameBtn");
+    if (!nameInput || !saveBtn) return;
+
+    nameInput.addEventListener("input", () => {
+      const changed = nameInput.value.trim() !== state.originalName;
+      saveBtn.disabled = !changed;
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      clearError();
+      const newName = nameInput.value.trim();
+      if (!newName) {
+        showToast("error", "Name cannot be empty.");
+        return;
+      }
+      saveBtn.disabled = true;
+      const prevLabel = saveBtn.textContent ?? "Save changes";
+      saveBtn.textContent = "Saving…";
+      try {
+        await updateAccountName(newName);
+        state.originalName = newName;
+        showToast("success", "Settings saved.");
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        showToast("error", `Could not save settings: ${message}`);
+        showError(message);
+      } finally {
+        saveBtn.textContent = prevLabel;
+        saveBtn.disabled = nameInput.value.trim() === state.originalName;
+      }
+    });
+  }
+
+  function renderNotifications(user: any): void {
+    const target = $id("notificationsContent");
+    if (!target) return;
+
+    const newsletter = !!(user.prefs?.newsletter === true);
+    state.originalNewsletter = newsletter;
+
+    target.innerHTML = `
+      <div class="space-y-2">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input
+            id="newsletterInput"
+            type="checkbox"
+            ${newsletter ? "checked" : ""}
+            class="size-4 mt-1 cursor-pointer shrink-0 rounded border-input text-primary focus:ring-ring"
+          />
+          <span class="space-y-1">
+            <span class="block text-sm font-medium">Newsletter</span>
+            <span class="block text-xs text-muted-foreground">
+              Get news, updates, and our latest posts on sustainable travel. No spam, unsubscribe any time.
+            </span>
+          </span>
+        </label>
+      </div>
+      <div class="flex items-center gap-4 pt-2">
+        <button
+          id="saveNewsletterBtn"
+          type="button"
+          disabled
+          class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 gap-2 text-sm [&_svg]:size-4 rounded-md"
+        >Save preferences</button>
+      </div>
+    `;
+
+    const newsInput = $id<HTMLInputElement>("newsletterInput");
+    const saveBtn = $id<HTMLButtonElement>("saveNewsletterBtn");
+    if (!newsInput || !saveBtn) return;
+
+    newsInput.addEventListener("change", () => {
+      saveBtn.disabled = newsInput.checked === state.originalNewsletter;
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      clearError();
+      saveBtn.disabled = true;
+      const prevLabel = saveBtn.textContent ?? "Save preferences";
+      saveBtn.textContent = "Saving…";
+      const desired = newsInput.checked;
+      try {
+        await updateAccountPreference("newsletter", desired);
+        state.originalNewsletter = desired;
+        showToast("success", "Preferences saved.");
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        showToast("error", `Could not save preferences: ${message}`);
+        showError(message);
+      } finally {
+        saveBtn.textContent = prevLabel;
+        saveBtn.disabled = newsInput.checked === state.originalNewsletter;
+      }
+    });
+  }
+
+  function wireDangerZone(): void {
+    const input = $id<HTMLInputElement>("deleteConfirm");
+    const btn = $id<HTMLButtonElement>("deleteBtn");
+    if (!input || !btn) return;
+    input.addEventListener("input", () => {
+      btn.disabled = input.value !== "DELETE";
+    });
+    btn.addEventListener("click", async () => {
+      if (input.value !== "DELETE") return;
+      clearError();
+      btn.disabled = true;
+      const prevLabel = btn.textContent ?? "Delete account";
+      btn.textContent = "Deleting…";
+      try {
+        await deleteAccount();
+        showToast("success", "Account deleted.");
+        window.setTimeout(() => {
+          window.location.href = "/login/";
+        }, 700);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        showToast("error", `Could not delete account: ${message}`);
+        showError(message);
+        btn.textContent = prevLabel;
+        btn.disabled = input.value !== "DELETE";
+      }
+    });
+  }
+
+  async function load(): Promise<void> {
+    try {
+      const auth = localStorage.getItem("pocketbase_auth");
+      if (!auth || auth === "null" || auth === "undefined") {
+        window.location.href = "/login/";
+        return;
+      }
+      const user = await getCurrentUser();
+      if (!user) {
+        window.location.href = "/login/";
+        return;
+      }
+      state.user = user;
+      state.originalName = (user.name ?? "").trim();
+      renderAccount(user);
+      renderNotifications(user);
+      wireDangerZone();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      showError(`Failed to load settings: ${message}`);
+    }
+  }
+
+  void load();
+</script>

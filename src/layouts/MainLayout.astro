@@ -29,6 +29,10 @@ const {
         <BaseHead title={title} description={description} image={image} noindex={noindex} />
     </head>
     <body>
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-md focus:bg-card focus:text-card-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+        >Skip to content</a>
         <HeaderUnified variant={headerVariant} theme={headerTheme} />
         <slot />
         <NewsletterSection />

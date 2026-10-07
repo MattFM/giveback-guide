@@ -11,6 +11,7 @@ import EmptyHeader from "@/components/bearnie/empty/EmptyHeader.astro";
 import EmptyTitle from "@/components/bearnie/empty/EmptyTitle.astro";
 import EmptyDescription from "@/components/bearnie/empty/EmptyDescription.astro";
 import EmptyMedia from "@/components/bearnie/empty/EmptyMedia.astro";
+import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
 import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
 ---
 
@@ -19,7 +20,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
   description="View and manage items saved to a list."
   noindex={true}
 >
-  <main class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-6">
+  <main id="main-content" class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-6">
     <header class="flex flex-wrap items-start gap-3">
       <div class="flex-1 min-w-0">
         <AccountBreadcrumb
@@ -167,7 +168,38 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
       <ul
         id="itemsList"
         class="divide-y rounded-lg border bg-card overflow-visible"
-      ></ul>
+      >
+        <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
+          <Skeleton class="size-4 shrink-0 mt-1" />
+          <Skeleton class="size-14 sm:size-16 shrink-0" />
+          <div class="flex-1 min-w-0 space-y-2">
+            <Skeleton class="h-4 w-3/4" />
+            <Skeleton class="h-3 w-1/3" />
+          </div>
+          <Skeleton class="size-4 shrink-0 mt-1" />
+          <Skeleton class="h-8 w-8 shrink-0" />
+        </li>
+        <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
+          <Skeleton class="size-4 shrink-0 mt-1" />
+          <Skeleton class="size-14 sm:size-16 shrink-0" />
+          <div class="flex-1 min-w-0 space-y-2">
+            <Skeleton class="h-4 w-2/3" />
+            <Skeleton class="h-3 w-1/2" />
+          </div>
+          <Skeleton class="size-4 shrink-0 mt-1" />
+          <Skeleton class="h-8 w-8 shrink-0" />
+        </li>
+        <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0">
+          <Skeleton class="size-4 shrink-0 mt-1" />
+          <Skeleton class="size-14 sm:size-16 shrink-0" />
+          <div class="flex-1 min-w-0 space-y-2">
+            <Skeleton class="h-4 w-1/2" />
+            <Skeleton class="h-3 w-1/4" />
+          </div>
+          <Skeleton class="size-4 shrink-0 mt-1" />
+          <Skeleton class="h-8 w-8 shrink-0" />
+        </li>
+      </ul>
       <div
         id="filterEmpty"
         class="hidden text-center text-sm text-muted-foreground py-6"
@@ -283,6 +315,8 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     deleteList,
     setDefaultList,
   } from "@/lib/lists";
+  import { showInlineRename, showInlineConfirm } from "@/lib/inline-dialogs";
+  import { showToast } from "@/lib/toast-manager";
   import { setCompleted, getStatusesForItems, type ItemStatus } from "@/lib/completed";
   import { getAccountTier } from "@/lib/billing";
 
@@ -345,6 +379,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     bulkMode: boolean;
     moveItems: Array<{ recId: string; item_type: ItemType; item_id: string }>;
     selectedIds: Set<string>;
+    dialogReturnFocus: HTMLElement | null;
   } = {
     list: null,
     items: [],
@@ -352,6 +387,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     filter: "all",
     bulkMode: false,
     moveItems: [],
+    dialogReturnFocus: null,
     selectedIds: new Set<string>(),
   };
 
@@ -709,9 +745,31 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
   }
 
   function wireFilter(): void {
-    document.querySelectorAll<HTMLButtonElement>("#filterGroup [data-filter]").forEach((button) => {
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>("#filterGroup [data-filter]"),
+    );
+    buttons.forEach((button, index) => {
       button.addEventListener("click", () => {
         const filter = button.dataset.filter as Filter;
+        if (filter) setFilter(filter);
+      });
+      button.addEventListener("keydown", (event: KeyboardEvent) => {
+        const targetIndex = (() => {
+          if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+            return (index + 1) % buttons.length;
+          }
+          if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+            return (index - 1 + buttons.length) % buttons.length;
+          }
+          if (event.key === "Home") return 0;
+          if (event.key === "End") return buttons.length - 1;
+          return null;
+        })();
+        if (targetIndex === null) return;
+        event.preventDefault();
+        const next = buttons[targetIndex];
+        next.focus();
+        const filter = next.dataset.filter as Filter;
         if (filter) setFilter(filter);
       });
     });
@@ -766,9 +824,12 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
           await setCompleted(item.item_type, item.item_id, true);
         }
       } else if (action === "remove") {
-        const ok = window.confirm(
-          `Remove ${items.length} item(s) from this list? They stay on your account; only this list is affected.`,
-        );
+        const ok = await showInlineConfirm({
+          title: `Remove ${items.length} item(s)?`,
+          body: "They stay on your account; only this list is affected.",
+          confirmLabel: "Remove",
+          variant: "destructive",
+        });
         if (!ok) return;
         for (const item of items) {
           await removeItemFromList(state.list.id, item.item_type, item.item_id);
@@ -797,14 +858,17 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     if (!state.list) return;
     const view = getItemsForCurrentView().filter((it) => !it.visited);
     if (view.length === 0) return;
-    const ok = window.confirm(
-      `Mark ${view.length} item(s) visible under this filter as visited?`,
-    );
+    const ok = await showInlineConfirm({
+      title: "Mark all visible as visited?",
+      body: `${view.length} item(s) under the current filter will be marked visited. You can un-do this by clicking their visited checkbox again.`,
+      confirmLabel: "Mark visited",
+    });
     if (!ok) return;
     try {
       for (const item of view) {
         await setCompleted(item.item_type, item.item_id, true);
       }
+      showToast("success", `${view.length} item(s) marked visited.`);
       await load();
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -823,6 +887,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     count: number
   ): void {
     state.moveItems = items.slice();
+    state.dialogReturnFocus = document.activeElement as HTMLElement | null;
     const dialog = $id("moveDialog");
     const overlay = $id("moveDialogOverlay");
     const content = $id("moveDialogContent");
@@ -868,7 +933,6 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     if (overlay) overlay.classList.remove("hidden");
     if (content) {
       content.classList.remove("hidden");
-      // Focus the first focusable element inside the dialog.
       requestAnimationFrame(() => {
         const first = content.querySelector<HTMLElement>(
           "input, button, [tabindex]:not([tabindex='-1'])",
@@ -879,7 +943,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     document.body.style.overflow = "hidden";
   }
 
-  function closeMoveDialog(): void {
+  function closeMoveDialog(restoreFocus = true): void {
     const dialog = $id("moveDialog");
     const overlay = $id("moveDialogOverlay");
     const content = $id("moveDialogContent");
@@ -888,6 +952,10 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     if (content) content.classList.add("hidden");
     document.body.style.overflow = "";
     state.moveItems = [];
+    if (restoreFocus && state.dialogReturnFocus && document.contains(state.dialogReturnFocus)) {
+      state.dialogReturnFocus.focus();
+    }
+    state.dialogReturnFocus = null;
   }
 
   async function confirmMove(): Promise<void> {
@@ -954,27 +1022,41 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     if (!state.list) return;
     try {
       if (action === "rename") {
-        const next = window.prompt("Rename list", state.list.title);
+        const titleEl = $id("listTitle");
+        if (!titleEl) return;
+        const next = await showInlineRename({
+          container: titleEl,
+          initialValue: state.list.title,
+          maxLength: 120,
+          placeholder: "List name",
+        });
         if (next === null) return;
         const trimmed = next.trim();
-        if (!trimmed) return;
+        if (!trimmed || trimmed === state.list.title) return;
         await renameList(state.list.id, trimmed);
+        showToast("success", "List renamed.");
         await load();
       } else if (action === "set-default") {
         if (state.list.isDefault) return;
         await setDefaultList(state.list.id);
+        showToast("success", "Default list updated.");
         await load();
       } else if (action === "delete") {
-        const ok = window.confirm(
-          `Delete "${state.list.title}"? This removes the list and its saved items. This cannot be undone.`,
-        );
+        const ok = await showInlineConfirm({
+          title: `Delete "${state.list.title}"?`,
+          body: "This removes the list and its saved items. This cannot be undone.",
+          confirmLabel: "Delete list",
+          variant: "destructive",
+        });
         if (!ok) return;
         await deleteList(state.list.id);
+        showToast("success", "List deleted.");
         window.location.href = DASHBOARD;
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       showError(`Could not update list: ${message}`);
+      showToast("error", message);
     }
   }
 

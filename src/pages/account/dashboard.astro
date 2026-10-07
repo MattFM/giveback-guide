@@ -1,7 +1,6 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
-import StatsStrip from "@/components/account/StatsStrip.astro";
 import UpgradePrompt from "@/components/account/UpgradePrompt.astro";
 import Empty from "@/components/bearnie/empty/Empty.astro";
 import EmptyHeader from "@/components/bearnie/empty/EmptyHeader.astro";
@@ -13,6 +12,7 @@ import CardHeader from "@/components/bearnie/card/CardHeader.astro";
 import CardTitle from "@/components/bearnie/card/CardTitle.astro";
 import CardContent from "@/components/bearnie/card/CardContent.astro";
 import Button from "@/components/bearnie/button/Button.astro";
+import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
 ---
 
 <MainLayout
@@ -20,7 +20,7 @@ import Button from "@/components/bearnie/button/Button.astro";
   description="Your lists, saves and recently visited projects and stays."
   noindex={true}
 >
-  <main class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-8">
+  <main id="main-content" class="container mx-auto max-w-screen-xl px-4 py-8 sm:py-12 space-y-8">
     <header class="flex flex-wrap items-center gap-4">
       <div class="flex-1 min-w-0 space-y-2">
         <h1 id="headerGreeting" class="text-2xl sm:text-3xl font-semibold tracking-tight">
@@ -35,7 +35,11 @@ import Button from "@/components/bearnie/button/Button.astro";
     <div id="errorBanner" class="hidden"></div>
 
     <section id="statsSection" class="hidden">
-      <StatsStrip kpis={[]} />
+      <div class="grid gap-4 sm:grid-cols-3">
+        <Skeleton class="h-24 w-full" />
+        <Skeleton class="h-24 w-full" />
+        <Skeleton class="h-24 w-full" />
+      </div>
     </section>
 
     <section id="emptySection" class="hidden">
@@ -108,6 +112,8 @@ import Button from "@/components/bearnie/button/Button.astro";
   import { getRecentCompleted, getCompletedCount } from "@/lib/completed";
   import { getAccountTier } from "@/lib/billing";
   import { canCreateList, FREE_TIER } from "@/lib/tier-limits";
+  import { showInlineRename, showInlineConfirm } from "@/lib/inline-dialogs";
+  import { showToast } from "@/lib/toast-manager";
 
   const LOGIN = "/login/";
 
@@ -410,10 +416,14 @@ import Button from "@/components/bearnie/button/Button.astro";
         event.preventDefault();
         const action = button.getAttribute("data-list-action");
         const listId = button.getAttribute("data-list-id");
-        const title = button.closest("[data-list-id]")?.querySelector<HTMLElement>(".font-semibold")?.textContent ?? "";
+        const card = button.closest<HTMLElement>("[data-list-id]");
+        if (!card) return;
+        const title =
+          card.querySelector<HTMLElement>("[data-list-link] .font-semibold")
+            ?.textContent ?? "";
         if (!action || !listId) return;
         closeAllMenus();
-        await handleListAction(action, listId, title);
+        await handleListAction(action, listId, title, card);
       });
     });
 
@@ -438,30 +448,48 @@ import Button from "@/components/bearnie/button/Button.astro";
   async function handleListAction(
     action: string,
     listId: string,
-    currentTitle: string
+    currentTitle: string,
+    cardEl?: HTMLElement
   ): Promise<void> {
     try {
       if (action === "rename") {
-        const next = window.prompt("Rename list", currentTitle);
+        if (!cardEl) return;
+        const titleEl = cardEl.querySelector<HTMLElement>(
+          "[data-list-link] .font-semibold"
+        );
+        if (!titleEl) return;
+        const next = await showInlineRename({
+          container: titleEl,
+          initialValue: currentTitle,
+          maxLength: 120,
+          placeholder: "List name",
+        });
         if (next === null) return;
         const trimmed = next.trim();
-        if (!trimmed) return;
+        if (!trimmed || trimmed === currentTitle) return;
         await renameList(listId, trimmed);
+        showToast("success", "List renamed.");
         await load();
       } else if (action === "set-default") {
         await setDefaultList(listId);
+        showToast("success", "Default list updated.");
         await load();
       } else if (action === "delete") {
-        const confirmed = window.confirm(
-          `Delete "${currentTitle}"? This removes the list and its saved items. This cannot be undone.`
-        );
+        const confirmed = await showInlineConfirm({
+          title: `Delete "${currentTitle}"?`,
+          body: "This removes the list and its saved items. This cannot be undone.",
+          confirmLabel: "Delete list",
+          variant: "destructive",
+        });
         if (!confirmed) return;
         await deleteList(listId);
+        showToast("success", "List deleted.");
         await load();
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       showError(`Could not update list: ${message}`);
+      showToast("error", message);
     }
   }
 
