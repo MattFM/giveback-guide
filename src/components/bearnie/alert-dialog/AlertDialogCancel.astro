@@ -7,7 +7,7 @@ export interface Props {
   type?: "button" | "submit" | "reset";
 }
 
-const { class: className, disabled, type = "button" } = Astro.props;
+const { class: className, disabled, type = "button", ...props } = Astro.props;
 ---
 
 <Button
@@ -17,6 +17,7 @@ const { class: className, disabled, type = "button" } = Astro.props;
   disabled={disabled}
   type={type}
   data-alert-dialog-cancel
+  {...props}
 >
   <slot />
 </Button>

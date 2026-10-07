@@ -13,6 +13,7 @@ const {
   class: className,
   disabled,
   type = "button",
+  ...props
 } = Astro.props;
 ---
 
@@ -23,6 +24,7 @@ const {
   disabled={disabled}
   type={type}
   data-alert-dialog-action
+  {...props}
 >
   <slot />
 </Button>
