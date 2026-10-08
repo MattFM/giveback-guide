@@ -20,14 +20,14 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
   noindex={true}
 >
   <main id="main-content" class="space-y-0">
-    <section id="bandedHeader" class="bg-indigo-100 dark:bg-indigo-950">
-      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-8">
+    <section id="bandedHeader" class="bg-[#F9FAFC] dark:bg-[#0F1217]">
+      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-10">
         <header class="flex flex-wrap items-center gap-4 mb-4 sm:mb-6">
           <div class="flex-1 min-w-0 space-y-2">
-            <h1 id="headerGreeting" class="text-2xl sm:text-3xl font-semibold tracking-tight">
+            <h1 id="headerGreeting" class="text-3xl sm:text-4xl lg:text-5xl tracking-tight font-extrabold text-gray-900 dark:text-white leading-[1.1]">
               Welcome back
             </h1>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
               <AccountBreadcrumb crumbs={[{ label: "Dashboard" }]} />
             </p>
           </div>
@@ -36,7 +36,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
         <div id="errorBanner" class="hidden mb-4"></div>
 
         <section id="statsSection" class="hidden">
-          <div class="grid gap-4 sm:grid-cols-3">
+          <div class="grid grid-cols-3 gap-2 sm:gap-4">
             <Skeleton class="h-24 w-full" />
             <Skeleton class="h-24 w-full" />
             <Skeleton class="h-24 w-full" />
@@ -247,8 +247,8 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     const safeTitle = escapeHtml(list.title);
     const countLabel =
       list.itemCount === 1 ? "item saved" : "items saved";
-    const defaultBadge = list.isDefault
-      ? `<span class="inline-flex items-center gap-1 rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground self-start">Default</span>`
+    const defaultChip = list.isDefault
+      ? `<span class="absolute top-3 left-3 z-10 inline-flex items-center rounded-sm bg-background/85 dark:bg-background/80 backdrop-blur-sm px-2 py-0.5 text-xs font-medium border shadow-sm">Default</span>`
       : "";
     const disabledDefault = list.isDefault
       ? `<button class="w-full text-left px-2 py-1.5 text-sm rounded-sm opacity-50 cursor-not-allowed" disabled aria-disabled="true">Set as default</button>`
@@ -258,13 +258,22 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     const firstLetter = ((safeTitle || "?").trim().charAt(0) || "?").toUpperCase();
     const cover = renderCover(list, safeTitle, palette);
     const avatar = `<span class="inline-flex items-center justify-center size-12 rounded-full ${palette.avatarBg} ${palette.avatarText} text-lg font-semibold shrink-0">${firstLetter}</span>`;
+    const targetListHref = `/account/list/?id=${encodeURIComponent(list.id)}`;
 
     return `
-      <div class="relative rounded-lg border bg-card overflow-hidden" data-list-id="${list.id}">
-        ${cover}
+      <div class="relative rounded-lg border bg-card overflow-hidden" data-list-id="${list.id}" data-list-title="${safeTitle}">
+        <a
+          href="${targetListHref}"
+          class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          data-list-link
+          aria-label="Open list ${safeTitle}"
+        >
+          ${cover}
+        </a>
+        ${defaultChip}
         <button
           type="button"
-          class="absolute top-3 right-3 inline-flex items-center justify-center size-10 rounded-md bg-background/80 text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring backdrop-blur-sm"
+          class="absolute top-3 right-3 z-10 inline-flex items-center justify-center size-10 rounded-md bg-background/80 text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring backdrop-blur-sm cursor-pointer"
           data-list-kebab
           data-list-id="${list.id}"
           aria-label="List actions"
@@ -283,19 +292,21 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
           <button data-list-action="delete" data-list-id="${list.id}" class="w-full text-left px-2 py-1.5 text-sm rounded-sm text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:outline-none">Delete list</button>
         </div>
         <a
-          href="/account/list/?id=${encodeURIComponent(list.id)}"
-          class="block p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          href="${targetListHref}"
+          class="block p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
           data-list-link
         >
           <div class="flex items-center gap-3 mb-3">
             ${avatar}
-            <div class="flex-1 min-w-0 space-y-1.5">
-              <p class="font-semibold text-lg leading-tight line-clamp-2">${safeTitle}</p>
-              ${defaultBadge}
-            </div>
+            <p class="flex-1 min-w-0 font-semibold text-lg leading-tight line-clamp-2">${safeTitle}</p>
           </div>
-          <p class="text-4xl font-semibold tabular-nums leading-none">${list.itemCount}</p>
-          <p class="text-sm text-muted-foreground mt-1">${countLabel} · ${list.lastUpdatedLabel}</p>
+          <div class="space-y-1">
+            <p class="text-4xl font-semibold tabular-nums leading-none">${list.itemCount}</p>
+            <p class="text-xs text-muted-foreground">${countLabel}</p>
+            ${list.lastUpdatedLabel
+              ? `<p class="text-xs text-muted-foreground">Last update · ${escapeHtml(list.lastUpdatedLabel)}</p>`
+              : ""}
+          </div>
         </a>
       </div>
     `;
@@ -326,7 +337,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
             <span class="text-3xl text-muted-foreground mb-2" aria-hidden="true">+</span>
             <p class="text-sm font-medium text-foreground">New list</p>
             <p class="text-xs text-muted-foreground mt-1 text-center">
-              Adding more lists is on the road.
+              You'll be able to add another list soon.
             </p>
           </div>
         </div>
@@ -352,10 +363,10 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
       .map(
         (kpi) => `
         <div class="rounded-lg border bg-card text-card-foreground">
-          <div class="p-4 space-y-1">
-            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">${kpi.label}</p>
-            <p class="text-3xl font-semibold tracking-tight tabular-nums">${kpi.value}</p>
-            ${kpi.caption ? `<p class="text-xs text-muted-foreground">${kpi.caption}</p>` : ""}
+          <div class="p-2 sm:p-4 space-y-1 text-center sm:text-left">
+            <p class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">${kpi.label}</p>
+            <p class="text-2xl sm:text-3xl font-semibold tracking-tight tabular-nums">${kpi.value}</p>
+            ${kpi.caption ? `<p class="hidden sm:block text-xs text-gray-600 dark:text-gray-400">${kpi.caption}</p>` : ""}
           </div>
         </div>
       `
@@ -375,9 +386,9 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
       const items = payload.items ?? [];
       const map = new Map<string, ItemIndexEntry>();
       for (const item of items) {
-        map.set(item.id, item);
+        map.set(`${item.type}:${item.id}`, item);
         for (const alt of item.altIds ?? []) {
-          map.set(alt, item);
+          map.set(`${item.type}:${alt}`, item);
         }
       }
       return map;
@@ -414,9 +425,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
         const listId = button.getAttribute("data-list-id");
         const card = button.closest<HTMLElement>("[data-list-id]");
         if (!card) return;
-        const title =
-          card.querySelector<HTMLElement>("[data-list-link] .font-semibold")
-            ?.textContent ?? "";
+        const title = card.getAttribute("data-list-title") ?? "";
         if (!action || !listId) return;
         closeAllMenus();
         await handleListAction(action, listId, title, card);
@@ -475,7 +484,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
         await load();
       } else if (action === "delete") {
         const confirmed = await showInlineConfirm({
-          title: `Delete "${currentTitle}"?`,
+          title: "Delete this list?",
           body: "This removes the list and its saved items. This cannot be undone.",
           confirmLabel: "Delete list",
           variant: "destructive",
@@ -496,7 +505,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
     const section = $id("statsSection");
     if (!section) return;
     section.innerHTML =
-      `<div class="grid gap-4 sm:grid-cols-3">${renderStatsKpis(kpis)}</div>`;
+      `<div class="grid grid-cols-3 gap-2 sm:gap-4">${renderStatsKpis(kpis)}</div>`;
     section.classList.remove("hidden");
   }
 
@@ -568,7 +577,7 @@ import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
         const items = list.items ?? [];
         const itemsTs = items.map((it: any) => new Date(it.added_at).getTime()).filter((t) => !Number.isNaN(t));
         const lastUpdatedMs = itemsTs.length ? Math.max(...itemsTs) : (list.created_at ? new Date(list.created_at).getTime() : null);
-        const lastUpdatedLabel = lastUpdatedMs ? relativeTime(new Date(lastUpdatedMs).toISOString()) : "—";
+        const lastUpdatedLabel = lastUpdatedMs ? relativeTime(new Date(lastUpdatedMs).toISOString()) : "";
         const firstItem = items[0];
         const coverKey = firstItem
           ? `${firstItem.item_type}:${String(firstItem.item_id)}`

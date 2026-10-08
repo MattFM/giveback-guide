@@ -19,6 +19,7 @@ import AlertDialogAction from '../bearnie/alert-dialog/AlertDialogAction.astro';
 import AlertDialogCancel from '../bearnie/alert-dialog/AlertDialogCancel.astro';
 import HugeIcon from '../bearnie/icon/HugeIcon.astro';
 import UserIcon from '@hugeicons/core-free-icons/UserIcon';
+import Settings01Icon from '@hugeicons/core-free-icons/Settings01Icon';
 import Logout01Icon from '@hugeicons/core-free-icons/Logout01Icon';
 import { SITE_TITLE } from '../../consts';
 
@@ -68,7 +69,7 @@ const { theme = 'light' } = Astro.props;
 
         <DropdownMenuItem href="/account/settings/">
           <span class="flex items-center gap-2">
-            <HugeIcon icon={UserIcon} size="sm" />
+            <HugeIcon icon={Settings01Icon} size="sm" />
             <span>Settings</span>
           </span>
         </DropdownMenuItem>

@@ -21,8 +21,8 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
   noindex={true}
 >
   <main id="main-content" class="space-y-0">
-    <section id="bandedHeader" class="bg-indigo-100 dark:bg-indigo-950">
-      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-8">
+    <section id="bandedHeader" class="bg-[#F9FAFC] dark:bg-[#0F1217]">
+      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 py-6 sm:py-10">
         <header class="mb-4 sm:mb-6">
           <AccountBreadcrumb
             crumbs={[
@@ -37,7 +37,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
             <div class="flex-1 min-w-0 space-y-1.5">
               <h1
                 id="listTitle"
-                class="text-2xl sm:text-3xl font-semibold tracking-tight"
+                class="text-3xl sm:text-4xl lg:text-5xl tracking-tight font-extrabold text-gray-900 dark:text-white leading-[1.1]"
               >
                 Loading…
               </h1>
@@ -46,7 +46,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
               </div>
               <div
                 id="listMeta"
-                class="text-sm text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1"
+                class="text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-x-2 gap-y-1"
               >
               </div>
             </div>
@@ -54,7 +54,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
               <button
                 id="kebab"
                 type="button"
-                class="inline-flex items-center justify-center h-10 w-10 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                class="inline-flex items-center justify-center h-10 w-10 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
                 aria-label="List actions"
                 aria-haspopup="menu"
                 aria-expanded="false"
@@ -98,37 +98,37 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
       <div id="listErrorBanner" class="hidden"></div>
 
       <section id="listControlsSection" class="hidden">
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div
             id="filterGroup"
-            class="inline-flex items-center gap-1 rounded-md border bg-card p-1 text-muted-foreground"
+            class="inline-flex items-center gap-1 rounded-md border bg-card p-1 text-muted-foreground self-center sm:self-auto"
             role="tablist"
             aria-label="Filter items"
           >
             <button
               type="button"
               data-filter="all"
-              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
               role="tab"
               aria-selected="true"
             >All</button>
             <button
               type="button"
               data-filter="visited"
-              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
               role="tab"
               aria-selected="false"
             >Visited</button>
             <button
               type="button"
               data-filter="unvisited"
-              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              class="px-3 py-1.5 text-xs font-medium rounded-sm transition-colors aria-selected:bg-background aria-selected:text-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
               role="tab"
               aria-selected="false"
             >Not visited</button>
           </div>
 
-          <div class="flex flex-wrap items-center gap-3 ml-auto">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 justify-center sm:justify-end">
             <button
               data-bulk-action="visit"
               type="button"
@@ -578,14 +578,19 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
     return `
       <li class="flex items-start gap-3 p-3 sm:p-4 border-b last:border-b-0 hover:bg-muted/40 transition-colors" data-item-row data-rec-id="${escapeHtml(item.recId)}" data-item-id="${escapeHtml(item.item_id)}" data-item-type="${item.item_type}">
         <input type="checkbox" data-row-bulk class="shrink-0 size-4 cursor-pointer mt-1" aria-label="Select ${safeTitle} for bulk actions" />
-        <div class="shrink-0">${image}</div>
-        <div class="flex-1 min-w-0 space-y-1.5">
-          <a href="${itemUrl}" class="font-medium hover:underline line-clamp-2 text-sm">${safeTitle}</a>
-          <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span class="inline-flex items-center rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">${typeTag}</span>
-            ${location}
+        <a
+          href="${itemUrl}"
+          class="flex flex-1 min-w-0 items-start gap-3 cursor-pointer rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <div class="shrink-0">${image}</div>
+          <div class="flex-1 min-w-0 space-y-1.5">
+            <span class="block font-medium hover:underline line-clamp-2 text-sm">${safeTitle}</span>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <span class="inline-flex items-center rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">${typeTag}</span>
+              ${location}
+            </div>
           </div>
-        </div>
+        </a>
         <div class="shrink-0 flex items-center gap-2 mt-0.5">
           <span
             class="text-xs text-muted-foreground font-medium select-none"
@@ -844,7 +849,6 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
           item_id: it.item_id,
         }));
         openMoveDialog(payload, items.length);
-        state.selectedIds.clear();
         return;
       }
       state.selectedIds.clear();
@@ -1026,7 +1030,7 @@ import AccountBreadcrumb from "@/components/account/AccountBreadcrumb.astro";
         await load();
       } else if (action === "delete") {
         const ok = await showInlineConfirm({
-          title: `Delete "${state.list.title}"?`,
+          title: "Delete this list?",
           body: "This removes the list and its saved items. This cannot be undone.",
           confirmLabel: "Delete list",
           variant: "destructive",

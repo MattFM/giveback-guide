@@ -56,10 +56,9 @@ export function showInlineConfirm(opts: InlineConfirmOptions): Promise<boolean> 
 
     const confirmBtn = document.createElement("button");
     confirmBtn.type = "button";
-    confirmBtn.className =
-      isDestructive
-        ? "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        : "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+    confirmBtn.className = isDestructive
+      ? "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-destructive/10 text-destructive-foreground hover:bg-destructive/20 disabled:pointer-events-none disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+      : "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer";
     confirmBtn.textContent = opts.confirmLabel;
 
     actions.appendChild(cancelBtn);
