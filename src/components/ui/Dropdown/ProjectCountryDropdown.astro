@@ -2,48 +2,41 @@
 import { getCollection } from "astro:content";
 import BaseSelectDropdown from "./BaseSelectDropdown.astro";
 
-// Get the current country from the URL
-const currentCountryPromise = (async () => {
-  const pathSegments = Astro.url.pathname.split("/");
-  const potentialCountry = pathSegments[2];
+const slugify = (s: string) =>
+  s.toLowerCase().trim().replace(/\s+/g, "-");
 
-  const projects = await getCollection("projects");
-  const validCountries = projects.reduce((acc: Set<string>, project) => {
-    const countries = Array.isArray(project.data.properties.pCountry)
-      ? project.data.properties.pCountry.map((c) =>
-          c.toLowerCase().replace(/\s+/g, "-")
-        )
-      : [String(project.data.properties.pCountry).toLowerCase().replace(/\s+/g, "-")];
-    countries.forEach((country) => acc.add(country));
-    return acc;
-  }, new Set<string>());
-
-  return validCountries.has(potentialCountry) ? potentialCountry : null;
-})();
-const currentCountry = await currentCountryPromise;
-
+// Single getCollection call. Both `currentCountry` (URL probe) and
+// `uniqueCountries` (dropdown items) are derived from the same result,
+// so we don't pay for an extra round-trip through the content layer.
 const projects = await getCollection("projects");
 
-// Extract unique countries and sort alphabetically
-const uniqueCountries = [
-  ...new Set(
-    projects.flatMap((project) =>
-      Array.isArray(project.data.properties.pCountry)
-        ? project.data.properties.pCountry
-        : [project.data.properties.pCountry]
-    )
-  ),
-].sort();
+const validCountrySlugs = new Set<string>();
+const uniqueCountries = new Set<string>();
+for (const project of projects) {
+  const raw = project.data.properties.pCountry;
+  const countries = Array.isArray(raw) ? raw : [raw];
+  for (const country of countries) {
+    if (typeof country !== "string" || country.length === 0) continue;
+    uniqueCountries.add(country);
+    validCountrySlugs.add(slugify(country));
+  }
+}
 
-// Transform to items array for BaseSelectDropdown
-const items = uniqueCountries.map((country) => {
-  const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-  return {
-    name: country,
-    slug: countrySlug,
-    url: `/projects/${countrySlug}`,
-  };
-});
+const potentialCountry = Astro.url.pathname.split("/")[2] ?? "";
+const currentCountry = validCountrySlugs.has(potentialCountry)
+  ? potentialCountry
+  : null;
+
+const items = [...uniqueCountries]
+  .sort((a, b) => a.localeCompare(b))
+  .map((country) => {
+    const countrySlug = slugify(country);
+    return {
+      name: country,
+      slug: countrySlug,
+      url: `/projects/${countrySlug}`,
+    };
+  });
 ---
 
 <BaseSelectDropdown
