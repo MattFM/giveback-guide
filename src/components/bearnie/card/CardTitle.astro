@@ -2,9 +2,17 @@
 import { cn } from '@/utils/cn';
 import type { HTMLAttributes } from 'astro/types';
 
-export interface Props extends HTMLAttributes<'div'> {}
+export interface Props extends HTMLAttributes<'div'> {
+    /**
+     * Element to render as. Default 'div' preserves original behaviour.
+     * Pass 'h3' (or appropriate heading level) for card titles that act as
+     * sub-headings of a parent section so screen readers include them in
+     * heading-level navigation.
+     */
+    as?: 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+}
 
-const { class: className, ...props } = Astro.props;
+const { class: className, as: Tag = 'div', ...props } = Astro.props;
 
 const classes = cn(
   "leading-none font-semibold",
@@ -12,6 +20,6 @@ const classes = cn(
 );
 ---
 
-<div class={classes} data-slot="card-title" {...props}>
+<Tag class={classes} data-slot="card-title" {...props}>
   <slot />
-</div>
+</Tag>

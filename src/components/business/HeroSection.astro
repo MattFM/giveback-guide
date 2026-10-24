@@ -1,0 +1,60 @@
+---
+/**
+ * Generic hero used at the top of /for-businesses/.
+ *
+ * Layout: text column on top, all wrapped in a soft brand-indigo background
+ * panel. Earlier revisions included a StatsStrip beneath the hero copy — this
+ * was removed in Phase 8 as the broader page rhythm made it redundant.
+ */
+import Button from "@/components/bearnie/button/Button.astro";
+import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
+import Badge from "@/components/bearnie/badge/Badge.astro";
+import { ArrowRight01Icon } from "@/components/bearnie/icon/icons";
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta: { label: string; href: string };
+}
+
+const {
+  eyebrow = "Opportunities for Businesses",
+  title,
+  subtitle,
+  primaryCta,
+  secondaryCta,
+} = Astro.props;
+---
+
+<section class="bg-gbg-indigo-50 dark:bg-gbg-indigo-700/10 py-12 sm:py-20">
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6">
+    <div class="max-w-3xl">
+      <Badge class="bg-gbg-indigo-600 hover:bg-gbg-indigo-700 text-white mb-6" data-flat-exempt="true">
+        {eyebrow}
+      </Badge>
+      <h1
+        class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.05]"
+      >
+        {title}
+      </h1>
+      <p class="mt-6 text-lg text-gray-700 dark:text-gray-300">
+        {subtitle}
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <Button
+          href={primaryCta.href}
+          size="lg"
+          class="bg-gbg-indigo-600 hover:bg-gbg-indigo-700 text-white"
+        >
+          {primaryCta.label}
+          <HugeIcon slot="right-icon" icon={ArrowRight01Icon} size="sm" />
+        </Button>
+        <Button href={secondaryCta.href} size="lg" variant="outline">
+          {secondaryCta.label}
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

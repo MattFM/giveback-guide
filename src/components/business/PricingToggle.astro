@@ -1,0 +1,62 @@
+---
+/**
+ * Monthly / Yearly billing toggle. Renders a Bearnie Switch with a "Save £10"
+ * callout next to the Yearly label.
+ *
+ * On click, sets `data-pricing-period="monthly" | "yearly"` on
+ * `document.documentElement`. PricingCard components read this attribute to
+ * show the appropriate price element via global CSS rules.
+ *
+ * Accessibility: visible "Monthly" / "Yearly" / "Save £10" labels are
+ * marked aria-hidden because they are visual cues; the Switch itself carries
+ * an explicit aria-label so screen readers announce "Toggle between monthly
+ * and yearly billing, switch, on/off" without a duplicate-label conflict.
+ */
+import Switch from "@/components/bearnie/switch/Switch.astro";
+---
+
+<div
+  class="inline-flex items-center gap-3"
+  role="group"
+  aria-label="Billing period"
+>
+  <span
+    class="text-sm font-medium text-gray-700 dark:text-gray-300 select-none"
+    aria-hidden="true"
+  >
+    Monthly
+  </span>
+  <Switch
+    id="pricing-period-toggle"
+    aria-label="Toggle between monthly and yearly billing"
+  />
+  <span
+    class="text-sm font-medium text-gray-700 dark:text-gray-300 select-none"
+    aria-hidden="true"
+  >
+    Yearly
+  </span>
+  <span
+    class="ml-1 inline-flex items-center rounded-sm bg-gbg-lime-100 text-gbg-lime-800 px-2 py-0.5 text-xs font-medium dark:bg-gbg-lime-700/20 dark:text-gbg-lime-300"
+    data-flat-exempt="true"
+    aria-hidden="true"
+  >
+    Save £10
+  </span>
+</div>
+
+<script>
+  const toggle = document.getElementById("pricing-period-toggle") as HTMLElement | null;
+  const applyPeriod = (period: "monthly" | "yearly") => {
+    document.documentElement.dataset.pricingPeriod = period;
+  };
+  // Initial state matches PricingCard's default (monthly); keep the page and cards in sync.
+  applyPeriod("monthly");
+
+  if (toggle) {
+    toggle.addEventListener("change", (event) => {
+      const detail = (event as CustomEvent<{ checked: boolean }>).detail;
+      applyPeriod(detail.checked ? "yearly" : "monthly");
+    });
+  }
+</script>

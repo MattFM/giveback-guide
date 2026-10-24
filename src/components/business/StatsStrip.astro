@@ -1,0 +1,39 @@
+---
+/**
+ * N-up stat tiles (Listings / Countries / Impact Areas on the homepage,
+ * and per-page datasets like the advertising page).
+ *
+ * Backward-compatible: when called without a `stats` prop it renders
+ * `businessStats` (the homepage numbers), so existing call sites — the
+ * HeroSection on /for-businesses/ in particular — keep working unchanged.
+ */
+import {
+  businessStats,
+  type StatBlock,
+} from "@/data/business-stat-blocks";
+
+interface Props {
+  stats?: StatBlock[];
+}
+
+const { stats = businessStats } = Astro.props;
+---
+
+<div
+  role="presentation"
+  class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4"
+>
+  {
+    stats.map((stat) => (
+      <div class="rounded-lg border bg-card text-card-foreground p-4 sm:p-6">
+        <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          {stat.label}
+        </p>
+        <p class="mt-2 text-2xl sm:text-3xl font-semibold tabular-nums">
+          {stat.value}
+        </p>
+        <p class="mt-1 text-xs text-muted-foreground">{stat.caption}</p>
+      </div>
+    ))
+  }
+</div>

@@ -8,6 +8,12 @@
       "environment": {
         "BEARNIE_REGISTRY_URL": "https://bearnie.dev/registry"
       }
+    },
+    "servers": {
+      "penpot": {
+        "type": "remote",
+        "url": "https://design.penpot.app/mcp/stream?userToken=eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2R0NNIn0.3FYtt81iwbc-UOYBznwSdb13Un3Qg2VorRD8qipPhwE9MAzxppKpIQ.Fr_6e4JZXibFu1YL.cPjPnTOOhyrP3CQ3ORvWD2aJ7tc7LntdVYRuVvB0rlDKcxr0QsuYvcL7LmjCp6I4yXbJH2qT33-ldJJ88PofU8UMCv3XiecFpRbQ2mA6RgC9qfN9CMV_Ap1Nr0dt8gVjzcnINhg2JEE_OcWvY6FBvWZ7oMgHD9dt3-gYUS252WUayuAfyEVdYjZ5yiQ9vSZIqbP_iFgaY9EqtEY_ejWBFBE.lJ8iVxPHYyntIziTA7v_gA"
+      }
     }
   }
 }

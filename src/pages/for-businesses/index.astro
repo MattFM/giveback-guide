@@ -1,0 +1,57 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+
+// Section components — composed top-to-bottom per the For Businesses plan.
+import HeroSection from "@/components/business/HeroSection.astro";
+import TwoWaysCard from "@/components/business/TwoWaysCard.astro";
+import WhyListGrid from "@/components/business/WhyListGrid.astro";
+import ListingIncludes from "@/components/business/ListingIncludes.astro";
+import PricingSection from "@/components/business/PricingSection.astro";
+import AdSummaryCard from "@/components/business/AdSummaryCard.astro";
+import FaqSection from "@/components/business/FaqSection.astro";
+
+---
+
+<MainLayout
+  title="For Businesses | Give Back Guide"
+  description="Grow your impact-driven or regenerative business with Give Back Guide. Free directory listings, optional paid visibility, and bespoke partnerships."
+>
+  <main id="main-content" class="surface-flat">
+    <!-- §1 Hero — page-foreground -->
+    <HeroSection
+      eyebrow="Opportunities for Businesses"
+      title="Reach travellers wanting to bring about positive change"
+      subtitle="Be part of a growing movement to make tourism a force for good. Get listed in our directory for free or choose one of our optional paid opportunities for greater visibility and to ensure our non-profit directory remains free and open to all."
+      primaryCta={{ label: "Get listed for free", href: "/for-businesses/submit/" }}
+      secondaryCta={{ label: "Discuss a Partnership", href: "/for-businesses/contact/" }}
+    />
+
+    <!-- §2 Two ways to work with us -->
+    <div class="bg-white dark:bg-gray-950 py-12 sm:py-20">
+      <TwoWaysCard />
+    </div>
+
+    <!-- §3 Why list on Give Back Guide? -->
+    <div class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-20">
+      <WhyListGrid />
+    </div>
+
+    <!-- §4 Your free listing includes -->
+    <div class="bg-white dark:bg-gray-950 py-12 sm:py-20">
+      <ListingIncludes />
+    </div>
+
+    <!-- §5 Pricing tiers -->
+    <div class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-20">
+      <PricingSection />
+    </div>
+
+    <!-- §6 Cross-link to Display Advertising -->
+    <AdSummaryCard />
+
+    <!-- §7 FAQ -->
+    <div class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-20">
+      <FaqSection />
+    </div>
+  </main>
+</MainLayout>

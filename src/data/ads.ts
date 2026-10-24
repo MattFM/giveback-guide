@@ -27,7 +27,7 @@ export const ADS: TextAd[] = [
     id: "advertise-here",
     title: "Support Give Back Guide",
     businessName: "Advertise here",
-    url: "https://giveback.guide/about/advertising/",
+    url: "https://giveback.guide/for-businesses/advertising/",
     cta: "Find out more",
     description:
       "Get your brand in front of thoughtful, ethical and sustainably-minded travellers.",

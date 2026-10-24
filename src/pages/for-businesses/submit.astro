@@ -1,0 +1,74 @@
+---
+import GenericPage from "../../layouts/GenericPage.astro";
+---
+
+<GenericPage
+    title="Submit your organisation | Give Back Guide"
+    headerTitle="Submit your organisation"
+    subtitle="Add your business or organisation to Give Back Guide. Free to submit, free to verify, free to be listed."
+>
+    <p>
+        Give Back Guide is a non-profit sustainable and regenerative travel
+        platform built by and for the community.
+    </p>
+    <p>
+        To be included in the directory, your business or organisation must
+        satisfy at least one of our <a
+            href="https://giveback.guide/about/impacts/">Impact Areas</a
+        >, and be able to provide proof on request. If you are unsure whether
+        your business qualifies, please read our Impact Areas page before
+        submitting.
+    </p>
+    <p>
+        It is <strong>completely free</strong> to add your listing. We research
+        and verify most of the listings in our database ourselves, but we also
+        rely on direct submissions from the businesses and organisations we
+        list.
+    </p>
+    <p>
+        We manually review every submission against our values and criteria —
+        typically within two to four weeks. We may follow up by email if we
+        need additional evidence or clarification. Read about our <a
+            href="https://giveback.guide/about/verification/"
+            >verification process</a
+        > for more detail.
+    </p>
+
+    <iframe
+        data-tally-src="https://tally.so/embed/RG1RN4?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+        loading="lazy"
+        width="100%"
+        height="1024"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title="Submit your organisation"></iframe>
+
+    <script is:inline>
+        var d = document,
+            w = "https://tally.so/widgets/embed.js",
+            v = function () {
+                "undefined" != typeof Tally
+                    ? Tally.loadEmbeds()
+                    : d
+                          .querySelectorAll("iframe[data-tally-src]:not([src])")
+                          .forEach(function (e) {
+                              e.src = e.dataset.tallySrc;
+                          });
+            };
+        if ("undefined" != typeof Tally) v();
+        else if (d.querySelector('script[src="' + w + '"]') == null) {
+            var s = d.createElement("script");
+            (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
+        }
+    </script>
+
+    <script>
+        // Re-initialize Tally forms after View Transitions
+        document.addEventListener("astro:page-load", () => {
+            if (typeof window !== "undefined" && "Tally" in window) {
+                (window as any).Tally.loadEmbeds();
+            }
+        });
+    </script>
+</GenericPage>

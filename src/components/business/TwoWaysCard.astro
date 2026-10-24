@@ -1,0 +1,98 @@
+---
+/**
+ * 2-up "Two ways to work with us" entry card.
+ * Directs a reader toward either listing submission or the advertising page.
+ */
+import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
+import Button from "@/components/bearnie/button/Button.astro";
+import Card from "@/components/bearnie/card/Card.astro";
+import CardHeader from "@/components/bearnie/card/CardHeader.astro";
+import CardTitle from "@/components/bearnie/card/CardTitle.astro";
+import CardDescription from "@/components/bearnie/card/CardDescription.astro";
+import CardContent from "@/components/bearnie/card/CardContent.astro";
+import CardFooter from "@/components/bearnie/card/CardFooter.astro";
+import { FolderAddIcon, ChartUpIcon, ArrowRight01Icon } from "@/components/bearnie/icon/icons";
+---
+
+<section
+  aria-labelledby="two-ways-heading"
+  class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6"
+>
+  <div class="text-left max-w-3xl">
+    <h2
+      id="two-ways-heading"
+      class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+    >
+      Two ways to work with us
+    </h2>
+    <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+      Get a permanent free listing in our directory with optional paid features,
+      and/or book a short-term advertising slot using our in-house display
+      text-based ads.
+    </p>
+  </div>
+  <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <Card class="bg-gray-50 dark:bg-gray-900/40">
+      <CardHeader>
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-lg bg-gbg-turquoise-50 text-gbg-turquoise-700 dark:bg-gbg-turquoise-700/15 dark:text-gbg-turquoise-200 mb-4"
+          aria-hidden="true"
+        >
+          <HugeIcon icon={FolderAddIcon} size="base" />
+        </span>
+        <CardTitle as="h3">Get listed in the directory</CardTitle>
+        <CardDescription>
+          Our free-to-access directory of social enterprises, community projects
+          and ethical businesses is our core product.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Getting listed in the directory is completely free and always will
+          be. Support our platform and get more visibility by choosing one of
+          our paid options.
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Button href="#pricing-heading" size="lg" class="w-full">
+          View options
+          <HugeIcon slot="right-icon" icon={ArrowRight01Icon} size="sm" />
+        </Button>
+      </CardFooter>
+    </Card>
+
+    <Card class="bg-gray-50 dark:bg-gray-900/40">
+      <CardHeader>
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-lg bg-gbg-azure-50 text-gbg-azure-700 dark:bg-gbg-azure-700/15 dark:text-gbg-azure-200 mb-4"
+          aria-hidden="true"
+        >
+          <HugeIcon icon={ChartUpIcon} size="base" />
+        </span>
+        <CardTitle as="h3">Advertise with us</CardTitle>
+        <CardDescription>
+          Our in-house text-based display advertising is open to ethical
+          businesses looking for short-term ad campaigns targeted towards our
+          highly-engaged audience.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Ads appear across the site on almost every page. Businesses listed in
+          our directory may also choose this option.
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Button
+          href="/for-businesses/advertising/"
+          size="lg"
+          variant="outline"
+          class="w-full"
+        >
+          View Advertising Options
+          <HugeIcon slot="right-icon" icon={ArrowRight01Icon} size="sm" />
+        </Button>
+      </CardFooter>
+    </Card>
+  </div>
+</section>

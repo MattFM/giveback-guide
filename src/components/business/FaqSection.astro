@@ -1,0 +1,52 @@
+---
+/**
+ * FAQ accordion. Source is `businessFaq` in src/data/business-faq.ts.
+ * Question -> AccordionTrigger; answerHTML -> AccordionContent with prose
+ * styling so inline anchors pick up the site's purple link colour.
+ *
+ * Phase 8 polish: heading/subtitle contained in a left-aligned wrapper, and
+ * AccordionTrigger gets `cursor-pointer` so sighted users get a clear visual
+ * affordance that the question is a click target.
+ *
+ * Phase 8 design overhaul: under `.surface-flat`, the bearine AccordionItem
+ * `border-b` dividers vanish, so we insert an explicit `<Separator>` between
+ * items to keep them visually distinct.
+ */
+import { businessFaq } from "@/data/business-faq";
+import Separator from "@/components/bearnie/separator/Separator.astro";
+import Accordion from "@/components/bearnie/accordion/Accordion.astro";
+import AccordionItem from "@/components/bearnie/accordion/AccordionItem.astro";
+import AccordionTrigger from "@/components/bearnie/accordion/AccordionTrigger.astro";
+import AccordionContent from "@/components/bearnie/accordion/AccordionContent.astro";
+---
+
+<section
+  aria-labelledby="faq-heading"
+  class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6"
+>
+  <div class="text-left mb-8 max-w-3xl mx-auto">
+    <h2
+      id="faq-heading"
+      class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+    >
+      Frequently asked questions
+    </h2>
+  </div>
+  <Accordion type="single" class="w-full max-w-3xl mx-auto">
+    {
+      businessFaq.map((item, idx) => (
+        <Fragment>
+          <AccordionItem value={item.question}>
+            <AccordionTrigger class="cursor-pointer">
+              {item.question}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div class="prose prose-sm dark:prose-invert max-w-none" set:html={item.answerHTML} />
+            </AccordionContent>
+          </AccordionItem>
+          {idx < businessFaq.length - 1 && <Separator />}
+        </Fragment>
+      ))
+    }
+  </Accordion>
+</section>

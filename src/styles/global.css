@@ -186,3 +186,60 @@ select {
     -webkit-appearance: none;
     appearance: none;
 }
+
+/* ----------------------------------------------------------------------------
+ * .surface-flat — opt-in for "no rounded corners, no thin borders" treatment.
+ *
+ * Used as a test bed to differentiate the site from generic card-and-border UI
+ * patterns characteristic of AI-generated layouts. Apply via
+ * `class="surface-flat"` on a wrapper element (typically a page's <main>).
+ *
+ * Behaviour inside the wrapped subtree:
+ *   - All `border-radius` collapses to 0 EXCEPT for interactive controls
+ *     (buttons, anchors styled as buttons, switches) and explicitly
+ *     opt-out lozenges — those keep rounded corners so they remain
+ *     recognisably interactive elements.
+ *   - All `border-width` collapses to 0 (border, border-b, border-2, etc.).
+ *
+ * Notes:
+ *   - Rings (`box-shadow --tw-ring-shadow`) are not affected — they remain
+ *     for elements that need a non-border elevation cue (e.g. the highlighted
+ *     pricing tier).
+ * ------------------------------------------------------------------------- */
+.surface-flat,
+.surface-flat * {
+    border-radius: 0 !important;
+}
+
+.surface-flat *,
+.surface-flat *::before,
+.surface-flat *::after {
+    border-width: 0 !important;
+}
+
+/* Restore rounded corners on interactive controls. Buttons (and links styled
+   as buttons via Bearine Button) take the Tailwind rounded-md value; switches
+   take the full-rounded track; data-flat-exempt defaults to rounded-sm for
+   badge-style lozenges. */
+.surface-flat button,
+.surface-flat a {
+    border-radius: var(--radius-md) !important;
+}
+
+.surface-flat [role="switch"],
+.surface-flat [role="switch"] * {
+    border-radius: var(--radius-full) !important;
+}
+
+.surface-flat [data-flat-exempt] {
+    border-radius: var(--radius-sm) !important;
+}
+
+/* Restore the outline button variant's 1px border, which the flat rule
+   above-stripped. The Bearine Button outline variant emits the
+   `border-input` Tailwind utility (border-color: var(--color-input)) —
+   matching on that class uniquely identifies outline-variant buttons
+   without affecting other flat elements. */
+.surface-flat [class~="border-input"] {
+    border-width: 1px !important;
+}
