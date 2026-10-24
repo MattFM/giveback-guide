@@ -5,6 +5,65 @@ import notionRehype from "notion-rehype-k";
 import rehypeStringify from "rehype-stringify";
 
 /**
+ * Tunables (overridable via env). Conservative defaults so dev startup
+ * always completes within ~90s even when individual page renders stall.
+ * None of these affect correctness — they bound resource use.
+ */
+const CONCURRENT_RENDERS = Number(
+  process.env.NOTION_CONCURRENT_RENDERS ?? 2
+);
+const PER_PAGE_TIMEOUT_MS = Number(
+  process.env.NOTION_PAGE_TIMEOUT_MS ?? 30_000
+);
+const TOTAL_TIMEOUT_MS = Number(
+  process.env.NOTION_LOAD_TIMEOUT_MS ?? 90_000
+);
+const MAX_BLOCK_DEPTH = Number(
+  process.env.NOTION_MAX_BLOCK_DEPTH ?? 10
+);
+const RENDER_BUDGET = process.env.NOTION_RENDER_BUDGET
+  ? Number(process.env.NOTION_RENDER_BUDGET)
+  : undefined;
+
+/**
+ * Race a promise against a timeout. If the timeout wins, the underlying
+ * promise keeps running in the background but is no longer awaited; its
+ * eventual settlement is harmless because no one holds a reference once
+ * the call site has moved on.
+ */
+function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  label: string
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return new Promise<T>((resolve, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`${label} timed out after ${ms}ms`)),
+      ms
+    );
+    promise.then(
+      (value) => {
+        if (timer) clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        if (timer) clearTimeout(timer);
+        reject(err);
+      }
+    );
+  });
+}
+
+/**
+ * Shared unified pipeline. Constructed once and reused across pages so we
+ * don't pay the cost of plugin initialisation for every one of the render
+ * tasks. Safe for the plugins in use here because each `process()` call
+ * builds and discards its own hast/vfile tree.
+ */
+const renderProcessor = unified().use(notionRehype).use(rehypeStringify);
+
+/**
  * Retry wrapper around native Node.js fetch with exponential backoff.
  * Handles 429 (rate limited) and 5xx (transient server errors).
  */
@@ -144,11 +203,14 @@ export interface NotionLoaderOptions {
 }
 
 /**
- * Recursively fetch all blocks for a Notion page.
+ * Recursively fetch all blocks for a Notion page. Depth is capped to
+ * prevent pathological nesting from triggering runaway block-fetches.
  */
 async function* listBlocks(
   client: Client,
-  blockId: string
+  blockId: string,
+  depth = 0,
+  maxDepth = MAX_BLOCK_DEPTH
 ): AsyncGenerator<any, void, unknown> {
   for await (const block of iteratePaginatedAPI(client.blocks.children.list, {
     block_id: blockId,
@@ -157,9 +219,11 @@ async function* listBlocks(
       continue;
     }
     if (block.has_children) {
-      const children = [];
-      for await (const child of listBlocks(client, block.id)) {
-        children.push(child);
+      const children: any[] = [];
+      if (depth + 1 < maxDepth) {
+        for await (const child of listBlocks(client, block.id, depth + 1, maxDepth)) {
+          children.push(child);
+        }
       }
       // @ts-ignore -- attach children to the block's typed content
       block[block.type].children = children;
@@ -169,11 +233,11 @@ async function* listBlocks(
 }
 
 /**
- * Render Notion blocks to HTML string using notion-rehype-k.
+ * Render Notion blocks to HTML string using the shared unified pipeline.
+ * The caller is responsible for wrapping this in a timeout via withTimeout.
  */
 async function renderBlocksToHtml(blocks: any[]): Promise<string> {
-  const processor = unified().use(notionRehype).use(rehypeStringify);
-  const vfile = await processor.process({ data: blocks });
+  const vfile = await renderProcessor.process({ data: blocks });
   return String(vfile);
 }
 
@@ -196,8 +260,6 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
   const name = collectionName
     ? `notion-loader/${collectionName}`
     : "notion-loader";
-
-  const CONCURRENT_RENDERS = 5;
 
   return {
     name,
@@ -234,60 +296,110 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
           existingPage?.digest !== page.last_edited_time ||
           !existingPage?.rendered;
 
-        if (needsRender) {
-          const filePath = `notion/${page.id}.md`;
-          const data = await parseData({
+        if (!needsRender) {
+          log_db.debug(`Skipped page ${page.id.slice(0, 6)}`);
+          continue;
+        }
+
+        const filePath = `notion/${page.id}.md`;
+        const data = await parseData({
+          id: page.id,
+          data: page,
+          filePath,
+        });
+
+        // Apply render budget: only queue tasks up to the configured cap so
+        // dev startup doesn't spend all its time on Notion rendering while
+        // you're iterating on UI. Pages that exceed the budget still get
+        // their validated `data` stored (so they remain queryable via
+        // getCollection); only the Notion→HTML render is skipped.
+        if (RENDER_BUDGET && renderTasks.length >= RENDER_BUDGET) {
+          log_db.info(
+            `Deferred page ${page.id.slice(0, 6)} (over render budget, data only)`
+          );
+          store.delete(page.id);
+          store.set({
             id: page.id,
-            data: page,
+            digest: page.last_edited_time,
+            data,
             filePath,
           });
-
-          const task = async () => {
-            try {
-              const blocks = [];
-              for await (const block of listBlocks(client, page.id)) {
-                blocks.push(block);
-              }
-              const html = await renderBlocksToHtml(blocks);
-              // Force Astro to accept the update by deleting the stale entry first
-              store.delete(page.id);
-              store.set({
-                id: page.id,
-                digest: page.last_edited_time,
-                data,
-                rendered: { html },
-                filePath,
-              });
-              renderedCount++;
-            } catch (err) {
-              log_db.warn(
-                `Failed to render page ${page.id.slice(0, 6)}: ${err instanceof Error ? err.message : String(err)}`
-              );
-              // Store without rendered content so the page still builds
-              store.delete(page.id);
-              store.set({
-                id: page.id,
-                digest: page.last_edited_time,
-                data,
-                filePath,
-              });
-            }
-          };
-
-          renderTasks.push(task);
-
-          log_db.info(
-            `${isCached ? "Updated" : "Created"} page ${page.id.slice(0, 6)}`
-          );
-        } else {
-          log_db.debug(`Skipped page ${page.id.slice(0, 6)}`);
+          continue;
         }
+
+        const task = async () => {
+          try {
+            // Wrap the entire block-fetch + render in a per-page timeout so
+            // a single stalled page cannot hold up the whole render pool.
+            const html = await withTimeout(
+              (async () => {
+                const blocks: any[] = [];
+                for await (const block of listBlocks(client, page.id)) {
+                  blocks.push(block);
+                }
+                return renderBlocksToHtml(blocks);
+              })(),
+              PER_PAGE_TIMEOUT_MS,
+              `Render page ${page.id.slice(0, 6)}`
+            );
+            // Force Astro to accept the update by deleting the stale entry first
+            store.delete(page.id);
+            store.set({
+              id: page.id,
+              digest: page.last_edited_time,
+              data,
+              rendered: { html },
+              filePath,
+            });
+            renderedCount++;
+          } catch (err) {
+            log_db.warn(
+              `Failed to render page ${page.id.slice(0, 6)}: ${
+                err instanceof Error ? err.message : String(err)
+              }`
+            );
+            // Store without rendered content so the page still builds
+            store.delete(page.id);
+            store.set({
+              id: page.id,
+              digest: page.last_edited_time,
+              data,
+              filePath,
+            });
+          }
+        };
+
+        renderTasks.push(task);
+
+        log_db.info(
+          `${isCached ? "Updated" : "Created"} page ${page.id.slice(0, 6)}`
+        );
       }
 
-      // Wait for all render operations to complete, with limited concurrency
+      // Wait for all render operations to complete, with limited concurrency.
+      // Wrap the whole pool in an overall timeout so a few pathological pages
+      // cannot hang dev startup indefinitely; tasks that completed store their
+      // HTML, tasks that didn't fall through to the catch handler in the task.
       if (renderTasks.length > 0) {
         log_db.info(`Rendering ${renderTasks.length} updated pages`);
-        await pLimitAll(renderTasks, CONCURRENT_RENDERS);
+        if (RENDER_BUDGET && renderTasks.length >= RENDER_BUDGET) {
+          log_db.info(
+            `(Render budget ${RENDER_BUDGET} applied; older pages deferred)`
+          );
+        }
+        try {
+          await withTimeout(
+            pLimitAll(renderTasks, CONCURRENT_RENDERS),
+            TOTAL_TIMEOUT_MS,
+            `Notion loader overall (${renderTasks.length} pages)`
+          );
+        } catch (err) {
+          log_db.warn(
+            `Notion loader overall guard triggered after ${TOTAL_TIMEOUT_MS}ms: ${
+              err instanceof Error ? err.message : String(err)
+            }. Continuing with whatever rendered so far.`
+          );
+        }
         log_db.info(`Rendered ${renderedCount} pages`);
       }
 
