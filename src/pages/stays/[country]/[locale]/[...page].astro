@@ -8,72 +8,53 @@ import StayLocaleDropdown from "../../../../components/ui/Dropdown/StayLocaleDro
 import Pagination from "../../../../components/ui/Pagination.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  // Fetch all stays
+  // Fetch all stays once.
   const stays = await getCollection("stays");
 
-  // Extract unique countries and locales from all projects
-  const countryLocaleMap = new Map();
+  // Bucket each stay into every (country, locale) group it belongs to in a
+  // single pass. The previous implementation iterated the full collection
+  // once per (country, locale) combination — O(C × L × N). The new version
+  // is O(N + G) where G is the number of distinct (country, locale) pairs.
+  const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, "-");
+  type Entry = { stay: (typeof stays)[number]; date: number };
+  const grouped = new Map<string, Entry[]>();
 
-  stays.forEach((stay) => {
-    const countries = Array.isArray(stay.data.properties.sCountry)
-      ? stay.data.properties.sCountry
-      : [stay.data.properties.sCountry];
+  for (const stay of stays) {
+    const rawCountries = stay.data.properties.sCountry;
+    const rawLocales = stay.data.properties.sLocale;
+    const countries = Array.isArray(rawCountries) ? rawCountries : [rawCountries];
+    const locales = Array.isArray(rawLocales) ? rawLocales : [rawLocales];
+    const date = (stay.data.properties.sPublished ?? new Date(0)).getTime();
 
-    const locales = Array.isArray(stay.data.properties.sLocale)
-      ? stay.data.properties.sLocale
-      : [stay.data.properties.sLocale];
-
-    countries.forEach((country) => {
-      const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-      if (!countryLocaleMap.has(countrySlug)) {
-        countryLocaleMap.set(countrySlug, new Set());
+    for (const country of countries) {
+      const countrySlug = slugify(String(country ?? ""));
+      if (!countrySlug) continue;
+      for (const locale of locales) {
+        const localeSlug = slugify(String(locale ?? ""));
+        if (!localeSlug) continue;
+        const key = `${countrySlug}|${localeSlug}`;
+        const list = grouped.get(key);
+        if (list) list.push({ stay, date });
+        else grouped.set(key, [{ stay, date }]);
       }
-      locales.forEach((locale) => {
-        const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-        countryLocaleMap.get(countrySlug).add(localeSlug);
-      });
-    });
-  });
-
-  // Generate paginated paths for each country and locale
-  const paths = [];
-
-  for (const [country, locales] of countryLocaleMap.entries()) {
-    for (const locale of locales) {
-      const localeStays = stays.filter((stay) => {
-        const stayCountries = Array.isArray(stay.data.properties.sCountry)
-          ? stay.data.properties.sCountry.map((c) =>
-              c.toLowerCase().replace(/\s+/g, "-")
-            )
-          : [stay.data.properties.sCountry.toLowerCase().replace(/\s+/g, "-")];
-
-        const stayLocales = Array.isArray(stay.data.properties.sLocale)
-          ? stay.data.properties.sLocale.map((l) =>
-              l.toLowerCase().replace(/\s+/g, "-")
-            )
-          : [stay.data.properties.sLocale.toLowerCase().replace(/\s+/g, "-")];
-
-        return (
-          stayCountries.includes(country) &&
-          stayLocales.includes(locale)
-        );
-      });
-
-      // Sort stays by sPublished date (descending order)
-      const sortedLocaleStays = localeStays.sort((a, b) => {
-        const dateA = a.data.properties.sPublished || new Date(0);
-        const dateB = b.data.properties.sPublished || new Date(0);
-        return dateB.getTime() - dateA.getTime(); // Most recent first
-      });
-
-      const localePaginatedPaths = paginate(sortedLocaleStays, {
-        pageSize: 9, // Number of stays per page
-        params: { country, locale },
-        props: { country, locale }, // Pass country and locale as props
-      });
-
-      paths.push(...localePaginatedPaths);
     }
+  }
+
+  // Sort each group once and emit paginated paths.
+  const paths = [];
+  for (const [key, items] of grouped) {
+    items.sort((a, b) => b.date - a.date);
+    const [country, locale] = key.split("|");
+    paths.push(
+      ...paginate(
+        items.map((i) => i.stay),
+        {
+          pageSize: 9,
+          params: { country, locale },
+          props: { country, locale },
+        }
+      )
+    );
   }
 
   return paths;

@@ -8,47 +8,45 @@ import ProjectLocaleDropdown from "../../../components/ui/Dropdown/ProjectLocale
 import Pagination from "../../../components/ui/Pagination.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  // Fetch all projects
+  // Fetch all projects once.
   const projects = await getCollection("projects");
 
-  // Extract unique countries
-  const countries = Array.from(
-    new Set(
-      projects.flatMap((project) =>
-        Array.isArray(project.data.properties.pCountry)
-          ? project.data.properties.pCountry
-          : [project.data.properties.pCountry]
+  // Bucket each project into every country group it belongs to in a single
+  // pass. Avoids re-iterating the full collection once per country.
+  const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, "-");
+  type Entry = { project: (typeof projects)[number]; date: number };
+  const grouped = new Map<string, Entry[]>();
+
+  for (const project of projects) {
+    const rawCountries = project.data.properties.pCountry;
+    const countries = Array.isArray(rawCountries) ? rawCountries : [rawCountries];
+    const date = (project.data.properties.pPublished ?? new Date(0)).getTime();
+    for (const country of countries) {
+      const countrySlug = slugify(String(country ?? ""));
+      if (!countrySlug) continue;
+      const list = grouped.get(countrySlug);
+      if (list) list.push({ project, date });
+      else grouped.set(countrySlug, [{ project, date }]);
+    }
+  }
+
+  // Sort each country group once and emit paginated paths.
+  const paths = [];
+  for (const [country, items] of grouped) {
+    items.sort((a, b) => b.date - a.date);
+    paths.push(
+      ...paginate(
+        items.map((i) => i.project),
+        {
+          pageSize: 9,
+          params: { country },
+          props: { country },
+        }
       )
-    )
-  ).map((country) => country.toLowerCase().replace(/\s+/g, "-"));
+    );
+  }
 
-  // Generate paginated paths for each country
-  const paths = countries.map((country) => {
-    const countryProjects = projects.filter((project) => {
-      const projectCountries = Array.isArray(project.data.properties.pCountry)
-        ? project.data.properties.pCountry.map((c) =>
-            c.toLowerCase().replace(/\s+/g, "-")
-          )
-        : [project.data.properties.pCountry.toLowerCase().replace(/\s+/g, "-")];
-
-      return projectCountries.includes(country);
-    });
-
-    // Sort projects by pPublished date (descending order)
-    const sortedCountryProjects = countryProjects.sort((a, b) => {
-      const dateA = a.data.properties.pPublished || new Date(0);
-      const dateB = b.data.properties.pPublished || new Date(0);
-      return dateB.getTime() - dateA.getTime(); // Most recent first
-    });
-
-    return paginate(sortedCountryProjects, {
-      pageSize: 9, // Number of projects per page
-      params: { country },
-      props: { country }, // Pass country as a prop
-    });
-  });
-
-  return paths.flat();
+  return paths;
 }
 
 const { country } = Astro.params; // Get the current country from the URL

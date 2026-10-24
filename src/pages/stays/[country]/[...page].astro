@@ -8,47 +8,45 @@ import StayLocaleDropdown from "../../../components/ui/Dropdown/StayLocaleDropdo
 import Pagination from "../../../components/ui/Pagination.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  // Fetch all stays
+  // Fetch all stays once.
   const stays = await getCollection("stays");
 
-  // Extract unique countries
-  const countries = Array.from(
-    new Set(
-      stays.flatMap((stay) =>
-        Array.isArray(stay.data.properties.sCountry)
-          ? stay.data.properties.sCountry
-          : [stay.data.properties.sCountry]
+  // Bucket each stay into every country group it belongs to in a single
+  // pass. Avoids re-iterating the full collection once per country.
+  const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, "-");
+  type Entry = { stay: (typeof stays)[number]; date: number };
+  const grouped = new Map<string, Entry[]>();
+
+  for (const stay of stays) {
+    const rawCountries = stay.data.properties.sCountry;
+    const countries = Array.isArray(rawCountries) ? rawCountries : [rawCountries];
+    const date = (stay.data.properties.sPublished ?? new Date(0)).getTime();
+    for (const country of countries) {
+      const countrySlug = slugify(String(country ?? ""));
+      if (!countrySlug) continue;
+      const list = grouped.get(countrySlug);
+      if (list) list.push({ stay, date });
+      else grouped.set(countrySlug, [{ stay, date }]);
+    }
+  }
+
+  // Sort each country group once and emit paginated paths.
+  const paths = [];
+  for (const [country, items] of grouped) {
+    items.sort((a, b) => b.date - a.date);
+    paths.push(
+      ...paginate(
+        items.map((i) => i.stay),
+        {
+          pageSize: 9,
+          params: { country },
+          props: { country },
+        }
       )
-    )
-  ).map((country) => country.toLowerCase().replace(/\s+/g, "-"));
+    );
+  }
 
-  // Generate paginated paths for each country
-  const paths = countries.map((country) => {
-    const countryStays = stays.filter((stay) => {
-      const stayCountries = Array.isArray(stay.data.properties.sCountry)
-        ? stay.data.properties.sCountry.map((c) =>
-            c.toLowerCase().replace(/\s+/g, "-")
-          )
-        : [stay.data.properties.sCountry.toLowerCase().replace(/\s+/g, "-")];
-
-      return stayCountries.includes(country);
-    });
-
-    // Sort stays by sPublished date (descending order)
-    const sortedCountryStays = countryStays.sort((a, b) => {
-      const dateA = a.data.properties.sPublished || new Date(0);
-      const dateB = b.data.properties.sPublished || new Date(0);
-      return dateB.getTime() - dateA.getTime(); // Most recent first
-    });
-
-    return paginate(sortedCountryStays, {
-      pageSize: 9, // Number of stays per page
-      params: { country },
-      props: { country }, // Pass country as a prop
-    });
-  });
-
-  return paths.flat();
+  return paths;
 }
 
 const { country } = Astro.params; // Get the current country from the URL

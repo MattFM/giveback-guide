@@ -8,72 +8,56 @@ import ProjectLocaleDropdown from "../../../../components/ui/Dropdown/ProjectLoc
 import Pagination from "../../../../components/ui/Pagination.astro";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  // Fetch all projects
+  // Fetch all projects once.
   const projects = await getCollection("projects");
 
-  // Extract unique countries and locales from all projects
-  const countryLocaleMap = new Map();
+  // Bucket each project into every (country, locale) group it belongs to in
+  // a single pass. The previous implementation iterated the full collection
+  // once per (country, locale) combination — O(C × L × N) — which is by far
+  // the dominant cost of this route's getStaticPaths. With ~60 countries,
+  // ~10 locales each and 280+ projects that worked out at ~168k filter
+  // iterations per Astro sync. The new version is O(N + G) where G is the
+  // number of distinct (country, locale) pairs.
+  const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, "-");
+  type Entry = { project: (typeof projects)[number]; date: number };
+  const grouped = new Map<string, Entry[]>();
 
-  projects.forEach((project) => {
-    const countries = Array.isArray(project.data.properties.pCountry)
-      ? project.data.properties.pCountry
-      : [project.data.properties.pCountry];
+  for (const project of projects) {
+    const rawCountries = project.data.properties.pCountry;
+    const rawLocales = project.data.properties.pLocale;
+    const countries = Array.isArray(rawCountries) ? rawCountries : [rawCountries];
+    const locales = Array.isArray(rawLocales) ? rawLocales : [rawLocales];
+    const date = (project.data.properties.pPublished ?? new Date(0)).getTime();
 
-    const locales = Array.isArray(project.data.properties.pLocale)
-      ? project.data.properties.pLocale
-      : [project.data.properties.pLocale];
-
-    countries.forEach((country) => {
-      const countrySlug = country.toLowerCase().replace(/\s+/g, "-");
-      if (!countryLocaleMap.has(countrySlug)) {
-        countryLocaleMap.set(countrySlug, new Set());
+    for (const country of countries) {
+      const countrySlug = slugify(String(country ?? ""));
+      if (!countrySlug) continue;
+      for (const locale of locales) {
+        const localeSlug = slugify(String(locale ?? ""));
+        if (!localeSlug) continue;
+        const key = `${countrySlug}|${localeSlug}`;
+        const list = grouped.get(key);
+        if (list) list.push({ project, date });
+        else grouped.set(key, [{ project, date }]);
       }
-      locales.forEach((locale) => {
-        const localeSlug = locale.toLowerCase().replace(/\s+/g, "-");
-        countryLocaleMap.get(countrySlug).add(localeSlug);
-      });
-    });
-  });
-
-  // Generate paginated paths for each country and locale
-  const paths = [];
-
-  for (const [country, locales] of countryLocaleMap.entries()) {
-    for (const locale of locales) {
-      const localeProjects = projects.filter((project) => {
-        const projectCountries = Array.isArray(project.data.properties.pCountry)
-          ? project.data.properties.pCountry.map((c) =>
-              c.toLowerCase().replace(/\s+/g, "-")
-            )
-          : [project.data.properties.pCountry.toLowerCase().replace(/\s+/g, "-")];
-
-        const projectLocales = Array.isArray(project.data.properties.pLocale)
-          ? project.data.properties.pLocale.map((l) =>
-              l.toLowerCase().replace(/\s+/g, "-")
-            )
-          : [project.data.properties.pLocale.toLowerCase().replace(/\s+/g, "-")];
-
-        return (
-          projectCountries.includes(country) &&
-          projectLocales.includes(locale)
-        );
-      });
-
-      // Sort projects by pPublished date (descending order)
-      const sortedLocaleProjects = localeProjects.sort((a, b) => {
-        const dateA = a.data.properties.pPublished || new Date(0);
-        const dateB = b.data.properties.pPublished || new Date(0);
-        return dateB.getTime() - dateA.getTime(); // Most recent first
-      });
-
-      const localePaginatedPaths = paginate(sortedLocaleProjects, {
-        pageSize: 9, // Number of projects per page
-        params: { country, locale },
-        props: { country, locale }, // Pass country and locale as props
-      });
-
-      paths.push(...localePaginatedPaths);
     }
+  }
+
+  // Sort each group once and emit paginated paths.
+  const paths = [];
+  for (const [key, items] of grouped) {
+    items.sort((a, b) => b.date - a.date);
+    const [country, locale] = key.split("|");
+    paths.push(
+      ...paginate(
+        items.map((i) => i.project),
+        {
+          pageSize: 9,
+          params: { country, locale },
+          props: { country, locale },
+        }
+      )
+    );
   }
 
   return paths;
