@@ -35,37 +35,52 @@ const actionId = String(
     (properties as any).sID ?? (properties as any).sSlug ?? "",
 ).trim();
 
-// Filter related projects
-const relatedProjects = allStays
-    .filter((stay) => {
-        // Exclude the current project
-        if (stay.data.properties.sTitle === properties.sTitle) return false;
+// Pick up to 3 related stays: matching by locale wins over matching by
+// country. Build O(1) lookup sets for the current stay's locales / countries
+// so the per-stay intersection is just `Set.has()`, and stop once we have
+// enough results.
+const currentTitle = properties.sTitle;
+const currentLocales = new Set<string>(
+    Array.isArray(properties.sLocale)
+        ? properties.sLocale
+        : properties.sLocale
+          ? [properties.sLocale]
+          : []
+);
+const currentCountries = new Set<string>(
+    Array.isArray(properties.sCountry)
+        ? properties.sCountry
+        : properties.sCountry
+          ? [properties.sCountry]
+          : []
+);
 
-        // Match by locale first
-        if (
-            Array.isArray(stay.data.properties.sLocale) &&
-            Array.isArray(properties.sLocale) &&
-            stay.data.properties.sLocale.some((stay) =>
-                properties.sLocale.includes(stay),
-            )
-        ) {
-            return true;
-        }
+const relatedProjects: typeof allStays = [];
+for (const stay of allStays) {
+    if (stay.data.properties.sTitle === currentTitle) continue;
 
-        // Match by country if no locale match
-        if (
-            Array.isArray(stay.data.properties.sCountry) &&
-            Array.isArray(properties.sCountry) &&
-            stay.data.properties.sCountry.some((stay) =>
-                properties.sCountry.includes(stay),
-            )
-        ) {
-            return true;
-        }
+    const rawLocales = stay.data.properties.sLocale;
+    const rawCountries = stay.data.properties.sCountry;
+    const stayLocales = Array.isArray(rawLocales)
+        ? rawLocales
+        : rawLocales
+          ? [rawLocales]
+          : [];
+    const stayCountries = Array.isArray(rawCountries)
+        ? rawCountries
+        : rawCountries
+          ? [rawCountries]
+          : [];
 
-        return false;
-    })
-    .slice(0, 3); // Limit to 3 projects
+    const localeMatch = stayLocales.some((l) => currentLocales.has(l));
+    const countryMatch =
+        !localeMatch &&
+        stayCountries.some((c) => currentCountries.has(c));
+    if (localeMatch || countryMatch) {
+        relatedProjects.push(stay);
+        if (relatedProjects.length >= 3) break;
+    }
+}
 
 // Split facilities into two columns
 let facilitiesLeft: string[] = [];

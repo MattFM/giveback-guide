@@ -38,37 +38,52 @@ const actionId = String(
     (properties as any).pID ?? (properties as any).pSlug ?? "",
 ).trim();
 
-// Filter related projects
-const relatedProjects = allProjects
-    .filter((project) => {
-        // Exclude the current project
-        if (project.data.properties.pTitle === properties.pTitle) return false;
+// Pick up to 3 related projects: matching by locale wins over matching by
+// country. Build O(1) lookup sets for the current project's locales /
+// countries so the per-project intersection is just \`Set.has()\`, and stop
+// once we have enough results.
+const currentTitle = properties.pTitle;
+const currentLocales = new Set<string>(
+    Array.isArray(properties.pLocale)
+        ? properties.pLocale
+        : properties.pLocale
+          ? [properties.pLocale]
+          : []
+);
+const currentCountries = new Set<string>(
+    Array.isArray(properties.pCountry)
+        ? properties.pCountry
+        : properties.pCountry
+          ? [properties.pCountry]
+          : []
+);
 
-        // Match by locale first
-        if (
-            Array.isArray(project.data.properties.pLocale) &&
-            Array.isArray(properties.pLocale) &&
-            project.data.properties.pLocale.some((locale) =>
-                properties.pLocale.includes(locale),
-            )
-        ) {
-            return true;
-        }
+const relatedProjects: typeof allProjects = [];
+for (const project of allProjects) {
+    if (project.data.properties.pTitle === currentTitle) continue;
 
-        // Match by country if no locale match
-        if (
-            Array.isArray(project.data.properties.pCountry) &&
-            Array.isArray(properties.pCountry) &&
-            project.data.properties.pCountry.some((country) =>
-                properties.pCountry.includes(country),
-            )
-        ) {
-            return true;
-        }
+    const rawLocales = project.data.properties.pLocale;
+    const rawCountries = project.data.properties.pCountry;
+    const projectLocales = Array.isArray(rawLocales)
+        ? rawLocales
+        : rawLocales
+          ? [rawLocales]
+          : [];
+    const projectCountries = Array.isArray(rawCountries)
+        ? rawCountries
+        : rawCountries
+          ? [rawCountries]
+          : [];
 
-        return false;
-    })
-    .slice(0, 3); // Limit to 3 projects
+    const localeMatch = projectLocales.some((l) => currentLocales.has(l));
+    const countryMatch =
+        !localeMatch &&
+        projectCountries.some((c) => currentCountries.has(c));
+    if (localeMatch || countryMatch) {
+        relatedProjects.push(project);
+        if (relatedProjects.length >= 3) break;
+    }
+}
 ---
 
 <MainLayout title={title} description={description} image={image}>
