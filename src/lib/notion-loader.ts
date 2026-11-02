@@ -1,4 +1,7 @@
 import type { Loader } from "astro/loaders";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 // `@notionhq/client` v5 is published as CommonJS, so we import it as a
 // default export and destructure the symbols we use. Named ESM imports
 // would otherwise trip Vite's module-evaluate path.
@@ -46,18 +49,23 @@ async function resolveDataSourceId(
 }
 
 /**
- * Tunables (overridable via env). Conservative defaults so dev startup
- * always completes within ~90s even when individual page renders stall.
- * None of these affect correctness — they bound resource use.
+ * Tunables (overridable via env).
+ *
+ * Concurrency is deliberately 5 rather than 2: the work is dominated by
+ * Notion API latency (~250 ms per page) and Notion's rate limiter, while
+ * the HTML renderer itself costs ~1 ms per page. Setting this too low
+ * makes a cold sync take minutes instead of a minute.
  */
 const CONCURRENT_RENDERS = Number(
-  process.env.NOTION_CONCURRENT_RENDERS ?? 2
+  process.env.NOTION_CONCURRENT_RENDERS ?? 5
 );
-const PER_PAGE_TIMEOUT_MS = Number(
+/**
+ * Per-request timeout, enforced by `fetchOnce` with an AbortController.
+ * It bounds a single HTTP attempt, not the whole retry sequence, so long
+ * Notion 429 backoffs don't count against it.
+ */
+const REQUEST_TIMEOUT_MS = Number(
   process.env.NOTION_PAGE_TIMEOUT_MS ?? 30_000
-);
-const TOTAL_TIMEOUT_MS = Number(
-  process.env.NOTION_LOAD_TIMEOUT_MS ?? 90_000
 );
 const MAX_BLOCK_DEPTH = Number(
   process.env.NOTION_MAX_BLOCK_DEPTH ?? 10
@@ -66,65 +74,89 @@ const RENDER_BUDGET = process.env.NOTION_RENDER_BUDGET
   ? Number(process.env.NOTION_RENDER_BUDGET)
   : undefined;
 
-// When true, the loader still parses page metadata (Zod transforms) and
-// queues tasks normally, but each task swaps the expensive
-// listBlocks + renderBlocksToHtml work for a small placeholder HTML
-// string. This lets dev mode start in seconds even with hundreds of
-// published Notion pages, where the unified-based renderer would
-// otherwise blow past Astro's startup budget.
-//
-// Resolution order at module load time:
-//   1. `NOTION_SKIP_HTML_RENDER=0`  -> force OFF (kill switch)
-//   2. `NOTION_SKIP_HTML_RENDER=1`  -> force ON
-//   3. `process.env.NODE_ENV === "development"` -> ON (default in dev)
-//   4. otherwise                     -> OFF (production)
-//
-// Production builds (Astro sets NODE_ENV="production" during build) keep
-// full rendering. Dev runs get the placeholder for free unless the kill
-// switch is set.
-const ENV_SKIP = process.env.NOTION_SKIP_HTML_RENDER;
-const IS_DEV = process.env.NODE_ENV === "development";
-
+// Emergency escape hatch only. Dev mode must show real Notion content,
+// so this is never enabled by default. Placeholder output is tagged and
+// is never written to the durable cache nor treated as valid content,
+// which means disabling the flag restores real HTML on the next run.
 const SKIP_HTML_RENDER =
-  ENV_SKIP === "0" || ENV_SKIP === "false"
-    ? false
-    : ENV_SKIP === "1" ||
-      ENV_SKIP === "true" ||
-      IS_DEV;
+  process.env.NOTION_SKIP_HTML_RENDER === "1" ||
+  process.env.NOTION_SKIP_HTML_RENDER === "true";
 
+const PLACEHOLDER_MARKER = "data-notion-blocks-placeholder";
 const PLACEHOLDER_HTML =
-  '<div data-notion-blocks-placeholder aria-hidden="true">' +
+  `<div ${PLACEHOLDER_MARKER} aria-hidden="true">` +
   "[Notion blocks rendered at production build time]" +
   "</div>";
 
 /**
- * Race a promise against a timeout. If the timeout wins, the underlying
- * promise keeps running in the background but is no longer awaited; its
- * eventual settlement is harmless because no one holds a reference once
- * the call site has moved on.
+ * Durable render cache.
+ *
+ * Astro keeps content in `.astro/data-store.json`, which is disposable:
+ * Astro clears it whenever the content config, Astro config or Astro
+ * version changes, and it is lost if `.astro/` is deleted or a sync is
+ * interrupted. This cache lives outside Astro's store in
+ * `.cache/notion-render/` and is written per page as soon as that page
+ * finishes rendering, so an empty Astro store can be rehydrated without
+ * a single Notion block request.
+ *
+ * Entries are keyed by page id and validated against the page's
+ * `last_edited_time` plus `RENDER_CACHE_VERSION`. Bump the version
+ * whenever the block renderer changes in a way that invalidates output.
  */
-function withTimeout<T>(
-  promise: Promise<T>,
-  ms: number,
-  label: string
-): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  return new Promise<T>((resolve, reject) => {
-    timer = setTimeout(
-      () => reject(new Error(`${label} timed out after ${ms}ms`)),
-      ms
+const RENDER_CACHE_VERSION = 1;
+const RENDER_CACHE_DIR = fileURLToPath(
+  new URL("../../.cache/notion-render/", import.meta.url)
+);
+
+function renderCacheFile(pageId: string): string {
+  return path.join(RENDER_CACHE_DIR, `${pageId}.json`);
+}
+
+async function readRenderCache(
+  pageId: string,
+  digest: string
+): Promise<string | null> {
+  try {
+    const raw = await readFile(renderCacheFile(pageId), "utf8");
+    const parsed = JSON.parse(raw) as {
+      v?: number;
+      digest?: string;
+      html?: string;
+    };
+    if (
+      parsed.v !== RENDER_CACHE_VERSION ||
+      parsed.digest !== digest ||
+      typeof parsed.html !== "string" ||
+      parsed.html.includes(PLACEHOLDER_MARKER)
+    ) {
+      return null;
+    }
+    return parsed.html;
+  } catch {
+    return null;
+  }
+}
+
+async function writeRenderCache(
+  pageId: string,
+  digest: string,
+  html: string
+): Promise<void> {
+  // Never persist placeholders: they must not survive into a later run.
+  if (html.includes(PLACEHOLDER_MARKER)) return;
+  try {
+    await mkdir(RENDER_CACHE_DIR, { recursive: true });
+    const file = renderCacheFile(pageId);
+    const tmp = `${file}.${process.pid}.tmp`;
+    await writeFile(
+      tmp,
+      JSON.stringify({ v: RENDER_CACHE_VERSION, digest, html }),
+      "utf8"
     );
-    promise.then(
-      (value) => {
-        if (timer) clearTimeout(timer);
-        resolve(value);
-      },
-      (err) => {
-        if (timer) clearTimeout(timer);
-        reject(err);
-      }
-    );
-  });
+    await rename(tmp, file);
+  } catch {
+    // A cache-write failure must never fail the content sync.
+  }
 }
 
 /**
@@ -136,8 +168,39 @@ function withTimeout<T>(
 const renderProcessor = unified().use(notionRehype).use(rehypeStringify);
 
 /**
+ * A single request attempt with a hard timeout. The AbortController
+ * actually cancels the socket, unlike a race against a timer.
+ */
+async function fetchOnce(
+  url: string,
+  init?: RequestInit
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error(
+        `Request to Notion API timed out after ${REQUEST_TIMEOUT_MS}ms`
+      );
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
  * Retry wrapper around native Node.js fetch with exponential backoff.
  * Handles 429 (rate limited) and 5xx (transient server errors).
+ *
+ * The timeout applies to each individual HTTP attempt, not to the whole
+ * retry sequence. That distinction matters: Notion's 429 responses can
+ * ask us to wait tens of seconds before retrying, and a timeout that
+ * covered the backoff would abort perfectly healthy requests. Every
+ * attempt is actively cancelled via AbortController, so a hung socket
+ * cannot hold a render slot indefinitely.
  */
 async function fetchWithRetry(
   url: string,
@@ -149,7 +212,7 @@ async function fetchWithRetry(
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await fetch(url, init);
+      const response = await fetchOnce(url, init);
 
       // Rate limited — respect Retry-After header if available
       if (response.status === 429) {
@@ -306,7 +369,8 @@ async function* listBlocks(
 
 /**
  * Render Notion blocks to HTML string using the shared unified pipeline.
- * The caller is responsible for wrapping this in a timeout via withTimeout.
+ * This is cheap (~1 ms per page); the cost of a sync is the Notion block
+ * fetch, not the renderer.
  */
 async function renderBlocksToHtml(blocks: any[]): Promise<string> {
   const vfile = await renderProcessor.process({ data: blocks });
@@ -326,7 +390,11 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
   const client = new Client({
     ...clientOptions,
     fetch: fetchWithRetry as any,
-    timeoutMs: 120000,
+    // Outer backstop only: `fetchOnce` already enforces a per-attempt
+    // timeout and actively aborts the socket. The SDK's timeout races the
+    // whole retry sequence (including 429 backoff sleeps), so it must be
+    // generous enough not to abort legitimate retries.
+    timeoutMs: REQUEST_TIMEOUT_MS * 8,
     // Pin the Notion API version so future SDK upgrades don't silently
     // switch us to a different (potentially slower or differently rate-
     // limited) version. "2025-09-03" is the SDK 5.x default and the lowest
@@ -364,7 +432,9 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
       });
 
       let pageCount = 0;
+      let cachedCount = 0;
       let renderedCount = 0;
+      let failedCount = 0;
       const renderTasks: (() => Promise<void>)[] = [];
 
       for await (const page of pages) {
@@ -373,13 +443,22 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
         }
         pageCount++;
 
-        const isCached = existingPageIds.delete(page.id);
+        const wasInStore = existingPageIds.delete(page.id);
         const existingPage = store.get(page.id);
 
-        // Re-render if page changed or if previously stored without rendered content
+        // A placeholder is never valid content: it means a previous run
+        // explicitly opted out of rendering. Treat it as stale so the real
+        // renderer replaces it as soon as the flag is removed.
+        const hasPlaceholder =
+          typeof existingPage?.rendered?.html === "string" &&
+          existingPage.rendered.html.includes(PLACEHOLDER_MARKER);
+
+        // Re-render if the page changed, was never rendered, or only has
+        // placeholder HTML.
         const needsRender =
           existingPage?.digest !== page.last_edited_time ||
-          !existingPage?.rendered;
+          !existingPage?.rendered ||
+          hasPlaceholder;
 
         if (!needsRender) {
           log_db.debug(`Skipped page ${page.id.slice(0, 6)}`);
@@ -392,6 +471,29 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
           data: page,
           filePath,
         });
+
+        // Rehydrate from the durable cache before touching the Notion API.
+        // This is what makes dev startup fast even after Astro has cleared
+        // or lost `.astro/data-store.json`.
+        const cachedHtml = await readRenderCache(
+          page.id,
+          page.last_edited_time
+        );
+        // An empty string is a legitimate render result for a page with no
+        // body blocks, so distinguish it from a cache miss (`null`).
+        if (cachedHtml !== null) {
+          store.delete(page.id);
+          store.set({
+            id: page.id,
+            digest: page.last_edited_time,
+            data,
+            rendered: { html: cachedHtml },
+            filePath,
+          });
+          cachedCount++;
+          log_db.debug(`Cache hit for page ${page.id.slice(0, 6)}`);
+          continue;
+        }
 
         // Apply render budget: only queue tasks up to the configured cap so
         // dev startup doesn't spend all its time on Notion rendering while
@@ -414,25 +516,25 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
 
         const task = async () => {
           try {
-            // Skip the block-fetch + unified render entirely when dev-mode
-            // opted out via NOTION_SKIP_HTML_RENDER. We still touch the
-            // store so pLimitAll sees a real task complete, but the work is
-            // a constant-time placeholder string. This is the single most
-            // effective lever for fitting dev startup inside Astro's 30 s
-            // budget when the published-site dataset is large.
-            const html = SKIP_HTML_RENDER
-              ? PLACEHOLDER_HTML
-              : await withTimeout(
-                  (async () => {
-                    const blocks: any[] = [];
-                    for await (const block of listBlocks(client, page.id)) {
-                      blocks.push(block);
-                    }
-                    return renderBlocksToHtml(blocks);
-                  })(),
-                  PER_PAGE_TIMEOUT_MS,
-                  `Render page ${page.id.slice(0, 6)}`
-                );
+            let html: string;
+            if (SKIP_HTML_RENDER) {
+              // Emergency escape hatch only. The placeholder is tagged and
+              // is deliberately not written to the durable cache.
+              html = PLACEHOLDER_HTML;
+            } else {
+              const blocks: any[] = [];
+              for await (const block of listBlocks(client, page.id)) {
+                blocks.push(block);
+              }
+              html = await renderBlocksToHtml(blocks);
+              // Persist immediately so an interrupted sync resumes here
+              // next time instead of re-fetching this page.
+              await writeRenderCache(
+                page.id,
+                page.last_edited_time,
+                html
+              );
+            }
             // Force Astro to accept the update by deleting the stale entry first
             store.delete(page.id);
             store.set({
@@ -444,6 +546,7 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
             });
             renderedCount++;
           } catch (err) {
+            failedCount++;
             log_db.warn(
               `Failed to render page ${page.id.slice(0, 6)}: ${
                 err instanceof Error ? err.message : String(err)
@@ -463,35 +566,29 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
         renderTasks.push(task);
 
         log_db.info(
-          `${isCached ? "Updated" : "Created"} page ${page.id.slice(0, 6)}`
+          `${wasInStore ? "Updated" : "Created"} page ${page.id.slice(0, 6)}`
         );
       }
 
-      // Wait for all render operations to complete, with limited concurrency.
-      // Wrap the whole pool in an overall timeout so a few pathological pages
-      // cannot hang dev startup indefinitely; tasks that completed store their
-      // HTML, tasks that didn't fall through to the catch handler in the task.
+      // Wait for all render operations to complete. There is deliberately
+      // no overall timeout: abandoning the pool leaves the Astro store
+      // partial, so the next start pays the same cost again. Each HTTP
+      // attempt has its own AbortController-based timeout instead.
       if (renderTasks.length > 0) {
-        log_db.info(`Rendering ${renderTasks.length} updated pages`);
+        log_db.info(
+          `Rendering ${renderTasks.length} updated pages (${cachedCount} from cache)`
+        );
         if (RENDER_BUDGET && renderTasks.length >= RENDER_BUDGET) {
           log_db.info(
             `(Render budget ${RENDER_BUDGET} applied; older pages deferred)`
           );
         }
-        try {
-          await withTimeout(
-            pLimitAll(renderTasks, CONCURRENT_RENDERS),
-            TOTAL_TIMEOUT_MS,
-            `Notion loader overall (${renderTasks.length} pages)`
-          );
-        } catch (err) {
-          log_db.warn(
-            `Notion loader overall guard triggered after ${TOTAL_TIMEOUT_MS}ms: ${
-              err instanceof Error ? err.message : String(err)
-            }. Continuing with whatever rendered so far.`
-          );
-        }
-        log_db.info(`Rendered ${renderedCount} pages`);
+        await pLimitAll(renderTasks, CONCURRENT_RENDERS);
+        log_db.info(
+          `Rendered ${renderedCount} pages${
+            failedCount ? ` (${failedCount} failed)` : ""
+          }`
+        );
       }
 
       for (const deletedPageId of existingPageIds) {
@@ -500,7 +597,9 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
       }
 
       log_db.info(
-        `Loaded database (fetched ${pageCount} pages from API)`
+        `Loaded database (fetched ${pageCount} pages from API; ` +
+          `${cachedCount} cache hits, ${renderedCount} rendered` +
+          `${failedCount ? `, ${failedCount} failed` : ""})`
       );
     },
   };
