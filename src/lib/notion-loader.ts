@@ -66,6 +66,22 @@ const RENDER_BUDGET = process.env.NOTION_RENDER_BUDGET
   ? Number(process.env.NOTION_RENDER_BUDGET)
   : undefined;
 
+// When true, the loader still parses page metadata (Zod transforms) and
+// queues tasks normally, but each task swaps the expensive
+// listBlocks + renderBlocksToHtml work for a small placeholder HTML
+// string. This lets dev mode start in seconds even with hundreds of
+// published Notion pages, where the unified-based renderer would
+// otherwise blow past Astro's hard 30 s startup budget. Set via
+// `NOTION_SKIP_HTML_RENDER=1`. Production builds leave this off.
+const SKIP_HTML_RENDER =
+  process.env.NOTION_SKIP_HTML_RENDER === "1" ||
+  process.env.NOTION_SKIP_HTML_RENDER === "true";
+
+const PLACEHOLDER_HTML =
+  '<div data-notion-blocks-placeholder aria-hidden="true">' +
+  "[Notion blocks rendered at production build time]" +
+  "</div>";
+
 /**
  * Race a promise against a timeout. If the timeout wins, the underlying
  * promise keeps running in the background but is no longer awaited; its
@@ -383,19 +399,25 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
 
         const task = async () => {
           try {
-            // Wrap the entire block-fetch + render in a per-page timeout so
-            // a single stalled page cannot hold up the whole render pool.
-            const html = await withTimeout(
-              (async () => {
-                const blocks: any[] = [];
-                for await (const block of listBlocks(client, page.id)) {
-                  blocks.push(block);
-                }
-                return renderBlocksToHtml(blocks);
-              })(),
-              PER_PAGE_TIMEOUT_MS,
-              `Render page ${page.id.slice(0, 6)}`
-            );
+            // Skip the block-fetch + unified render entirely when dev-mode
+            // opted out via NOTION_SKIP_HTML_RENDER. We still touch the
+            // store so pLimitAll sees a real task complete, but the work is
+            // a constant-time placeholder string. This is the single most
+            // effective lever for fitting dev startup inside Astro's 30 s
+            // budget when the published-site dataset is large.
+            const html = SKIP_HTML_RENDER
+              ? PLACEHOLDER_HTML
+              : await withTimeout(
+                  (async () => {
+                    const blocks: any[] = [];
+                    for await (const block of listBlocks(client, page.id)) {
+                      blocks.push(block);
+                    }
+                    return renderBlocksToHtml(blocks);
+                  })(),
+                  PER_PAGE_TIMEOUT_MS,
+                  `Render page ${page.id.slice(0, 6)}`
+                );
             // Force Astro to accept the update by deleting the stale entry first
             store.delete(page.id);
             store.set({
