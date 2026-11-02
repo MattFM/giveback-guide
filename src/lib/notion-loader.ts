@@ -1,8 +1,49 @@
 import type { Loader } from "astro/loaders";
-import { Client, isFullPage, isFullBlock, iteratePaginatedAPI } from "@notionhq/client";
+// `@notionhq/client` v5 is published as CommonJS, so we import it as a
+// default export and destructure the symbols we use. Named ESM imports
+// would otherwise trip Vite's module-evaluate path.
+import notionPkg from "@notionhq/client";
 import { unified } from "unified";
 import notionRehype from "notion-rehype-k";
 import rehypeStringify from "rehype-stringify";
+
+const { Client, isFullPage, isFullBlock, iteratePaginatedAPI } = notionPkg;
+
+/**
+ * Notion API version `2025-09-03` (the default for SDK v5) restructured
+ * /v1/databases into /v1/databases (the container) + /v1/data_sources
+ * (the queryable tables). To query rows from a database id we now have to
+ * first retrieve the database, pick a data source, then call
+ * `dataSources.query` with the `data_source_id` parameter.
+ *
+ * This module-scope cache memoises the database → data-source resolution
+ * so a single Notion API call covers both projects and stays loaders if
+ * they share a database id (common when test data is reused), and avoids
+ * resolving again on HMR reloads within the same dev process.
+ */
+const databaseToDataSourceCache = new Map<string, string>();
+
+async function resolveDataSourceId(
+  client: Client,
+  databaseId: string,
+  logDb: { warn: (msg: string) => void }
+): Promise<string> {
+  const cached = databaseToDataSourceCache.get(databaseId);
+  if (cached) return cached;
+
+  const db = await client.databases.retrieve({ database_id: databaseId });
+  // v5 SDK returns `data_sources` as an array of objects with at least an `id`.
+  const sources = (db as { data_sources?: Array<{ id: string }> }).data_sources;
+  if (!sources || sources.length === 0) {
+    logDb.warn(
+      `Database ${databaseId} returned no data sources; cannot query.`
+    );
+    throw new Error(`No data source found for database ${databaseId}`);
+  }
+  const id = sources[0].id;
+  databaseToDataSourceCache.set(databaseId, id);
+  return id;
+}
 
 /**
  * Tunables (overridable via env). Conservative defaults so dev startup
@@ -255,6 +296,11 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
     ...clientOptions,
     fetch: fetchWithRetry as any,
     timeoutMs: 120000,
+    // Pin the Notion API version so future SDK upgrades don't silently
+    // switch us to a different (potentially slower or differently rate-
+    // limited) version. "2025-09-03" is the SDK 5.x default and the lowest
+    // version supported by the v5 line.
+    notionVersion: "2025-09-03",
   });
 
   const name = collectionName
@@ -271,8 +317,16 @@ export function notionLoader(options: NotionLoaderOptions): Loader {
         `Loading database (found ${existingPageIds.size} pages in store)`
       );
 
-      const pages = iteratePaginatedAPI(client.databases.query, {
+      // Resolve the data-source id for this database (v5 SDK API), then
+      // iterate pages through dataSources.query. One extra round-trip per
+      // load; cached at module scope across loader instances.
+      const dataSourceId = await resolveDataSourceId(
+        client,
         database_id,
+        log_db
+      );
+      const pages = iteratePaginatedAPI(client.dataSources.query, {
+        data_source_id: dataSourceId,
         filter,
         sorts,
         archived,

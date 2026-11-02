@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@astrojs/markdown-remark": "^7.3.0",
-    "@notionhq/client": "^2.3.0",
+    "@notionhq/client": "^5.30.0",
     "@tailwindcss/typography": "^0.5.20",
     "notion-rehype-k": "^1.1.6",
     "rehype-stringify": "^10.0.1",
