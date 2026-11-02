@@ -71,11 +71,26 @@ const RENDER_BUDGET = process.env.NOTION_RENDER_BUDGET
 // listBlocks + renderBlocksToHtml work for a small placeholder HTML
 // string. This lets dev mode start in seconds even with hundreds of
 // published Notion pages, where the unified-based renderer would
-// otherwise blow past Astro's hard 30 s startup budget. Set via
-// `NOTION_SKIP_HTML_RENDER=1`. Production builds leave this off.
+// otherwise blow past Astro's startup budget.
+//
+// Resolution order at module load time:
+//   1. `NOTION_SKIP_HTML_RENDER=0`  -> force OFF (kill switch)
+//   2. `NOTION_SKIP_HTML_RENDER=1`  -> force ON
+//   3. `process.env.NODE_ENV === "development"` -> ON (default in dev)
+//   4. otherwise                     -> OFF (production)
+//
+// Production builds (Astro sets NODE_ENV="production" during build) keep
+// full rendering. Dev runs get the placeholder for free unless the kill
+// switch is set.
+const ENV_SKIP = process.env.NOTION_SKIP_HTML_RENDER;
+const IS_DEV = process.env.NODE_ENV === "development";
+
 const SKIP_HTML_RENDER =
-  process.env.NOTION_SKIP_HTML_RENDER === "1" ||
-  process.env.NOTION_SKIP_HTML_RENDER === "true";
+  ENV_SKIP === "0" || ENV_SKIP === "false"
+    ? false
+    : ENV_SKIP === "1" ||
+      ENV_SKIP === "true" ||
+      IS_DEV;
 
 const PLACEHOLDER_HTML =
   '<div data-notion-blocks-placeholder aria-hidden="true">' +
