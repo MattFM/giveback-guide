@@ -14,24 +14,24 @@ export interface ListingInclude {
 
 export const listingIncludes: ListingInclude[] = [
   {
-    title: "One direct website link",
+    title: "A link to your website",
     description:
-      "Point travellers straight to your booking or website from your listing.",
+      "Get our users straight to where they need to be.",
   },
   {
     title: "Description",
     description:
-      "Plain-text summary of what you do and why it matters.",
+      "Summary of what you do, your impact and how users can engage.",
   },
   {
-    title: "Location info",
+    title: "Location",
     description:
-      "Country and locale, so travellers planning trips can find you by region.",
+      "City and country info, plus indigenous names and endonyms.",
   },
   {
-    title: "Relevant Impact Areas",
+    title: "Impact Areas",
     description:
-      "The positive-impact categories your business satisfies, with proof.",
+      "Core to our directory, the positive-impact categories your business satisfies",
   },
   {
     title: "Google Maps link",
@@ -39,6 +39,6 @@ export const listingIncludes: ListingInclude[] = [
   },
   {
     title: "Instagram link",
-    description: "Connect with travellers who want to follow your work.",
+    description: "Connect with travellers who want to follow what you do.",
   },
 ];

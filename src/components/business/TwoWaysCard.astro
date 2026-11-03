@@ -2,8 +2,10 @@
 /**
  * 2-up "Two ways to work with us" entry card.
  * Directs a reader toward either listing submission or the advertising page.
+ *
+ * Each card opens with a 16:9 media block. Images are placeholders for now —
+ * pass `listingImage` / `advertisingImage` (plus alt text) to swap them in.
  */
-import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
 import Button from "@/components/bearnie/button/Button.astro";
 import Card from "@/components/bearnie/card/Card.astro";
 import CardHeader from "@/components/bearnie/card/CardHeader.astro";
@@ -11,7 +13,23 @@ import CardTitle from "@/components/bearnie/card/CardTitle.astro";
 import CardDescription from "@/components/bearnie/card/CardDescription.astro";
 import CardContent from "@/components/bearnie/card/CardContent.astro";
 import CardFooter from "@/components/bearnie/card/CardFooter.astro";
-import { FolderAddIcon, ChartUpIcon, ArrowRight01Icon } from "@/components/bearnie/icon/icons";
+import CardMedia from "./CardMedia.astro";
+import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
+import { ArrowRight01Icon } from "@/components/bearnie/icon/icons";
+
+interface Props {
+  listingImage?: string;
+  listingImageAlt?: string;
+  advertisingImage?: string;
+  advertisingImageAlt?: string;
+}
+
+const {
+  listingImage,
+  listingImageAlt = "",
+  advertisingImage,
+  advertisingImageAlt = "",
+} = Astro.props;
 ---
 
 <section
@@ -33,13 +51,8 @@ import { FolderAddIcon, ChartUpIcon, ArrowRight01Icon } from "@/components/bearn
   </div>
   <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
     <Card class="bg-gray-50 dark:bg-gray-900/40">
+      <CardMedia src={listingImage} alt={listingImageAlt} />
       <CardHeader>
-        <span
-          class="flex h-10 w-10 items-center justify-center rounded-lg bg-gbg-turquoise-50 text-gbg-turquoise-700 dark:bg-gbg-turquoise-700/15 dark:text-gbg-turquoise-200 mb-4"
-          aria-hidden="true"
-        >
-          <HugeIcon icon={FolderAddIcon} size="base" />
-        </span>
         <CardTitle as="h3">Get listed in the directory</CardTitle>
         <CardDescription>
           Our free-to-access directory of social enterprises, community projects
@@ -62,13 +75,8 @@ import { FolderAddIcon, ChartUpIcon, ArrowRight01Icon } from "@/components/bearn
     </Card>
 
     <Card class="bg-gray-50 dark:bg-gray-900/40">
+      <CardMedia src={advertisingImage} alt={advertisingImageAlt} />
       <CardHeader>
-        <span
-          class="flex h-10 w-10 items-center justify-center rounded-lg bg-gbg-azure-50 text-gbg-azure-700 dark:bg-gbg-azure-700/15 dark:text-gbg-azure-200 mb-4"
-          aria-hidden="true"
-        >
-          <HugeIcon icon={ChartUpIcon} size="base" />
-        </span>
         <CardTitle as="h3">Advertise with us</CardTitle>
         <CardDescription>
           Our in-house text-based display advertising is open to ethical

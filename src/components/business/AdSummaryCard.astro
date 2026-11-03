@@ -1,46 +1,18 @@
 ---
 /**
- * Cross-link section advertising the separate /for-businesses/advertising/
- * page. Modelled on `NewsletterSection`'s wrapping, palette and typography,
- * with text left-justified and the action button right-aligned inside the
- * band. Includes a `Separator` underneath so the section reads as a
- * discrete band, matching how NewsletterSection ends.
+ * Cross-link band pointing at the separate /for-businesses/advertising/ page.
+ *
+ * Thin wrapper over the shared `CrossLinkCta` so this band and the reciprocal
+ * one on the advertising page stay identical. Background matches the site
+ * header, which lets the band divide the grey sections either side of it.
  */
-import Button from "@/components/bearnie/button/Button.astro";
-import Separator from "@/components/bearnie/separator/Separator.astro";
+import CrossLinkCta from "./CrossLinkCta.astro";
 ---
 
-<section
-  class="bg-indigo-100 dark:bg-gray-900"
-  aria-labelledby="ad-summary-heading"
->
-  <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
-    <div
-      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 text-left"
-    >
-      <div class="flex-1 max-w-2xl">
-        <h2
-          id="ad-summary-heading"
-          class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-black dark:text-white"
-        >
-          Looking to advertise directly?
-        </h2>
-        <p class="mt-2 text-base text-black dark:text-gray-400">
-          Display advertising on Give Back Guide is a separate offering from
-          directory listings. Ads can be purchased by any business — listed or
-          not — and appear across our blog and key landing pages.
-        </p>
-      </div>
-      <div class="sm:ml-auto">
-        <Button
-          href="/for-businesses/advertising/"
-          size="lg"
-          class="bg-gbg-indigo-600 hover:bg-gbg-indigo-700 text-white"
-        >
-          View advertising options
-        </Button>
-      </div>
-    </div>
-  </div>
-  <Separator />
-</section>
+<CrossLinkCta
+  headingId="ad-summary-heading"
+  heading="Looking to advertise directly?"
+  body="Display advertising on Give Back Guide is a separate offering from directory listings. Ads can be purchased by any business — listed or not — and appear across our blog and key landing pages."
+  cta={{ label: "View advertising options", href: "/for-businesses/advertising/" }}
+  divider={true}
+/>

@@ -1,39 +1,46 @@
 ---
 /**
- * N-up stat tiles (Listings / Countries / Impact Areas on the homepage,
- * and per-page datasets like the advertising page).
+ * N-up stat row. Deliberately chrome-free: no cards, no borders, no fills —
+ * the numbers and labels carry the hierarchy.
  *
- * Backward-compatible: when called without a `stats` prop it renders
- * `businessStats` (the homepage numbers), so existing call sites — the
- * HeroSection on /for-businesses/ in particular — keep working unchanged.
+ * Rendered as a definition list: each label is a <dt>, and the value plus
+ * caption sit in the corresponding <dd>. Column count follows `stats.length`,
+ * so a two-stat dataset can't leave an empty third column.
  */
-import {
-  businessStats,
-  type StatBlock,
-} from "@/data/business-stat-blocks";
+import type { StatBlock } from "@/data/business-stat-blocks";
 
 interface Props {
-  stats?: StatBlock[];
+  stats: StatBlock[];
 }
 
-const { stats = businessStats } = Astro.props;
+const { stats } = Astro.props;
+
+const columnClasses: Record<number, string> = {
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-4",
+};
+
+const gridCols = columnClasses[stats.length] ?? "sm:grid-cols-3";
 ---
 
-<div
-  role="presentation"
-  class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4"
->
+<dl class:list={["grid grid-cols-1 gap-x-12 gap-y-10", gridCols]}>
   {
     stats.map((stat) => (
-      <div class="rounded-lg border bg-card text-card-foreground p-4 sm:p-6">
-        <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+      <div>
+        <dt class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           {stat.label}
-        </p>
-        <p class="mt-2 text-2xl sm:text-3xl font-semibold tabular-nums">
-          {stat.value}
-        </p>
-        <p class="mt-1 text-xs text-muted-foreground">{stat.caption}</p>
+        </dt>
+        <dd class="mt-2">
+          <span class="block text-4xl sm:text-5xl font-extrabold tracking-tight tabular-nums text-gray-900 dark:text-white">
+            {stat.value}
+          </span>
+          <span class="mt-2 block text-sm text-gray-600 dark:text-gray-400">
+            {stat.caption}
+          </span>
+        </dd>
       </div>
     ))
   }
-</div>
+</dl>

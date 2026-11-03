@@ -2,66 +2,59 @@
 /**
  * 4-up "Why list on Give Back Guide" grid.
  * The 4 reasons come from the user's original brief.
+ *
+ * Icons were removed in the design overhaul — the headings now carry the
+ * visual weight, so they sit at text-lg rather than text-base.
  */
 import WhyListCard from "./WhyListCard.astro";
-import {
-  Globe02Icon,
-  UserMultiple02Icon,
-  Shield01Icon,
-  Tick02Icon,
-} from "@/components/bearnie/icon/icons";
 
 const reasons = [
-  {
-    icon: Globe02Icon,
-    title: "Reach conscious travellers",
-    description:
-      "People actively seeking to give back — animal welfare, climate, community and biodiversity. A genuinely interested, mission-led audience.",
-  },
-  {
-    icon: UserMultiple02Icon,
-    title: "Mission-aligned audience",
-    description:
-      "A growing community aligned with regenerative values. Not a mass-market race to the bottom.",
-  },
-  {
-    icon: Shield01Icon,
-    title: "Free always, pay only for more",
-    description:
-      "Your basic listing is and will remain free. Paid options unlock visibility only if you choose to upgrade.",
-  },
-  {
-    icon: Tick02Icon,
-    title: "Verified credibility",
-    description:
-      "Every listing is verified against our Impact Areas. A badge travellers can trust, not a directory of duplicates.",
-  },
+    {
+        title: "Reach conscious travellers",
+        description:
+            "Our users actively want to make a difference and are looking to engage with organisations like yours.",
+    },
+    {
+        title: "Verified credibility",
+        description:
+            "We check every single listing to ensure it meets our strict criteria and our Impact Areas. ",
+    },
+    {
+        title: "It will always be free",
+        description:
+            "Your basic listing will always be free. Paid options unlock extra visibility only if you choose to upgrade.",
+    },
+    {
+        title: "Part of a growing community",
+        description:
+            "Interest in regenerative travel is increasing. Now's the time to collaborate.",
+    },
 ];
 ---
 
 <section
-  aria-labelledby="why-list-heading"
-  class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6"
+    aria-labelledby="why-list-heading"
+    class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6"
 >
-  <div class="text-left max-w-3xl">
-    <h2
-      id="why-list-heading"
-      class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
-    >
-      Why list on Give Back Guide?
-    </h2>
-    <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
-      We are not a mass-market directory. Every listing meets our Impact Areas,
-      and every visitor is here because they care.
-    </p>
-  </div>
-  <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-    {reasons.map((reason) => (
-      <WhyListCard
-        icon={reason.icon}
-        title={reason.title}
-        description={reason.description}
-      />
-    ))}
-  </div>
+    <div class="text-left max-w-3xl">
+        <h2
+            id="why-list-heading"
+            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+        >
+            Why should you get listed on Give Back Guide?
+        </h2>
+        <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+            We have a rigourous verification process, meaning our directory will
+            always only contain high quality listings and will be thought of as
+            a trusted source with our users.
+        </p>
+    </div>
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+        {reasons.map((reason) => (
+            <WhyListCard
+                title={reason.title}
+                description={reason.description}
+            />
+        ))}
+    </div>
 </section>

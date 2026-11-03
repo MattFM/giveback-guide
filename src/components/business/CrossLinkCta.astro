@@ -1,0 +1,62 @@
+---
+/**
+ * Full-width cross-link band: heading and body on the left, a single primary
+ * button on the right.
+ *
+ * Used to point readers between the two marketing surfaces (directory
+ * listings ↔ advertising). Modelled on `NewsletterSection`'s band so the
+ * pattern reads consistently across the site.
+ *
+ * `divider` draws a rule under the band, which helps when the next section
+ * shares the same background colour.
+ */
+import Button from "@/components/bearnie/button/Button.astro";
+import Separator from "@/components/bearnie/separator/Separator.astro";
+
+interface Props {
+  heading: string;
+  body: string;
+  cta: { label: string; href: string };
+  /** id for the heading, used as the section's accessible name. */
+  headingId: string;
+  /** Band fill. Defaults to the page background. */
+  backgroundClass?: string;
+  /** Draw a rule beneath the band. */
+  divider?: boolean;
+}
+
+const {
+  heading,
+  body,
+  cta,
+  headingId,
+  backgroundClass = "bg-white dark:bg-gray-950",
+  divider = false,
+} = Astro.props;
+---
+
+<section class:list={["w-full", backgroundClass]} aria-labelledby={headingId}>
+  <div class="py-12 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 text-left"
+    >
+      <div class="flex-1 max-w-2xl">
+        <h2
+          id={headingId}
+          class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-black dark:text-white"
+        >
+          {heading}
+        </h2>
+        <p class="mt-2 text-base text-black dark:text-gray-400">
+          {body}
+        </p>
+      </div>
+      <div class="sm:ml-auto">
+        <Button href={cta.href} size="lg">
+          {cta.label}
+        </Button>
+      </div>
+    </div>
+  </div>
+  {divider && <Separator />}
+</section>

@@ -3,13 +3,21 @@
  * Single pricing-tier card. Renders one of the `pricingTiers` defined in
  * `src/data/business-pricing.ts`.
  *
+ * Pricing visibility: `PRICING_PUBLIC` in the data file is the master switch.
+ * While it is false, paid tiers show "Pricing to be announced" instead of
+ * their figures; the Free tier always shows its price because "Free forever"
+ * is a selling point rather than a commitment being held back.
+ *
  * Pricing-period handling: if the tier has `variants` (e.g. Featured's monthly
  * and yearly), both period prices are rendered into the DOM at SSR time, then
  * the visibility of each is controlled by the document-level `data-pricing-period`
  * attribute. This means crawlers see both sets of numbers, and JS-driven toggle
  * state changes do not require re-render.
+ *
+ * The "Most Popular" badge was removed — it asserted something that wasn't
+ * true. The highlighted tier still carries a ring and shadow for emphasis.
  */
-import type { PricingTier } from "@/data/business-pricing";
+import { PRICING_PUBLIC, type PricingTier } from "@/data/business-pricing";
 import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
 import Card from "@/components/bearnie/card/Card.astro";
 import CardHeader from "@/components/bearnie/card/CardHeader.astro";
@@ -32,25 +40,20 @@ const monthlyVariant = tier.variants?.find((v) => v.period === "monthly");
 const yearlyVariant = tier.variants?.find((v) => v.period === "yearly");
 const hasVariants = Boolean(monthlyVariant && yearlyVariant);
 
+const showPrice = PRICING_PUBLIC || tier.id === "free";
+
 const cardClasses = tier.highlighted ? "ring-2 ring-gbg-indigo-600 shadow-lg" : "";
 ---
 
-<div class={tier.highlighted ? "relative" : ""}>
-  {
-    tier.highlighted && (
-      <Badge class="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-gbg-indigo-600 text-white px-3 py-1 shadow-md" data-flat-exempt="true">
-        Most Popular
-      </Badge>
-    )
-  }
-  <Card class={cardClasses}>
-    <CardHeader>
-      <CardTitle as="h3">{tier.name}</CardTitle>
-      <CardDescription>{tier.tagline}</CardDescription>
-    </CardHeader>
+<Card class={cardClasses}>
+  <CardHeader>
+    <CardTitle as="h3">{tier.name}</CardTitle>
+    <CardDescription>{tier.tagline}</CardDescription>
+  </CardHeader>
 
-    <div class="px-6">
-      {
+  <div class="px-6">
+    {
+      showPrice ? (
         hasVariants ? (
           <>
             <p class="price-monthly flex items-baseline gap-1">
@@ -96,63 +99,61 @@ const cardClasses = tier.highlighted ? "ring-2 ring-gbg-indigo-600 shadow-lg" : 
             )}
           </p>
         )
+      ) : (
+        <p class="text-lg font-semibold text-gray-500 dark:text-gray-400">
+          Pricing to be announced
+        </p>
+      )
+    }
+    {tier.comingSoon && (
+      <Badge variant="warning" class="mt-3" data-flat-exempt="true">Coming soon</Badge>
+    )}
+  </div>
+
+  <Separator class="my-4" />
+
+  <CardContent>
+    <p class="text-sm text-gray-600 dark:text-gray-400">{tier.description}</p>
+    <ul class="mt-5 space-y-2.5">
+      {
+        tier.features.map((feature) => {
+          const isPreamble = feature.startsWith("Everything in");
+          return (
+            <li class="flex items-start gap-2">
+              <HugeIcon
+                icon={CheckmarkCircle01Icon}
+                size="sm"
+                class="mt-0.5 shrink-0 text-gray-700 dark:text-gray-300"
+              />
+              <span
+                class={`text-sm ${
+                  isPreamble
+                    ? "font-semibold text-gray-900 dark:text-white"
+                    : "text-gray-600 dark:text-gray-400"
+                }`}
+              >
+                {feature}
+              </span>
+            </li>
+          );
+        })
       }
-      {tier.comingSoon && (
-        <Badge variant="warning" class="mt-3" data-flat-exempt="true">Coming soon</Badge>
-      )}
-    </div>
+    </ul>
+  </CardContent>
 
-    <Separator class="my-4" />
-
-    <CardContent>
-      <p class="text-sm text-gray-600 dark:text-gray-400">{tier.description}</p>
-      <ul class="mt-5 space-y-2.5">
-        {
-          tier.features.map((feature) => {
-            const isPreamble = feature.startsWith("Everything in");
-            return (
-              <li class="flex items-start gap-2">
-                <HugeIcon
-                  icon={CheckmarkCircle01Icon}
-                  size="sm"
-                  class={`mt-0.5 shrink-0 ${
-                    isPreamble
-                      ? "text-gray-400 dark:text-gray-500"
-                      : "text-gbg-turquoise-600 dark:text-gbg-turquoise-300"
-                  }`}
-                />
-                <span
-                  class={`text-sm ${
-                    isPreamble
-                      ? "font-semibold text-gray-900 dark:text-white"
-                      : "text-gray-600 dark:text-gray-400"
-                  }`}
-                >
-                  {feature}
-                </span>
-              </li>
-            );
-          })
-        }
-      </ul>
-    </CardContent>
-
-    <CardFooter>
-      <Button
-        href={tier.cta.href}
-        size="lg"
-        variant={tier.highlighted ? "default" : "outline"}
-        class={`w-full ${
-          tier.highlighted ? "bg-gbg-indigo-600 hover:bg-gbg-indigo-700 text-white" : ""
-        }`}
-        disabled={tier.comingSoon}
-      >
-        {tier.cta.label}
-        <HugeIcon slot="right-icon" icon={ArrowRight01Icon} size="sm" />
-      </Button>
-    </CardFooter>
-  </Card>
-</div>
+  <CardFooter>
+    <Button
+      href={tier.cta.href}
+      size="lg"
+      variant={tier.highlighted ? "default" : "outline"}
+      class="w-full"
+      disabled={tier.comingSoon}
+    >
+      {tier.cta.label}
+      <HugeIcon slot="right-icon" icon={ArrowRight01Icon} size="sm" />
+    </Button>
+  </CardFooter>
+</Card>
 
 <style is:global>
   /* Pricing-period visibility. The default is monthly; PricingToggle flips this. */
@@ -164,8 +165,5 @@ const cardClasses = tier.highlighted ? "ring-2 ring-gbg-indigo-600 shadow-lg" : 
   }
   [data-pricing-period="yearly"] .price-yearly {
     display: block;
-  }
-  [data-pricing-period="yearly"] #pricing-period-toggle {
-    /* Reflect the switch's checked state visually when JS has flipped the period */
   }
 </style>

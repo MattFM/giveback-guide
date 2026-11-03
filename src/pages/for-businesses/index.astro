@@ -10,6 +10,16 @@ import PricingSection from "@/components/business/PricingSection.astro";
 import AdSummaryCard from "@/components/business/AdSummaryCard.astro";
 import FaqSection from "@/components/business/FaqSection.astro";
 
+// Card imagery — Cloudinary-hosted screenshots of the two product surfaces.
+const listingCardImage =
+  "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1793712202/for-businesses-listing_yl8ub3.jpg";
+const listingCardImageAlt =
+  "A laptop and phone displaying Give Back Guide listings for a community-run sauna project in Oslo and an elephant sanctuary in Cambodia";
+const advertisingCardImage =
+  "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1793712201/for-businesses-ads_t40yhw.jpg";
+const advertisingCardImageAlt =
+  "Example inline and sidebar text ads shown on a Give Back Guide page";
+
 ---
 
 <MainLayout
@@ -19,7 +29,6 @@ import FaqSection from "@/components/business/FaqSection.astro";
   <main id="main-content" class="surface-flat">
     <!-- §1 Hero — page-foreground -->
     <HeroSection
-      eyebrow="Opportunities for Businesses"
       title="Reach travellers wanting to bring about positive change"
       subtitle="Be part of a growing movement to make tourism a force for good. Get listed in our directory for free or choose one of our optional paid opportunities for greater visibility and to ensure our non-profit directory remains free and open to all."
       primaryCta={{ label: "Get listed for free", href: "/for-businesses/submit/" }}
@@ -28,7 +37,12 @@ import FaqSection from "@/components/business/FaqSection.astro";
 
     <!-- §2 Two ways to work with us -->
     <div class="bg-white dark:bg-gray-950 py-12 sm:py-20">
-      <TwoWaysCard />
+      <TwoWaysCard
+        listingImage={listingCardImage}
+        listingImageAlt={listingCardImageAlt}
+        advertisingImage={advertisingCardImage}
+        advertisingImageAlt={advertisingCardImageAlt}
+      />
     </div>
 
     <!-- §3 Why list on Give Back Guide? -->
@@ -36,10 +50,8 @@ import FaqSection from "@/components/business/FaqSection.astro";
       <WhyListGrid />
     </div>
 
-    <!-- §4 Your free listing includes -->
-    <div class="bg-white dark:bg-gray-950 py-12 sm:py-20">
-      <ListingIncludes />
-    </div>
+    <!-- §4 Your free listing includes — full-bleed split feature -->
+    <ListingIncludes />
 
     <!-- §5 Pricing tiers -->
     <div class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-20">

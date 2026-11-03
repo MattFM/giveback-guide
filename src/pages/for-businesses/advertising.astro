@@ -1,213 +1,247 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
-import Badge from "@/components/bearnie/badge/Badge.astro";
-import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
-import WhyListCard from "@/components/business/WhyListCard.astro";
+import HeroSection from "@/components/business/HeroSection.astro";
 import StatsStrip from "@/components/business/StatsStrip.astro";
+import WhyListCard from "@/components/business/WhyListCard.astro";
+import CrossLinkCta from "@/components/business/CrossLinkCta.astro";
 import TextAd from "@/components/features/ads/TextAd.astro";
 import { advertisingStats } from "@/data/advertising-stats";
-import {
-  Globe02Icon,
-  Search01Icon,
-  Shield01Icon,
-  Rocket01Icon,
-} from "@/components/bearnie/icon/icons";
 
 const benefits = [
-  {
-    icon: Globe02Icon,
-    title: "Conscious travellers, by design",
-    description:
-      "We index only impact-led businesses and verified listings. Our visitors know this and self-select — they are not browsing by accident.",
-  },
-  {
-    icon: Search01Icon,
-    title: "High-intent moments",
-    description:
-      "Your ad runs inline with directory browsing and editorial reads. Pre-purchase, pre-decision. Not lost in a noisy feed.",
-  },
-  {
-    icon: Shield01Icon,
-    title: "Trusted neighbour",
-    description:
-      "Your brand sits beside verified listings and original blog content. Association-by-proximity with a curated non-profit context.",
-  },
-  {
-    icon: Rocket01Icon,
-    title: "Spend that does good",
-    description:
-      "Every pound you spend helps keep Give Back Guide free for businesses and accessible to mission-led travellers.",
-  },
+    {
+        title: "High quality listings only",
+        description:
+            "We're really careful about who we list in our directory. We stringently check and verify every listing.",
+    },
+    {
+        title: "High-intent browsers",
+        description:
+            "Your ad runs inline with directory browsing and editorial reads. Our users are actively seeking to engage.",
+    },
+    {
+        title: "Trusted brand meets trusted brand",
+        description:
+            "Your brand sits beside verified listings and original human-written blog content. Your brand benefits from association-by-proximity.",
+    },
+    {
+        title: "Ads that do good",
+        description:
+            "Ad revenue helps to keep Give Back Guide free accessible for all.",
+    },
 ];
 ---
 
 <MainLayout
-  title="Advertising on Give Back Guide"
-  description="Display advertising across the Give Back Guide directory and blog. Reach conscious, mission-aligned travellers and support a non-profit platform."
+    title="Advertising on Give Back Guide"
+    description="Display advertising across the Give Back Guide directory and blog. Reach conscious, mission-aligned travellers and support a non-profit platform."
 >
-  <main id="main-content">
-    <!-- §1 Hero -->
-    <section
-      class="bg-gbg-azure-50 dark:bg-gbg-azure-700/10 py-12 sm:py-16"
-      aria-labelledby="advertising-hero"
-    >
-      <div class="mx-auto max-w-screen-xl px-4 sm:px-6">
-        <div class="max-w-3xl">
-          <Badge class="bg-gbg-azure-600 text-white mb-4">Advertising</Badge>
-          <h1
-            id="advertising-hero"
-            class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.05]"
-          >
-            Advertising on Give Back Guide
-          </h1>
-          <p class="mt-4 text-lg text-gray-700 dark:text-gray-300">
-            Display advertising that puts your brand in front of conscious,
-            mission-aligned travellers. Every pound you spend keeps Give Back
-            Guide free for businesses and accessible to the people we serve.
-          </p>
-          <a
-            href="#advertising-form"
-            class="mt-6 inline-flex items-center gap-2 text-gbg-indigo-700 dark:text-gbg-indigo-300 hover:text-gbg-indigo-800 dark:hover:text-gbg-indigo-200 font-medium"
-          >
-            Get in touch
-            <HugeIcon icon={Rocket01Icon} size="sm" />
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- §2 Audience stats -->
-    <section
-      class="bg-white dark:bg-gray-950 py-12 sm:py-16"
-      aria-label="Audience at a glance"
-    >
-      <div class="mx-auto max-w-screen-xl px-4 sm:px-6">
-        <StatsStrip stats={advertisingStats} />
-      </div>
-    </section>
-
-    <!-- §3 Where your ads appear -->
-    <section
-      class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-16"
-      aria-labelledby="where-ads-appear-heading"
-    >
-      <div class="mx-auto max-w-screen-xl px-4 sm:px-6">
-        <div class="max-w-3xl mx-auto text-center mb-8">
-          <h2
-            id="where-ads-appear-heading"
-            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
-          >
-            Where your ads appear
-          </h2>
-          <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
-            Display ads run inline on blog posts and listings, and as sidebar
-            cards across our directory and key landing pages. Reach the
-            audience during their research, not after they've already decided.
-          </p>
-        </div>
-        <div class="max-w-3xl mx-auto space-y-3">
-          <p
-            class="text-xs font-medium text-muted-foreground uppercase tracking-wide text-center mb-2"
-          >
-            Inline format — examples
-          </p>
-          <TextAd format="inline" />
-          <TextAd format="inline" />
-          <TextAd format="inline" />
-        </div>
-      </div>
-    </section>
-
-    <!-- §4 Why advertise -->
-    <section
-      class="bg-white dark:bg-gray-950 py-12 sm:py-16"
-      aria-labelledby="why-advertise-heading"
-    >
-      <div class="mx-auto max-w-screen-xl px-4 sm:px-6">
-        <div class="text-center max-w-2xl mx-auto mb-10">
-          <h2
-            id="why-advertise-heading"
-            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
-          >
-            Why advertise with us
-          </h2>
-          <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
-            Our audience is small but exceptionally aligned. Here is what makes
-            us different from mass-market directories.
-          </p>
-        </div>
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-5xl mx-auto"
-        >
-          {benefits.map((b) => (
-            <WhyListCard
-              icon={b.icon}
-              title={b.title}
-              description={b.description}
+    <main id="main-content">
+        <div class="surface-flat">
+            <!-- §1 Hero -->
+            <HeroSection
+                title="Advertising on Give Back Guide"
+                subtitle="Display advertising that puts your brand in front of conscious, mission-aligned travellers. Every pound you spend keeps Give Back Guide free for businesses and accessible to the people we serve."
+                primaryCta={{
+                    label: "Get in touch",
+                    href: "#advertising-form",
+                }}
+                secondaryCta={{
+                    label: "View listing options",
+                    href: "/for-businesses/",
+                }}
             />
-          ))}
+
+            <!-- §2 Audience stats -->
+            <section
+                class="bg-white dark:bg-gray-950 py-12 sm:py-20"
+                aria-labelledby="audience-heading"
+            >
+                <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6">
+                    <div class="max-w-3xl">
+                        <h2
+                            id="audience-heading"
+                            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            Our audience at a glance
+                        </h2>
+                        <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+                            Our growing user base is actively researching how to
+                            travel better and are open to engaging with
+                            businesses that are aligned with their ethics and
+                            values.
+                        </p>
+                    </div>
+                    <div class="mt-10">
+                        <StatsStrip stats={advertisingStats} />
+                    </div>
+                </div>
+            </section>
         </div>
-      </div>
-    </section>
 
-    <!-- §5 Tally form -->
-    <section
-      id="advertising-form"
-      class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-16"
-      aria-labelledby="advertising-form-heading"
-    >
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <div class="text-center mb-8">
-          <h2
-            id="advertising-form-heading"
-            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
-          >
-            Advertise with us
-          </h2>
-          <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
-            Tell us about your business and your goals. We will get back to you
-            with audience-fit options and pricing for your campaign.
-          </p>
+        {/*
+      §3 Where your ads appear
+      Kept outside `.surface-flat` on purpose: the TextAd previews are the real
+      production components, so they must render with their actual corners and
+      borders rather than the page's flattened treatment.
+    */}
+        <section
+            class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-20"
+            aria-labelledby="where-ads-appear-heading"
+        >
+            <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6">
+                <div class="max-w-3xl">
+                    <h2
+                        id="where-ads-appear-heading"
+                        class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+                    >
+                        Where your ads appear
+                    </h2>
+                    <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+                        Display ads run inline on blog posts and listings, and
+                        as sidebar cards across our directory and key landing
+                        pages. Reach our audience during their research and
+                        discovery phase.
+                    </p>
+                </div>
+
+                <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">
+                            Inline format
+                        </h3>
+                        <div class="space-y-3">
+                            <TextAd format="inline" />
+                            <TextAd format="inline" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">
+                            Sidebar format
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <TextAd format="sidebar" />
+                            <TextAd format="sidebar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="surface-flat">
+            <!-- §4 Why advertise -->
+            <section
+                class="bg-white dark:bg-gray-950 py-12 sm:py-20"
+                aria-labelledby="why-advertise-heading"
+            >
+                <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6">
+                    <div class="max-w-3xl">
+                        <h2
+                            id="why-advertise-heading"
+                            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            Why advertise with us
+                        </h2>
+                        <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+                            We're a mission-driven non-profit travel platform
+                            with a growing audience of conscious traveller.
+                            Here's what sets us apart.
+                        </p>
+                    </div>
+                    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+                        {benefits.map((b) => (
+                            <WhyListCard
+                                title={b.title}
+                                description={b.description}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <!-- §5 Tally form -->
+            <section
+                id="advertising-form"
+                class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-20"
+                aria-labelledby="advertising-form-heading"
+            >
+                <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6">
+                    <div class="max-w-3xl">
+                        <h2
+                            id="advertising-form-heading"
+                            class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            Advertise with us
+                        </h2>
+                        <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+                            Tell us about your business and your goals. We will
+                            get back to you with audience-fit options and
+                            pricing for your campaign.
+                        </p>
+
+                        <div class="mt-8">
+                            <iframe
+                                data-tally-src="https://tally.so/embed/w75XrR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                                loading="lazy"
+                                width="100%"
+                                height="694"
+                                frameborder="0"
+                                marginheight="0"
+                                marginwidth="0"
+                                title="Advertising enquiry"
+                            ></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <script is:inline>
+                    var d = document,
+                        w = "https://tally.so/widgets/embed.js",
+                        v = function () {
+                            "undefined" != typeof Tally
+                                ? Tally.loadEmbeds()
+                                : d
+                                      .querySelectorAll(
+                                          "iframe[data-tally-src]:not([src])",
+                                      )
+                                      .forEach(function (e) {
+                                          e.src = e.dataset.tallySrc;
+                                      });
+                        };
+                    if ("undefined" != typeof Tally) v();
+                    else if (
+                        d.querySelector('script[src="' + w + '"]') == null
+                    ) {
+                        var s = d.createElement("script");
+                        ((s.src = w),
+                            (s.onload = v),
+                            (s.onerror = v),
+                            d.body.appendChild(s));
+                    }
+                </script>
+
+                <script>
+                    // Re-initialize Tally forms after View Transitions
+                    document.addEventListener("astro:page-load", () => {
+                        if (
+                            typeof window !== "undefined" &&
+                            "Tally" in window
+                        ) {
+                            (window as any).Tally.loadEmbeds();
+                        }
+                    });
+                </script>
+            </section>
+
+            <!-- §6 Cross-link back to directory listings -->
+            <CrossLinkCta
+                headingId="listing-cross-link-heading"
+                heading="Prefer a permanent listing?"
+                body="A directory listing is free and always will be. If you would rather build long-term visibility than run a campaign, start there — you can always add advertising later."
+                cta={{
+                    label: "Explore listing options",
+                    href: "/for-businesses/",
+                }}
+            />
         </div>
-
-        <iframe
-          data-tally-src="https://tally.so/embed/w75XrR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-          loading="lazy"
-          width="100%"
-          height="694"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-          title="Advertising enquiry"></iframe>
-
-        <script is:inline>
-          var d = document,
-              w = "https://tally.so/widgets/embed.js",
-              v = function () {
-                "undefined" != typeof Tally
-                    ? Tally.loadEmbeds()
-                    : d
-                          .querySelectorAll("iframe[data-tally-src]:not([src])")
-                          .forEach(function (e) {
-                              e.src = e.dataset.tallySrc;
-                          });
-              };
-          if ("undefined" != typeof Tally) v();
-          else if (d.querySelector('script[src="' + w + '"]') == null) {
-              var s = d.createElement("script");
-              (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
-          }
-        </script>
-
-        <script>
-          // Re-initialize Tally forms after View Transitions
-          document.addEventListener("astro:page-load", () => {
-            if (typeof window !== "undefined" && "Tally" in window) {
-              (window as any).Tally.loadEmbeds();
-            }
-          });
-        </script>
-      </div>
-    </section>
-  </main>
+    </main>
 </MainLayout>

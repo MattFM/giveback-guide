@@ -1,42 +1,55 @@
 ---
 /**
- * "Your free listing includes…" checklist.
- * Renders the 6 free-tiers fields from `listingIncludes`.
+ * "Your free listing includes…" — full-bleed split feature.
+ *
+ * Uses the shared `SplitMedia` primitive with the image on the left, matching
+ * the HomeSplitHero pattern. The image is a placeholder for now; swap the two
+ * constants below for final photography (Cloudinary URLs work unchanged).
  */
 import { listingIncludes } from "@/data/listing-includes";
+import SplitMedia from "@/components/sections/SplitMedia.astro";
 import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
 import { CheckmarkCircle01Icon } from "@/components/bearnie/icon/icons";
+
+const image =
+  "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1793712201/for-businesses-listing-details_wjysa3.jpg";
+const imageAlt =
+  "A Give Back Guide listing page showing impact areas, a project description and a get-involved panel";
 ---
 
-<section
-  aria-labelledby="listing-includes-heading"
-  class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-6"
+<SplitMedia
+    image={image}
+    imageAlt={imageAlt}
+    imageSide="left"
+    imagePreset="hero"
+    backgroundColor="bg-white dark:bg-gray-950"
+    minHeightClass="min-h-[50vh] lg:min-h-[70vh]"
 >
-  <h2
-    id="listing-includes-heading"
-    class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
-  >
-    Your free listing includes
-  </h2>
-  <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
-    Every free listing carries the same set of fields — enough for a traveller
-    to find you, understand your impact and engage with your business.
-  </p>
-  <ul class="mt-8 space-y-3">
-    {
-      listingIncludes.map((item) => (
-        <li class="flex items-start gap-3">
-          <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gbg-turquoise-100 text-gbg-turquoise-700 dark:bg-gbg-turquoise-700/20 dark:text-gbg-turquoise-300">
-            <HugeIcon icon={CheckmarkCircle01Icon} size="sm" />
-          </span>
-          <div>
-            <p class="font-medium text-gray-900 dark:text-white">{item.title}</p>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              {item.description}
-            </p>
-          </div>
-        </li>
-      ))
-    }
-  </ul>
-</section>
+    <h2
+        id="listing-includes-heading"
+        class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+    >
+        What does your free listing include?
+    </h2>
+    <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
+        Your free listing contains everything that a traveller could need to
+        find you, understand your impact and engage with your business.
+    </p>
+    <ul class="mt-8 space-y-4">
+        {listingIncludes.map((item) => (
+            <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-gray-700 dark:text-gray-300">
+                    <HugeIcon icon={CheckmarkCircle01Icon} size="sm" />
+                </span>
+                <div>
+                    <p class="font-medium text-gray-900 dark:text-white">
+                        {item.title}
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        {item.description}
+                    </p>
+                </div>
+            </li>
+        ))}
+    </ul>
+</SplitMedia>

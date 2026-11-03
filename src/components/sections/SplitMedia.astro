@@ -1,0 +1,120 @@
+---
+/**
+ * Generic two-column block: image on one side, arbitrary content on the other.
+ *
+ * Generalised from the original SplitHero so the pattern can be reused for
+ * feature sections (e.g. "Your free listing includes" on /for-businesses/)
+ * without duplicating the Cloudinary responsive-image and skeleton logic.
+ *
+ * DOM order follows `imageSide`:
+ *   - imageSide="right" -> content, then image (image below content on mobile)
+ *   - imageSide="left"  -> image, then content (image above content on mobile)
+ *
+ * `fullBleed` (default) lets the block run to the viewport edges, matching
+ * HomeSplitHero. Set `fullBleed={false}` to constrain it to max-w-screen-xl.
+ */
+import Skeleton from "@/components/bearnie/skeleton/Skeleton.astro";
+import {
+    createResponsiveImage,
+    RESPONSIVE_PRESETS,
+} from "@/utils/cloudinary";
+
+type ImagePreset = keyof typeof RESPONSIVE_PRESETS;
+
+interface Props {
+    image?: string;
+    imageAlt?: string;
+    imageSide?: "left" | "right";
+    imagePreset?: ImagePreset;
+    backgroundColor?: string;
+    objectPosition?: string;
+    minHeightClass?: string;
+    fullBleed?: boolean;
+    pagefindImageMeta?: string;
+    loading?: "eager" | "lazy";
+    fetchpriority?: "high" | "low" | "auto";
+    class?: string;
+}
+
+const {
+    image,
+    imageAlt = "",
+    imageSide = "right",
+    imagePreset = "hero",
+    backgroundColor = "bg-gray-50",
+    objectPosition = "center",
+    minHeightClass = "min-h-[50vh]",
+    fullBleed = true,
+    pagefindImageMeta,
+    loading = "lazy",
+    fetchpriority,
+    class: className,
+} = Astro.props;
+
+const preset = RESPONSIVE_PRESETS[imagePreset];
+
+const responsiveImage = image
+    ? createResponsiveImage(image, {
+          sizes: preset.sizes,
+          sizesAttribute: preset.sizesAttribute,
+          fallbackWidth: 1200,
+          quality: 85,
+          format: "auto",
+      })
+    : null;
+
+const gridCols = responsiveImage ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1";
+
+const imageFirst = imageSide === "left";
+
+const skeletonId = `split-skeleton-${Math.random().toString(36).slice(2, 11)}`;
+---
+
+<section
+    class:list={[
+        "grid",
+        gridCols,
+        minHeightClass,
+        fullBleed ? "" : "mx-auto max-w-screen-xl",
+        className,
+    ]}
+>
+    {responsiveImage && (
+        <div
+            class:list={[
+                "relative min-h-[300px] overflow-hidden lg:min-h-full",
+                imageFirst ? "order-1" : "order-2",
+            ]}
+        >
+            <div id={skeletonId} class="absolute inset-0 z-10">
+                <Skeleton class="w-full h-full rounded-none" />
+            </div>
+            <img
+                src={responsiveImage.src}
+                srcset={responsiveImage.srcset}
+                sizes={responsiveImage.sizes}
+                alt={imageAlt}
+                width={responsiveImage.width}
+                height={responsiveImage.height}
+                loading={loading}
+                fetchpriority={fetchpriority}
+                class="absolute inset-0 w-full h-full object-cover"
+                style={`object-position: ${objectPosition};`}
+                data-pagefind-meta={pagefindImageMeta}
+                onload={`document.getElementById('${skeletonId}').style.display = 'none';`}
+            />
+        </div>
+    )}
+
+    <div
+        class:list={[
+            backgroundColor,
+            "flex flex-col justify-center px-6 py-12 sm:px-10 sm:py-16 md:px-14 lg:px-16 xl:px-20 2xl:px-24",
+            imageFirst ? "order-2" : "order-1",
+        ]}
+    >
+        <div class="max-w-2xl xl:max-w-3xl">
+            <slot />
+        </div>
+    </div>
+</section>

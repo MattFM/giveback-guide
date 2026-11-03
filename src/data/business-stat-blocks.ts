@@ -1,29 +1,11 @@
 /**
- * Stat blocks shown on the /for-businesses/ hero.
+ * Shared shape for stat datasets rendered by `StatsStrip`.
  *
- * These mirror the homepage's hero stats so the marketing surface
- * is consistent across pages. Update both if the underlying numbers change.
+ * Individual datasets live beside their page — see `advertising-stats.ts`.
+ * Add new datasets as their own modules rather than growing this file.
  */
 export interface StatBlock {
   label: string;
   value: string;
   caption: string;
 }
-
-export const businessStats: StatBlock[] = [
-  {
-    label: "Listings",
-    value: "400+",
-    caption: "Projects, stays and tours in the directory",
-  },
-  {
-    label: "Countries",
-    value: "60+",
-    caption: "Across six continents",
-  },
-  {
-    label: "Impact Areas",
-    value: "10+",
-    caption: "Animal welfare, climate, community and more",
-  },
-];

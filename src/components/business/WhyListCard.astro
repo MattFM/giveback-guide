@@ -1,13 +1,15 @@
 ---
 /**
- * Reusable benefit card: icon tile + title + short description.
- * Used by WhyListGrid (4-up reasons-to-list) and similar rows.
+ * Reusable benefit card: optional icon tile + title + short description.
+ *
+ * Used by WhyListGrid (icon-less, on /for-businesses/) and by the advertising
+ * page (icon-led). `icon` is optional so both usages share one component.
  */
 import HugeIcon from "@/components/bearnie/icon/HugeIcon.astro";
 import type { HugeIconData } from "@/components/bearnie/icon/HugeIcon.astro";
 
 interface Props {
-  icon: HugeIconData;
+  icon?: HugeIconData;
   title: string;
   description: string;
 }
@@ -16,14 +18,16 @@ const { icon, title, description } = Astro.props;
 ---
 
 <div class="flex items-start gap-4">
-  <span
-    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gbg-indigo-50 text-gbg-indigo-700 dark:bg-gbg-indigo-700/15 dark:text-gbg-indigo-200"
-    aria-hidden="true"
-  >
-    <HugeIcon icon={icon} size="base" />
-  </span>
+  {icon && (
+    <span
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gbg-indigo-50 text-gbg-indigo-700 dark:bg-gbg-indigo-700/15 dark:text-gbg-indigo-200"
+      aria-hidden="true"
+    >
+      <HugeIcon icon={icon} size="base" />
+    </span>
+  )}
   <div>
-    <h3 class="text-base font-semibold text-gray-900 dark:text-white">{title}</h3>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{description}</p>
   </div>
 </div>

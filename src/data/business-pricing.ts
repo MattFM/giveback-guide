@@ -46,20 +46,28 @@ export interface PricingTier {
   }>;
 }
 
+/**
+ * Master switch for whether monetary amounts are published on the marketing
+ * surface. While false, PricingCard replaces the price block on paid tiers
+ * with "Pricing to be announced" and PricingSection hides the monthly/yearly
+ * toggle. All figures stay in this file, so publishing is a one-line flip.
+ */
+export const PRICING_PUBLIC = false;
+
 export const pricingTiers: PricingTier[] = [
   {
     id: "free",
     name: "Free Listing",
     tagline: "Get discovered",
     description:
-      "Everything a traveller needs to find and engage with your business. Always free, always included.",
+      "Everything a traveller needs to find your business and engage with what you do.",
     price: "Free",
     priceSuffix: "forever",
     features: [
-      "One direct website link",
-      "Description of what you do and why it matters",
-      "Country and locale for trip-planning",
-      "Relevant Impact Areas with proof",
+      "Direct website link",
+      "Description of what you do and your impact",
+      "Location info",
+      "Your verified Impact Areas",
       "Google Maps link",
       "Instagram link",
     ],
@@ -69,9 +77,9 @@ export const pricingTiers: PricingTier[] = [
   {
     id: "featured",
     name: "Featured Listing",
-    tagline: "Stand out from the crowd",
+    tagline: "Get extra visibility",
     description:
-      "Greater visibility across the directory — badged, prioritised in search and showcased on relevant landing pages.",
+      "Get badged, prioritised in search and showcased on relevant landing pages.",
     price: "£5",
     priceSuffix: "/month",
     variants: [
@@ -90,11 +98,10 @@ export const pricingTiers: PricingTier[] = [
     ],
     features: [
       "Everything in Free, plus:",
-      "‘Featured Partner’ badge on your listing",
+      "‘Featured’ badge on your listing",
       "Prioritised placement in search results",
       "Featured on relevant landing pages",
-      "Newsletter mention each quarter",
-      "Priority support",
+      "Newsletter mention",
     ],
     highlighted: true,
     comingSoon: true,
@@ -107,17 +114,17 @@ export const pricingTiers: PricingTier[] = [
   {
     id: "bespoke",
     name: "Bespoke Partnership",
-    tagline: "A tailored arrangement",
+    tagline: "Tailored arrangements",
     description:
-      "For businesses wanting a fuller partnership — co-created social content, an on-site visit and dedicated editorial support.",
+      "For businesses wanting a closer and more involved partnership.",
     price: "Custom",
     priceSuffix: "on request",
     features: [
       "Everything in Featured, plus:",
-      "On-site verification visit",
-      "Co-created social media content",
+      "In-person verirication from us",
+      "Bespoke social media content",
       "Editorial features in our blog",
-      "Direct account management",
+      "Newsletter features",
     ],
     comingSoon: true,
     cta: {

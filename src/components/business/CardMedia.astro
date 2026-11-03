@@ -1,0 +1,56 @@
+---
+/**
+ * Optional 16:9 media block for the top of a Bearnie Card.
+ *
+ * Renders a real image when `src` is supplied, otherwise a neutral labelled
+ * placeholder so layout work stays honest until photography exists.
+ *
+ * Cloudinary URLs are transformed into a responsive srcset using the same
+ * utility as the rest of the site. The sizes attribute assumes a 2-up card
+ * grid inside a max-w-screen-xl container; pass a wider `src` if that changes.
+ */
+import { createResponsiveImage } from "@/utils/cloudinary";
+
+interface Props {
+    src?: string;
+    alt?: string;
+}
+
+const { src, alt = "" } = Astro.props;
+
+const responsiveImage = src
+    ? createResponsiveImage(src, {
+          sizes: [{ width: 400 }, { width: 600 }, { width: 800 }],
+          sizesAttribute: ["(max-width: 768px) 100vw", "50vw"],
+          fallbackWidth: 800,
+          quality: 80,
+          format: "auto",
+      })
+    : null;
+---
+
+<div class="aspect-[16/9] w-full overflow-hidden rounded-t-lg bg-gray-200 dark:bg-gray-800">
+    {
+        responsiveImage ? (
+            <img
+                src={responsiveImage.src}
+                srcset={responsiveImage.srcset}
+                sizes={responsiveImage.sizes}
+                alt={alt}
+                width={responsiveImage.width}
+                height={responsiveImage.height}
+                loading="lazy"
+                class="h-full w-full object-cover"
+            />
+        ) : (
+            <div
+                class="flex h-full w-full items-center justify-center"
+                aria-hidden="true"
+            >
+                <span class="text-xs font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                    Image placeholder
+                </span>
+            </div>
+        )
+    }
+</div>
