@@ -1,0 +1,589 @@
+# Technical SEO plan — Give Back Guide
+
+**Created:** 11 November 2026
+**Location:** `docs/plans/technical-seo-plan.md` (moved out of `~/.opencode/plan` on 11 Nov 2026)
+**Scope:** Everything on the site that affects how Google crawls, indexes, understands and displays pages. Content strategy is a separate document.
+**Owner:** Matthew (solo). All tasks are written so an AI agent can implement them under review.
+**Status:** Verified and ready to start. Phase 0 not begun.
+**Revision 3 (11 Nov 2026):** Every claim re-verified against the deployed build. See §8 for the log. Three claims were wrong and are corrected there; the malformed-URL diagnosis in §1.4.1 was also wrong and is rewritten.
+
+---
+
+## Handoff
+
+Read this before touching anything. It exists so a session with no prior context
+can act safely.
+
+### Current state
+
+| Field | Value |
+|---|---|
+| Phases complete | None |
+| Next action | Phase 0 (§4) |
+| Blocked on | Nothing — Phase 0 can start now |
+| Coordination risk | The three redirects must ship with the next deploy — see below |
+| Verified against | The live build, 11 November 2026 (§8) |
+| Progress log | §9 |
+
+### Deploy ordering — get this wrong and you lose a ranking
+
+Notion was cleaned on 11 November: three listing slugs that contained trailing
+spaces have been fixed, so their URLs change on the next build. The live site
+still serves the old malformed URLs because it has not been rebuilt.
+
+- **T11.13 (the 301 redirects) must land in the same deploy as the rebuild.**
+- Rebuild without it and `/stays/kirtipur-community-homestay%20/` returns 404.
+  That URL has 861 impressions and 2 clicks at position 8.4.
+- After deploying, fetch all three old URLs and confirm a 301, not a 404:
+  `/projects/awamaki%20/`, `/stays/kirtipur-community-homestay%20/`,
+  `/projects/united%20way%20mumbai/`.
+
+### Hard constraints
+
+| Constraint | Why |
+|---|---|
+| Do not start **W6** (merging duplicate posts) without approval | Every merge needs a decision about which URL survives |
+| Do not start **T11.1** (pruning locale hubs) without approval | It removes pages from the index |
+| Do not redesign the location data model or URL scheme | W11 works with the routes as they exist — see the caution in W11 |
+| Do not write article content | Matthew writes all articles. This plan supplies briefs and internal-link targets only |
+| UK English in all user-facing strings | House style |
+
+### How to work through it
+
+1. Take **one phase** from §4 at a time. Do not batch phases.
+2. Re-read each file named in a task before editing it. The plan was verified on
+   11 November 2026; if a file has changed since, trust the file over the plan.
+3. After each phase, run the checks in §5, then add a row to §9.
+4. Verify against the live build where a claim is about behaviour, not just the
+   source. Three of this plan's original claims were wrong because they were
+   checked against source alone — see §8.
+
+---
+
+## 0. The finding in one paragraph
+
+The site does not have a crawling problem — it has a **click-through problem and a metadata problem**. In the last 12 months it earned 1.16 million impressions and 9,622 clicks (0.83% CTR). Seventeen pages alone account for 565,285 impressions but only 1,689 clicks — a 0.30% CTR, less than half the site average. Those pages are already ranking (positions 6–17), so the lever is titles, descriptions and rich results, not new content.
+
+The second finding is about architecture, and it cuts the opposite way to what I first assumed. The directory **already has** country and city hub pages — 109 country hubs and 480 locale hubs, all live and in the sitemap. They earn **40 clicks a year between them**, against 7,767 from 88 blog URLs. The architecture exists; it has never been filled in. A hub page currently ships with no meta description, a title ending in "Page 1 of 1", one sentence of body copy, no structured data and no inbound links from articles.
+
+Underneath both: **no structured data anywhere**, no author attribution, utility pages submitted to Google in the sitemap, and almost no internal links between articles and the directory.
+
+---
+
+## 1. Verified baseline
+
+All figures below were read directly from `~/Downloads/giveback.guide-Performance-on-Search-2026-11-10/Pages.csv` (1,000 rows, 12 months) and the live Umami database (31 Aug – 11 Nov 2026, 72 days). The two windows are **not comparable** — GSC is annual, Umami is 72 days.
+
+### 1.1 Search Console, 12 months
+
+| Metric | Value |
+|---|---|
+| Pages in export | 1,000 |
+| Clicks | 9,622 |
+| Impressions | 1,158,317 |
+| Site CTR | 0.83% |
+| Pages with 0 clicks | 688 |
+
+### 1.2 Position bands
+
+| Position | Pages | Impressions | Clicks |
+|---|---|---|---|
+| 1–3 | 30 | 133 | 1 |
+| 4–10 | 522 | 424,817 | 6,182 |
+| 11–20 | 314 | 637,909 | 3,192 |
+| 21+ | 134 | 95,458 | 247 |
+
+Two observations:
+
+- **Positions 1–3 are effectively empty.** 30 pages generate 133 impressions between them. There is almost no top-of-page presence.
+- **Positions 11–20 carry the most impressions** (638k) and convert poorly. These are page-two rankings — one push each would move a lot of traffic.
+
+### 1.3 The CTR problem
+
+Seventeen pages have more than 10,000 impressions and under 1% CTR:
+
+| Page | Clicks | Impressions | CTR | Position |
+|---|---|---|---|---|
+| `/blog/brno/` | 250 | 167,604 | 0.15% | 11.7 |
+| `/blog/oslo-in-winter/` | 233 | 56,341 | 0.41% | 10.65 |
+| `/blog/north-cyprus-things-to-know/` | 239 | 53,400 | 0.45% | 16.93 |
+| `/blog/vegan-glasgow-scotland/` | 273 | 52,888 | 0.52% | 11.71 |
+| `/blog/bedford/` | 181 | 37,139 | 0.49% | 14.68 |
+| `/blog/carbon-offsetting-apps-for-travel/` | 60 | 33,215 | 0.18% | 12.69 |
+| `/blog/lugano-day-trip/` | 164 | 32,654 | 0.50% | 10.75 |
+| `/blog/budapest-13-things-know-go/` | 48 | 16,956 | 0.28% | 6.00 |
+| `/blog/bergamo/` | 30 | 15,689 | 0.19% | 13.69 |
+| `/blog/2026-travel-trends-regenerative/` | 41 | 14,877 | 0.28% | 6.70 |
+| `/blog/iron-men-crosby-beach-liverpool/` | 25 | 14,339 | 0.17% | 9.21 |
+| `/blog/morocco-travel-guide/` | 34 | 13,678 | 0.25% | 20.32 |
+
+*Illustrative, not a forecast:* lifting these seventeen from 0.30% to 1.5% CTR — still below the site's best pages — would produce roughly 8,479 clicks instead of 1,689.
+
+> **Correction to an earlier figure.** I previously quoted Brno as 9 clicks. The export says **250 clicks / 167,604 impressions / 0.15% / position 11.7**. The 9-click figure came from the 72-day Umami window, not GSC. Use the GSC numbers.
+
+### 1.4 What the sitemap actually contains
+
+`https://giveback.guide/sitemap-0.xml` holds **1,295 URLs**. Classified by matching against `/api/items.json` (496 published listings), and cross-referenced with the GSC export:
+
+| Group | URLs in sitemap | With GSC data | Clicks | Impressions | Share of impressions |
+|---|---|---|---|---|---|
+| Blog | 88 | 79 | 7,767 | 990,316 | 86% |
+| Listing detail pages | 489 | 476 | 1,572 | 145,049 | 12.5% |
+| Country hubs | 109 | 99 | **27** | 1,932 | 0.17% |
+| Locale hubs | 480 | 209 | **13** | 1,328 | 0.11% |
+| Paginated indexes | 93 | 21 | 0 | 115 | 0.01% |
+
+Three things follow from this:
+
+- **The blog is the entire search presence.** 86% of impressions come from 88 URLs.
+- **The directory's hub layer is invisible.** 589 country and locale hubs generate 40 clicks a year. **271 of the 480 locale hubs do not appear in the export at all** — they have effectively no impressions.
+- **Pagination is dead weight.** 93 URLs, 115 impressions, zero clicks.
+
+> **Reading the zeroes correctly.** The GSC export is capped at 1,000 rows, so a URL that is absent from it is not provably at zero impressions — only below the cut-off, which in practice means a handful at most. Treat "absent" as "negligible", not "mathematically zero". The click and impression totals for each group are lower bounds for the same reason.
+
+A live example, `/projects/portugal/`, verified by fetching it:
+
+```html
+<title>Projects in Portugal - Page 1 of 1</title>
+<meta name="description">          <!-- present but empty -->
+<h1>Projects in Portugal</h1>
+<p>A list of projects located in Portugal.</p>
+```
+
+No JSON-LD, no breadcrumbs, no link to any related blog post.
+
+### 1.4.1 Data defects — fixed in Notion, not yet deployed
+
+The sitemap has 1,259 directory URLs against 496 published listings. Matching the listing index (`/api/items.json`) against the sitemap exposed three listings at malformed URLs:
+
+| Listing | Old URL | New URL | GSC (12m) |
+|---|---|---|---|
+| Awamaki | `/projects/awamaki%20/` | `/projects/awamaki/` | 11 impressions |
+| Kirtipur Community Homestay | `/stays/kirtipur-community-homestay%20/` | `/stays/kirtipur-community-homestay/` | 861 impressions, 2 clicks |
+| United Way Mumbai | `/projects/united%20way%20mumbai/` | `/projects/united-way-mumbai/` | 6 impressions |
+
+**Root cause (corrected):** all three had a **trailing space in the `pSlug`/`sSlug` field**, not in the country field as this plan first stated. `pSlug` is built with `richTextToPlainText()`, which does not trim, and the route uses the value untrimmed.
+
+**Status as of 11 Nov:** Notion is fixed. All 1,186 project and stay records were checked and **zero** slug values now contain stray whitespace. The live site still serves the old URLs because it has not been rebuilt and deployed since the edit.
+
+**Consequence — this needs doing before the next deploy.** Google has indexed all three old URLs, and the Kirtipur one earns clicks. Once the rebuild lands, all three will 404 unless redirects are added first. See T11.13.
+
+Notion is also inconsistent in a way that matters for the plan's linking work: the "United Way Mumbai" project has been retitled to a full sentence ("Help to keep the shores of Mumbai tidy of rubbish at regular clean-ups"), so listing titles are not uniform.
+
+### 1.5 On-site behaviour, Umami, 72 days
+
+| Metric | Value |
+|---|---|
+| Pageviews | 7,966 |
+| Visitors | 6,526 |
+| Bounce rate | 93.1% |
+| Views per visit | 1.16 |
+| Average visit | 20s |
+| `/projects/` views | 65 |
+| `/stays/` views | 43 |
+| `/blog/` views | 552 |
+
+Accessibility audit performed: **no structured data**, **no author byline**, **no related posts**, **6 of 71 posts** link to a project, **7 of 71** link to another post, **455 of 523 post images** have empty alt text.
+
+---
+
+## 2. Principles
+
+1. **Fix what is wrong before adding what is new.** Half of this plan is removal and correction.
+2. **Every change must be measurable.** Custom events come before content or layout changes so effects are attributable.
+3. **One source of truth for metadata.** Today titles and descriptions are assembled ad hoc in each layout and page. Centralise.
+4. **Do not noindex a page that is the only crawl path to content.** Paginated indexes must stay crawlable unless a country/city hub replaces them.
+5. **UK English in all user-facing strings.**
+6. **Small, reversible commits.** This is a static build; each task should be verifiable with `pnpm dev` and a check of the rendered HTML.
+
+---
+
+## 3. Workstreams
+
+Tasks are numbered `T<workstream>.<n>`. Effort is S (under 1 hr), M (1–4 hrs), L (half a day or more).
+
+### W1 — Indexation and sitemap hygiene
+
+The sitemap currently excludes only `/docs/` and `/design/` (`astro.config.mjs`, line 33). Verified against the live `sitemap-0.xml`: **17 utility URLs are being submitted**, including all seven `/account/` pages, `/search/`, `/login/`, `/verify/`, `/claim/`, `/submit/`, `/report/` and four `/feedback/` pages.
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T1.1 | Extend the sitemap filter to drop `/account/`, `/search/`, `/login/`, `/verify/`, `/claim/`, `/submit/`, `/feedback/`, `/report/`, `/api/` | `astro.config.mjs` | S |
+| T1.2 | Add `noindex` to `/search/` | `src/pages/search.astro` | S |
+| T1.3 | Add `noindex` to `/login/`, `/verify/`, `/claim/`, `/submit/`, `/account/onboarding/` and `/account/verify/`. The other five `/account/` pages already have it | `src/pages/*` | S |
+| T1.4 | Fix the `/verify/` page title, which currently reads **"Contact Us"** — a duplicate of `/contact/` | `src/pages/verify.astro` | S |
+| T1.5 | Confirm `robots.txt` stays as-is; it already declares the sitemap correctly | `public/robots.txt` | S |
+
+**Not a problem (checked and dismissed):** the footer links to `/about/animal-welfare/` and `/about/ai-policy/` both resolve — they are MDX pages at `src/pages/about/animal-welfare.mdx` and `src/pages/about/ai-policy.mdx`. My earlier scan wrongly reported them missing.
+
+**Acceptance:** `sitemap-index.xml` contains no private or utility routes. Fetching `/search/` returns `<meta name="robots" content="noindex, nofollow">`.
+
+---
+
+### W2 — Titles and meta descriptions (highest expected return)
+
+This is where the traffic is. Pages ranking 6–17 with 0.2–0.5% CTR are being ignored in the results page, and titles are the main cause.
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T2.1 | Introduce a single `buildTitle()` helper that always appends `| Give Back Guide` and never emits a page number on page 1 | `src/utils/seo.ts` (new) | M |
+| T2.2 | Rewrite titles for the 12 pages in §1.3 to lead with the search intent, not the site's internal labelling. Formula: `[Primary intent] — [specific hook] \| Give Back Guide` | 12 MDX files | M |
+| T2.3 | Write meta descriptions for those same 12 pages, 140–155 characters, containing the primary query and a reason to click | 12 MDX files | M |
+| T2.4 | Fix the blog index: live title is `Blog - Page 1 of 8` and there is **no meta description at all**. Drop the page count on page 1 and write a description | `src/pages/blog/[...page].astro` | S |
+| T2.5 | Fix the projects index: live title is `All Projects - Page 1 of 49`, description empty | `src/pages/projects/[...page].astro` | S |
+| T2.6 | Fix the stays index: live title is `All Stays - Page 1 of 7`, description empty | `src/pages/stays/[...page].astro` | S |
+| T2.7 | Fix tag pages: live title is `Posts in Travel Guides - Page 1 of 6`. The description already falls back correctly, so only the page count needs removing | `src/pages/blog/[tag]/[...page].astro` | S |
+| T2.8 | Add a missing-description fallback in `BaseHead` so no page ever ships an empty description. **Every one of the 16 pages I checked without an explicit description currently renders `<meta name="description" content="">` or omits it** | `src/components/layout/BaseHead.astro` | S |
+| T2.9 | Audit every page for title length over 60 characters (truncation) | site-wide | M |
+| T2.10 | Country hubs ship `Projects in Portugal - Page 1 of 1`, which is both unbranded and padded with a page count. Replace with a search-intent title and generate a description naming the number of listings, the cities covered and one impact area | `src/pages/projects/[country]/[...page].astro`, `src/pages/stays/[country]/[...page].astro` | M |
+| T2.11 | Locale hubs ship the same pattern. Same fix, including the city name in the title | `src/pages/projects/[country]/[locale]/[...page].astro`, `src/pages/stays/[country]/[locale]/[...page].astro` | M |
+
+**Title rules**
+
+- Under 60 characters including the suffix.
+- Primary keyword first, brand last.
+- No `Page N of M` except on pages 2+.
+- No duplicated titles across the site (T1.4 is an example of a live duplicate).
+- **Every page must have a non-empty description.** Hubs currently emit `<meta name="description">` with no content at all.
+
+**Acceptance:** no two pages share a `<title>`. Every page has a non-empty description of 120+ characters. Fetching `/projects/portugal/` returns a branded title with no page count and a populated description.
+
+---
+
+### W3 — Structured data
+
+The site has **zero JSON-LD**. For a directory this is the largest single missing signal, and it is also what produces rich results.
+
+| ID | Schema type | Where | Effort |
+|---|---|---|---|
+| T3.1 | `Organization` + `WebSite` (with `SearchAction`) | `BaseHead.astro`, site-wide | M |
+| T3.2 | `Article` on posts — headline, datePublished, dateModified, author, publisher, image, mainEntityOfPage | `BlogPostLayout.astro` | M |
+| T3.3 | `BreadcrumbList` | `Breadcrumbs.astro` (component already renders visible breadcrumbs on listings) | M |
+| T3.4 | `NGO` or `Organization` for project listings | `ProjectPage.astro` | M |
+| T3.5 | `LodgingBusiness` for stays | `StayPage.astro` | M |
+| T3.6 | `ItemList` on paginated index pages | projects/stays/blog indexes | M |
+| T3.7 | Validate every type in Google's Rich Results Test and Schema.org validator | — | S |
+
+**Implementation note:** put each builder in `src/utils/schema.ts` returning a plain object, and emit with a single `<script type="application/ld+json" set:html={JSON.stringify(obj)} />` in `BaseHead`. Do not hand-write JSON into layouts — it will drift.
+
+**Do not mark up** ratings, reviews, prices or opening hours. There is no first-party data behind them and inventing it risks a manual action.
+
+**Acceptance:** Rich Results Test passes with no errors for one post, one project, one stay and the homepage. No `Article` markup on non-article pages.
+
+---
+
+### W4 — Identity and credibility (E-E-A-T)
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T4.1 | Add `author` to the blog schema (default to a single name, per-post override possible) | `src/content.config.ts` | S |
+| T4.2 | Render a byline on posts: name, short credential, link to an author page | `BlogPostLayout.astro` | M |
+| T4.3 | Create `/about/author/` (or `/about/matthew/`) with a real bio, photo and links | new page | M |
+| T4.4 | Add `lastUpdated` visibly (already computed but only shown when it differs — confirm it always renders when a genuine update occurred) | `BlogPostLayout.astro` | S |
+| T4.5 | Add a visible "How we verify listings" note linking to `/about/verification/` from project pages | `ProjectPage.astro` | S |
+
+**Why:** you are the author of all 71 posts, which is a genuine advantage over anonymous travel content. Right now the site never says so. This also feeds T3.2 — `Article` without an `author` is a weak signal.
+
+**Acceptance:** every post shows a named author linked to a real page; the author page appears in the sitemap.
+
+---
+
+### W5 — Internal linking
+
+Currently 6 posts link to a project and 7 to another post. With 441 projects, 56 stays and 167 café/bar/restaurant listings, the archive is effectively disconnected from the directory.
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T5.1 | Add a `relatedPosts` block to post templates — same primary tag, then most recent, max 3 | `BlogPostLayout.astro` | M |
+| T5.2 | Add a `relatedProjects` block to post templates, matched by the post's destination | `BlogPostLayout.astro` | L |
+| T5.3 | Add a `destination` frontmatter field (`country` + optional `locale`) to the blog schema so T5.2 can match reliably instead of guessing from tags | `src/content.config.ts` | M |
+| T5.4 | Backfill `destination` across all 71 posts | 71 MDX files | L |
+| T5.5 | Add contextual links inside existing high-impression posts to their matching listings (the 12 pages in §1.3 first) | 12 MDX files | M |
+| T5.6 | Ensure every post has at least 3 outbound internal links: 1 listing, 1 sibling post, 1 hub | editorial rule | — |
+| T5.7 | Add `ListingEmbed` to posts where a full card is more useful than a text link (component already exists and is registered globally in `src/mdx-components.ts`) | 12 MDX files | M |
+
+**Note:** `ProjectPage` and `StayPage` already have a related-listings block. The gap is posts → listings and posts → posts, not listings → listings.
+
+**Acceptance:** a spot check of five posts shows at least three internal links each, and at least one points at a listing. No post is an orphan.
+
+---
+
+### W6 — Duplicate and near-duplicate content
+
+| ID | Task | Effort |
+|---|---|---|
+| T6.1 | Merge `/blog/north-cyprus/` and `/blog/north-cyprus-things-to-know/` | M |
+| T6.2 | Merge the three Budapest posts | M |
+| T6.3 | Merge the two Oslo posts (or differentiate: one "winter", one "vegan" — verify they do not target the same queries) | M |
+| T6.4 | Merge the three Morocco posts | M |
+| T6.5 | Merge the two Jungfrau posts | M |
+| T6.6 | Add 301 redirects for every merged URL in `astro.config.mjs` (only one redirect exists today) | S |
+| T6.7 | Split the tag taxonomy: 4 tags hold 71 posts, with 48 under "Travel Guides". Add destination/region tags so tag pages can rank | M |
+
+**Before merging, check with GSC:** if both versions of a duplicate pair have meaningful impressions, keep the stronger URL and redirect the weaker one. Do not delete a page that still earns clicks.
+
+**Acceptance:** no two published posts target the same primary query. Every retired URL 301s to its replacement.
+
+---
+
+### W7 — Redirects and error handling
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T7.1 | Fix the 404 page: "Back to Homepage" currently points at `href="#"`. Point it at `/` and add links to `/blog/`, `/projects/`, `/stays/` and `/search/` | `src/pages/404.astro` | S |
+| T7.2 | Add a description to the 404 page | `src/pages/404.astro` | S |
+| T7.3 | Add redirects for legacy paths appearing in analytics: `/home-new/`, `/why`, `/project/…` | `astro.config.mjs` | S |
+| T7.4 | Add a redirect rule for the singular `/project/` and `/stay/` prefixes if any external links use them | `astro.config.mjs` | S |
+| T7.5 | ~~Confirm Cloudflare returns a real 404 status~~ — **verified: unknown paths return HTTP 404**, not a soft 200. No action needed | — | done |
+
+**Acceptance:** no internal link points to `#`. Unknown paths return HTTP 404 and a page with onward navigation.
+
+---
+
+### W8 — Social and sharing metadata
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T8.1 | Make `og:type` configurable — `article` for posts, `website` elsewhere | `BaseHead.astro` | S |
+| T8.2 | Change Twitter tags from `property=` to `name=` (all five are wrong today) | `BaseHead.astro` | S |
+| T8.3 | Add `og:site_name` and `og:locale` (`en_GB`) | `BaseHead.astro` | S |
+| T8.4 | Add `article:published_time` and `article:modified_time` on posts | `BaseHead.astro` | S |
+| T8.5 | Ensure the fallback image is at least 1200×630 (current placeholder is used on many pages) | `public/` | S |
+| T8.6 | Add `twitter:site` if an account exists | `BaseHead.astro` | S |
+
+**Acceptance:** a post shares with `og:type=article`; `.astro` output contains `name="twitter:card"`.
+
+---
+
+### W9 — Images and accessibility-adjacent SEO
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T9.1 | `ProjectCard.astro` passes `alt=""`, and the rendered output drops the attribute entirely — 9 of 10 images on `/projects/` have no `alt` at all. Use the project title | `ProjectCard.astro` | S |
+| T9.2 | **455 of 523 images in blog posts have empty alt text** (`![](...)`) — 87% of all content images. Start with the 12 pages in §1.3, then work backwards. This is an editorial backlog, not a code fix | 71 MDX files | L |
+| T9.3 | Add a fallback so an image with an empty alt is attributable rather than absent: pass the post title as alt when the source alt is blank | `remark-responsive-images.mjs` | S |
+| T9.4 | Ensure post cover images are passed as `og:image` at full resolution (currently a Cloudinary URL, verify dimensions) | `BlogPostLayout.astro` | S |
+| T9.5 | Confirm hero images on listing pages keep `fetchpriority="high"` and cards keep `loading="lazy"` — verified true on the live build | `ProjectPage.astro`, `ResponsiveImage.astro` | done |
+
+---
+
+### W10 — Measurement
+
+Nothing on this list can be evaluated until events exist. **This is Phase 1.**
+
+| Event | Fires when | Properties |
+|---|---|---|
+| `project_click` | A project card or link to `/projects/*` is clicked | `slug`, `source_page` |
+| `stay_click` | A stay card or link to `/stays/*` is clicked | `slug`, `source_page` |
+| `booking_click` | An outbound booking or affiliate link is clicked | `listing_slug`, `destination_domain` |
+| `newsletter_signup` | Newsletter form submits successfully | `source` (`site-wide`, `post`, `footer`) |
+| `member_signup` | Account created | `method` |
+| `search_performed` | Site search returns results | `query`, `result_count` |
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T10.1 | Add `data-umami-event` attributes to listing cards and links | `ProjectCard.astro`, `StayCard.astro`, `ListingEmbed.astro`, `ProjectPage.astro`, `StayPage.astro` | M |
+| T10.2 | Add `data-umami-event` to `NewsletterForm` with a `source` property | `src/components/features/newsletter/NewsletterForm.astro` | S |
+| T10.3 | Add `data-domains="giveback.guide"` to the Umami script so localhost and preview deploys stop polluting the data | `src/components/utility/Analytics.astro` | S |
+| T10.4 | Enable bot filtering in Umami settings — Singapore (1,653 visitors) and China (232) are datacentre traffic, roughly 25% of the total | Umami UI | S |
+| T10.5 | Investigate why Umami reports **0 Core Web Vitals measurements**; enable performance tracking if supported, otherwise run Lighthouse monthly and record results | `Analytics.astro` / process | M |
+
+**Acceptance:** clicking a project card from a blog post produces a `project_click` event with the correct `source_page`. Umami's country report no longer shows a Singapore block.
+
+---
+
+### W11 — The hub layer: fill it in or prune it
+
+The country and locale hub routes already exist:
+
+```
+src/pages/projects/[country]/[...page].astro
+src/pages/projects/[country]/[locale]/[...page].astro
+src/pages/stays/[country]/[...page].astro
+src/pages/stays/[country]/[locale]/[...page].astro
+```
+
+That is 109 country hubs and 480 locale hubs in the sitemap, earning 27 and 13 clicks respectively over twelve months. The problem is not the URL scheme. It is that each hub is an empty shell: a generated title, an empty description, one sentence of copy and a paginated grid of nine cards.
+
+The 480 locale hubs are the weakest surface on the site. **271 do not appear in the GSC export at all**, and the 209 that do average 6 impressions each. Several duplicate their parent country hub exactly (`/projects/aruba/aruba/`, `/projects/singapore/singapore/`, `/stays/hong-kong/hong-kong/`).
+
+| ID | Task | File | Effort |
+|---|---|---|---|
+| T11.1 | Decide the survival rule for locale hubs. Recommendation: keep a locale hub only if it has 3+ published listings **and** either GSC impressions or a matching blog post; otherwise drop it from the sitemap and `noindex` it | decision | S |
+| T11.2 | Collapse locale hubs where the city equals the country (`aruba/aruba`, `singapore/singapore`, `hong-kong/hong-kong`) into the country hub with a 301 | route code | S |
+| T11.3 | Add a real intro paragraph per country hub — 80–120 words covering what kinds of projects exist there, which regions, and one concrete example. This is the single highest-value content task on the directory | editorial + route prop | L |
+| T11.4 | Add breadcrumbs to hub pages (`Breadcrumbs` already exists and is used on detail pages) | hub routes | S |
+| T11.5 | Add `ItemList` structured data to hubs | hub routes | S |
+| T11.6 | Link each country hub to the 2–3 most relevant blog posts for that country, and add a return link from those posts | hub routes + W5 | M |
+| T11.7 | Trim slug and country values on import (`richTextToPlainText` returns untrimmed text). Notion is already clean; this is the guard against regression | `src/content.config.ts`, `src/lib/notion-loader.ts` | S |
+| T11.8 | Investigate `/stays/italy/` returning 404 while `/projects/italy/` returns 200 — either a stay is tagged with a misspelt country, or no stay covers Italy and the dropdown is misleading | Notion data | S |
+| T11.9 | Consider `noindex, follow` on paginated hub pages beyond page 1. They currently generate 115 impressions and zero clicks from 93 URLs | hub routes | S |
+| T11.10 | ~~Fix `/stays/kirtipur-community-homestay/`~~ — resolved in Notion; tracked as a redirect under T11.13 | — | done |
+| T11.11 | ~~Normalise slugs on import~~ — Notion is clean. Keep T11.7 as the regression guard | — | done |
+| T11.12 | Add a build-time guard that fails the build if any published listing lacks a generated page, or if any slug contains a space or stray whitespace | build script | M |
+| T11.13 | **Add 301 redirects for the three old malformed URLs before the next deploy** — Google has indexed all three and Kirtipur earns 2 clicks | `astro.config.mjs` or Cloudflare | S |
+
+**Caution on T11.1:** do not prune a locale hub that still earns clicks, and do not `noindex` a hub that is the only crawl path to a listing. Check the GSC export per URL before removing anything.
+
+**What this is not:** it is not a URL restructure. The routes are fine. The work is copy, metadata, internal links and pruning — substantially cheaper than rebuilding the scheme, and it does not need to wait on the location data model session.
+
+---
+
+## 4. Sequence
+
+| Phase | Contents | Why first |
+|---|---|---|
+| **Phase 0** — half a day | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, **T11.13 (before the next deploy)**, T11.7 | Broken or wrong today; near-zero risk |
+| **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it |
+| **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is |
+| **Phase 3** — 2 days | W3, W4 | Rich results plus authorship |
+| **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory |
+| **Phase 5** — 3–4 days | W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 | Consolidation and pruning, best done before new content |
+| **Phase 6** — ongoing | T11.3, W9.4, T10.5 | Hub copy is editorial work, one country at a time |
+
+Phases 0–2 are roughly one week of work and capture the majority of the upside, because the impression base already exists.
+
+T11.3 is the exception to that ordering. It is the slowest task in the plan and the one most likely to change the directory's fortunes, because it is the only task that gives 589 existing URLs something worth ranking. Start it in parallel and work through countries in order of GSC impressions — South Africa, Laos, Thailand, Iceland, Mexico, Vietnam.
+
+---
+
+## 5. Verification checklist
+
+Run after each phase.
+
+- [ ] `pnpm dev` builds with no new console errors
+- [ ] `/sitemap-index.xml` fetches and lists only intended routes
+- [ ] `curl -s https://giveback.guide/blog/brno/ | grep -c 'application/ld+json'` returns ≥ 1
+- [ ] Rich Results Test passes for a post, a project, a stay
+- [ ] No page has an empty `<meta name="description">`
+- [ ] `curl -s https://giveback.guide/projects/portugal/` returns a branded title with no page count and a populated description
+- [ ] No two pages share a `<title>`
+- [ ] `twitter:card` uses `name=`, not `property=`
+- [ ] A blog post contains at least 3 internal links, at least 1 to a listing
+- [ ] Unknown URL returns HTTP 404
+- [ ] Every published listing returns 200 at its canonical URL — no listing is shadowed by a country hub
+- [ ] No sitemap URL contains `%20` or a stray space
+- [ ] Umami receives `project_click` from a real click
+- [ ] Umami country report has no Singapore block after 7 days
+
+---
+
+## 6. Risks and gotchas
+
+| Risk | Mitigation |
+|---|---|
+| `trailingSlash: 'always'` — every internal link must end in `/`. A mismatch creates a redirect chain and wastes crawl budget | Grep for `href="/` without a trailing slash before shipping |
+| Changing titles loses existing rankings temporarily | Change in batches of 5, watch GSC for 2 weeks, revert anything that drops |
+| Merging duplicates can lose links and rankings | Check GSC first; 301 rather than delete; keep the stronger URL |
+| Noindexing paginated pages can orphan listings | Hubs already exist as an alternative crawl path, so pagination can be noindexed — but confirm each listing also appears on a country hub first |
+| Pruning locale hubs can orphan listings that have no other page | Verify each listing is reachable from its country hub and the main index before removing a locale hub |
+| Notion-loaded content regenerates at build time | Any frontmatter-style change for projects must go through `src/content.config.ts`, not the MDX files |
+| `BaseHead` is used by every page | Change it once, verify on a post, a listing, an index and a utility page |
+| The site is static | Redirects live in `astro.config.mjs`; Cloudflare-level redirects are the fallback for legacy paths |
+
+---
+
+## 7. Out of scope
+
+- Content writing, topic selection and editorial calendar — separate document
+- The location data model and URL scheme decisions — separate session. W11 does not depend on them; it works with the routes as they exist
+- Affiliate and advertising revenue work
+- Backlink acquisition and digital PR
+- Paid search
+
+---
+
+## 8. Verification log — 11 November 2026
+
+Every claim in this plan was checked against the deployed build (`giveback.guide`), not just the source. Method: fetch each page, parse the rendered HTML; classify the live sitemap against `/api/items.json`; query Notion directly for data defects.
+
+### Confirmed
+
+| Claim | Evidence |
+|---|---|
+| No JSON-LD anywhere | 0 `application/ld+json` blocks on all 16 pages sampled, including home, post, both hub types and both listing types |
+| `og:type` always `website` | Confirmed on the Brno post |
+| Twitter tags use `property=` | 5 `property="twitter:*"`, 0 `name="twitter:*"` |
+| No `og:site_name`, `og:locale`, `article:published_time` | All absent on a post |
+| No author byline | Absent on post pages |
+| No related-posts module | Absent on post pages |
+| Sitemap contains private routes | 17 utility URLs: 7 × `/account/`, `/search/`, `/login/`, `/verify/`, `/claim/`, `/submit/`, `/report/`, 4 × `/feedback/` |
+| No `noindex` on utility pages | `/search/`, `/login/`, `/verify/`, `/claim/`, `/submit/` all return no robots meta |
+| `/verify/` duplicates the `/contact/` title | Both render `Contact Us` |
+| Blog index has no description | `<meta name="description">` empty |
+| Index and hub titles carry page numbers | `Blog - Page 1 of 8`, `All Projects - Page 1 of 49`, `All Stays - Page 1 of 7`, `Projects in Portugal - Page 1 of 1`, `Projects in Lisbon, Portugal - Page 1 of 1` |
+| Hub pages have empty descriptions | Confirmed on both hub types |
+| 404 "Back to Homepage" is `href="#"` | Confirmed |
+| Pagination is self-canonical | `/projects/2/` canonicalises to itself |
+| Posts barely link to the directory | Brno: 0 links to `/projects/`, 1 to `/blog/` |
+| Card images have no alt | 9 of 10 `<img>` on `/projects/` have no `alt` attribute at all |
+| Blog images have no alt | 11 of 13 `<img>` on the Brno post, because 455 of 523 post images have empty alt in source |
+
+### Verified as already correct — no action needed
+
+| Check | Result |
+|---|---|
+| 404 status code | Unknown paths return **HTTP 404**, not a soft 200 |
+| RSS feed | `/rss.xml` returns 200 with 71 items |
+| `robots.txt` | Declares `Sitemap: https://giveback.guide/sitemap-index.xml` |
+| Canonical tags | Present and correct on posts, hubs and paginated pages |
+| Trailing slashes | Consistent; `/projects/portugal` and `/projects/portugal/` both resolve |
+| Footer policy links | `/about/animal-welfare/` and `/about/ai-policy/` both exist (MDX pages) |
+| Account pages | `/account/dashboard/` and `/account/settings/` already `noindex, nofollow` |
+| Lazy loading and `fetchpriority` | Cards lazy-load, listing heroes are eager with high priority |
+
+### Corrected during verification
+
+| Earlier claim | Corrected finding |
+|---|---|
+| "The site has no country or city hub pages" | It has 589 of them. See §1.4 |
+| "Hub pages are unreachable through pagination" | They are in the sitemap and live; they are simply empty shells |
+| The three malformed URLs were caused by a country field | They were caused by trailing spaces in **slug** fields |
+| The three malformed URLs are broken | Notion is fixed; the live site is stale. They need redirects, not repairs |
+| "17 `<img>` tags to audit" | 455 of 523 post images have empty alt text, and card images omit the attribute entirely |
+
+---
+
+## 9. Progress
+
+Update this after every phase. A row per phase, with the date and what actually
+shipped. Do not mark a phase complete until its §5 checks pass.
+
+| Date | Phase | Tasks done | Checks | Notes |
+|---|---|---|---|---|
+| — | — | — | — | No work started |
+
+---
+
+## Appendix A — Title and description formula
+
+```
+Title:    <primary query in natural language> — <specific hook> | Give Back Guide
+          (≤ 60 characters total)
+
+Desc:     <what the page answers>. <a concrete detail from the page>.
+          (140–155 characters)
+```
+
+Worked example for the Brno page:
+
+- **Before:** `Brno: 11 Reasons Why You'll Love Czechia's Quirky Second City - Give Back Guide`
+- **After:** `Is Brno Worth Visiting? An Honest 2026 Guide | Give Back Guide`
+- **Description:** `Yes — if you want a cheap, youthful city break with great bars and no crowds. What to see, where to eat, and how to give back locally.`
+
+The current title is a listicle; the ranking page is a decision. Matching the title to the query is what moves CTR at position 11.
+
+---
+
+## Appendix B — Event attribute pattern
+
+```html
+<a
+  href={`/projects/${slug}/`}
+  data-umami-event="project_click"
+  data-umami-event-slug={slug}
+  data-umami-event-source-page={Astro.url.pathname}
+>
+```
+
+Umami picks up any `data-umami-event-*` attribute as an event property.
