@@ -2,7 +2,18 @@
 // src/components/Analytics.astro
 ---
 
+<!--
+  `data-domains` restricts collection to the production hostname, so preview
+  deploys, localhost and the retired heretotravel.com domain stop recording.
+  The hostname check is an exact match, so www (which 301s to the apex) and
+  translated copies are excluded too.
+
+  `data-performance` enables Core Web Vitals collection. It was off, which is
+  why the Umami performance report was empty.
+-->
 <script
     defer
     src="https://umami.giveback.guide/script.js"
-    data-website-id="34887332-2d1d-4cd4-907c-dad4712d4501"></script>
+    data-website-id="34887332-2d1d-4cd4-907c-dad4712d4501"
+    data-domains="giveback.guide"
+    data-performance="true"></script>

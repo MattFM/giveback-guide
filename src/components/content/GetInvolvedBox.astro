@@ -4,9 +4,10 @@ interface Props {
   websiteUrl?: string | null;
   getYourGuideUrl?: string | null;
   mapsUrl?: string | null;
+  listingSlug?: string | null;
 }
 
-const { description, websiteUrl, getYourGuideUrl, mapsUrl } = Astro.props;
+const { description, websiteUrl, getYourGuideUrl, mapsUrl, listingSlug = '' } = Astro.props;
 
 // Don't render if no URLs are provided
 const hasAnyUrl = websiteUrl || getYourGuideUrl || mapsUrl;
@@ -37,6 +38,9 @@ const hasAnyUrl = websiteUrl || getYourGuideUrl || mapsUrl;
           target="_blank"
           rel="noopener noreferrer"
           class="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+          data-umami-event="outbound_click"
+          data-umami-event-link_type="website"
+          data-umami-event-slug={listingSlug}
         >
           Visit Website
           <!-- Material Symbols: open_in_new (rounded) -->
@@ -55,6 +59,9 @@ const hasAnyUrl = websiteUrl || getYourGuideUrl || mapsUrl;
           style="background-color: #ff5533;"
           onmouseover="this.style.backgroundColor='#e04a2d'"
           onmouseout="this.style.backgroundColor='#ff5533'"
+          data-umami-event="outbound_click"
+          data-umami-event-link_type="booking"
+          data-umami-event-slug={listingSlug}
         >
           Book on GetYourGuide
           <!-- Material Symbols: open_in_new (rounded) -->
@@ -70,6 +77,9 @@ const hasAnyUrl = websiteUrl || getYourGuideUrl || mapsUrl;
           target="_blank"
           rel="noopener noreferrer"
           class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
+          data-umami-event="outbound_click"
+          data-umami-event-link_type="map"
+          data-umami-event-slug={listingSlug}
         >
           View on Google Maps
           <!-- Material Symbols: open_in_new (rounded) -->

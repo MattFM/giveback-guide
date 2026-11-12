@@ -451,6 +451,7 @@ const allSFacilities = [...new Set(
     canonicalCountryNames,
     parseCountryList,
   } from "../lib/card-rendering";
+  import { trackEvent } from "../lib/analytics";
 
   const CONTENT_TYPE_FILTERS: Record<string, string> = {
     projects: 'project',
@@ -1225,7 +1226,15 @@ const allSFacilities = [...new Set(
         if (search.results.length === 0) {
           allResults = [];
           updateFilterButtons(); // Update button states when no results
-          
+
+          // A search that finds nothing is the most useful signal of all.
+          if (queryChanged && query.trim() !== '') {
+            trackEvent('search_performed', {
+              query: query.trim(),
+              results: 0,
+            });
+          }
+
           showNoResults(query);
           return;
         }
@@ -1257,7 +1266,15 @@ const allSFacilities = [...new Set(
           return true;
         });
         console.log('Processed results (excluding docs):', allResults.length);
-        
+
+        // Count searches, not filter changes: only a new query is a search.
+        if (queryChanged && query.trim() !== '') {
+          trackEvent('search_performed', {
+            query: query.trim(),
+            results: allResults.length,
+          });
+        }
+
         // Update result counts
         updateResultCounts();
         
@@ -1480,10 +1497,28 @@ const allSFacilities = [...new Set(
         </p>`;
       }
 
+      // Search cards are built here rather than by ProjectCard/StayCard, so
+      // their click tracking has to be mirrored. Blog results are not listings
+      // and stay untracked.
+      const slug =
+        new URL(data.url, window.location.origin).pathname
+          .split('/')
+          .filter(Boolean)
+          .pop() ?? '';
+      const clickEvent =
+        contentTypeSlug === 'projects'
+          ? 'project_click'
+          : contentTypeSlug === 'stays'
+            ? 'stay_click'
+            : '';
+      const clickAttrs = clickEvent
+        ? `data-umami-event="${clickEvent}" data-umami-event-slug="${slug}" data-umami-event-source_page="search"`
+        : '';
+
       return `
         <article class="rounded-lg">
           <div class="relative">
-            <a href="${data.url}">
+            <a href="${data.url}" ${clickAttrs}>
               <img 
                 class="w-full rounded-lg h-64 mb-3 object-cover" 
                 src="${image}" 
@@ -1498,7 +1533,7 @@ const allSFacilities = [...new Set(
           </div>
           ${badgesLine}
           <h2 class="mb-2 text-2xl font-medium tracking-tight text-gray-900 dark:text-white">
-            <a href="${data.url}">
+            <a href="${data.url}" ${clickAttrs}>
               ${title}
             </a>
           </h2>

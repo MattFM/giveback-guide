@@ -55,6 +55,7 @@ import OnboardingContent from '../../components/design/OnboardingContent.astro';
 
 <script>
   import { getCurrentUser, updateAccountName, updateAccountPreference } from '../../lib/auth';
+  import { trackEvent } from '../../lib/analytics';
 
   const WORKER_URL = import.meta.env.PUBLIC_WORKER_URL;
 
@@ -135,6 +136,10 @@ import OnboardingContent from '../../components/design/OnboardingContent.astro';
   // no-op: profiles upsert removed per configuration
 
       showMessage('Profile saved. Verifying and redirecting...', false);
+
+      // Onboarding completion is the signup signal. Firing on magic-link
+      // verification instead would count every return visit as a signup.
+      trackEvent('member_signup', { method: 'magic-link' });
 
       // Wait for the auth provider to reflect updated metadata (avoid race)
       const start = Date.now();

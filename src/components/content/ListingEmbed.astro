@@ -74,6 +74,10 @@ if (!listingData) {
 
 const { title, imageUrl, description, ctaText, href } = listingData;
 
+// Embed clicks are listing clicks, so they share the event names used by the
+// listing cards. `type` is already known from the embed URL.
+const clickEvent = type === "stays" ? "stay_click" : "project_click";
+
 const responsiveImage = createResponsiveImage(imageUrl, {
   sizes: RESPONSIVE_PRESETS.card.sizes,
   sizesAttribute: RESPONSIVE_PRESETS.card.sizesAttribute,
@@ -84,7 +88,15 @@ const responsiveImage = createResponsiveImage(imageUrl, {
 ---
 
 <Card class="not-prose my-8 overflow-hidden cursor-pointer hover:border-gray-500 dark:hover:border-gray-400 hover:shadow-md transition-all duration-200">
-  <a href={href} class="grid grid-cols-1 sm:grid-cols-[192px_1fr]" style="text-decoration: none;" aria-label={`${ctaText}: ${title}`}>
+  <a
+    href={href}
+    class="grid grid-cols-1 sm:grid-cols-[192px_1fr]"
+    style="text-decoration: none;"
+    aria-label={`${ctaText}: ${title}`}
+    data-umami-event={clickEvent}
+    data-umami-event-slug={slug}
+    data-umami-event-source_page={Astro.url.pathname}
+  >
     <div class="relative overflow-hidden">
       <img
         src={responsiveImage.src}

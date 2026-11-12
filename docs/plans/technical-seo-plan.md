@@ -18,11 +18,11 @@ can act safely.
 
 | Field | Value |
 |---|---|
-| Phases complete | Phase 0 (12 Nov 2026) |
-| Next action | Phase 1 — W10 measurement (§4) |
-| Blocked on | Nothing — Phase 1 can start now |
+| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026) |
+| Next action | Phase 2 — W2 plus T2.10–T2.11 (§4) |
+| Blocked on | Nothing. Live event and Core Web Vitals checks need the next deploy |
 | Coordination risk | The three redirects must ship with the next deploy — see below |
-| Verified against | The live build, 11 November 2026 (§8); Phase 0 re-verified against a local build on 12 Nov |
+| Verified against | The live build, 11 November 2026 (§8); Phases 0 and 1 re-verified against local builds on 12 Nov |
 | Progress log | §9 |
 
 ### Deploy ordering — get this wrong and you lose a ranking
@@ -378,22 +378,28 @@ Nothing on this list can be evaluated until events exist. **This is Phase 1.**
 
 | Event | Fires when | Properties |
 |---|---|---|
-| `project_click` | A project card or link to `/projects/*` is clicked | `slug`, `source_page` |
-| `stay_click` | A stay card or link to `/stays/*` is clicked | `slug`, `source_page` |
-| `booking_click` | An outbound booking or affiliate link is clicked | `listing_slug`, `destination_domain` |
-| `newsletter_signup` | Newsletter form submits successfully | `source` (`site-wide`, `post`, `footer`) |
-| `member_signup` | Account created | `method` |
-| `search_performed` | Site search returns results | `query`, `result_count` |
+| `project_click` | A project card, project embed or search result is clicked | `slug`, `source_page` |
+| `stay_click` | A stay card, stay embed or search result is clicked | `slug`, `source_page` |
+| `outbound_click` | Any outbound link on a listing page is clicked | `link_type` (`website`, `map`, `social`, `booking`), `slug` |
+| `newsletter_signup` | Newsletter form submits successfully **and** the address is new | `source` (`placement:section`, e.g. `footer:blog`) |
+| `member_signup` | Onboarding completes | `method` |
+| `search_performed` | A new search query runs, including zero-result searches | `query`, `results` |
+
+Card and embed clicks are tracked declaratively via `data-umami-event-*`
+attributes, so they need no JavaScript. The other three are fired explicitly
+through `src/lib/analytics.ts`.
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T10.1 | Add `data-umami-event` attributes to listing cards and links | `ProjectCard.astro`, `StayCard.astro`, `ListingEmbed.astro`, `ProjectPage.astro`, `StayPage.astro` | M |
-| T10.2 | Add `data-umami-event` to `NewsletterForm` with a `source` property | `src/components/features/newsletter/NewsletterForm.astro` | S |
-| T10.3 | Add `data-domains="giveback.guide"` to the Umami script so localhost and preview deploys stop polluting the data | `src/components/utility/Analytics.astro` | S |
-| T10.4 | Enable bot filtering in Umami settings — Singapore (1,653 visitors) and China (232) are datacentre traffic, roughly 25% of the total | Umami UI | S |
-| T10.5 | Investigate why Umami reports **0 Core Web Vitals measurements**; enable performance tracking if supported, otherwise run Lighthouse monthly and record results | `Analytics.astro` / process | M |
+| T10.1 | Add `data-umami-event` attributes to listing cards and links | `ProjectCard.astro`, `StayCard.astro`, `ListingEmbed.astro`, `ActionBar.astro`, `GetInvolvedBox.astro`, `search.astro`, `ProjectPage.astro`, `StayPage.astro` | done |
+| T10.2 | Fire `newsletter_signup` from the form's success branch, with a `source` of `placement:section`. The form has one instance today (the footer band), so the label must carry the placement to stay meaningful once it is duplicated | `NewsletterForm.astro`, `NewsletterSection.astro` | done |
+| T10.3 | Add `data-domains="giveback.guide"` to the Umami script so preview deploys, localhost and the retired `heretotravel.com` domain stop polluting the data | `src/components/utility/Analytics.astro` | done |
+| T10.4 | Bot filtering. There is **no dashboard setting**: Umami filters by user agent server-side with `isbot` and it is already on (`DISABLE_BOT_CHECK=1` turns it *off*). The Singapore block is spoofed user agents that pass that check, so it has to be blocked upstream at the ingest hostname | Cloudflare WAF | done (manual) |
+| T10.5 | Enable performance tracking: `data-performance="true"` on the script tag. The attribute was simply missing, which is why there were 0 Core Web Vitals measurements | `Analytics.astro` | done |
+| T10.6 | Fire `member_signup` when onboarding completes, not when a magic link is verified | `src/pages/account/onboarding.astro` | done |
+| T10.7 | Fire `search_performed` from `performSearch()`, only when the query actually changed, so filter tweaks do not inflate the count | `src/pages/search.astro` | done |
 
-**Acceptance:** clicking a project card from a blog post produces a `project_click` event with the correct `source_page`. Umami's country report no longer shows a Singapore block.
+**Acceptance:** clicking a project card from a blog post produces a `project_click` with `source_page=/blog/<slug>/`. Clicking a booking button produces `outbound_click` with `link_type=booking`. Check both with `get_events` / `get_event_properties` after the deploy. Umami's country report stops showing a Singapore block within a week of the WAF rule, and `get_performance` starts returning measurements.
 
 ---
 
@@ -439,12 +445,12 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 | Phase | Contents | Why first |
 |---|---|---|
 | **Phase 0** — half a day | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, **T11.13 (before the next deploy)**, T11.7 | Broken or wrong today; near-zero risk — **complete 12 Nov 2026** |
-| **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it |
+| **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it — **complete 12 Nov 2026** |
 | **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is |
 | **Phase 3** — 2 days | W3, W4 | Rich results plus authorship |
 | **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory |
 | **Phase 5** — 3–4 days | W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 | Consolidation and pruning, best done before new content |
-| **Phase 6** — ongoing | T11.3, W9.4, T10.5 | Hub copy is editorial work, one country at a time |
+| **Phase 6** — ongoing | T11.3, W9.4 | Hub copy is editorial work, one country at a time |
 
 Phases 0–2 are roughly one week of work and capture the majority of the upside, because the impression base already exists.
 
@@ -557,6 +563,7 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 | Date | Phase | Tasks done | Checks | Notes |
 |---|---|---|---|---|
 | 12 Nov 2026 | Phase 0 | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, T11.7, T11.13 | Pass (local build) | See below |
+| 12 Nov 2026 | Phase 1 | T10.1–T10.7 | Pass (local build) | See below |
 
 ### Phase 0 — detail, 12 November 2026
 
@@ -578,6 +585,24 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 **Not yet verified:** the 301s on the live domain — that needs the deploy. Run the three `curl` checks in the Handoff section afterwards.
 
 **Noted, not fixed (out of scope):** every page without an explicit description still renders `<meta name="description">` with no content. That is T2.8. Listing titles from Notion can still carry trailing spaces (e.g. "Kirtipur Community Homestay ") — T11.7 trims slugs and country values only, per the task text.
+
+### Phase 1 — detail, 12 November 2026
+
+| Task | What shipped |
+|---|---|
+| T10.1 | Cards (`ProjectCard`, `StayCard`) and `ListingEmbed` carry `data-umami-event`, `-slug` and `-source_page={Astro.url.pathname}`. `ActionBar` and `GetInvolvedBox` fire `outbound_click` with `link_type` of `website`, `map`, `social` or `booking`, classified from the existing icon props. `ProjectPage`/`StayPage` pass a new `listingSlug` prop; `search.astro` builds the same attributes in `createResultCard()` using the slug from the result URL. All static attributes — no JavaScript |
+| T10.2 | New `src/lib/analytics.ts` (`trackEvent`, guarded against the deferred tracker). `NewsletterForm` takes a required `placement` prop and derives `source` as `placement:section` from `Astro.url.pathname` at build time. The inline `define:vars` script was replaced with a bundled script that binds every `[data-newsletter-form]` instance and reads its config from data attributes, so duplicating the component now works. Default id is `newsletter-${placement}` |
+| T10.3 | `data-domains="giveback.guide"` on the Umami script. Exact hostname match, so `www`, translated copies, localhost and `heretotravel.com` all stop recording |
+| T10.4 | Nothing to enable in Umami: bot filtering is server-side `isbot` and is on by default. The Singapore block (1,636 of 1,670 visitors on Windows 10/Chrome, against a mobile-heavy GB/US audience) is spoofed user-agent traffic. Blocked at the ingest hostname with a Cloudflare WAF rule, deployed by the owner on 12 Nov 2026 |
+| T10.5 | `data-performance="true"` added — the attribute was missing, which is the whole reason for 0 measurements |
+| T10.6 | `member_signup` fires once onboarding saves, before the redirect to the dashboard |
+| T10.7 | `search_performed` fires from `performSearch()` with `query` and `results`, including the zero-results branch, and only when the query changed |
+
+**Verification (local build).** 1,300 pages, no errors. `dist` contains: 18 `project_click` anchors on `/projects/` (two per card) and 18 `stay_click` on `/stays/`, each with the correct slug and `source_page`; all four `link_type` values on a project page with booking links (`nuttintodo`), both `website` and `booking` on a stay page; the Umami tag with `data-domains` and `data-performance`; newsletter `source` values of `footer:site-wide` (home), `footer:blog` (post), `footer:projects`, `footer:stays`. The three JS events live in bundled chunks, not inline scripts.
+
+**Not yet verified:** live clicks, `newsletter_signup`, `member_signup`, `search_performed` and Core Web Vitals all need the deploy. After it, check with the Umami MCP `get_events` and `get_performance`.
+
+**Noted, not instrumented:** blog results in site search carry no click event, because `project_click`/`stay_click` are the only listing events defined. A hub result clicked from search (e.g. `/projects/portugal/`) is indistinguishable from a listing at the same path depth, so it will report as a `project_click` with the country as its slug. `GetInvolvedBox` is instrumented but not currently imported anywhere.
 
 ---
 

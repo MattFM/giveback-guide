@@ -3,7 +3,12 @@ import Button from "@/components/bearnie/button/Button.astro";
 import Input from "@/components/bearnie/input/Input.astro";
 
 export interface Props {
-    source: string;
+    /**
+     * Where this form instance lives, e.g. "footer", "article", "popup".
+     * Combined with the page section below to build the newsletter `source`,
+     * so duplicated forms stay distinguishable.
+     */
+    placement: string;
     id?: string;
     size?: "xs" | "sm" | "default" | "lg";
     showPrivacyText?: boolean;
@@ -19,8 +24,8 @@ export interface Props {
 }
 
 const {
-    source,
-    id = "newsletter-form",
+    placement,
+    id = `newsletter-${placement}`,
     size = "sm",
     showPrivacyText = true,
     privacyText = 'Unsubscribe anytime. By subscribing, you agree to our <a href="/privacy/" class="hover:underline text-inherit">Privacy Policy</a>.',
@@ -48,6 +53,22 @@ const inputSizeClass = {
 
 const buttonSize = size === "default" ? undefined : size;
 
+/**
+ * Which part of the site the reader is in, derived from the URL at build time.
+ *
+ * Section names rather than "post"/"listing": a path alone cannot reliably
+ * tell a blog post from a tag page, or a listing from a country hub.
+ */
+function pageSection(pathname: string): string {
+    const first = pathname.split("/").filter(Boolean)[0];
+    return first === "blog" || first === "projects" || first === "stays"
+        ? first
+        : "site-wide";
+}
+
+/** e.g. `footer:blog`, `article:projects`, `footer:site-wide`. */
+const source = `${placement}:${pageSection(Astro.url.pathname)}`;
+
 ---
 
 <div class={wrapperClass}>
@@ -64,7 +85,18 @@ const buttonSize = size === "default" ? undefined : size;
         )
     }
 
-    <form id={formId} class={`w-full ${formClass}`}>
+    <form
+        id={formId}
+        class={`w-full ${formClass}`}
+        data-newsletter-form
+        data-worker-url={import.meta.env.PUBLIC_WORKER_URL}
+        data-source={source}
+        data-email-id={emailId}
+        data-message-id={messageId}
+        data-btn-id={btnId}
+        data-submitting-text={submittingText}
+        data-button-text={buttonText}
+    >
         <div class="flex gap-2">
             <label for={emailId} class="sr-only">Email address</label>
             <Input
@@ -95,81 +127,95 @@ const buttonSize = size === "default" ? undefined : size;
     </form>
 </div>
 
-<script
-    is:inline
-    define:vars={{
-        WORKER_URL: import.meta.env.PUBLIC_WORKER_URL,
-        formId,
-        emailId,
-        messageId,
-        btnId,
-        source,
-        submittingText,
-        buttonText,
-    }}
->
-    const form = document.getElementById(formId);
-    const messageEl = document.getElementById(messageId);
-    const btn = document.getElementById(btnId);
+<script>
+    import { trackEvent } from "@/lib/analytics";
 
-    if (form) {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
+    // This script is bundled once per page, so bind every form instance rather
+    // than a single id. That is what makes duplicating the component safe.
+    document
+        .querySelectorAll<HTMLFormElement>("[data-newsletter-form]")
+        .forEach((form) => {
+            const {
+                workerUrl = "",
+                source = "site-wide",
+                emailId = "",
+                messageId = "",
+                btnId = "",
+                submittingText = "Subscribing...",
+                buttonText = "Subscribe",
+            } = form.dataset;
 
-            const emailInput = document.getElementById(emailId);
+            const emailInput = document.getElementById(
+                emailId,
+            ) as HTMLInputElement | null;
+            const messageEl = document.getElementById(messageId);
+            const btn = document.getElementById(btnId) as HTMLButtonElement | null;
+
             if (!emailInput) return;
 
-            const email = emailInput.value;
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
 
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = submittingText;
-            }
-            if (messageEl) {
-                messageEl.classList.add("hidden");
-            }
+                const email = emailInput.value;
 
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        source: source,
-                    }),
-                });
-
-                const data = await response.json();
-
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = submittingText;
+                }
                 if (messageEl) {
-                    if (data.success) {
-                        messageEl.textContent = data.alreadySubscribed
-                            ? "You are already subscribed!"
-                            : "Done! Check your email to confirm your subscription.";
-                        messageEl.className = "mt-2 text-xs text-emerald-500 dark:text-emerald-400";
-                        emailInput.value = "";
-                    } else {
-                        messageEl.textContent =
-                            data.error ||
-                            "Subscription failed. Please try again.";
-                        messageEl.className = "mt-2 text-xs text-red-500 dark:text-red-400";
+                    messageEl.classList.add("hidden");
+                }
+
+                try {
+                    const response = await fetch(workerUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            source: source,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (messageEl) {
+                        if (data.success) {
+                            messageEl.textContent = data.alreadySubscribed
+                                ? "You are already subscribed!"
+                                : "Done! Check your email to confirm your subscription.";
+                            messageEl.className =
+                                "mt-2 text-xs text-emerald-500 dark:text-emerald-400";
+                            emailInput.value = "";
+
+                            // Existing subscribers are not new signups, so they
+                            // must not inflate the conversion rate.
+                            if (!data.alreadySubscribed) {
+                                trackEvent("newsletter_signup", { source });
+                            }
+                        } else {
+                            messageEl.textContent =
+                                data.error ||
+                                "Subscription failed. Please try again.";
+                            messageEl.className =
+                                "mt-2 text-xs text-red-500 dark:text-red-400";
+                        }
+                        messageEl.classList.remove("hidden");
                     }
-                    messageEl.classList.remove("hidden");
+                } catch (error) {
+                    if (messageEl) {
+                        messageEl.textContent = "Network error. Please try again.";
+                        messageEl.className =
+                            "mt-2 text-xs text-red-500 dark:text-red-400";
+                        messageEl.classList.remove("hidden");
+                    }
                 }
-            } catch (error) {
-                if (messageEl) {
-                    messageEl.textContent = "Network error. Please try again.";
-                    messageEl.className = "mt-2 text-xs text-red-500 dark:text-red-400";
-                    messageEl.classList.remove("hidden");
-                }
-            }
 
-            if (btn) {
-                btn.disabled = false;
-                btn.textContent = buttonText;
-            }
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = buttonText;
+                }
+            });
         });
-    }
 </script>
