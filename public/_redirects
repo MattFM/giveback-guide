@@ -1,0 +1,16 @@
+# Redirects are applied by Cloudflare Workers static assets before any file is
+# served, so these are real HTTP redirects rather than meta-refresh pages.
+#
+# Format: <source> <destination> [code]
+# Keep the 301 status explicit — 302 is the default.
+
+# Legacy tag slug (pre-existing).
+/blog/announcements/ /blog/news-and-updates/ 301
+
+# Notion slug corrections, November 2026. These listings previously had a
+# trailing space in pSlug/sSlug, so their live URLs contained %20. All three
+# were indexed by Google; Kirtipur earns ~861 impressions a year, so the
+# rebuild that fixes the slugs must ship with these rules.
+/projects/awamaki%20/ /projects/awamaki/ 301
+/stays/kirtipur-community-homestay%20/ /stays/kirtipur-community-homestay/ 301
+/projects/united%20way%20mumbai/ /projects/united-way-mumbai/ 301

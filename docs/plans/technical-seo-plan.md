@@ -18,11 +18,11 @@ can act safely.
 
 | Field | Value |
 |---|---|
-| Phases complete | None |
-| Next action | Phase 0 (§4) |
-| Blocked on | Nothing — Phase 0 can start now |
+| Phases complete | Phase 0 (12 Nov 2026) |
+| Next action | Phase 1 — W10 measurement (§4) |
+| Blocked on | Nothing — Phase 1 can start now |
 | Coordination risk | The three redirects must ship with the next deploy — see below |
-| Verified against | The live build, 11 November 2026 (§8) |
+| Verified against | The live build, 11 November 2026 (§8); Phase 0 re-verified against a local build on 12 Nov |
 | Progress log | §9 |
 
 ### Deploy ordering — get this wrong and you lose a ranking
@@ -34,6 +34,9 @@ still serves the old malformed URLs because it has not been rebuilt.
 - **T11.13 (the 301 redirects) must land in the same deploy as the rebuild.**
 - Rebuild without it and `/stays/kirtipur-community-homestay%20/` returns 404.
   That URL has 861 impressions and 2 clicks at position 8.4.
+- The rules live in `public/_redirects`, which Cloudflare Workers static assets
+  applies as real 301s. Do not move them back to `astro.config.mjs`: on a static
+  build Astro's `redirects` option only emits a 200 page with a meta refresh.
 - After deploying, fetch all three old URLs and confirm a 301, not a 404:
   `/projects/awamaki%20/`, `/stays/kirtipur-community-homestay%20/`,
   `/projects/united%20way%20mumbai/`.
@@ -208,11 +211,13 @@ The sitemap currently excludes only `/docs/` and `/design/` (`astro.config.mjs`,
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T1.1 | Extend the sitemap filter to drop `/account/`, `/search/`, `/login/`, `/verify/`, `/claim/`, `/submit/`, `/feedback/`, `/report/`, `/api/` | `astro.config.mjs` | S |
-| T1.2 | Add `noindex` to `/search/` | `src/pages/search.astro` | S |
-| T1.3 | Add `noindex` to `/login/`, `/verify/`, `/claim/`, `/submit/`, `/account/onboarding/` and `/account/verify/`. The other five `/account/` pages already have it | `src/pages/*` | S |
-| T1.4 | Fix the `/verify/` page title, which currently reads **"Contact Us"** — a duplicate of `/contact/` | `src/pages/verify.astro` | S |
-| T1.5 | Confirm `robots.txt` stays as-is; it already declares the sitemap correctly | `public/robots.txt` | S |
+| T1.1 | Extend the sitemap filter to drop `/account/`, `/search/`, `/login/`, `/verify/`, `/claim/`, `/submit/`, `/feedback/`, `/report/`, `/api/` | `astro.config.mjs` | done |
+| T1.2 | Add `noindex` to `/search/` | `src/pages/search.astro` | done |
+| T1.3 | Add `noindex` to `/login/`, `/verify/`, `/claim/`, `/submit/`, `/account/onboarding/` and `/account/verify/`. The other five `/account/` pages already have it | `src/pages/*` | done |
+| T1.4 | Fix the `/verify/` page title, which currently reads **"Contact Us"** — a duplicate of `/contact/` | `src/pages/verify.astro` | done |
+| T1.5 | Confirm `robots.txt` stays as-is; it already declares the sitemap correctly | `public/robots.txt` | done |
+
+**Implementation notes (12 Nov 2026):** T1.1 uses prefix matching on the pathname, not `includes()`, so `/submit/` no longer sweeps up `/for-businesses/submit/`, which stays in the sitemap. `/api/` was dropped from the list: endpoints are never pages and it matched nothing. T1.3 required adding a `noindex` prop to `GenericPage.astro` for `/claim/` and `/submit/`. T1.4 also fixed `/report/`, which had the same duplicate title. T1.5 confirmed no change: Cloudflare AI Crawl Control injects its own `User-agent: *` block at the edge, so adding one to the file would create a competing group.
 
 **Not a problem (checked and dismissed):** the footer links to `/about/animal-welfare/` and `/about/ai-policy/` both resolve — they are MDX pages at `src/pages/about/animal-welfare.mdx` and `src/pages/about/ai-policy.mdx`. My earlier scan wrongly reported them missing.
 
@@ -330,7 +335,7 @@ Currently 6 posts link to a project and 7 to another post. With 441 projects, 56
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T7.1 | Fix the 404 page: "Back to Homepage" currently points at `href="#"`. Point it at `/` and add links to `/blog/`, `/projects/`, `/stays/` and `/search/` | `src/pages/404.astro` | S |
+| T7.1 | Fix the 404 page: "Back to Homepage" currently points at `href="#"`. Point it at `/` and add links to `/blog/`, `/projects/`, `/stays/` and `/search/` | `src/pages/404.astro` | done |
 | T7.2 | Add a description to the 404 page | `src/pages/404.astro` | S |
 | T7.3 | Add redirects for legacy paths appearing in analytics: `/home-new/`, `/why`, `/project/…` | `astro.config.mjs` | S |
 | T7.4 | Add a redirect rule for the singular `/project/` and `/stay/` prefixes if any external links use them | `astro.config.mjs` | S |
@@ -344,9 +349,9 @@ Currently 6 posts link to a project and 7 to another post. With 441 projects, 56
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T8.1 | Make `og:type` configurable — `article` for posts, `website` elsewhere | `BaseHead.astro` | S |
-| T8.2 | Change Twitter tags from `property=` to `name=` (all five are wrong today) | `BaseHead.astro` | S |
-| T8.3 | Add `og:site_name` and `og:locale` (`en_GB`) | `BaseHead.astro` | S |
+| T8.1 | Make `og:type` configurable — `article` for posts, `website` elsewhere | `BaseHead.astro` | done |
+| T8.2 | Change Twitter tags from `property=` to `name=` (all five are wrong today) | `BaseHead.astro` | done |
+| T8.3 | Add `og:site_name` and `og:locale` (`en_GB`) | `BaseHead.astro` | done |
 | T8.4 | Add `article:published_time` and `article:modified_time` on posts | `BaseHead.astro` | S |
 | T8.5 | Ensure the fallback image is at least 1200×630 (current placeholder is used on many pages) | `public/` | S |
 | T8.6 | Add `twitter:site` if an account exists | `BaseHead.astro` | S |
@@ -359,7 +364,7 @@ Currently 6 posts link to a project and 7 to another post. With 441 projects, 56
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T9.1 | `ProjectCard.astro` passes `alt=""`, and the rendered output drops the attribute entirely — 9 of 10 images on `/projects/` have no `alt` at all. Use the project title | `ProjectCard.astro` | S |
+| T9.1 | `ProjectCard.astro` passes `alt=""`, and the rendered output drops the attribute entirely — 9 of 10 images on `/projects/` have no `alt` at all. Use the project title | `ProjectCard.astro` | done |
 | T9.2 | **455 of 523 images in blog posts have empty alt text** (`![](...)`) — 87% of all content images. Start with the 12 pages in §1.3, then work backwards. This is an editorial backlog, not a code fix | 71 MDX files | L |
 | T9.3 | Add a fallback so an image with an empty alt is attributable rather than absent: pass the post title as alt when the source alt is blank | `remark-responsive-images.mjs` | S |
 | T9.4 | Ensure post cover images are passed as `og:image` at full resolution (currently a Cloudinary URL, verify dimensions) | `BlogPostLayout.astro` | S |
@@ -415,13 +420,13 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 | T11.4 | Add breadcrumbs to hub pages (`Breadcrumbs` already exists and is used on detail pages) | hub routes | S |
 | T11.5 | Add `ItemList` structured data to hubs | hub routes | S |
 | T11.6 | Link each country hub to the 2–3 most relevant blog posts for that country, and add a return link from those posts | hub routes + W5 | M |
-| T11.7 | Trim slug and country values on import (`richTextToPlainText` returns untrimmed text). Notion is already clean; this is the guard against regression | `src/content.config.ts`, `src/lib/notion-loader.ts` | S |
+| T11.7 | Trim slug and country values on import (`richTextToPlainText` returns untrimmed text). Notion is already clean; this is the guard against regression | `src/content.config.ts` | done |
 | T11.8 | Investigate `/stays/italy/` returning 404 while `/projects/italy/` returns 200 — either a stay is tagged with a misspelt country, or no stay covers Italy and the dropdown is misleading | Notion data | S |
 | T11.9 | Consider `noindex, follow` on paginated hub pages beyond page 1. They currently generate 115 impressions and zero clicks from 93 URLs | hub routes | S |
 | T11.10 | ~~Fix `/stays/kirtipur-community-homestay/`~~ — resolved in Notion; tracked as a redirect under T11.13 | — | done |
 | T11.11 | ~~Normalise slugs on import~~ — Notion is clean. Keep T11.7 as the regression guard | — | done |
 | T11.12 | Add a build-time guard that fails the build if any published listing lacks a generated page, or if any slug contains a space or stray whitespace | build script | M |
-| T11.13 | **Add 301 redirects for the three old malformed URLs before the next deploy** — Google has indexed all three and Kirtipur earns 2 clicks | `astro.config.mjs` or Cloudflare | S |
+| T11.13 | **Add 301 redirects for the three old malformed URLs before the next deploy** — Google has indexed all three and Kirtipur earns 2 clicks | `public/_redirects` | done |
 
 **Caution on T11.1:** do not prune a locale hub that still earns clicks, and do not `noindex` a hub that is the only crawl path to a listing. Check the GSC export per URL before removing anything.
 
@@ -433,7 +438,7 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 
 | Phase | Contents | Why first |
 |---|---|---|
-| **Phase 0** — half a day | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, **T11.13 (before the next deploy)**, T11.7 | Broken or wrong today; near-zero risk |
+| **Phase 0** — half a day | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, **T11.13 (before the next deploy)**, T11.7 | Broken or wrong today; near-zero risk — **complete 12 Nov 2026** |
 | **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it |
 | **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is |
 | **Phase 3** — 2 days | W3, W4 | Rich results plus authorship |
@@ -479,7 +484,7 @@ Run after each phase.
 | Pruning locale hubs can orphan listings that have no other page | Verify each listing is reachable from its country hub and the main index before removing a locale hub |
 | Notion-loaded content regenerates at build time | Any frontmatter-style change for projects must go through `src/content.config.ts`, not the MDX files |
 | `BaseHead` is used by every page | Change it once, verify on a post, a listing, an index and a utility page |
-| The site is static | Redirects live in `astro.config.mjs`; Cloudflare-level redirects are the fallback for legacy paths |
+| The site is static | Redirects live in `public/_redirects`, which Cloudflare Workers static assets applies as real 301s. `astro.config.mjs` redirects are **not** used: on a static build they only produce a 200 page with a meta refresh |
 
 ---
 
@@ -551,7 +556,28 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 
 | Date | Phase | Tasks done | Checks | Notes |
 |---|---|---|---|---|
-| — | — | — | — | No work started |
+| 12 Nov 2026 | Phase 0 | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, T11.7, T11.13 | Pass (local build) | See below |
+
+### Phase 0 — detail, 12 November 2026
+
+| Task | What shipped |
+|---|---|
+| T1.1 | `astro.config.mjs`: pathname prefix filter replaces `includes()`. Sitemap 1,295 → 1,278 URLs. `/for-businesses/submit/` kept deliberately. `/api/` dropped: endpoints never appear in the sitemap |
+| T1.2 | `noindex, nofollow` on `/search/` |
+| T1.3 | `noindex` on `/login/`, `/verify/`, `/claim/`, `/submit/`, `/account/onboarding/`, `/account/verify/`. Required adding a `noindex` prop to `GenericPage.astro` |
+| T1.4 | `/verify/` → "Verify a project"; `/report/` → "Report a problem" (same duplicate-title bug) |
+| T1.5 | No change. Cloudflare AI Crawl Control injects its own `User-agent: *` / `Content-Signal` block at the edge, so adding one to `public/robots.txt` would create a competing group |
+| T7.1 | 404 "Back to Homepage" → `/`; added nav links to `/projects/`, `/stays/`, `/blog/`, `/search/`. T7.2 (description) left for Phase 2 |
+| T8.1–T8.3 | `ogType` prop threaded `BlogPostLayout` → `MainLayout` → `BaseHead`; posts emit `article`, all else `website`. Twitter tags moved to `name=`. Added `og:site_name`, `og:locale=en_GB` |
+| T9.1 | `ProjectCard` and `StayCard` alt text now uses the listing name. `/projects/` renders 10/10 images with `alt` |
+| T11.7 | `normaliseUrlText()` applied to `pSlug`/`sSlug`; country and locale multi-select names trimmed. `notion-loader.ts` needed no change — it does no slug shaping |
+| T11.13 | New `public/_redirects` with four 301s (three slug fixes plus the existing `/blog/announcements/` rule moved out of `astro.config.mjs`) |
+
+**Verification.** `pnpm run build` clean, 1,300 pages. Sitemap has zero utility routes and zero `%20` entries. `/search/` and `/verify/` carry `noindex, nofollow`. Posts render `og:type=article`, hubs `website`. No `property="twitter:*"` remains. 404 has no `href="#"`. Redirects were tested against `wrangler dev`: all four return `301` with the correct `Location`, and non-matching URLs still return 200.
+
+**Not yet verified:** the 301s on the live domain — that needs the deploy. Run the three `curl` checks in the Handoff section afterwards.
+
+**Noted, not fixed (out of scope):** every page without an explicit description still renders `<meta name="description">` with no content. That is T2.8. Listing titles from Notion can still carry trailing spaces (e.g. "Kirtipur Community Homestay ") — T11.7 trims slugs and country values only, per the task text.
 
 ---
 

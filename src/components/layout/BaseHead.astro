@@ -8,11 +8,19 @@ interface Props {
 	description?: string; // Make title optional
 	image?: string;
 	noindex?: boolean;
+	/** Open Graph object type. Posts are `article`; everything else `website`. */
+	ogType?: 'website' | 'article';
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = '/giveback-guide-placeholder.jpg', noindex } = Astro.props;
+const {
+	title,
+	description,
+	image = '/giveback-guide-placeholder.jpg',
+	noindex,
+	ogType = 'website',
+} = Astro.props;
 ---
 
 <!-- Global Metadata -->
@@ -42,17 +50,19 @@ const { title, description, image = '/giveback-guide-placeholder.jpg', noindex }
 <meta name="pocketbase-url" content={import.meta.env.PUBLIC_POCKETBASE_URL || ''} />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:locale" content="en_GB" />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image, Astro.url)} />
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.url)} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={Astro.url} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={new URL(image, Astro.url)} />
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}

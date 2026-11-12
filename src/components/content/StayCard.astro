@@ -17,7 +17,7 @@ const localeArray = parseCountryList(stay.data.properties.sLocale);
           <ResponsiveImage
             class="w-full rounded-lg h-64 mb-3 object-cover"
             src={stay.data.properties.sImageURL1}
-            alt=""
+            alt={stay.data.properties.sName}
             preset="card"
             fallbackWidth={600}
             transitionName={`stay-${stay.data.properties.sSlug}`}

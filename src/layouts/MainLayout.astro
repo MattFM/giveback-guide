@@ -11,6 +11,7 @@ interface Props {
     headerVariant?: "default" | "transparent";
     headerTheme?: "light" | "dark";
     noindex?: boolean;
+    ogType?: "website" | "article";
 }
 
 const {
@@ -20,13 +21,14 @@ const {
     headerVariant = "default",
     headerTheme = "light",
     noindex,
+    ogType,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} image={image} noindex={noindex} />
+        <BaseHead title={title} description={description} image={image} noindex={noindex} ogType={ogType} />
     </head>
     <body>
         <a

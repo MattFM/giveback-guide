@@ -8,12 +8,14 @@ interface Props {
     subtitle?: string;
     description?: string;
     image?: string;
+    noindex?: boolean;
     frontmatter?: {
         title?: string;
         headerTitle?: string;
         subtitle?: string;
         description?: string;
         image?: string;
+        noindex?: boolean;
     };
 }
 
@@ -25,9 +27,10 @@ const headerTitle = props.headerTitle ?? "";
 const subtitle = props.subtitle;
 const description = props.description;
 const image = props.image;
+const noindex = props.noindex;
 ---
 
-<MainLayout title={title} description={description} image={image}>
+<MainLayout title={title} description={description} image={image} noindex={noindex}>
     <main id="main-content">
         <section class="bg-white dark:bg-gray-900">
             <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-xl lg:px-6">

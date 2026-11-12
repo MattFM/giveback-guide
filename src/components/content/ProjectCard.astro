@@ -20,7 +20,7 @@ const localeArray = parseCountryList(project.data.properties.pLocale);
       <ResponsiveImage
         class="w-full rounded-lg h-64 mb-3 object-cover"
         src={project.data.properties.pImageURL}
-        alt=""
+        alt={project.data.properties.pName}
         preset="card"
         fallbackWidth={600}
         transitionName={`project-${project.data.properties.pSlug}`}

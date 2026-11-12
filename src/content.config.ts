@@ -32,6 +32,20 @@ function richTextToPlainText(richText: any[]): string {
   return richText.map((item) => item.plain_text || "").join("");
 }
 
+/**
+ * Normalise a text value used to build a URL.
+ *
+ * Trims the ends and collapses runs of whitespace. Inner spaces are left
+ * alone deliberately: hyphenating them here would silently rewrite a URL and
+ * hide the Notion data errors that the build guard is meant to catch.
+ *
+ * Slugs previously passed through untrimmed, which produced URLs such as
+ * `/projects/awamaki%20/`. Notion is clean now; this is the regression guard.
+ */
+function normaliseUrlText(value: string): string {
+  return value.trim().replace(/\s+/g, " ");
+}
+
 // Base property schemas that match Notion API responses
 const basePropertySchema = {
   type: z.string(),
@@ -132,13 +146,13 @@ const projects = defineCollection({
         ...basePropertySchema,
         type: z.literal("multi_select"),
         multi_select: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
-      }).transform((prop) => prop.multi_select.map((item) => item.name)),
+      }).transform((prop) => prop.multi_select.map((item) => item.name.trim())),
 
       pLocale: z.object({
         ...basePropertySchema,
         type: z.literal("multi_select"),
         multi_select: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
-      }).transform((prop) => prop.multi_select.map((item) => item.name)),
+      }).transform((prop) => prop.multi_select.map((item) => item.name.trim())),
 
       // Relation properties - array of page IDs
       pTypes: z.object({
@@ -223,7 +237,7 @@ const projects = defineCollection({
         ...basePropertySchema,
         type: z.literal("rich_text"),
         rich_text: z.array(z.any()),
-      }).transform((prop) => richTextToPlainText(prop.rich_text)),
+      }).transform((prop) => normaliseUrlText(richTextToPlainText(prop.rich_text))),
 
       pReview: z.object({
         ...basePropertySchema,
@@ -365,13 +379,13 @@ const stays = defineCollection({
         ...basePropertySchema,
         type: z.literal("multi_select"),
         multi_select: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
-      }).transform((prop) => prop.multi_select.map((item) => item.name)),
+      }).transform((prop) => prop.multi_select.map((item) => item.name.trim())),
 
       sLocale: z.object({
         ...basePropertySchema,
         type: z.literal("multi_select"),
         multi_select: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
-      }).transform((prop) => prop.multi_select.map((item) => item.name)),
+      }).transform((prop) => prop.multi_select.map((item) => item.name.trim())),
 
       sFacilities: z.object({
         ...basePropertySchema,
@@ -468,7 +482,7 @@ const stays = defineCollection({
         ...basePropertySchema,
         type: z.literal("rich_text"),
         rich_text: z.array(z.any()),
-      }).transform((prop) => richTextToPlainText(prop.rich_text)),
+      }).transform((prop) => normaliseUrlText(richTextToPlainText(prop.rich_text))),
 
       sReview: z.object({
         ...basePropertySchema,

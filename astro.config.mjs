@@ -12,13 +12,33 @@ import path from 'path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/**
+ * Sitemap exclusions, matched against the URL pathname from the root.
+ *
+ * Prefix matching (rather than `includes`) keeps `/submit/` from also
+ * sweeping up `/for-businesses/submit/`, which is a real marketing page and
+ * should stay in the sitemap.
+ */
+const SITEMAP_EXCLUDED_PREFIXES = [
+  '/docs/',
+  '/design/',
+  '/account/',
+  '/search/',
+  '/login/',
+  '/verify/',
+  '/claim/',
+  '/submit/',
+  '/feedback/',
+  '/report/',
+];
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://giveback.guide',
   trailingSlash: 'always',
-  redirects: {
-    '/blog/announcements/': '/blog/news-and-updates/',
-  },
+  // Redirects live in `public/_redirects`, which Cloudflare Workers static
+  // assets applies as real 301s. Astro's `redirects` option only emits a
+  // 200 HTML page with a meta refresh on a static build, so it is not used.
   experimental: {
     incrementalBuild: true,
   },
@@ -30,7 +50,12 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/docs/') && !page.includes('/design/'),
+      filter: (page) => {
+        const { pathname } = new URL(page);
+        return !SITEMAP_EXCLUDED_PREFIXES.some((prefix) =>
+          pathname.startsWith(prefix)
+        );
+      },
     }),
     pagefind()
   ],

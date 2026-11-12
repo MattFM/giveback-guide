@@ -6,6 +6,7 @@ import OnboardingContent from '../../components/design/OnboardingContent.astro';
 <MainLayout
   title="Welcome"
   transition:persist={false}
+  noindex={true}
 >
   <!-- Early client-side heuristic redirect if no PocketBase auth token found -->
   <script is:inline>

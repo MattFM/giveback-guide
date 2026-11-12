@@ -3,7 +3,7 @@ import MainLayout from '../../layouts/MainLayout.astro';
 import VerifyContent from '../../components/design/VerifyContent.astro';
 ---
 
-<MainLayout title="Verifying..." transition:persist={false}>
+<MainLayout title="Verifying..." transition:persist={false} noindex={true}>
     <VerifyContent status="loading" />
 </MainLayout>
 
