@@ -11,6 +11,10 @@ import {
   buildTitle,
   rankByFrequency,
 } from "../../../../utils/seo";
+import Breadcrumbs from "../../../../components/layout/Breadcrumbs.astro";
+import CompactBlogCard from "../../../../components/content/CompactBlogCard.astro";
+import { itemListSchema } from "../../../../utils/schema";
+import { findPostsForPlace } from "../../../../utils/related";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all stays once.
@@ -98,11 +102,36 @@ const description = buildHubDescription({
   impacts,
   kind: "stay",
 });
+
+const site = Astro.site ?? new URL("https://giveback.guide");
+const schema = itemListSchema({
+  site,
+  url: new URL(Astro.url.pathname, site).href,
+  name: `Sustainable Stays in ${localeName}, ${countryName}`,
+  items: page.data.map((entry) => ({
+    name: entry.data.properties.sTitle,
+    url: `/stays/${entry.data.properties.sSlug}/`,
+  })),
+  start: page.start,
+  total: page.total,
+});
+
+const crumbs = [
+  { label: "Home", href: "/" },
+  { label: "Stays", href: "/stays/" },
+  { label: countryName, href: `/stays/${country}/` },
+  { label: localeName },
+];
+const relatedPosts = await findPostsForPlace([localeName]);
 ---
 
-<MainLayout title={title} description={description}>
+<MainLayout title={title} description={description} schema={schema}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+      <div class="mb-6">
+        <Breadcrumbs crumbs={crumbs} />
+      </div>
+
       <div class="max-w-screen-md mb-8 lg:mb-16">
         <h1
           class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
@@ -158,4 +187,27 @@ const description = buildHubDescription({
       />
     </div>
   </section>
+
+  {page.currentPage === 1 && relatedPosts.length > 0 && (
+    <section class="bg-white dark:bg-gray-900">
+      <div class="px-4 pb-8 mx-auto max-w-screen-xl sm:pb-16 lg:px-6">
+        <h2
+          class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+        >
+          Read more about {localeName}, {countryName}
+        </h2>
+        <ul class="grid gap-6 sm:grid-cols-2">
+          {relatedPosts.map((post) => (
+            <li>
+              <CompactBlogCard
+                href={post.href}
+                image={post.image}
+                title={post.title}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
 </MainLayout>

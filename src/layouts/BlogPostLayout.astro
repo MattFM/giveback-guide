@@ -5,10 +5,13 @@ import SplitHero from "../components/sections/SplitHero.astro";
 import Badge from "../components/bearnie/badge/Badge.astro";
 import Separator from "../components/bearnie/separator/Separator.astro";
 import AboutCallout from "../components/content/AboutCallout.astro";
+import CompactBlogCard from "../components/content/CompactBlogCard.astro";
+import CompactListingCard from "../components/content/CompactListingCard.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
 import { getValidTags, getTagSlug } from "../lib/blog-tags";
 import { buildTitle } from "../utils/seo";
 import { articleSchema } from "../utils/schema";
+import { findRelatedListings, findRelatedPosts } from "../utils/related";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -20,7 +23,30 @@ const {
     lastUpdated,
     tags,
     authors,
+    slug,
+    destinations = [],
 } = Astro.props;
+
+// Each post gets a route into the directory and a route into the archive.
+// Both blocks are derived, not hand-maintained, so new posts inherit them.
+const [relatedListings, relatedPosts] = await Promise.all([
+    findRelatedListings(destinations),
+    findRelatedPosts(slug, destinations, tags),
+]);
+
+const relatedPlace =
+    relatedListings.hub?.label ||
+    destinations[0]?.country ||
+    "";
+const relatedHeading =
+    destinations.length > 1
+        ? "Places to give back on this trip"
+        : `Places to give back in ${relatedPlace}`;
+const hubLabel = relatedListings.hub
+    ? relatedListings.hub.href.startsWith("/stays/")
+        ? "See all stays in"
+        : "See all projects in"
+    : "";
 
 const validTags = getValidTags(tags);
 
@@ -188,6 +214,76 @@ const schema = articleSchema({
             <div id="about-callout-container" class="hidden">
                 <AboutCallout />
             </div>
+
+            {
+                relatedListings.listings.length > 0 && (
+                    <section
+                        class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700"
+                        aria-labelledby="related-listings-heading"
+                    >
+                        <h2
+                            id="related-listings-heading"
+                            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            {relatedHeading}
+                        </h2>
+                        <p class="mb-6 text-gray-600 dark:text-gray-400">
+                            Directory listings connected to this guide.
+                        </p>
+                        <ul class="space-y-6">
+                            {relatedListings.listings.map((listing) => (
+                                <li>
+                                    <CompactListingCard
+                                        href={listing.href}
+                                        image={listing.image}
+                                        title={listing.title}
+                                        place={listing.place}
+                                        kind={listing.kind}
+                                        slug={listing.slug}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                        {relatedListings.hub && (
+                            <p class="mt-6">
+                                <a
+                                    href={relatedListings.hub.href}
+                                    class="font-medium text-purple-600 underline decoration-purple-300 underline-offset-2 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                                >
+                                    {hubLabel} {relatedListings.hub.label}
+                                </a>
+                            </p>
+                        )}
+                    </section>
+                )
+            }
+
+            {
+                relatedPosts.length > 0 && (
+                    <section
+                        class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700"
+                        aria-labelledby="related-posts-heading"
+                    >
+                        <h2
+                            id="related-posts-heading"
+                            class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                        >
+                            More from the blog
+                        </h2>
+                        <ul class="space-y-6">
+                            {relatedPosts.map((post) => (
+                                <li>
+                                    <CompactBlogCard
+                                        href={post.href}
+                                        image={post.image}
+                                        title={post.title}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )
+            }
 
             <div class="mt-12">
                 <SupportCTA />

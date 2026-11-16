@@ -24,6 +24,21 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     authors: z.array(z.string()).default(["Matt", "Jade"]),
     coverImage: z.string().url().optional(),
+    /**
+     * The places a post is about. Entries mirror the Locations hierarchy
+     * planned in docs/plans/roadmap.md: country, then an optional nation or
+     * region, then an optional city. Posts that are not about a place (news,
+     * brand updates, thematic pieces) leave the array empty.
+     */
+    destinations: z
+      .array(
+        z.object({
+          country: z.string(),
+          region: z.string().optional(),
+          city: z.string().optional(),
+        }),
+      )
+      .default([]),
   }),
 });
 

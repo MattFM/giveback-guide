@@ -4,7 +4,7 @@
 **Location:** `docs/plans/technical-seo-plan.md` (moved out of `~/.opencode/plan` on 11 Nov 2026)
 **Scope:** Everything on the site that affects how Google crawls, indexes, understands and displays pages. Content strategy is a separate document.
 **Owner:** Matthew (solo). All tasks are written so an AI agent can implement them under review.
-**Status:** Phases 0–3 complete. Phase 4 not begun.
+**Status:** Phases 0–4 complete. Phase 5 not begun.
 **Revision 3 (11 Nov 2026):** Every claim re-verified against the deployed build. See §8 for the log. Three claims were wrong and are corrected there; the malformed-URL diagnosis in §1.4.1 was also wrong and is rewritten.
 
 ---
@@ -18,11 +18,11 @@ can act safely.
 
 | Field | Value |
 |---|---|
-| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026), Phase 3 (16 Nov 2026) |
-| Next action | Awaiting go-ahead for Phase 4 — W5, T11.4–T11.6 (§4) |
-| Blocked on | Nothing. Live event and Core Web Vitals checks need the next deploy |
+| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026), Phase 3 (16 Nov 2026), Phase 4 (16 Nov 2026) |
+| Next action | Awaiting go-ahead for Phase 5 — W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 (§4) |
+| Blocked on | Nothing. Live event, Core Web Vitals, rich-result and internal-link checks need the next deploy |
 | Coordination risk | The three redirects must ship with the next deploy — see below |
-| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phases 2–3 against local builds on 16 Nov |
+| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phases 2–4 against local builds on 16 Nov |
 | Progress log | §9 |
 
 ### Deploy ordering — get this wrong and you lose a ranking
@@ -328,17 +328,46 @@ Currently 6 posts link to a project and 7 to another post. With 441 projects, 56
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T5.1 | Add a `relatedPosts` block to post templates — same primary tag, then most recent, max 3 | `BlogPostLayout.astro` | M |
-| T5.2 | Add a `relatedProjects` block to post templates, matched by the post's destination | `BlogPostLayout.astro` | L |
-| T5.3 | Add a `destination` frontmatter field (`country` + optional `locale`) to the blog schema so T5.2 can match reliably instead of guessing from tags | `src/content.config.ts` | M |
-| T5.4 | Backfill `destination` across all 71 posts | 71 MDX files | L |
-| T5.5 | Add contextual links inside existing high-impression posts to their matching listings (the 12 pages in §1.3 first) | 12 MDX files | M |
-| T5.6 | Ensure every post has at least 3 outbound internal links: 1 listing, 1 sibling post, 1 hub | editorial rule | — |
-| T5.7 | Add `ListingEmbed` to posts where a full card is more useful than a text link (component already exists and is registered globally in `src/mdx-components.ts`) | 12 MDX files | M |
+| T5.1 | Add a `relatedPosts` block to post templates — same primary tag, then most recent, max 3 | `BlogPostLayout.astro` | done |
+| T5.2 | Add a `relatedProjects` block to post templates, matched by the post's destination | `BlogPostLayout.astro` | done |
+| T5.3 | Add a `destination` frontmatter field (`country` + optional `locale`) to the blog schema so T5.2 can match reliably instead of guessing from tags | `src/content.config.ts` | done |
+| T5.4 | Backfill `destination` across all 71 posts | 71 MDX files | done |
+| T5.5 | Add contextual links inside existing high-impression posts to their matching listings (the 12 pages in §1.3 first) | 12 MDX files | done |
+| T5.6 | Ensure every post has at least 3 outbound internal links: 1 listing, 1 sibling post, 1 hub | `scripts/link-check.mjs` | done |
+| T5.7 | Add `ListingEmbed` to posts where a full card is more useful than a text link (component already exists and is registered globally in `src/mdx-components.ts`) | 12 MDX files | done |
 
-**Note:** `ProjectPage` and `StayPage` already have a related-listings block. The gap is posts → listings and posts → posts, not listings → listings.
+**What actually shipped, 16 November 2026.**
 
-**Acceptance:** a spot check of five posts shows at least three internal links each, and at least one points at a listing. No post is an orphan.
+- **Field shape.** The plan's `destination` (`country` + optional `locale`) became
+  `destinations`: an **array** of `{ country, region?, city? }`. Multi-country
+  round-ups (`amazing-less-explored-places` names twelve) and UK-wide posts need
+  more than one entry, and the deeper shape mirrors the Locations hierarchy in
+  `docs/plans/roadmap.md` Bucket 2, so the Notion migration fills in `region` and
+  `city` rather than changing the type.
+- **All matching lives in `src/utils/related.ts`.** `normalisePlace()` folds
+  diacritics and synonyms (UK → United Kingdom, USA → United States, Czech
+  Republic → Czechia, Turkey → Türkiye, Holland → Netherlands, North Cyprus →
+  Cyprus). Listings are scored city 3 / region 2 / country 1, ties broken by
+  destination order then recency. When listings carry location records, only the
+  two collection readers in that file change.
+- **Posts get two blocks:** related listings (max 3, projects *and* stays, using
+  the new `CompactListingCard`) and related posts (max 3, destination first, then
+  tag, then recency). Both render after the article and before `SupportCTA`, and
+  both vanish when the post has no destinations.
+- **T5.4:** 48 of 71 posts now declare destinations. The 23 left empty are
+  thematic, news or brand posts with no place to name — a deliberate exemption,
+  not a backlog.
+- **T5.5 + T5.7:** editorial links or embeds added to 11 of the 12 CTR posts.
+  `ListingEmbed` now appears in 10 posts (12 instances).
+- **T5.6 became a script, not an editorial rule.** `pnpm run seo:links` reads the
+  built HTML and fails on a post with fewer than three internal links, no listing
+  link, no sibling-post link, no hub link, or no inbound links. Posts whose
+  destinations have no listings at all are reported but not failed, because there
+  is genuinely nothing to link to.
+
+**Acceptance.** Met, and now enforced rather than spot-checked: 71 posts, fewest
+internal links 28, zero orphans, zero destination posts missing a listing link.
+One exemption — Bratislava, because no Slovakia listings exist.
 
 ---
 
@@ -452,9 +481,9 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 | T11.1 | Decide the survival rule for locale hubs. Recommendation: keep a locale hub only if it has 3+ published listings **and** either GSC impressions or a matching blog post; otherwise drop it from the sitemap and `noindex` it | decision | S |
 | T11.2 | Collapse locale hubs where the city equals the country (`aruba/aruba`, `singapore/singapore`, `hong-kong/hong-kong`) into the country hub with a 301 | route code | S |
 | T11.3 | Add a real intro paragraph per country hub — 80–120 words covering what kinds of projects exist there, which regions, and one concrete example. This is the single highest-value content task on the directory | editorial + route prop | L |
-| T11.4 | Add breadcrumbs to hub pages (`Breadcrumbs` already exists and is used on detail pages) | hub routes | S |
-| T11.5 | Add `ItemList` structured data to hubs | hub routes | S |
-| T11.6 | Link each country hub to the 2–3 most relevant blog posts for that country, and add a return link from those posts | hub routes + W5 | M |
+| T11.4 | Add breadcrumbs to hub pages (`Breadcrumbs` already exists and is used on detail pages) | hub routes | done |
+| T11.5 | Add `ItemList` structured data to hubs | hub routes | done |
+| T11.6 | Link each country hub to the 2–3 most relevant blog posts for that country, and add a return link from those posts | hub routes + W5 | done |
 | T11.7 | Trim slug and country values on import (`richTextToPlainText` returns untrimmed text). Notion is already clean; this is the guard against regression | `src/content.config.ts` | done |
 | T11.8 | Investigate `/stays/italy/` returning 404 while `/projects/italy/` returns 200 — either a stay is tagged with a misspelt country, or no stay covers Italy and the dropdown is misleading | Notion data | S |
 | T11.9 | Consider `noindex, follow` on paginated hub pages beyond page 1. They currently generate 115 impressions and zero clicks from 93 URLs | hub routes | S |
@@ -462,6 +491,18 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 | T11.11 | ~~Normalise slugs on import~~ — Notion is clean. Keep T11.7 as the regression guard | — | done |
 | T11.12 | Add a build-time guard that fails the build if any published listing lacks a generated page, or if any slug contains a space or stray whitespace | build script | M |
 | T11.13 | **Add 301 redirects for the three old malformed URLs before the next deploy** — Google has indexed all three and Kirtipur earns 2 clicks | `public/_redirects` | done |
+
+**Shipped 16 November 2026 (T11.4–T11.6).** All four hub routes now render
+`Breadcrumbs` (Home → collection → country → locale), emit `ItemList` with
+positions continuing across pages, and show a "Read more about {place}" block of
+up to three related posts on page 1 only. Matching uses `findPostsForPlace()` in
+`src/utils/related.ts`: a country hub pulls posts that name the country, a locale
+hub pulls only posts that name that city or region, so `/projects/czechia/` and
+`/projects/czechia/brno/` do not duplicate each other's suggestions. The return
+link from a post lives in the related-listings heading ("See all projects in
+Czechia") and is derived from the top match, so it can never point at a hub that
+does not exist. 60 of 681 hubs have at least one matching post; the rest have no
+travel guide for their place yet.
 
 **Caution on T11.1:** do not prune a locale hub that still earns clicks, and do not `noindex` a hub that is the only crawl path to a listing. Check the GSC export per URL before removing anything.
 
@@ -477,7 +518,7 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 | **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it — **complete 12 Nov 2026** |
 | **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is — **complete 16 Nov 2026** |
 | **Phase 3** — 2 days | W3, W4 | Rich results plus authorship — **complete 16 Nov 2026** |
-| **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory |
+| **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory — **complete 16 Nov 2026** |
 | **Phase 5** — 3–4 days | W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 | Consolidation and pruning, best done before new content |
 | **Phase 6** — ongoing | T11.3, W9.4 | Hub copy is editorial work, one country at a time |
 
@@ -500,6 +541,8 @@ Run after each phase.
 - [ ] No two pages share a `<title>`
 - [ ] `twitter:card` uses `name=`, not `property=`
 - [ ] A blog post contains at least 3 internal links, at least 1 to a listing
+- [ ] `pnpm run seo:audit`, `pnpm run seo:schema` and `pnpm run seo:links` all exit clean against a fresh `dist/`
+- [ ] A country hub links to 2–3 related posts, and one of those posts links back to the hub
 - [ ] Unknown URL returns HTTP 404
 - [ ] Every published listing returns 200 at its canonical URL — no listing is shadowed by a country hub
 - [ ] No sitemap URL contains `%20` or a stray space
@@ -595,6 +638,7 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 | 12 Nov 2026 | Phase 1 | T10.1–T10.7 | Pass (local build) | See below |
 | 16 Nov 2026 | Phase 2 | T2.1–T2.11 | Pass (local build) | See below |
 | 16 Nov 2026 | Phase 3 | T3.1–T3.7, T4.1–T4.5 | Pass (local build) | See below |
+| 16 Nov 2026 | Phase 4 | T5.1–T5.7, T11.4–T11.6 | Pass (local build) | See below; deviations recorded |
 
 ### Phase 0 — detail, 12 November 2026
 
@@ -697,6 +741,53 @@ Spot-checked in `dist`: `/projects/`, `/stays/`, `/blog/`, `/blog/2/`, tag pages
 **Not yet verified:** Google's Rich Results Test and the Schema.org validator need the deployed URL. After the next deploy, check the home page, one post, one project and one stay, then confirm the enhancement reports in Search Console. No rich result is expected for the listing types: `ItemPage`, `Thing` and `LodgingBusiness` are there for entity clarity, not snippets.
 
 **Deviations from the original task text, agreed during review:** Organization is home-only rather than site-wide; `SearchAction` is dropped; project and stay pages use `ItemPage` wrappers rather than asserting the business as the page's own entity; projects use `Thing` rather than `NGO`/`Organization` because the taxonomy includes activities and venues.
+
+### Phase 4 — detail, 16 November 2026
+
+Two workstreams, one purpose: give every post a route into the directory and every
+hub a route into the archive.
+
+| Task | What shipped |
+|---|---|
+| T5.3 | `src/content.config.ts` gains `destinations`, an array of `{ country, region?, city? }`, defaulting to `[]`. Chosen over the planned single `destination` so multi-country round-ups work and so the shape survives the Locations migration in `docs/plans/roadmap.md` Bucket 2 |
+| T5.4 | 48 of 71 posts backfilled. Cities and regions are spelled as the Notion data spells them, so a `city` value matches a listing's `Locale` option exactly. The 23 posts left empty are thematic, news or brand posts (e.g. `carbon-offsetting-apps-for-travel`, `2026-travel-trends-regenerative`, `tourism-leakage`) |
+| T5.1, T5.2 | New `src/utils/related.ts` holds every place comparison on the site. `findRelatedListings()` scores a listing city 3 / region 2 / country 1, then destination order, then recency; `findRelatedPosts()` orders by shared places, then shared tags, then recency. `BlogPostLayout.astro` renders both blocks after the article, before `SupportCTA`, with a heading that changes to "Places to give back on this trip" when the post names more than one destination |
+| New | `src/components/content/CompactListingCard.astro` — image, Project/Stay label, title, place, and the existing `project_click`/`stay_click` event attributes |
+| T5.5 | Contextual listing links added to 11 of the 12 CTR posts. `2026-travel-trends-regenerative` got only a `/about/impacts/` link: it is a thematic post, so the listing rule does not apply |
+| T5.7 | `ListingEmbed` added to 10 posts (12 instances), including two that already had one (`is-lille-worth-visiting`, `oslo-in-winter`) |
+| T5.6 | Converted from an editorial rule into `scripts/link-check.mjs` + `pnpm run seo:links`. Reads `dist/`, classifies pages by their JSON-LD (`ItemPage` → listing, `ItemList` → hub, `og:type=article` → post), and fails on: fewer than three internal links, no listing link, no sibling-post link, no hub link, or no inbound links. A destination post is exempt from the listing rule only when no hub exists for any of its places |
+| T11.4 | All four hub routes render `Breadcrumbs`: Home → Projects/Stays → country → locale. The visible trail and the `BreadcrumbList` come from the same array |
+| T11.5 | All four hub routes pass `itemListSchema()` to `MainLayout`. Positions continue across pagination; `numberOfItems` is the hub total |
+| T11.6 | Hub routes render "Read more about {place}" with up to three posts from `findPostsForPlace()`. Country hubs match any destination naming the country; locale hubs match only the city or region, so parent and child do not repeat each other. Page 1 only. The return link from post to hub sits under the related listings ("See all projects in Czechia") and uses the top match's own country, so the target is guaranteed to exist |
+
+**Verification.** `pnpm run build` clean at 1,300 pages. `pnpm run seo:schema`:
+1,253 of 1,301 built HTML files carry JSON-LD (1,117 `BreadcrumbList`, 689
+`ItemList`, 492 `ItemPage`, 71 `Article`, 1 `Organization`, 1 `WebSite`), no
+problems — including the new rule that a page cannot claim to be both an item and
+a list. `pnpm run seo:links`: 48 destination posts, 0 failures, 1 exemption
+(Bratislava — no Slovakia listings), 0 orphans, fewest internal links on any post
+28. `pnpm run seo:audit` unchanged from Phase 3 (531 long titles, 62 long
+descriptions, 1 duplicate group). Spot-checked in `dist`:
+
+- `/blog/brno/` lists three Czechia projects in city-first order and links "See all projects in Czechia"; its related posts are the Prague and Czechia pieces.
+- `/blog/north-cyprus-things-to-know/` matches the Nicosia listing through the `Cyprus` + `Northern Cyprus` synonym fold.
+- `/blog/carbon-offsetting-apps-for-travel/` renders no listings block and keeps its related-posts block.
+- `/projects/czechia/` emits `ItemList` of 6 with positions 1–6, a four-crumb trail, and three Czechia posts.
+- `/projects/hungary/budapest/` matches only Budapest posts, not all Hungary posts.
+- `/stays/uk/` shows related posts; hub related-posts blocks do not appear on page 2.
+
+**Deviations from the original task text, agreed during review:**
+
+1. `destinations` array with `region`/`city` instead of a single `country` + `locale`.
+2. Related listings include stays as well as projects.
+3. Related posts order destination first, then tag — the plan only asked for same-tag. Necessary because 48 of 71 posts share `Travel Guides`.
+4. Locale hubs match city-level posts only, rather than inheriting the country hub's suggestions.
+5. Hub related-posts render on page 1 only.
+6. Destination posts are exempt from the listing-link rule where the place has no listings, and thematic posts are exempt entirely.
+7. T5.5 applied to all 12 CTR posts even though four are Phase 5 merge candidates. The links move with the content if those merges go ahead.
+
+**Not yet verified:** that Google follows the new internal links and re-crawls the hub layer needs the deploy plus Search Console data. The expected signal is not a CTR jump but more impressions and deeper crawl on the 589 hub URLs, and first clicks on the previously unlinked listings.
+
 
 ---
 

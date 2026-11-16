@@ -40,8 +40,14 @@ function pathnameOf(file) {
     return `/${relative(DIST, file).replace(/index\.html$/, "")}`;
 }
 
-function isIndexPage(pathname) {
-    return /^\/(projects|stays|blog)(\/\d+)?\/$/.test(pathname);
+/**
+ * ItemList is allowed on the collections' own pages: the root indexes, their
+ * pagination, and the country/locale hubs. Detail pages share the same URL
+ * shape as hubs, so the reliable distinction is the markup itself — a page
+ * that describes one item must not also claim to be a list.
+ */
+function isListPath(pathname) {
+    return /^\/(projects|stays|blog)\//.test(pathname);
 }
 
 /** Walk every object in a node, collecting keys and bad URLs. */
@@ -140,8 +146,11 @@ for (const file of files) {
             if (types.includes("Article") && !isArticlePage) {
                 problems.push(`${pathname}: Article on a non-article page`);
             }
-            if (types.includes("ItemList") && !isIndexPage(pathname)) {
-                problems.push(`${pathname}: ItemList on a non-index page`);
+            if (types.includes("ItemList") && !isListPath(pathname)) {
+                problems.push(`${pathname}: ItemList on a non-collection page`);
+            }
+            if (types.includes("ItemPage") && types.includes("ItemList")) {
+                problems.push(`${pathname}: page claims to be both an item and a list`);
             }
             if (types.includes("ItemPage")) {
                 const subjectUrl = node.mainEntity?.url;
