@@ -7,6 +7,7 @@ import BlogTagsDropdown from "../../components/ui/Dropdown/BlogTagsDropdown.astr
 import Pagination from "../../components/ui/Pagination.astro";
 import PageHeader from "../../components/layout/PageHeader.astro";
 import { buildTitle } from "../../utils/seo";
+import { itemListSchema } from "../../utils/schema";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     // Get MDX blog posts
@@ -39,9 +40,22 @@ const title = buildTitle(
 );
 const description =
     "Destination guides, practical advice and honest reporting on the problems with tourism — plus practical ways to give back wherever you travel next.";
+
+const site = Astro.site ?? new URL("https://giveback.guide");
+const schema = itemListSchema({
+    site,
+    url: new URL(Astro.url.pathname, site).href,
+    name: "Travel Blog",
+    items: page.data.map((post) => ({
+        name: post.data.title,
+        url: `/blog/${post.data.slug}/`,
+    })),
+    start: page.start,
+    total: page.total,
+});
 ---
 
-<MainLayout title={title} description={description}>
+<MainLayout title={title} description={description} schema={schema}>
     <section class="bg-white dark:bg-gray-900">
         <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
             <PageHeader

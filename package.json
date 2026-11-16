@@ -10,7 +10,8 @@
     "astro": "astro",
     "blog:convert": "node scripts/convert-notion-to-mdx.js",
     "blog:validate": "node scripts/validate-blog-posts.js",
-    "seo:audit": "node scripts/seo-audit.mjs"
+    "seo:audit": "node scripts/seo-audit.mjs",
+    "seo:schema": "node scripts/schema-check.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

@@ -17,6 +17,7 @@ import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 import { getAllSearchTerms } from "../data/country-aliases";
 import { DESCRIPTION_MAX, buildTitle } from "../utils/seo";
+import { itemPageSchema } from "../utils/schema";
 
 type Props = CollectionEntry<"projects">["data"];
 
@@ -43,6 +44,29 @@ const descriptionSuffix =
         (suffix) => baseDescription.length + suffix.length <= DESCRIPTION_MAX,
     ) ?? "";
 const description = baseDescription + descriptionSuffix;
+
+// A directory page, not the organisation's own page. The subject carries the
+// business's official URL; the page keeps the Give Back Guide canonical URL.
+const site = Astro.site ?? new URL("https://giveback.guide");
+const officialUrl = properties.pURL ?? undefined;
+const sameAs = [properties.pURL, properties.pInstagramURL].filter(
+    (value): value is string => Boolean(value),
+);
+
+const schema = itemPageSchema({
+    site,
+    url: new URL(Astro.url.pathname, site).href,
+    name: title,
+    description,
+    subject: {
+        "@type": "Thing",
+        name: properties.pTitle,
+        description,
+        image: new URL(image, site).href,
+        ...(officialUrl ? { url: officialUrl } : {}),
+        ...(sameAs.length > 0 ? { sameAs } : {}),
+    },
+});
 
 const allProjects = await getCollection("projects");
 const actionId = String(
@@ -97,7 +121,7 @@ for (const project of allProjects) {
 }
 ---
 
-<MainLayout title={title} description={description} image={image}>
+<MainLayout title={title} description={description} image={image} schema={schema}>
     <div>
         <div
             class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"

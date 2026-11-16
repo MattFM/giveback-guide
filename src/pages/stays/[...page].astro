@@ -6,6 +6,7 @@ import StayCard from "../../components/content/StayCard.astro";
 import StayCountryDropdown from "../../components/ui/Dropdown/StayCountryDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
 import { buildTitle } from "../../utils/seo";
+import { itemListSchema } from "../../utils/schema";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const entries = await getCollection("stays");
@@ -30,9 +31,22 @@ const title = buildTitle(
 );
 const description =
   "Hotels, homestays and lodges that fund conservation, education or community projects — places to stay that give back to the places you visit.";
+
+const site = Astro.site ?? new URL("https://giveback.guide");
+const schema = itemListSchema({
+  site,
+  url: new URL(Astro.url.pathname, site).href,
+  name: "Sustainable Stays",
+  items: page.data.map((stay) => ({
+    name: stay.data.properties.sTitle,
+    url: `/stays/${stay.data.properties.sSlug}/`,
+  })),
+  start: page.start,
+  total: page.total,
+});
 ---
 
-<MainLayout title={title} description={description}>
+<MainLayout title={title} description={description} schema={schema}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <div class="max-w-screen-md mb-8 lg:mb-16">

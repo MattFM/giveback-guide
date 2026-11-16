@@ -6,6 +6,10 @@ import LatestProjectsCarousel from "../components/sections/LatestProjectsCarouse
 import LatestStaysCarousel from "../components/sections/LatestStaysCarousel.astro";
 import LatestPostsNews from "../components/sections/LatestPostsNews.astro";
 import { SITE_TITLE } from "../consts";
+import { organisationSchema, websiteSchema } from "../utils/schema";
+
+const site = Astro.site ?? new URL("https://giveback.guide");
+const schema = [organisationSchema(site), websiteSchema(site)];
 ---
 
 <MainLayout
@@ -13,6 +17,7 @@ import { SITE_TITLE } from "../consts";
     description="A directory of animal sanctuaries, beach cleans, conservation projects, social enterprises and sustainable stays you can visit around the world."
     headerVariant="default"
     headerTheme="light"
+    schema={schema}
 >
     <HomeSplitHero />
     <InfiniteScroll speed="normal" direction="left" />

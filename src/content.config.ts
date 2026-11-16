@@ -22,6 +22,7 @@ const blog = defineCollection({
     published: z.coerce.date(),
     lastUpdated: z.coerce.date(),
     tags: z.array(z.string()).default([]),
+    authors: z.array(z.string()).default(["Matt", "Jade"]),
     coverImage: z.string().url().optional(),
   }),
 });

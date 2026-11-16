@@ -1,0 +1,129 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+
+const title = "About the Authors: Matt & Jade | Give Back Guide";
+const description =
+    "Matt and Jade founded Give Back Guide after a six-month trip through Southeast Asia. They research and write every listing and guide on the site.";
+
+const photo =
+    "https://res.cloudinary.com/dnxl7wsnx/image/upload/v1744197180/matt-jade-singapore-cloud-forest_wc25cv.jpg";
+
+const profiles = [
+    { label: "Instagram", href: "https://www.instagram.com/giveback.guide" },
+    { label: "TikTok", href: "https://www.tiktok.com/@giveback.guide" },
+    { label: "Mastodon", href: "https://mastodon.social/@givebackguide" },
+    {
+        label: "Bluesky",
+        href: "https://bsky.app/profile/givebackguide.bsky.social",
+    },
+    { label: "Threads", href: "https://www.threads.com/@giveback.guide" },
+    { label: "YouTube", href: "https://www.youtube.com/heretotravel" },
+];
+---
+
+<MainLayout title={title} description={description}>
+    <main class="bg-white dark:bg-gray-900">
+        <div class="mx-auto max-w-screen-md px-4 py-16 lg:px-6 lg:py-24">
+            <p
+                class="mb-3 text-sm font-semibold uppercase tracking-wide text-purple-600 dark:text-purple-400"
+            >
+                About the authors
+            </p>
+            <h1
+                class="mb-6 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl"
+            >
+                Matt &amp; Jade
+            </h1>
+            <p class="mb-8 text-xl leading-relaxed text-gray-600 dark:text-gray-300">
+                We founded Give Back Guide. We research the listings, check them
+                where we can, and write every guide on this site.
+            </p>
+
+            <img
+                src={photo}
+                alt="Matt and Jade at Singapore Cloud Forest"
+                class="mb-10 w-full rounded-lg"
+                loading="eager"
+            />
+
+            <div
+                class="prose prose-lg max-w-none dark:prose-invert prose-a:text-purple-600 dark:prose-a:text-purple-400"
+            >
+                <h2>How Give Back Guide started</h2>
+                <p>
+                    A few years ago we spent six months travelling through
+                    Southeast Asia. We wanted the trip to be more than a series
+                    of places to sleep and things to see, so we started
+                    gravitating towards social enterprise cafés, community
+                    clean-ups and animal sanctuaries.
+                </p>
+                <p>
+                    The difference was immediate. We were meeting local people
+                    who were passionate about their communities, and our money
+                    was staying where we spent it. The problem was finding those
+                    places. It took hours of cross-referencing blogs, maps and
+                    word of mouth, and half the time we were not sure whether a
+                    project was genuine.
+                </p>
+                <p>
+                    So we started keeping a list. Friends asked for it, then
+                    strangers did, and eventually the list became Give Back
+                    Guide: a free, independent directory of places where
+                    travellers can give back.
+                </p>
+
+                <h2>What we do</h2>
+                <p>
+                    Every listing is added by hand. We read the organisation's
+                    website and public material and check that the details on
+                    our page are consistent with it. Listings can carry one of
+                    two verification badges, and we explain what each one means
+                    on the <a href="/about/verification/">verification page</a>.
+                </p>
+                <p>
+                    We write the travel guides ourselves, usually after
+                    visiting. Some pieces are research-led and draw on public
+                    sources rather than first-hand experience.
+                </p>
+
+                <h2>Get in touch</h2>
+                <p>
+                    Corrections, suggestions and partnerships are all welcome.
+                    Use the <a href="/contact/">contact form</a> or email us
+                    through the details there. If something on a listing is
+                    wrong, tell us and we will fix it.
+                </p>
+            </div>
+
+            <section class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700">
+                <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+                    Find us elsewhere
+                </h2>
+                <ul class="flex flex-wrap gap-x-6 gap-y-2">
+                    {
+                        profiles.map((profile) => (
+                            <li>
+                                <a
+                                    href={profile.href}
+                                    class="text-gray-700 underline decoration-gray-300 underline-offset-2 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400"
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                >
+                                    {profile.label}
+                                </a>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </section>
+
+            <p class="mt-10 text-gray-600 dark:text-gray-400">
+                More about <a
+                    href="/about/"
+                    class="text-purple-600 underline decoration-purple-300 underline-offset-2 hover:text-purple-700 dark:text-purple-400"
+                    >Give Back Guide and how it is funded</a
+                >.
+            </p>
+        </div>
+    </main>
+</MainLayout>

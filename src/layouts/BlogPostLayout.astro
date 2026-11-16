@@ -8,11 +8,19 @@ import AboutCallout from "../components/content/AboutCallout.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
 import { getValidTags, getTagSlug } from "../lib/blog-tags";
 import { buildTitle } from "../utils/seo";
+import { articleSchema } from "../utils/schema";
 
 type Props = CollectionEntry<"blog">["data"];
 
-const { title, description, coverImage, published, lastUpdated, tags } =
-    Astro.props;
+const {
+    title,
+    description,
+    coverImage,
+    published,
+    lastUpdated,
+    tags,
+    authors,
+} = Astro.props;
 
 const validTags = getValidTags(tags);
 
@@ -30,9 +38,28 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
 });
 
 const hasBeenUpdated = published.toISOString() !== lastUpdated.toISOString();
+
+// Article markup lives with the post, not on index or non-article pages.
+const site = Astro.site ?? new URL("https://giveback.guide");
+const schema = articleSchema({
+    site,
+    url: new URL(Astro.url.pathname, site).href,
+    headline: title,
+    description,
+    image: coverImage,
+    published,
+    updated: lastUpdated,
+    authors,
+});
 ---
 
-<MainLayout title={buildTitle(title, { alwaysBrand: true })} description={description} image={coverImage} ogType="article">
+<MainLayout
+    title={buildTitle(title, { alwaysBrand: true })}
+    description={description}
+    image={coverImage}
+    ogType="article"
+    schema={schema}
+>
     <SplitHero
         coverImage={coverImage}
         coverImageAlt={title}
@@ -68,6 +95,35 @@ const hasBeenUpdated = published.toISOString() !== lastUpdated.toISOString();
         <Separator class="mb-6" />
 
         <ul class="space-y-3 text-left text-gray-500 dark:text-gray-400">
+            <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                <svg
+                    class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-7 2-7 5v1h14v-1c0-3-3-5-7-5Z"
+                    ></path>
+                </svg>
+                <span>
+                    Written by{" "}
+                    <a
+                        href="/about/authors/"
+                        class="font-medium text-gray-700 underline decoration-gray-300 underline-offset-2 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400"
+                    >{authors.join(" & ")}</a>,{" "}
+                    <span class="text-gray-500 dark:text-gray-400"
+                        >founders and editors</span
+                    >
+                </span>
+            </li>
             <li class="flex items-center space-x-3 rtl:space-x-reverse">
                 <svg
                     class="w-5 h-5 text-gray-500 dark:text-gray-400"

@@ -4,7 +4,7 @@
 **Location:** `docs/plans/technical-seo-plan.md` (moved out of `~/.opencode/plan` on 11 Nov 2026)
 **Scope:** Everything on the site that affects how Google crawls, indexes, understands and displays pages. Content strategy is a separate document.
 **Owner:** Matthew (solo). All tasks are written so an AI agent can implement them under review.
-**Status:** Phases 0–2 complete. Phase 3 not begun.
+**Status:** Phases 0–3 complete. Phase 4 not begun.
 **Revision 3 (11 Nov 2026):** Every claim re-verified against the deployed build. See §8 for the log. Three claims were wrong and are corrected there; the malformed-URL diagnosis in §1.4.1 was also wrong and is rewritten.
 
 ---
@@ -18,11 +18,11 @@ can act safely.
 
 | Field | Value |
 |---|---|
-| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026) |
-| Next action | Awaiting go-ahead for Phase 3 — W3, W4 (§4) |
+| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026), Phase 3 (16 Nov 2026) |
+| Next action | Awaiting go-ahead for Phase 4 — W5, T11.4–T11.6 (§4) |
 | Blocked on | Nothing. Live event and Core Web Vitals checks need the next deploy |
 | Coordination risk | The three redirects must ship with the next deploy — see below |
-| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phase 2 against a local build on 16 Nov |
+| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phases 2–3 against local builds on 16 Nov |
 | Progress log | §9 |
 
 ### Deploy ordering — get this wrong and you lose a ranking
@@ -269,17 +269,28 @@ The site has **zero JSON-LD**. For a directory this is the largest single missin
 
 | ID | Schema type | Where | Effort |
 |---|---|---|---|
-| T3.1 | `Organization` + `WebSite` (with `SearchAction`) | `BaseHead.astro`, site-wide | M |
-| T3.2 | `Article` on posts — headline, datePublished, dateModified, author, publisher, image, mainEntityOfPage | `BlogPostLayout.astro` | M |
-| T3.3 | `BreadcrumbList` | `Breadcrumbs.astro` (component already renders visible breadcrumbs on listings) | M |
-| T3.4 | `NGO` or `Organization` for project listings | `ProjectPage.astro` | M |
-| T3.5 | `LodgingBusiness` for stays | `StayPage.astro` | M |
-| T3.6 | `ItemList` on paginated index pages | projects/stays/blog indexes | M |
-| T3.7 | Validate every type in Google's Rich Results Test and Schema.org validator | — | S |
+| T3.1 | `Organization` + `WebSite` on the home page. `SearchAction` dropped: Google retired the sitelinks search box in 2024 | `BaseHead.astro` (home) | done |
+| T3.2 | `Article` on posts — headline, datePublished, dateModified, author, publisher, image, mainEntityOfPage | `BlogPostLayout.astro` | done |
+| T3.3 | `BreadcrumbList` built from the same data as the visible trail (project and stay detail pages) | `Breadcrumbs.astro` | done |
+| T3.4 | `ItemPage` with a `Thing` subject for project listings — the page is about the business, not the business's own page | `ProjectPage.astro` | done |
+| T3.5 | `ItemPage` with a `LodgingBusiness` subject for stays | `StayPage.astro` | done |
+| T3.6 | `ItemList` on paginated index pages | projects/stays/blog indexes | done |
+| T3.7 | Structural check locally (`pnpm run seo:schema`); Rich Results Test and Schema.org validator after deploy | — | done |
 
 **Implementation note:** put each builder in `src/utils/schema.ts` returning a plain object, and emit with a single `<script type="application/ld+json" set:html={JSON.stringify(obj)} />` in `BaseHead`. Do not hand-write JSON into layouts — it will drift.
 
 **Do not mark up** ratings, reviews, prices or opening hours. There is no first-party data behind them and inventing it risks a manual action.
+
+**Implementation notes (16 Nov 2026).**
+
+- All builders live in `src/utils/schema.ts`. `BaseHead` takes a `schema` prop (one node or an array) and serialises it once as a `@graph`, escaping `<` so a title cannot close the script early. `MainLayout` forwards the prop.
+- T3.1 is **home page only**. Google recommends the home page or a single about page, not every page of the site. `SearchAction` was dropped: Google retired the sitelinks search box on 21 November 2024. `WebSite` remains, because that is what the site-name feature uses.
+- T3.3 emits from `Breadcrumbs.astro`, not `BaseHead`, so the visible and structured crumbs come from one array. A second JSON-LD block is valid and avoids duplicating the crumb data.
+- T3.4 and T3.5 use `ItemPage` with the business nested under `mainEntity`. A directory page is not the business's official page, so the subject's `url` is the business's own site and the page keeps the Give Back Guide canonical URL. Projects use `Thing` because the Notion taxonomy mixes organisations, venues and activities; stays use `LodgingBusiness`. No ratings, reviews, prices or opening hours.
+- `ItemList` runs on the three indexes only, with `position` set from `page.start + index + 1` so page 2 starts at 10. Tag pages are lists of posts, not directory indexes, and are left out.
+- `scripts/schema-check.mjs` plus `pnpm run seo:schema` parse the built HTML and fail on malformed JSON, wrong placement, non-absolute URLs, or a listing subject URL that points back at giveback.guide.
+
+**Result:** 628 of 1,301 built HTML files carry JSON-LD: 492 `ItemPage` and 492 `BreadcrumbList` (one per detail page), 71 `Article`, 64 `ItemList`, one `Organization` and one `WebSite` (home). No problems reported.
 
 **Acceptance:** Rich Results Test passes with no errors for one post, one project, one stay and the homepage. No `Article` markup on non-article pages.
 
@@ -289,13 +300,23 @@ The site has **zero JSON-LD**. For a directory this is the largest single missin
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T4.1 | Add `author` to the blog schema (default to a single name, per-post override possible) | `src/content.config.ts` | S |
-| T4.2 | Render a byline on posts: name, short credential, link to an author page | `BlogPostLayout.astro` | M |
-| T4.3 | Create `/about/author/` (or `/about/matthew/`) with a real bio, photo and links | new page | M |
-| T4.4 | Add `lastUpdated` visibly (already computed but only shown when it differs — confirm it always renders when a genuine update occurred) | `BlogPostLayout.astro` | S |
-| T4.5 | Add a visible "How we verify listings" note linking to `/about/verification/` from project pages | `ProjectPage.astro` | S |
+| T4.1 | Add `authors` to the blog schema, defaulting to Matt and Jade, with per-post override | `src/content.config.ts` | done |
+| T4.2 | Render a byline on posts: name, short credential, link to an author page | `BlogPostLayout.astro` | done |
+| T4.3 | Create `/about/authors/` with the founders' story, photo and links | new page | done |
+| T4.4 | Add `lastUpdated` visibly (already computed but only shown when it differs — confirm it always renders when a genuine update occurred) | `BlogPostLayout.astro` | done |
+| T4.5 | Add a visible "How we verify listings" note linking to `/about/verification/` from project pages | `ProjectPage.astro` | done |
 
 **Why:** you are the author of all 71 posts, which is a genuine advantage over anonymous travel content. Right now the site never says so. This also feeds T3.2 — `Article` without an `author` is a weak signal.
+
+**Implementation notes (16 Nov 2026).**
+
+- `authors` (plural) is added to the blog schema, defaulting to `["Matt", "Jade"]`. A post can override it by adding `authors` to its frontmatter.
+- The byline sits above Published and links to `/about/authors/`. Because there are two authors, `Article.author` is an array of two `Person` nodes rather than one combined name.
+- New `/about/authors/` page: the founders' story, the existing photo and links to every official profile, plus links back to About, verification and contact. It is linked from every byline and from the About page.
+- T4.4 needed no change. `lastUpdated` is required and 70 of 71 posts have a different value from `published`, so the line renders; the one equal-date post correctly hides it.
+- T4.5 was already satisfied by `VerificationBox`, which renders whenever a listing has a verification status. Its link now includes the trailing slash.
+
+**Result:** every post shows a named author linked to the authors page, and `/about/authors/` appears in the sitemap.
 
 **Acceptance:** every post shows a named author linked to a real page; the author page appears in the sitemap.
 
@@ -455,7 +476,7 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 | **Phase 0** — half a day | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, **T11.13 (before the next deploy)**, T11.7 | Broken or wrong today; near-zero risk — **complete 12 Nov 2026** |
 | **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it — **complete 12 Nov 2026** |
 | **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is — **complete 16 Nov 2026** |
-| **Phase 3** — 2 days | W3, W4 | Rich results plus authorship |
+| **Phase 3** — 2 days | W3, W4 | Rich results plus authorship — **complete 16 Nov 2026** |
 | **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory |
 | **Phase 5** — 3–4 days | W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 | Consolidation and pruning, best done before new content |
 | **Phase 6** — ongoing | T11.3, W9.4 | Hub copy is editorial work, one country at a time |
@@ -573,6 +594,7 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 | 12 Nov 2026 | Phase 0 | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, T11.7, T11.13 | Pass (local build) | See below |
 | 12 Nov 2026 | Phase 1 | T10.1–T10.7 | Pass (local build) | See below |
 | 16 Nov 2026 | Phase 2 | T2.1–T2.11 | Pass (local build) | See below |
+| 16 Nov 2026 | Phase 3 | T3.1–T3.7, T4.1–T4.5 | Pass (local build) | See below |
 
 ### Phase 0 — detail, 12 November 2026
 
@@ -643,6 +665,38 @@ Spot-checked in `dist`: `/projects/`, `/stays/`, `/blog/`, `/blog/2/`, tag pages
 **Backlog (documented, not rewritten).** Long titles come from the listing name itself, so shortening them means editing each Notion record, not a template. Worst at the time of writing: `/stays/murchison-river-lodge/` (126), `/stays/good-hotel-guatemala-city/` (120), `/projects/quetzaltrekkers/` (117). Descriptions over 155 are mostly posts whose description was written for social sharing. Blog may move to Sanity, so the audit is deliberately CMS-agnostic.
 
 **Not yet verified:** live titles and CTR movement need the deploy and several weeks of GSC data.
+
+
+### Phase 3 — detail, 16 November 2026
+
+| Task | What shipped |
+|---|---|
+| T3.1 | `Organization` + `WebSite` on the home page only, with `@id`s, logo, description and `sameAs` for every official profile. No `SearchAction`: the sitelinks search box was retired in November 2024 |
+| T3.2 | `Article` on posts: headline, description, absolute image, `datePublished`, `dateModified`, author array, publisher, `mainEntityOfPage` and `isPartOf`. Only posts receive it |
+| T3.3 | `BreadcrumbList` emitted by `Breadcrumbs.astro` from the same array as the visible trail. Project and stay detail pages only, because that is where breadcrumbs are rendered |
+| T3.4 | Project detail pages emit `ItemPage` with a `Thing` subject. The subject carries the official site and social links; our canonical URL stays on the page |
+| T3.5 | Stay detail pages emit `ItemPage` with a `LodgingBusiness` subject, locality/country address and facilities as `amenityFeature` |
+| T3.6 | `ItemList` on the projects, stays and blog indexes. Positions continue across pages; `numberOfItems` is the collection total |
+| T3.7 | `scripts/schema-check.mjs` and `pnpm run seo:schema` validate the built HTML: JSON, `@context`, placement, absolute URLs, and that no listing subject points back at our own page. Live Rich Results and Schema.org validation need the deploy |
+| T4.1 | `authors` added to the blog schema, defaulting to `["Matt", "Jade"]`, with per-post override |
+| T4.2 | Byline above Published: "Written by Matt & Jade", linked to `/about/authors/` |
+| T4.3 | New `/about/authors/` page with the founders' story, photo, social links and links back to About, verification and contact. Linked from every post and from About |
+| T4.4 | Verified, no change needed: `lastUpdated` is required and 70 of 71 posts differ from `published`, so the line renders; the equal-date post correctly hides it |
+| T4.5 | Already covered by `VerificationBox` whenever a listing has a status. Link corrected to `/about/verification/` |
+
+**Verification.** `pnpm run build` clean at 1,300 pages. `pnpm run seo:schema` reports 628 of 1,301 built HTML files carrying JSON-LD — 492 `ItemPage`, 492 `BreadcrumbList`, 71 `Article`, 64 `ItemList`, one `Organization` and one `WebSite` — with no problems. Spot-checked in `dist`:
+
+- Home has the Organization + WebSite graph and nothing else.
+- `/blog/brno/` has one `Article` with both authors, `dateModified` 2026-06-18 and the post's real cover image.
+- `/projects/dignity-for-children-foundation/` has `ItemPage` → `Thing` with `url` pointing at `dignityforchildren.org`, plus `BreadcrumbList`; the page's own canonical is unchanged.
+- `/stays/haye-cornwall/` has `ItemPage` → `LodgingBusiness` with the property's URL, address and facilities.
+- `/projects/2/` item positions run 10–18.
+- `/blog/` pages and tag pages carry no `Article`; listings carry no `Organization` as their main type.
+- Author page: 48-character title, 145-character description, present in `sitemap-0.xml`.
+
+**Not yet verified:** Google's Rich Results Test and the Schema.org validator need the deployed URL. After the next deploy, check the home page, one post, one project and one stay, then confirm the enhancement reports in Search Console. No rich result is expected for the listing types: `ItemPage`, `Thing` and `LodgingBusiness` are there for entity clarity, not snippets.
+
+**Deviations from the original task text, agreed during review:** Organization is home-only rather than site-wide; `SearchAction` is dropped; project and stay pages use `ItemPage` wrappers rather than asserting the business as the page's own entity; projects use `Thing` rather than `NGO`/`Organization` because the taxonomy includes activities and venues.
 
 ---
 

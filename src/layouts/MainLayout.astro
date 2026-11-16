@@ -3,6 +3,7 @@ import BaseHead from "../components/layout/BaseHead.astro";
 import HeaderUnified from "../components/layout/HeaderUnified.astro";
 import Footer from "../components/layout/Footer.astro";
 import NewsletterSection from "../components/sections/NewsletterSection.astro";
+import type { SchemaNode } from "../utils/schema";
 
 interface Props {
     title?: string;
@@ -12,6 +13,7 @@ interface Props {
     headerTheme?: "light" | "dark";
     noindex?: boolean;
     ogType?: "website" | "article";
+    schema?: SchemaNode | SchemaNode[];
 }
 
 const {
@@ -22,13 +24,14 @@ const {
     headerTheme = "light",
     noindex,
     ogType,
+    schema,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} image={image} noindex={noindex} ogType={ogType} />
+        <BaseHead title={title} description={description} image={image} noindex={noindex} ogType={ogType} schema={schema} />
     </head>
     <body>
         <a

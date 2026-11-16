@@ -3,6 +3,7 @@ import '../../styles/global.css';
 import { SITE_TITLE } from '../../consts';
 import Analytics from '../utility/Analytics.astro';
 import { defaultDescription } from '../../utils/seo';
+import { jsonLd, type SchemaNode } from '../../utils/schema';
 
 interface Props {
 	title?: string; // Make title optional
@@ -11,6 +12,8 @@ interface Props {
 	noindex?: boolean;
 	/** Open Graph object type. Posts are `article`; everything else `website`. */
 	ogType?: 'website' | 'article';
+	/** schema.org nodes for this page. Serialised once, as a graph. */
+	schema?: SchemaNode | SchemaNode[];
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -21,11 +24,14 @@ const {
 	image = '/giveback-guide-placeholder.jpg',
 	noindex,
 	ogType = 'website',
+	schema,
 } = Astro.props;
 
 // No page should ship an empty description. Most static and account pages
 // never pass one, so fall back to section copy written for the purpose.
 const metaDescription = description?.trim() || defaultDescription(Astro.url.pathname);
+
+const schemaNodes = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 ---
 
 <!-- Global Metadata -->
@@ -69,5 +75,13 @@ const metaDescription = description?.trim() || defaultDescription(Astro.url.path
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={metaDescription} />
 <meta name="twitter:image" content={new URL(image, Astro.url)} />
+
+{schemaNodes.length > 0 && (
+	<script
+		type="application/ld+json"
+		is:inline
+		set:html={jsonLd(schemaNodes)}
+	/>
+)}
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}

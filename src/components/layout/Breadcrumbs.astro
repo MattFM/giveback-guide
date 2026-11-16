@@ -1,4 +1,6 @@
 ---
+import { breadcrumbSchema, jsonLd } from "../../utils/schema";
+
 interface Crumb {
   label: string;
   href?: string; // undefined for current page (last item)
@@ -9,6 +11,12 @@ interface Props {
 }
 
 const { crumbs } = Astro.props;
+
+// The structured crumbs come from the same array as the visible ones, so the
+// two cannot drift. A second JSON-LD block is fine: it is a separate graph.
+const site = Astro.site ?? new URL("https://giveback.guide");
+const pageUrl = new URL(Astro.url.pathname, site).href;
+const schema = breadcrumbSchema({ site, url: pageUrl, crumbs });
 ---
 
 <nav class="flex" aria-label="Breadcrumb">
@@ -74,3 +82,9 @@ const { crumbs } = Astro.props;
     })}
   </ol>
 </nav>
+
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={jsonLd(schema)}
+/>

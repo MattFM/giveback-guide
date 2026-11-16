@@ -14,6 +14,7 @@ import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import StockPhotoNotice from "../components/content/StockPhotoNotice.astro";
 import { getAllSearchTerms } from "../data/country-aliases";
 import { DESCRIPTION_MAX, buildTitle } from "../utils/seo";
+import { itemPageSchema } from "../utils/schema";
 
 type Props = CollectionEntry<"stays">["data"];
 
@@ -40,6 +41,57 @@ const descriptionSuffix =
         (suffix) => baseDescription.length + suffix.length <= DESCRIPTION_MAX,
     ) ?? "";
 const description = baseDescription + descriptionSuffix;
+
+// A directory page, not the property's own page. The subject carries the
+// property's official URL; the page keeps the Give Back Guide canonical URL.
+const site = Astro.site ?? new URL("https://giveback.guide");
+const countryString = Array.isArray(properties.sCountry)
+    ? properties.sCountry.join(", ")
+    : properties.sCountry || "";
+const officialUrl = properties.sURL ?? properties.sOtherURL ?? undefined;
+const sameAs = [properties.sURL, properties.sOtherURL].filter(
+    (value): value is string => Boolean(value),
+);
+const schemaImages = [
+    properties.sImageURL1,
+    properties.sImageURL2,
+    properties.sImageURL3,
+].filter((value): value is string => Boolean(value));
+const amenities = properties.sFacilities.filter(Boolean);
+const address = {
+    ...(localeString ? { addressLocality: localeString } : {}),
+    ...(countryString ? { addressCountry: countryString } : {}),
+};
+
+const schema = itemPageSchema({
+    site,
+    url: new URL(Astro.url.pathname, site).href,
+    name: title,
+    description,
+    subject: {
+        "@type": "LodgingBusiness",
+        name: properties.sTitle,
+        description,
+        image:
+            schemaImages.length > 0
+                ? schemaImages.map((src) => new URL(src, site).href)
+                : new URL(image, site).href,
+        ...(officialUrl ? { url: officialUrl } : {}),
+        ...(sameAs.length > 0 ? { sameAs } : {}),
+        ...(Object.keys(address).length > 0
+            ? { address: { "@type": "PostalAddress", ...address } }
+            : {}),
+        ...(amenities.length > 0
+            ? {
+                  amenityFeature: amenities.map((name) => ({
+                      "@type": "LocationFeatureSpecification",
+                      name,
+                      value: true,
+                  })),
+              }
+            : {}),
+    },
+});
 
 const allStays = await getCollection("stays");
 const actionId = String(
@@ -118,7 +170,7 @@ if (images.length === 0) {
 }
 ---
 
-<MainLayout title={title} description={description} image={image}>
+<MainLayout title={title} description={description} image={image} schema={schema}>
     <div class="bg-white dark:bg-gray-900">
         <div
             class="mx-auto max-w-screen-xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 px-0 lg:px-6"

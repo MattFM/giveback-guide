@@ -6,6 +6,7 @@ import ProjectCard from "../../components/content/ProjectCard.astro";
 import ProjectCountryDropdown from "../../components/ui/Dropdown/ProjectCountryDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
 import { buildTitle } from "../../utils/seo";
+import { itemListSchema } from "../../utils/schema";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const entries = await getCollection("projects");
@@ -30,9 +31,22 @@ const title = buildTitle(
 );
 const description =
   "Browse animal sanctuaries, beach cleans, conservation projects and social enterprises you can visit. Filter by country, city and impact area.";
+
+const site = Astro.site ?? new URL("https://giveback.guide");
+const schema = itemListSchema({
+  site,
+  url: new URL(Astro.url.pathname, site).href,
+  name: "Regenerative Travel Projects",
+  items: page.data.map((project) => ({
+    name: project.data.properties.pTitle,
+    url: `/projects/${project.data.properties.pSlug}/`,
+  })),
+  start: page.start,
+  total: page.total,
+});
 ---
 
-<MainLayout title={title} description={description}>
+<MainLayout title={title} description={description} schema={schema}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <div class="max-w-screen-md mb-8 lg:mb-16">
