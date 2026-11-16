@@ -7,6 +7,7 @@ import BlogTagsDropdown from "../../../components/ui/Dropdown/BlogTagsDropdown.a
 import Pagination from "../../../components/ui/Pagination.astro";
 import PageHeader from "../../../components/layout/PageHeader.astro";
 import { isValidBlogTag, getTagSlug, getTagDescription } from "../../../lib/blog-tags";
+import { buildTitle } from "../../../utils/seo";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all blog posts from MDX collection
@@ -59,9 +60,16 @@ const readableTag = tag
   .join(" ");
 
 const tagDescription = getTagDescription(tagName);
+
+// The description already falls back to a written sentence, so only the title
+// needs building. The tag name alone is enough: it is also the H1.
+const title = buildTitle(readableTag, {
+  page: page.currentPage,
+  total: page.lastPage,
+});
 ---
 
-<MainLayout title={`Posts in ${readableTag} - Page ${page.currentPage} of ${page.lastPage}`} description={tagDescription || `All of our blog posts that have the ${readableTag} tag.`}>
+<MainLayout title={title} description={tagDescription || `All of our blog posts that have the ${readableTag} tag.`}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <PageHeader

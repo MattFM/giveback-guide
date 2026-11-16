@@ -4,7 +4,7 @@
 **Location:** `docs/plans/technical-seo-plan.md` (moved out of `~/.opencode/plan` on 11 Nov 2026)
 **Scope:** Everything on the site that affects how Google crawls, indexes, understands and displays pages. Content strategy is a separate document.
 **Owner:** Matthew (solo). All tasks are written so an AI agent can implement them under review.
-**Status:** Verified and ready to start. Phase 0 not begun.
+**Status:** Phases 0–2 complete. Phase 3 not begun.
 **Revision 3 (11 Nov 2026):** Every claim re-verified against the deployed build. See §8 for the log. Three claims were wrong and are corrected there; the malformed-URL diagnosis in §1.4.1 was also wrong and is rewritten.
 
 ---
@@ -18,11 +18,11 @@ can act safely.
 
 | Field | Value |
 |---|---|
-| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026) |
-| Next action | Phase 2 — W2 plus T2.10–T2.11 (§4) |
+| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026) |
+| Next action | Awaiting go-ahead for Phase 3 — W3, W4 (§4) |
 | Blocked on | Nothing. Live event and Core Web Vitals checks need the next deploy |
 | Coordination risk | The three redirects must ship with the next deploy — see below |
-| Verified against | The live build, 11 November 2026 (§8); Phases 0 and 1 re-verified against local builds on 12 Nov |
+| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phase 2 against a local build on 16 Nov |
 | Progress log | §9 |
 
 ### Deploy ordering — get this wrong and you lose a ranking
@@ -103,7 +103,7 @@ Two observations:
 
 ### 1.3 The CTR problem
 
-Seventeen pages have more than 10,000 impressions and under 1% CTR:
+Twelve pages have more than 10,000 impressions and under 1% CTR:
 
 | Page | Clicks | Impressions | CTR | Position |
 |---|---|---|---|---|
@@ -120,7 +120,7 @@ Seventeen pages have more than 10,000 impressions and under 1% CTR:
 | `/blog/iron-men-crosby-beach-liverpool/` | 25 | 14,339 | 0.17% | 9.21 |
 | `/blog/morocco-travel-guide/` | 34 | 13,678 | 0.25% | 20.32 |
 
-*Illustrative, not a forecast:* lifting these seventeen from 0.30% to 1.5% CTR — still below the site's best pages — would produce roughly 8,479 clicks instead of 1,689.
+*Illustrative, not a forecast:* lifting these twelve from 0.31% to 1.5% CTR — still below the site's best pages — would produce roughly 7,632 clicks instead of 1,578.
 
 > **Correction to an earlier figure.** I previously quoted Brno as 9 clicks. The export says **250 clicks / 167,604 impressions / 0.15% / position 11.7**. The 9-click figure came from the 72-day Umami window, not GSC. Use the GSC numbers.
 
@@ -231,17 +231,25 @@ This is where the traffic is. Pages ranking 6–17 with 0.2–0.5% CTR are being
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T2.1 | Introduce a single `buildTitle()` helper that always appends `| Give Back Guide` and never emits a page number on page 1 | `src/utils/seo.ts` (new) | M |
-| T2.2 | Rewrite titles for the 12 pages in §1.3 to lead with the search intent, not the site's internal labelling. Formula: `[Primary intent] — [specific hook] \| Give Back Guide` | 12 MDX files | M |
-| T2.3 | Write meta descriptions for those same 12 pages, 140–155 characters, containing the primary query and a reason to click | 12 MDX files | M |
-| T2.4 | Fix the blog index: live title is `Blog - Page 1 of 8` and there is **no meta description at all**. Drop the page count on page 1 and write a description | `src/pages/blog/[...page].astro` | S |
-| T2.5 | Fix the projects index: live title is `All Projects - Page 1 of 49`, description empty | `src/pages/projects/[...page].astro` | S |
-| T2.6 | Fix the stays index: live title is `All Stays - Page 1 of 7`, description empty | `src/pages/stays/[...page].astro` | S |
-| T2.7 | Fix tag pages: live title is `Posts in Travel Guides - Page 1 of 6`. The description already falls back correctly, so only the page count needs removing | `src/pages/blog/[tag]/[...page].astro` | S |
-| T2.8 | Add a missing-description fallback in `BaseHead` so no page ever ships an empty description. **Every one of the 16 pages I checked without an explicit description currently renders `<meta name="description" content="">` or omits it** | `src/components/layout/BaseHead.astro` | S |
-| T2.9 | Audit every page for title length over 60 characters (truncation) | site-wide | M |
-| T2.10 | Country hubs ship `Projects in Portugal - Page 1 of 1`, which is both unbranded and padded with a page count. Replace with a search-intent title and generate a description naming the number of listings, the cities covered and one impact area | `src/pages/projects/[country]/[...page].astro`, `src/pages/stays/[country]/[...page].astro` | M |
-| T2.11 | Locale hubs ship the same pattern. Same fix, including the city name in the title | `src/pages/projects/[country]/[locale]/[...page].astro`, `src/pages/stays/[country]/[locale]/[...page].astro` | M |
+| T2.1 | Introduce a single `buildTitle()` helper that always appends `\| Give Back Guide` and never emits a page number on page 1 | `src/utils/seo.ts` (new) | done |
+| T2.2 | Rewrite titles for the 12 pages in §1.3 to lead with the search intent, not the site's internal labelling. Formula: `[Primary intent] — [specific hook] \| Give Back Guide` | 12 MDX files | done |
+| T2.3 | Write meta descriptions for those same 12 pages, 140–155 characters, containing the primary query and a reason to click | 12 MDX files | done |
+| T2.4 | Fix the blog index: live title is `Blog - Page 1 of 8` and there is **no meta description at all**. Drop the page count on page 1 and write a description | `src/pages/blog/[...page].astro` | done |
+| T2.5 | Fix the projects index: live title is `All Projects - Page 1 of 49`, description empty | `src/pages/projects/[...page].astro` | done |
+| T2.6 | Fix the stays index: live title is `All Stays - Page 1 of 7`, description empty | `src/pages/stays/[...page].astro` | done |
+| T2.7 | Fix tag pages: live title is `Posts in Travel Guides - Page 1 of 6`. The description already falls back correctly, so only the page count needs removing | `src/pages/blog/[tag]/[...page].astro` | done |
+| T2.8 | Add a missing-description fallback in `BaseHead` so no page ever ships an empty description. **Every one of the 16 pages I checked without an explicit description currently renders `<meta name="description" content="">` or omits it** | `src/components/layout/BaseHead.astro` | done |
+| T2.9 | Audit every page for title length over 60 characters (truncation) | site-wide | done |
+| T2.10 | Country hubs ship `Projects in Portugal - Page 1 of 1`, which is both unbranded and padded with a page count. Replace with a search-intent title and generate a description naming the number of listings, the cities covered and one impact area | `src/pages/projects/[country]/[...page].astro`, `src/pages/stays/[country]/[...page].astro` | done |
+| T2.11 | Locale hubs ship the same pattern. Same fix, including the city name in the title | `src/pages/projects/[country]/[locale]/[...page].astro`, `src/pages/stays/[country]/[locale]/[...page].astro` | done |
+
+**Implementation notes (16 Nov 2026).**
+
+- `buildTitle()` is a ladder, not a truncator. Callers pass phrasings from most to least specific and the first that fits inside 60 characters wins, so no title ends mid-word. Authored content passes `alwaysBrand: true` and keeps the brand even when the result exceeds 60; that is the documented backlog, not a silent truncation.
+- Country and locale hubs previously rebuilt display names from the slug (`usa` → `Usa`). They now carry the raw Notion name through `getStaticPaths` props, and the same pass aggregates cities and impact areas for the description. `pages.total` gives the true listing count for the hub rather than the page size.
+- Hub descriptions are built from what the page actually contains — count, cities, impact areas — plus a closing sentence chosen by length. A one-listing locale hub still reaches 120 characters without inventing copy.
+- T2.9 was re-scoped during implementation, with the owner's agreement. The remaining long titles are editorial (the listing or post name itself), and rewriting ~530 Notion records and MDX files is not a template task. The audit script plus the backlog note in §9 replace that work.
+- The audit reads `dist/`, not the source, so it sees exactly what a crawler sees. It skips noindex and meta-refresh pages.
 
 **Title rules**
 
@@ -446,7 +454,7 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 |---|---|---|
 | **Phase 0** — half a day | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, **T11.13 (before the next deploy)**, T11.7 | Broken or wrong today; near-zero risk — **complete 12 Nov 2026** |
 | **Phase 1** — half a day | W10 entirely | Nothing later can be measured without it — **complete 12 Nov 2026** |
-| **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is |
+| **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is — **complete 16 Nov 2026** |
 | **Phase 3** — 2 days | W3, W4 | Rich results plus authorship |
 | **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory |
 | **Phase 5** — 3–4 days | W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 | Consolidation and pruning, best done before new content |
@@ -564,6 +572,7 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 |---|---|---|---|---|
 | 12 Nov 2026 | Phase 0 | T1.1–T1.5, T7.1, T8.1–T8.3, T9.1, T11.7, T11.13 | Pass (local build) | See below |
 | 12 Nov 2026 | Phase 1 | T10.1–T10.7 | Pass (local build) | See below |
+| 16 Nov 2026 | Phase 2 | T2.1–T2.11 | Pass (local build) | See below |
 
 ### Phase 0 — detail, 12 November 2026
 
@@ -604,6 +613,37 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 
 **Noted, not instrumented:** blog results in site search carry no click event, because `project_click`/`stay_click` are the only listing events defined. A hub result clicked from search (e.g. `/projects/portugal/`) is indistinguishable from a listing at the same path depth, so it will report as a `project_click` with the country as its slug. `GetInvolvedBox` is instrumented but not currently imported anywhere.
 
+
+### Phase 2 — detail, 16 November 2026
+
+| Task | What shipped |
+|---|---|
+| T2.1 | New `src/utils/seo.ts`. `buildTitle()` takes an ordered list of candidates and returns the first that fits inside 60 characters with `\| Give Back Guide`, so a long country name degrades to a shorter phrasing rather than truncating. Page numbers appear only on page 2+ and read `— Page N`, never "of M". `alwaysBrand` keeps the brand on authored content |
+| T2.2 | All 12 pages in §1.3 retitled to lead with search intent: decision queries ("Is Brno Worth Visiting?"), numbered promises ("13 Things to Know") and concrete hooks. All are 60 characters or fewer with the brand |
+| T2.3 | The same 12 descriptions rewritten to 140–155 characters, each naming the primary query plus a concrete detail from the page |
+| T2.4 | `/blog/`: `Travel Blog: Regenerative Travel Guides \| Give Back Guide` on page 1, `Travel Blog — Page N` after that. Description added |
+| T2.5 | `/projects/`: `Regenerative Travel Projects \| Give Back Guide`, with a description naming the listing types and filters |
+| T2.6 | `/stays/`: `Sustainable Stays & Eco Hotels \| Give Back Guide`, with a description |
+| T2.7 | Tag pages: `Travel Advice \| Give Back Guide`, page numbers only on 2+. The four tag descriptions in `src/lib/blog-tags.ts` were expanded to 140–155 characters and a truncated one ("…our top travel advice,") was fixed |
+| T2.8 | `BaseHead.astro` falls back to `defaultDescription(pathname)` when a page passes nothing, and uses the resolved value for `description`, `og:description` and `twitter:description`. Section-aware copy covers about, for-businesses, feedback, contact, support, sustainability and submit, plus a site-wide default |
+| T2.9 | Re-scoped with the owner: no wholesale content rewrite. Added `scripts/seo-audit.mjs` and `pnpm run seo:audit`, which reads `dist/`, skips noindex and meta-refresh pages, and reports long titles, missing/short/long descriptions and duplicate titles by section. Every template-level title was fixed; the remaining long titles are authored listing and post titles, recorded below as backlog |
+| T2.10 | Country hubs carry the raw Notion country name, so "USA" no longer renders as "Usa". Titles use the `Regenerative Travel Projects in {country}` ladder, falling back to `Regenerative Projects in {country}` for the nine countries where the longer form exceeds 60 characters. Descriptions are generated from the real listing count, the two most common cities and two most common impact areas |
+| T2.11 | Locale hubs use the same approach, starting at `Regenerative Projects in {locale}, {country}`, with raw locale names. Stay hubs use `Sustainable Stays in …`, falling back to `Eco Stays in …` and then `Stays in …` |
+
+**Also fixed in this phase:** the homepage was a template-level title and description both over the limit (76 and 167 characters); it now reads `Give Back Guide: Regenerative Travel Directory` with a 144-character description, which also removes the "Giveback" typo. Two posts still had descriptions under 120 characters and were rewritten. Static pages that shipped no description (~18) now have one, `/about/verification/` was retitled "How Verification Works", and the duplicate `/about/about/` page was deleted (1,299 pages, down from 1,300).
+
+**Verification.** `pnpm run build` clean. `pnpm run seo:audit` reports 1,283 indexable pages after skipping 17 noindex or meta-refresh pages:
+
+- **Descriptions:** zero missing, zero under 120 characters. 62 over 155, all authored content (54 blog posts, 5 stays, 3 projects).
+- **Titles:** 531 over 60 characters, all authored listing or post titles (419 projects, 57 posts, 55 stays). No template-level title remains over the limit.
+- **Duplicates:** one group — two Marine Conservation Society projects share an identical `pTitle` in Notion. They cannot be distinguished at build time and need a manual edit.
+
+Spot-checked in `dist`: `/projects/`, `/stays/`, `/blog/`, `/blog/2/`, tag pages, `/projects/portugal/`, `/projects/usa/`, `/projects/usa/alaska/`, `/stays/usa/`, `/projects/northern-ireland/county-armagh/` and the 12 rewritten posts. No `Page 1 of N` remains, no "Usa"/"Uk" labels remain, page numbers appear only on page 2+, and every sampled description is 120–155 characters.
+
+**Backlog (documented, not rewritten).** Long titles come from the listing name itself, so shortening them means editing each Notion record, not a template. Worst at the time of writing: `/stays/murchison-river-lodge/` (126), `/stays/good-hotel-guatemala-city/` (120), `/projects/quetzaltrekkers/` (117). Descriptions over 155 are mostly posts whose description was written for social sharing. Blog may move to Sanity, so the audit is deliberately CMS-agnostic.
+
+**Not yet verified:** live titles and CTR movement need the deploy and several weeks of GSC data.
+
 ---
 
 ## Appendix A — Title and description formula
@@ -619,8 +659,8 @@ Desc:     <what the page answers>. <a concrete detail from the page>.
 Worked example for the Brno page:
 
 - **Before:** `Brno: 11 Reasons Why You'll Love Czechia's Quirky Second City - Give Back Guide`
-- **After:** `Is Brno Worth Visiting? An Honest 2026 Guide | Give Back Guide`
-- **Description:** `Yes — if you want a cheap, youthful city break with great bars and no crowds. What to see, where to eat, and how to give back locally.`
+- **After:** `Is Brno Worth Visiting? Yes — Here's Why | Give Back Guide` (57 characters)
+- **Description:** `Cheap beer, a quirky astronomical clock and no crowds: what to see, where to eat and how to give back in Czechia's underrated second city for a weekend.` (152 characters)
 
 The current title is a listicle; the ranking page is a decision. Matching the title to the query is what moves CTR at position 11.
 

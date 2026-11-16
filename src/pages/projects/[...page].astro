@@ -5,6 +5,7 @@ import type { GetStaticPathsOptions } from "astro";
 import ProjectCard from "../../components/content/ProjectCard.astro";
 import ProjectCountryDropdown from "../../components/ui/Dropdown/ProjectCountryDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
+import { buildTitle } from "../../utils/seo";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const entries = await getCollection("projects");
@@ -22,11 +23,16 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 }
 
 const { page } = Astro.props;
+
+const title = buildTitle(
+  ["Regenerative Travel Projects", "Regenerative Projects"],
+  { page: page.currentPage, total: page.lastPage },
+);
+const description =
+  "Browse animal sanctuaries, beach cleans, conservation projects and social enterprises you can visit. Filter by country, city and impact area.";
 ---
 
-<MainLayout
-  title={`All Projects - Page ${page.currentPage} of ${page.lastPage}`}
->
+<MainLayout title={title} description={description}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <div class="max-w-screen-md mb-8 lg:mb-16">

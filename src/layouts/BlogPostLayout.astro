@@ -7,6 +7,7 @@ import Separator from "../components/bearnie/separator/Separator.astro";
 import AboutCallout from "../components/content/AboutCallout.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
 import { getValidTags, getTagSlug } from "../lib/blog-tags";
+import { buildTitle } from "../utils/seo";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -31,7 +32,7 @@ const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString("en-GB", {
 const hasBeenUpdated = published.toISOString() !== lastUpdated.toISOString();
 ---
 
-<MainLayout title={`${title} - Give Back Guide`} description={description} image={coverImage} ogType="article">
+<MainLayout title={buildTitle(title, { alwaysBrand: true })} description={description} image={coverImage} ogType="article">
     <SplitHero
         coverImage={coverImage}
         coverImageAlt={title}

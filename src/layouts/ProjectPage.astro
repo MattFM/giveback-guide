@@ -16,13 +16,14 @@ import GetInvolvedBox from "../components/content/GetInvolvedBox.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 import { getAllSearchTerms } from "../data/country-aliases";
-import { SITE_TITLE } from "../consts";
+import { DESCRIPTION_MAX, buildTitle } from "../utils/seo";
 
 type Props = CollectionEntry<"projects">["data"];
 
 const { properties } = Astro.props;
-const title =
-    (properties.pTitle || "Default Title") + ` - Projects on ${SITE_TITLE}`;
+const title = buildTitle(properties.pTitle || "Default Title", {
+    alwaysBrand: true,
+});
 const image = properties.pImageURL || "/giveback-guide-placeholder.jpg"; // Fallback image
 
 // Format pLocale as a comma-separated string
@@ -30,8 +31,18 @@ const localeString = Array.isArray(properties.pLocale)
     ? properties.pLocale.join(", ")
     : properties.pLocale || "";
 
-// Generate the description
-const description = `Give back to the local community in ${localeString} by engaging with ${properties.pName} on your next trip.`;
+// Generate the description. The suffix fills a short SERP snippet, but is
+// dropped when it would spill past the point where Google truncates.
+const baseDescription = `Give back to the local community in ${localeString} by engaging with ${properties.pName} on your next trip.`;
+const descriptionSuffixes = [
+    " See what they do and how you can visit.",
+    " See how to visit.",
+];
+const descriptionSuffix =
+    descriptionSuffixes.find(
+        (suffix) => baseDescription.length + suffix.length <= DESCRIPTION_MAX,
+    ) ?? "";
+const description = baseDescription + descriptionSuffix;
 
 const allProjects = await getCollection("projects");
 const actionId = String(

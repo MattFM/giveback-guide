@@ -6,6 +6,11 @@ import StayCard from "../../../components/content/StayCard.astro";
 import StayCountryDropdown from "../../../components/ui/Dropdown/StayCountryDropdown.astro";
 import StayLocaleDropdown from "../../../components/ui/Dropdown/StayLocaleDropdown.astro";
 import Pagination from "../../../components/ui/Pagination.astro";
+import {
+  buildHubDescription,
+  buildTitle,
+  rankByFrequency,
+} from "../../../utils/seo";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all stays once.
@@ -16,14 +21,18 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, "-");
   type Entry = { stay: (typeof stays)[number]; date: number };
   const grouped = new Map<string, Entry[]>();
+  // The slug is lossy ("usa"), so keep the raw Notion name ("USA") for display.
+  const names = new Map<string, string>();
 
   for (const stay of stays) {
     const rawCountries = stay.data.properties.sCountry;
     const countries = Array.isArray(rawCountries) ? rawCountries : [rawCountries];
     const date = (stay.data.properties.sPublished ?? new Date(0)).getTime();
     for (const country of countries) {
-      const countrySlug = slugify(String(country ?? ""));
+      const name = String(country ?? "").trim();
+      const countrySlug = slugify(name);
       if (!countrySlug) continue;
+      names.set(countrySlug, name);
       const list = grouped.get(countrySlug);
       if (list) list.push({ stay, date });
       else grouped.set(countrySlug, [{ stay, date }]);
@@ -40,7 +49,18 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         {
           pageSize: 9,
           params: { country },
-          props: { country },
+          props: {
+            country,
+            countryName: names.get(country) ?? country,
+            cities: rankByFrequency(
+              items.flatMap((i) => i.stay.data.properties.sLocale ?? []),
+              3,
+            ),
+            impacts: rankByFrequency(
+              items.flatMap((i) => i.stay.data.properties.sImpactsNames ?? []),
+              3,
+            ),
+          },
         }
       )
     );
@@ -49,27 +69,33 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   return paths;
 }
 
-const { country } = Astro.params; // Get the current country from the URL
-const { page } = Astro.props; // Get the paginated data
+const { country, countryName, cities, impacts, page } = Astro.props; // Get the paginated data
 
-// Convert the country slug back to a readable format
-const readableCountry = country
-  .split("-")
-  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-  .join(" ");
+const title = buildTitle(
+  [`Sustainable Stays in ${countryName}`, `Eco Stays in ${countryName}`],
+  { page: page.currentPage, total: page.lastPage },
+);
+
+const description = buildHubDescription({
+  count: page.total,
+  place: countryName,
+  cities,
+  impacts,
+  kind: "stay",
+});
 ---
 
-<MainLayout title={`Stays in ${readableCountry} - Page ${page.currentPage} of ${page.lastPage}`}>
+<MainLayout title={title} description={description}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <div class="max-w-screen-md mb-8 lg:mb-16">
         <h1  
           class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
         >
-          Stays in {readableCountry}
+          Stays in {countryName}
         </h1>
         <p class="text-gray-500 sm:text-xl dark:text-gray-400">
-          A list of stays located in {readableCountry}.
+          A list of stays located in {countryName}.
         </p>
       </div>
 

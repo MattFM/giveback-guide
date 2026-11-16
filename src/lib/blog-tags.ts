@@ -6,19 +6,19 @@ export interface BlogTagEntry {
 export const BLOG_TAGS: BlogTagEntry[] = [
   {
     name: "Travel Guides",
-    description: "Discover how to travel regeneratively in destinations all over the world.",
+    description: "Discover how to travel regeneratively, with destination guides and practical advice on giving back to the places you visit around the world.",
   },
   {
     name: "Travel Advice",
-    description: "Learn how to travel sustainably with our top travel advice,",
+    description: "Practical advice on travelling more sustainably, from packing and transport to the small local choices that make a real difference on the ground.",
   },
   {
     name: "News & Updates",
-    description: "Latest news and updates on the Give Back Guide platform.",
+    description: "Latest news and updates on the Give Back Guide platform, including new destinations, new listings, partnerships and what we are working on next.",
   },
   {
     name: "The Problem With Travel",
-    description: "To fix the tourism industry, we must first understand the problems we are dealing with.",
+    description: "To fix tourism, we must first understand the problems we are dealing with — overtourism, emissions, leakage and the myth of the guilt-free trip.",
   }
 ] as const;
 

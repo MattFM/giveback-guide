@@ -2,6 +2,7 @@
 import '../../styles/global.css';
 import { SITE_TITLE } from '../../consts';
 import Analytics from '../utility/Analytics.astro';
+import { defaultDescription } from '../../utils/seo';
 
 interface Props {
 	title?: string; // Make title optional
@@ -21,6 +22,10 @@ const {
 	noindex,
 	ogType = 'website',
 } = Astro.props;
+
+// No page should ship an empty description. Most static and account pages
+// never pass one, so fall back to section copy written for the purpose.
+const metaDescription = description?.trim() || defaultDescription(Astro.url.pathname);
 ---
 
 <!-- Global Metadata -->
@@ -44,7 +49,7 @@ const {
 <title>{title}</title>
 <Analytics />
 <meta name="title" content={title} />
-<meta name="description" content={description} />
+<meta name="description" content={metaDescription} />
 
 <!-- PocketBase Config -->
 <meta name="pocketbase-url" content={import.meta.env.PUBLIC_POCKETBASE_URL || ''} />
@@ -55,14 +60,14 @@ const {
 <meta property="og:locale" content="en_GB" />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
+<meta property="og:description" content={metaDescription} />
 <meta property="og:image" content={new URL(image, Astro.url)} />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={Astro.url} />
 <meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
+<meta name="twitter:description" content={metaDescription} />
 <meta name="twitter:image" content={new URL(image, Astro.url)} />
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}

@@ -6,6 +6,11 @@ import ProjectCard from "../../../components/content/ProjectCard.astro";
 import ProjectCountryDropdown from "../../../components/ui/Dropdown/ProjectCountryDropdown.astro";
 import ProjectLocaleDropdown from "../../../components/ui/Dropdown/ProjectLocaleDropdown.astro";
 import Pagination from "../../../components/ui/Pagination.astro";
+import {
+  buildHubDescription,
+  buildTitle,
+  rankByFrequency,
+} from "../../../utils/seo";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   // Fetch all projects once.
@@ -16,14 +21,18 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, "-");
   type Entry = { project: (typeof projects)[number]; date: number };
   const grouped = new Map<string, Entry[]>();
+  // The slug is lossy ("usa"), so keep the raw Notion name ("USA") for display.
+  const names = new Map<string, string>();
 
   for (const project of projects) {
     const rawCountries = project.data.properties.pCountry;
     const countries = Array.isArray(rawCountries) ? rawCountries : [rawCountries];
     const date = (project.data.properties.pPublished ?? new Date(0)).getTime();
     for (const country of countries) {
-      const countrySlug = slugify(String(country ?? ""));
+      const name = String(country ?? "").trim();
+      const countrySlug = slugify(name);
       if (!countrySlug) continue;
+      names.set(countrySlug, name);
       const list = grouped.get(countrySlug);
       if (list) list.push({ project, date });
       else grouped.set(countrySlug, [{ project, date }]);
@@ -40,7 +49,20 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         {
           pageSize: 9,
           params: { country },
-          props: { country },
+          props: {
+            country,
+            countryName: names.get(country) ?? country,
+            // Aggregated once per country so the description can name real
+            // places and impact areas instead of a generic sentence.
+            cities: rankByFrequency(
+              items.flatMap((i) => i.project.data.properties.pLocale ?? []),
+              3,
+            ),
+            impacts: rankByFrequency(
+              items.flatMap((i) => i.project.data.properties.pImpactsNames ?? []),
+              3,
+            ),
+          },
         }
       )
     );
@@ -49,27 +71,36 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   return paths;
 }
 
-const { country } = Astro.params; // Get the current country from the URL
-const { page } = Astro.props; // Get the paginated data
+const { country, countryName, cities, impacts, page } = Astro.props; // Get the paginated data
 
-// Convert the country slug back to a readable format
-const readableCountry = country
-  .split("-")
-  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-  .join(" ");
+const title = buildTitle(
+  [
+    `Regenerative Travel Projects in ${countryName}`,
+    `Regenerative Projects in ${countryName}`,
+  ],
+  { page: page.currentPage, total: page.lastPage },
+);
+
+const description = buildHubDescription({
+  count: page.total,
+  place: countryName,
+  cities,
+  impacts,
+  kind: "project",
+});
 ---
 
-<MainLayout title={`Projects in ${readableCountry} - Page ${page.currentPage} of ${page.lastPage}`}>
+<MainLayout title={title} description={description}>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <div class="max-w-screen-md mb-8 lg:mb-16">
         <h1  
           class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
         >
-          Projects in {readableCountry}
+          Projects in {countryName}
         </h1>
         <p class="text-gray-500 sm:text-xl dark:text-gray-400">
-          A list of projects located in {readableCountry}.
+          A list of projects located in {countryName}.
         </p>
       </div>
 

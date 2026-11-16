@@ -6,6 +6,7 @@ import BlogPostCard from "../../components/content/BlogPostCard.astro";
 import BlogTagsDropdown from "../../components/ui/Dropdown/BlogTagsDropdown.astro";
 import Pagination from "../../components/ui/Pagination.astro";
 import PageHeader from "../../components/layout/PageHeader.astro";
+import { buildTitle } from "../../utils/seo";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     // Get MDX blog posts
@@ -29,9 +30,18 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 }
 
 const { page } = Astro.props;
+
+// The short candidate keeps the brand on pages 2+ without exceeding the
+// truncation limit.
+const title = buildTitle(
+    ["Travel Blog: Regenerative Travel Guides", "Travel Blog"],
+    { page: page.currentPage, total: page.lastPage },
+);
+const description =
+    "Destination guides, practical advice and honest reporting on the problems with tourism — plus practical ways to give back wherever you travel next.";
 ---
 
-<MainLayout title={`Blog - Page ${page.currentPage} of ${page.lastPage}`}>
+<MainLayout title={title} description={description}>
     <section class="bg-white dark:bg-gray-900">
         <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
             <PageHeader
