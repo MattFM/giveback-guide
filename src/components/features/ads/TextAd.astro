@@ -1,266 +1,244 @@
 ---
-import type { TextAd } from "../../../data/ads";
-import { ADS, getActiveAds } from "../../../data/ads";
+import type { TextAd as Ad } from "@/data/ads";
+import {
+    ADS,
+    getActiveAds,
+    getSponsorLabel,
+    hashKey,
+    pickWeightedAd,
+    validateAds,
+} from "@/data/ads";
 import Badge from "@/components/bearnie/badge/Badge.astro";
 import Button from "@/components/bearnie/button/Button.astro";
-import Card from "@/components/bearnie/card/Card.astro";
-import CardHeader from "@/components/bearnie/card/CardHeader.astro";
-import CardTitle from "@/components/bearnie/card/CardTitle.astro";
-import CardDescription from "@/components/bearnie/card/CardDescription.astro";
-import CardFooter from "@/components/bearnie/card/CardFooter.astro";
 
 interface Props {
-    format?: "inline" | "sidebar";
-    ads?: TextAd[];
+    /** Explicit ad, used by previews and the advertising page. */
+    ad?: Ad;
+    /** Identifies the slot in the page. Also seeds build-time selection. */
+    slot?: string;
+    /** Pick a fresh ad in the browser on every page load. */
+    rotate?: boolean;
+    /** Send click and impression events to Umami. Off for previews. */
+    track?: boolean;
 }
 
-const { format = "inline", ads: propAds } = Astro.props;
+const {
+    ad: explicitAd,
+    slot = "default",
+    rotate = false,
+    track = true,
+} = Astro.props;
 
-// Use provided ads (for design/testing) or fall back to the global inventory
-const allAds = propAds ?? ADS;
-const activeAds = getActiveAds(allAds);
+validateAds(ADS);
 
-// Fallback: if no active ads, render nothing on the server side
-const fallbackAd = activeAds[0] ?? null;
+const activeAds = getActiveAds(ADS);
+const selectionKey = `${Astro.url.pathname}:${slot}`;
+const selected =
+    explicitAd ??
+    pickWeightedAd(activeAds, hashKey(selectionKey) / 4294967296);
 
-// Inline the active ad pool as JSON for the client script
-const adPoolJson = JSON.stringify(activeAds);
+// `businessName` is usually the same as the title. Only show it when it adds
+// context (for example, "Byway" alongside a campaign headline).
+const sponsor = selected ? getSponsorLabel(selected) : "";
 ---
 
 {
-    activeAds.length > 0 && (
-        <div
-            class="text-ad-container"
-            data-format={format}
-            data-ad-pool={adPoolJson}
-            data-fallback-id={fallbackAd?.id}
+    selected && (
+        <aside
+            class="text-ad @container"
+            aria-label="Advertisement"
+            data-ad-slot={slot}
+            data-ad-id={selected.id}
+            data-ad-rotate={rotate ? "true" : undefined}
+            data-ad-static={explicitAd ? "true" : undefined}
+            data-ad-track={track ? "true" : undefined}
+            data-pagefind-ignore
         >
-            {/* ===== INLINE FORMAT ===== */}
-            {format === "inline" && (
-                <div class="ad-inline flex items-center justify-between gap-3 px-4 py-3 rounded-lg border bg-card text-card-foreground flex-wrap">
-                    <div class="ad-inline-content flex items-center gap-2 flex-wrap flex-1 min-w-0">
+            <div class="flex flex-col gap-3 rounded-lg border border-gray-200 bg-card p-4 text-card-foreground dark:border-gray-700 @min-[28rem]:flex-row @min-[28rem]:items-center @min-[28rem]:justify-between">
+                <div class="flex min-w-0 flex-1 flex-col gap-1 @min-[28rem]:flex-row @min-[28rem]:flex-wrap @min-[28rem]:items-center @min-[28rem]:gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
                         <Badge variant="outline">Ad</Badge>
-                        <span class="ad-inline-title text-sm font-semibold text-foreground whitespace-nowrap">{fallbackAd?.title}</span>
-                        <span class="text-sm text-muted-foreground whitespace-nowrap">—</span>
-                        <span class="ad-inline-desc text-sm text-muted-foreground">
-                            {fallbackAd?.description}
+                        <span
+                            data-ad-sponsor
+                            class="text-xs font-medium text-muted-foreground"
+                            hidden={!sponsor}
+                        >
+                            {sponsor}
                         </span>
                     </div>
-                    <Button
-                        href={fallbackAd?.url}
-                        size="sm"
-                        class="ad-inline-btn flex-shrink-0"
-                        target="_blank"
-                        rel="noopener sponsored"
-                        aria-label={`${fallbackAd?.cta} — ${fallbackAd?.title}`}
+                    <p
+                        data-ad-title
+                        class="line-clamp-2 text-sm font-semibold text-foreground @min-[28rem]:line-clamp-1"
                     >
-                        <span class="ad-cta">{fallbackAd?.cta}</span>
-                        <svg
-                            slot="right-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path d="M7 7h10v10" />
-                            <path d="M7 17 17 7" />
-                        </svg>
-                    </Button>
+                        {selected.title}
+                    </p>
+                    <span
+                        class="hidden text-sm text-muted-foreground @min-[28rem]:inline"
+                        aria-hidden="true"
+                    >
+                        —
+                    </span>
+                    <p
+                        data-ad-description
+                        class="line-clamp-3 text-sm text-muted-foreground @min-[28rem]:line-clamp-2 @min-[28rem]:min-w-0 @min-[28rem]:flex-1"
+                    >
+                        {selected.description}
+                    </p>
                 </div>
-            )}
 
-            {/* ===== SIDEBAR FORMAT ===== */}
-            {format === "sidebar" && (
-                <Card class="relative">
-                    <Badge variant="outline" class="absolute -top-2.5 left-3 bg-card">
-                        Ad
-                    </Badge>
-                    <CardHeader class="pb-0">
-                        <CardTitle>{fallbackAd?.title}</CardTitle>
-                        <CardDescription>{fallbackAd?.description}</CardDescription>
-                    </CardHeader>
-                    <CardFooter class="mt-2">
-                        <Button
-                            href={fallbackAd?.url}
-                            size="sm"
-                            class="w-full ad-sidebar-btn"
-                            target="_blank"
-                            rel="noopener sponsored"
-                            aria-label={`${fallbackAd?.cta} — ${fallbackAd?.title}`}
-                        >
-                            <span class="ad-cta">{fallbackAd?.cta}</span>
-                            <svg
-                                slot="right-icon"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                aria-hidden="true"
-                            >
-                                <path d="M7 7h10v10" />
-                                <path d="M7 17 17 7" />
-                            </svg>
-                        </Button>
-                    </CardFooter>
-                </Card>
-            )}
-        </div>
+                <Button
+                    href={selected.url}
+                    size="sm"
+                    class="w-full shrink-0 @min-[28rem]:w-auto"
+                    target="_blank"
+                    rel="noopener sponsored"
+                    data-ad-link
+                    data-umami-event={track ? "ad-click" : undefined}
+                    data-umami-event-ad={track ? selected.id : undefined}
+                    data-umami-event-slot={track ? slot : undefined}
+                >
+                    <span data-ad-cta>{selected.cta}</span>
+                    <span class="sr-only"> (opens in a new tab)</span>
+                    <svg
+                        slot="right-icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M7 7h10v10" />
+                        <path d="M7 17 17 7" />
+                    </svg>
+                </Button>
+            </div>
+        </aside>
     )
 }
 
 <script>
-    interface AdData {
-        id: string;
-        title: string;
-        businessName: string;
-        url: string;
-        cta: string;
-        description: string;
-        weight: number;
+    import {
+        ADS,
+        getActiveAds,
+        getSponsorLabel,
+        pickWeightedAd,
+        type TextAd,
+    } from "@/data/ads";
+
+    interface UmamiWindow extends Window {
+        umami?: {
+            track: (event: string, data?: Record<string, string>) => void;
+        };
     }
 
-    function pickWeightedAd(ads: AdData[]): AdData | null {
-        if (ads.length === 0) return null;
-        const totalWeight: number = ads.reduce(
-            (sum: number, ad: AdData) => sum + ad.weight,
-            0,
-        );
-        if (totalWeight <= 0) return null;
-
-        let random: number = Math.random() * totalWeight;
-        for (const ad of ads) {
-            random -= ad.weight;
-            if (random <= 0) return ad;
-        }
-        return ads[ads.length - 1] ?? null;
+    function trackImpression(ad: TextAd, slot: string): void {
+        (window as UmamiWindow).umami?.track("ad-impression", {
+            ad: ad.id,
+            slot,
+        });
     }
 
-    function renderInline(container: HTMLElement, ad: AdData | null): void {
-        const wrapper: HTMLElement | null =
-            container.querySelector(".ad-inline");
-        if (!wrapper) return;
-
-        if (!ad) {
-            wrapper.style.display = "none";
-            return;
-        }
-        wrapper.style.display = "";
-
-        const titleEl: HTMLElement | null =
-            wrapper.querySelector(".ad-inline-title");
-        if (titleEl) titleEl.textContent = ad.title;
-
-        const descEl: HTMLElement | null =
-            wrapper.querySelector(".ad-inline-desc");
-        if (descEl) descEl.textContent = ad.description;
-
-        const ctaEl: HTMLElement | null = wrapper.querySelector(".ad-cta");
-        if (ctaEl) ctaEl.textContent = ad.cta;
-
-        const linkEl: HTMLAnchorElement | null = wrapper.querySelector(
-            "a[rel*='sponsored']",
-        );
-        if (linkEl) {
-            linkEl.href = ad.url;
-            linkEl.setAttribute("aria-label", `${ad.cta} — ${ad.title}`);
-        }
+    function setText(
+        container: HTMLElement,
+        selector: string,
+        value: string,
+    ): void {
+        const element = container.querySelector<HTMLElement>(selector);
+        if (element) element.textContent = value;
     }
 
-    function renderSidebar(container: HTMLElement, ad: AdData | null): void {
-        const wrapper: HTMLElement | null =
-            container.querySelector("[data-slot='card']");
-        if (!wrapper) return;
+    function applyAd(container: HTMLElement, ad: TextAd): void {
+        container.dataset.adId = ad.id;
 
-        if (!ad) {
-            wrapper.style.display = "none";
-            return;
+        setText(container, "[data-ad-title]", ad.title);
+        setText(container, "[data-ad-description]", ad.description);
+        setText(container, "[data-ad-cta]", ad.cta);
+
+        const sponsor =
+            container.querySelector<HTMLElement>("[data-ad-sponsor]");
+        if (sponsor) {
+            const label = getSponsorLabel(ad);
+            sponsor.textContent = label;
+            sponsor.hidden = label === "";
         }
-        wrapper.style.display = "";
 
-        const titleEl: HTMLElement | null =
-            wrapper.querySelector("[data-slot='card-title']");
-        if (titleEl) titleEl.textContent = ad.title;
+        const link =
+            container.querySelector<HTMLAnchorElement>("[data-ad-link]");
+        if (link) {
+            link.href = ad.url;
+            link.dataset.umamiEventAd = ad.id;
+        }
 
-        const descEl: HTMLElement | null =
-            wrapper.querySelector("[data-slot='card-description']");
-        if (descEl) descEl.textContent = ad.description;
-
-        const ctaEl: HTMLElement | null = wrapper.querySelector(".ad-cta");
-        if (ctaEl) ctaEl.textContent = ad.cta;
-
-        const linkEl: HTMLAnchorElement | null = wrapper.querySelector(
-            "a[rel*='sponsored']",
-        );
-        if (linkEl) {
-            linkEl.href = ad.url;
-            linkEl.setAttribute("aria-label", `${ad.cta} — ${ad.title}`);
+        if (container.dataset.adTrack === "true") {
+            trackImpression(ad, container.dataset.adSlot ?? "default");
         }
     }
 
-    function initTextAd(container: HTMLElement): void {
-        const poolAttr: string | undefined = container.dataset.adPool;
-        if (!poolAttr) return;
+    function initTextAds(isReroll = false): void {
+        // Resolve expiry in the browser as well as at build time, so a
+        // campaign that ends between deploys stops running.
+        const pool = getActiveAds(ADS);
+        const containers =
+            document.querySelectorAll<HTMLElement>("[data-ad-slot]");
 
-        let pool: AdData[] = [];
-        try {
-            pool = JSON.parse(poolAttr) as AdData[];
-        } catch {
-            return;
-        }
+        const used = new Set<string>();
 
-        const format: string | undefined = container.dataset.format;
-        const selected: AdData | null = pickWeightedAd(pool);
+        containers.forEach((container) => {
+            const currentId = container.dataset.adId;
+            const current = pool.find((ad) => ad.id === currentId);
+            const shouldRotate = container.dataset.adRotate === "true";
 
-        if (format === "sidebar") {
-            renderSidebar(container, selected);
-        } else {
-            renderInline(container, selected);
-        }
+            // Explicit previews keep the ad they were given, even when it is
+            // outside its campaign dates.
+            if (container.dataset.adStatic === "true") {
+                if (current) used.add(current.id);
+                return;
+            }
+
+            // The server-rendered ad is still live and this slot is static.
+            // Leave it alone and only record the impression.
+            if (current && !shouldRotate) {
+                used.add(current.id);
+
+                if (container.dataset.adTrack === "true") {
+                    trackImpression(
+                        current,
+                        container.dataset.adSlot ?? "default",
+                    );
+                }
+
+                return;
+            }
+
+            // Do not repeat an ad immediately after a reroll of a rotating
+            // slot. On first load the full weighted pool is fair game.
+            const excluded = new Set(used);
+            if (isReroll && shouldRotate && currentId) excluded.add(currentId);
+
+            const available = pool.filter((ad) => !excluded.has(ad.id));
+            const next = pickWeightedAd(
+                available.length > 0 ? available : pool,
+                Math.random(),
+            );
+
+            if (!next) {
+                container.hidden = true;
+                return;
+            }
+
+            container.hidden = false;
+            applyAd(container, next);
+            used.add(next.id);
+        });
     }
 
-    function initAllTextAds(): void {
-        const containers: NodeListOf<HTMLElement> =
-            document.querySelectorAll(".text-ad-container");
-        containers.forEach((container: HTMLElement) => initTextAd(container));
-    }
+    initTextAds();
 
-    // Initialise on page load
-    initAllTextAds();
-
-    // Listen for reroll events (used on the design showcase page)
-    document.addEventListener("ads:reroll", () => {
-        initAllTextAds();
-    });
+    // Used by the design preview to test rotation without a page reload.
+    document.addEventListener("ads:reroll", () => initTextAds(true));
 </script>
-
-<style>
-    .ad-inline-btn {
-        flex-shrink: 0;
-    }
-
-    .ad-sidebar-btn {
-        min-width: 0;
-    }
-
-    .ad-sidebar-btn .ad-cta {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        min-width: 0;
-    }
-
-    .ad-sidebar-btn svg {
-        flex-shrink: 0;
-    }
-</style>

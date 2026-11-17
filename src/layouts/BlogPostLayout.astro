@@ -8,6 +8,7 @@ import AboutCallout from "../components/content/AboutCallout.astro";
 import CompactBlogCard from "../components/content/CompactBlogCard.astro";
 import CompactListingCard from "../components/content/CompactListingCard.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
+import TextAd from "../components/features/ads/TextAd.astro";
 import { getValidTags, getTagSlug } from "../lib/blog-tags";
 import { buildTitle } from "../utils/seo";
 import { articleSchema } from "../utils/schema";
@@ -212,6 +213,10 @@ const schema = articleSchema({
             >
                 <slot />
             </article>
+
+            <div class="mt-10">
+                <TextAd slot="post" />
+            </div>
 
             <div id="about-callout-container" class="hidden">
                 <AboutCallout />

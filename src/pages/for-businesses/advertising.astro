@@ -5,7 +5,12 @@ import StatsStrip from "@/components/business/StatsStrip.astro";
 import WhyListCard from "@/components/business/WhyListCard.astro";
 import CrossLinkCta from "@/components/business/CrossLinkCta.astro";
 import TextAd from "@/components/features/ads/TextAd.astro";
+import { ADS, getActiveAds } from "@/data/ads";
 import { advertisingStats } from "@/data/advertising-stats";
+
+// One live ad, shown at both widths so the responsive treatment is the only
+// thing that changes between the two previews.
+const exampleAd = getActiveAds(ADS)[0] ?? ADS[0];
 
 const benefits = [
     {
@@ -97,30 +102,34 @@ const benefits = [
                         Where your ads appear
                     </h2>
                     <p class="mt-3 text-base text-gray-600 dark:text-gray-400">
-                        Display ads run inline on blog posts and listings, and
-                        as sidebar cards across our directory and key landing
-                        pages. Reach our audience during their research and
-                        discovery phase.
+                        Display ads adapt to the space they sit in: a compact
+                        card in narrow columns and an inline strip across wide
+                        content. The same unit runs on blog posts, listings and
+                        the homepage.
                     </p>
                 </div>
 
                 <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <div>
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">
-                            Inline format
+                            Wide content slot
                         </h3>
-                        <div class="space-y-3">
-                            <TextAd format="inline" />
-                            <TextAd format="inline" />
-                        </div>
+                        <TextAd
+                            ad={exampleAd}
+                            slot="advertising-wide"
+                            track={false}
+                        />
                     </div>
                     <div>
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">
-                            Sidebar format
+                            Narrow column slot
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <TextAd format="sidebar" />
-                            <TextAd format="sidebar" />
+                        <div class="max-w-xs">
+                            <TextAd
+                                ad={exampleAd}
+                                slot="advertising-narrow"
+                                track={false}
+                            />
                         </div>
                     </div>
                 </div>

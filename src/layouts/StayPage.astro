@@ -10,6 +10,7 @@ import SkimlinksScript from "../components/utility/SkimlinksScript.astro";
 import StayMetadata from "../components/content/StayMetadata.astro";
 import VerificationBox from "../components/content/VerificationBox.astro";
 import SupportCTA from "../components/sections/SupportCTA.astro";
+import TextAd from "../components/features/ads/TextAd.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import StockPhotoNotice from "../components/content/StockPhotoNotice.astro";
 import { getAllSearchTerms } from "../data/country-aliases";
@@ -485,6 +486,11 @@ if (images.length === 0) {
                             </div>
                         </article>
                     </div>
+                </section>
+
+                <!-- Sponsored placement -->
+                <section class="pt-3 pb-3 px-4">
+                    <TextAd slot="listing" />
                 </section>
 
                 <!-- Stock Photo Notice -->

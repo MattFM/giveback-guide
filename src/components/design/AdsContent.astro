@@ -1,82 +1,138 @@
 ---
 import TextAd from "../features/ads/TextAd.astro";
+import { ADS, getActiveAds } from "@/data/ads";
+
+// Use a live inventory item for the width comparison so the only thing
+// changing between examples is the container width.
+const exampleAd = getActiveAds(ADS)[0] ?? ADS[0];
 ---
 
 <section class="py-12 px-4 max-w-screen-xl mx-auto space-y-16">
-  <div class="space-y-4">
-    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-      Design: Text Ads
-    </h1>
-    <p class="text-gray-600 dark:text-gray-400 max-w-2xl">
-      Preview both ad formats with sample inventory. Click "Reroll ads" to test
-      the client-side weighted random selection.
-    </p>
-
-    <button
-      id="reroll-ads"
-      class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
-      style="background-color: #1C2434;"
-      aria-label="Randomly select new ads from the pool"
-    >
-      <svg
-        class="w-4 h-4"
-        aria-hidden="true"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"
-        />
-      </svg>
-      Reroll ads
-    </button>
-  </div>
-
-  <!-- Inline Format -->
-  <div class="space-y-6">
-    <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-        Inline format
-      </h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        Used for mid-content placements on project, stay, and blog pages.
-      </p>
-    </div>
-
     <div class="space-y-4">
-      <TextAd format="inline" />
-      <TextAd format="inline" />
-    </div>
-  </div>
+        <h1
+            class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+        >
+            Design: Text Ads
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400 max-w-2xl">
+            One component, two layouts. The ad switches from a stacked card to
+            an inline strip when its container reaches
+            <code class="rounded bg-gray-100 px-1 py-0.5 text-sm dark:bg-gray-800"
+                >28rem</code
+            >, so it adapts to the space rather than the viewport.
+        </p>
 
-  <!-- Sidebar Format -->
-  <div class="space-y-6">
-    <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-        Sidebar format
-      </h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        Used for sticky sidebar placements on blog posts and project pages.
-      </p>
+        <button
+            id="reroll-ads"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            style="background-color: #1C2434;"
+            aria-label="Randomly select a new ad for the rotating example"
+        >
+            <svg
+                class="w-4 h-4"
+                aria-hidden="true"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"
+                />
+            </svg>
+            Reroll rotating ad
+        </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <TextAd format="sidebar" />
-      <TextAd format="sidebar" />
-      <TextAd format="sidebar" />
+    <!-- Container widths -->
+    <div class="space-y-6">
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Container widths
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                The same ad in a narrow column, a mid-width column and a full
+                content width.
+            </p>
+        </div>
+
+        <div class="space-y-8">
+            <div class="space-y-3">
+                <p
+                    class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                >
+                    Narrow (max-w-xs) — card
+                </p>
+                <div class="max-w-xs">
+                    <TextAd ad={exampleAd} slot="preview-narrow" track={false} />
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <p
+                    class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                >
+                    Mid (max-w-2xl) — inline strip
+                </p>
+                <div class="max-w-2xl">
+                    <TextAd ad={exampleAd} slot="preview-mid" track={false} />
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <p
+                    class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                >
+                    Full content width — inline strip
+                </p>
+                <TextAd ad={exampleAd} slot="preview-wide" track={false} />
+            </div>
+        </div>
     </div>
-  </div>
+
+    <!-- Inventory -->
+    <div class="space-y-6">
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Inventory
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Every ad currently in <code>src/data/ads.ts</code>, regardless
+                of campaign dates.
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            {ADS.map((ad) => (
+                <TextAd ad={ad} slot={`preview-${ad.id}`} track={false} />
+            ))}
+        </div>
+    </div>
+
+    <!-- Runtime rotation -->
+    <div class="space-y-6">
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                Runtime rotation
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Used on the homepage. The server renders a build-time choice,
+                then the browser picks a fresh weighted ad on every load. Use
+                the reroll button above to test it.
+            </p>
+        </div>
+
+        <TextAd slot="preview-rotating" rotate track={false} />
+    </div>
 </section>
 
 <script>
-  const rerollBtn: HTMLButtonElement | null =
-    document.getElementById("reroll-ads") as HTMLButtonElement | null;
+    const rerollBtn: HTMLButtonElement | null =
+        document.getElementById("reroll-ads") as HTMLButtonElement | null;
 
-  rerollBtn?.addEventListener("click", () => {
-    document.dispatchEvent(new CustomEvent("ads:reroll"));
-  });
+    rerollBtn?.addEventListener("click", () => {
+        document.dispatchEvent(new CustomEvent("ads:reroll"));
+    });
 </script>

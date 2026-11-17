@@ -28,12 +28,10 @@ import ResponsiveImage from './components/ui/Image/ResponsiveImage.astro';
 import MdxButton from './components/content/MdxButton.astro';
 import SupportCTA from './components/sections/SupportCTA.astro';
 import ListingEmbed from './components/content/ListingEmbed.astro';
-import TextAd from './components/features/ads/TextAd.astro';
 
 export const components = {
   ResponsiveImage,
   Button: MdxButton,
   SupportCTA,
   ListingEmbed,
-  TextAd,
 };
