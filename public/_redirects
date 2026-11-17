@@ -14,3 +14,18 @@
 /projects/awamaki%20/ /projects/awamaki/ 301
 /stays/kirtipur-community-homestay%20/ /stays/kirtipur-community-homestay/ 301
 /projects/united%20way%20mumbai/ /projects/united-way-mumbai/ 301
+
+# Legacy paths, November 2026. None appear in the top paths in analytics, and
+# the analytics history only starts in August 2026, so these are insurance
+# against old inbound links rather than a response to live traffic.
+#
+# The splat rules preserve the slug, which is right where the old path already
+# ended in the same slug. A legacy slug with no current equivalent lands on a
+# 404 — no worse than it is today.
+/home-new/ / 301
+/why /about/ 301
+/why/ /about/ 301
+/project/ /projects/ 301
+/stay/ /stays/ 301
+/project/* /projects/:splat 301
+/stay/* /stays/:splat 301

@@ -114,7 +114,15 @@ const crumbs = [
 const relatedPosts = await findPostsForPlace([countryName]);
 ---
 
-<MainLayout title={title} description={description} schema={schema}>
+{/* Page 2+ leaves the index but is still followed, so the paginated tail
+    stops competing for rankings without blocking discovery of the listings
+    on it. */}
+<MainLayout
+  title={title}
+  description={description}
+  robots={page.currentPage > 1 ? "noindex, follow" : undefined}
+  schema={schema}
+>
   <section class="bg-white dark:bg-gray-900">
     <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
       <div class="mb-6">

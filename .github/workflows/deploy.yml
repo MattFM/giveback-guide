@@ -73,6 +73,12 @@ jobs:
           PUBLIC_WORKER_URL: ${{ vars.PUBLIC_WORKER_URL }}
         run: pnpm run build
 
+      # Fails the deploy if a published listing has no page, a slug carries
+      # whitespace, or no hub links to a listing. Runs after the build because
+      # it reads dist/. See scripts/verify-listings.mjs.
+      - name: Verify listing integrity
+        run: pnpm run seo:listings
+
       - name: Update Wrangler
         run: pnpm add -g wrangler@latest
 

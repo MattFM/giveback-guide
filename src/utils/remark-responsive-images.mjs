@@ -13,12 +13,21 @@ import { visit } from 'unist-util-visit';
  */
 export default function remarkResponsiveImages() {
   return (tree, file) => {
+    // Interim fallback for images written without alt text: attribute the
+    // image to the post rather than shipping an empty alt. Real alt text
+    // should replace it as each post is edited — an empty alt is correct for
+    // decorative images, but an empty alt on a content image tells a screen
+    // reader nothing at all.
+    const postTitle = String(
+      file?.data?.astro?.frontmatter?.title ?? ''
+    ).trim();
+
     visit(tree, 'image', (node, index, parent) => {
       
       // Split alt text into alt and caption if " - " separator exists
       const altText = node.alt || '';
       const parts = altText.split(' - ');
-      const alt = parts[0].trim();
+      const alt = parts[0].trim() || postTitle;
       const caption = parts.length > 1 ? parts.slice(1).join(' - ').trim() : null;
       
       // Create ResponsiveImage component

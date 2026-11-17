@@ -2,7 +2,7 @@
 import '../../styles/global.css';
 import { SITE_TITLE } from '../../consts';
 import Analytics from '../utility/Analytics.astro';
-import { defaultDescription } from '../../utils/seo';
+import { defaultDescription, ogImageUrl } from '../../utils/seo';
 import { jsonLd, type SchemaNode } from '../../utils/schema';
 
 interface Props {
@@ -10,8 +10,17 @@ interface Props {
 	description?: string; // Make title optional
 	image?: string;
 	noindex?: boolean;
+	/**
+	 * Full robots directive. Use when the page should be dropped from the
+	 * index but still followed (paginated pages, for example). Takes
+	 * precedence over `noindex`.
+	 */
+	robots?: string;
 	/** Open Graph object type. Posts are `article`; everything else `website`. */
 	ogType?: 'website' | 'article';
+	/** Article timestamps. Only emitted when `ogType` is `article`. */
+	published?: Date;
+	modified?: Date;
 	/** schema.org nodes for this page. Serialised once, as a graph. */
 	schema?: SchemaNode | SchemaNode[];
 }
@@ -23,9 +32,27 @@ const {
 	description,
 	image = '/giveback-guide-placeholder.jpg',
 	noindex,
+	robots,
 	ogType = 'website',
+	published,
+	modified,
 	schema,
 } = Astro.props;
+
+// One robots value, from either prop. `noindex` keeps its original meaning
+// (drop the page and stop crawling out of it); `robots` covers the cases where
+// the page should still be followed.
+const robotsValue = robots ?? (noindex ? 'noindex, nofollow' : null);
+
+// Share images are normalised to the size previews crop to. Rendered here so
+// every page — posts, listings, static pages — gets the same treatment.
+const shareImage = new URL(ogImageUrl(image), Astro.url);
+
+// Article timestamps are only meaningful on an article.
+const articlePublished =
+	ogType === 'article' && published ? published.toISOString() : null;
+const articleModified =
+	ogType === 'article' && modified ? modified.toISOString() : null;
 
 // No page should ship an empty description. Most static and account pages
 // never pass one, so fall back to section copy written for the purpose.
@@ -67,14 +94,20 @@ const schemaNodes = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={metaDescription} />
-<meta property="og:image" content={new URL(image, Astro.url)} />
+<meta property="og:image" content={shareImage} />
+{articlePublished && (
+	<meta property="article:published_time" content={articlePublished} />
+)}
+{articleModified && (
+	<meta property="article:modified_time" content={articleModified} />
+)}
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={Astro.url} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={metaDescription} />
-<meta name="twitter:image" content={new URL(image, Astro.url)} />
+<meta name="twitter:image" content={shareImage} />
 
 {schemaNodes.length > 0 && (
 	<script
@@ -84,4 +117,4 @@ const schemaNodes = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 	/>
 )}
 
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{robotsValue && <meta name="robots" content={robotsValue} />}

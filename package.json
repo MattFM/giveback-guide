@@ -12,7 +12,8 @@
     "blog:validate": "node scripts/validate-blog-posts.js",
     "seo:audit": "node scripts/seo-audit.mjs",
     "seo:schema": "node scripts/schema-check.mjs",
-    "seo:links": "node scripts/link-check.mjs"
+    "seo:links": "node scripts/link-check.mjs",
+    "seo:listings": "node scripts/verify-listings.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

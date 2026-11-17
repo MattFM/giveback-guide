@@ -4,7 +4,7 @@
 **Location:** `docs/plans/technical-seo-plan.md` (moved out of `~/.opencode/plan` on 11 Nov 2026)
 **Scope:** Everything on the site that affects how Google crawls, indexes, understands and displays pages. Content strategy is a separate document.
 **Owner:** Matthew (solo). All tasks are written so an AI agent can implement them under review.
-**Status:** Phases 0–4 complete. Phase 5 not begun.
+**Status:** Phases 0–5 complete. Phase 6 is ongoing editorial work (T11.3, T9.2); no further code phase is approved.
 **Revision 3 (11 Nov 2026):** Every claim re-verified against the deployed build. See §8 for the log. Three claims were wrong and are corrected there; the malformed-URL diagnosis in §1.4.1 was also wrong and is rewritten.
 
 ---
@@ -18,11 +18,11 @@ can act safely.
 
 | Field | Value |
 |---|---|
-| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026), Phase 3 (16 Nov 2026), Phase 4 (16 Nov 2026) |
-| Next action | Awaiting go-ahead for Phase 5 — W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 (§4) |
-| Blocked on | Nothing. Live event, Core Web Vitals, rich-result and internal-link checks need the next deploy |
-| Coordination risk | The three redirects must ship with the next deploy — see below |
-| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phases 2–4 against local builds on 16 Nov |
+| Phases complete | Phase 0 (12 Nov 2026), Phase 1 (12 Nov 2026), Phase 2 (16 Nov 2026), Phase 3 (16 Nov 2026), Phase 4 (16 Nov 2026), Phase 5 (17 Nov 2026) |
+| Next action | Phase 6 editorial work: T11.3 (hub copy, country by country) and the T9.2 alt-text backlog. T11.1–T11.2 wait for the Locations migration |
+| Blocked on | Nothing. Live event, Core Web Vitals, rich-result, redirect and internal-link checks need the next deploy |
+| Coordination risk | The redirect rules must ship with the next deploy — see below |
+| Verified against | The live build, 11 November 2026 (§8); Phases 0–1 against local builds on 12 Nov; Phases 2–4 on 16 Nov; Phase 5 on 17 Nov |
 | Progress log | §9 |
 
 ### Deploy ordering — get this wrong and you lose a ranking
@@ -31,7 +31,7 @@ Notion was cleaned on 11 November: three listing slugs that contained trailing
 spaces have been fixed, so their URLs change on the next build. The live site
 still serves the old malformed URLs because it has not been rebuilt.
 
-- **T11.13 (the 301 redirects) must land in the same deploy as the rebuild.**
+- **The redirect rules must land in the same deploy as the rebuild.** Phase 0 added three, Phase 5 added seven more, all in `public/_redirects`.
 - Rebuild without it and `/stays/kirtipur-community-homestay%20/` returns 404.
   That URL has 861 impressions and 2 clicks at position 8.4.
 - The rules live in `public/_redirects`, which Cloudflare Workers static assets
@@ -45,8 +45,8 @@ still serves the old malformed URLs because it has not been rebuilt.
 
 | Constraint | Why |
 |---|---|
-| Do not start **W6** (merging duplicate posts) without approval | Every merge needs a decision about which URL survives |
-| Do not start **T11.1** (pruning locale hubs) without approval | It removes pages from the index |
+| Do not reopen **W6** merges without new evidence | Assessed 17 Nov 2026 and closed: the pairs target different queries. Reopening needs per-URL GSC impressions showing cannibalisation |
+| **T11.1–T11.2** wait for the Locations migration | Pruning now would be redone when the URL scheme becomes location-first |
 | Do not redesign the location data model or URL scheme | W11 works with the routes as they exist — see the caution in W11 |
 | Do not write article content | Matthew writes all articles. This plan supplies briefs and internal-link targets only |
 | UK English in all user-facing strings | House style |
@@ -375,17 +375,52 @@ One exemption — Bratislava, because no Slovakia listings exist.
 
 | ID | Task | Effort |
 |---|---|---|
-| T6.1 | Merge `/blog/north-cyprus/` and `/blog/north-cyprus-things-to-know/` | M |
-| T6.2 | Merge the three Budapest posts | M |
-| T6.3 | Merge the two Oslo posts (or differentiate: one "winter", one "vegan" — verify they do not target the same queries) | M |
-| T6.4 | Merge the three Morocco posts | M |
-| T6.5 | Merge the two Jungfrau posts | M |
-| T6.6 | Add 301 redirects for every merged URL in `astro.config.mjs` (only one redirect exists today) | S |
-| T6.7 | Split the tag taxonomy: 4 tags hold 71 posts, with 48 under "Travel Guides". Add destination/region tags so tag pages can rank | M |
+| T6.1 | Merge `/blog/north-cyprus/` and `/blog/north-cyprus-things-to-know/` | closed |
+| T6.2 | Merge the three Budapest posts | closed |
+| T6.3 | Merge the two Oslo posts (or differentiate: one "winter", one "vegan" — verify they do not target the same queries) | closed |
+| T6.4 | Merge the three Morocco posts | closed |
+| T6.5 | Merge the two Jungfrau posts | done |
+| T6.6 | Add 301 redirects for every merged URL in `astro.config.mjs` (only one redirect exists today) | moot |
+| T6.7 | Split the tag taxonomy: 4 tags hold 71 posts, with 48 under "Travel Guides". Add destination/region tags so tag pages can rank | deferred |
 
-**Before merging, check with GSC:** if both versions of a duplicate pair have meaningful impressions, keep the stronger URL and redirect the weaker one. Do not delete a page that still earns clicks.
+**Assessed 17 November 2026: no merges.** Each pair was compared on title,
+description, word count and cross-links. Five of the seven groups are not
+duplicates at all — they target different queries:
 
-**Acceptance:** no two published posts target the same primary query. Every retired URL 301s to its replacement.
+| Group | Pages | Finding |
+|---|---|---|
+| North Cyprus | attractions (4,600 words) vs practical pre-trip (3,400) | Different intents |
+| Budapest | things to see and do vs 13 practical tips vs winter reasons | Three intents |
+| Oslo | winter activities vs vegan eating | Clearly separate |
+| Morocco | 24 practical tips vs 10-day itinerary vs tours | Three intents |
+| Jungfrau | sledging vs winter hiking | Two activities, but near-identical titles |
+
+Merging the first four would have deleted ranking pages to solve a problem they
+do not have. Two other things changed the judgement:
+
+1. **Phase 4 already links them.** The related-posts block gives every post up to
+   three sibling links by shared destination, so the internal-linking motive for
+   merging has gone. Before Phase 4 only 3 of the 11 pages linked to a sibling.
+2. **The acceptance test is close to being met already.** No pair shares a
+   primary query; the Jungfrau pair shared a title formula, which is what was
+   fixed.
+
+**T6.5 (done)** retitled the Jungfrau pair to lead with the query —
+"Sledging in the Jungfrau Region" and "Winter Hiking in the Jungfrau Region" —
+and rewrote both descriptions along the same split. That removes the only
+genuine cannibalisation signal (both began "A Non-Skier's Guide to…") and takes
+both titles under 60 characters.
+
+**T6.6** is moot: nothing merged, so there is nothing to redirect. If a merge is
+revisited later, the redirect goes in `public/_redirects`, not `astro.config.mjs`.
+
+**T6.7 deferred.** Tags are currently 50 / 8 / 8 / 3. Adding destination tags
+would create tag pages competing with the hub layer for the same place queries,
+which is the opposite of what Phase 4 built. Revisit after the Locations
+migration, when the hub URLs are location-first.
+
+**Acceptance:** met. No two published posts share a primary query, and no URL was
+retired, so there is nothing to 301.
 
 ---
 
@@ -394,12 +429,33 @@ One exemption — Bratislava, because no Slovakia listings exist.
 | ID | Task | File | Effort |
 |---|---|---|---|
 | T7.1 | Fix the 404 page: "Back to Homepage" currently points at `href="#"`. Point it at `/` and add links to `/blog/`, `/projects/`, `/stays/` and `/search/` | `src/pages/404.astro` | done |
-| T7.2 | Add a description to the 404 page | `src/pages/404.astro` | S |
-| T7.3 | Add redirects for legacy paths appearing in analytics: `/home-new/`, `/why`, `/project/…` | `astro.config.mjs` | S |
-| T7.4 | Add a redirect rule for the singular `/project/` and `/stay/` prefixes if any external links use them | `astro.config.mjs` | S |
+| T7.2 | Add a description to the 404 page | `src/pages/404.astro` | done |
+| T7.3 | Add redirects for legacy paths appearing in analytics: `/home-new/`, `/why`, `/project/…` | `public/_redirects` | done |
+| T7.4 | Add a redirect rule for the singular `/project/` and `/stay/` prefixes if any external links use them | `public/_redirects` | done |
 | T7.5 | ~~Confirm Cloudflare returns a real 404 status~~ — **verified: unknown paths return HTTP 404**, not a soft 200. No action needed | — | done |
 
 **Acceptance:** no internal link points to `#`. Unknown paths return HTTP 404 and a page with onward navigation.
+
+**Shipped 17 November 2026.** T7.2 was already true — the 404 page has had a
+description since Phase 2. T7.3 and T7.4 add seven rules to `public/_redirects`
+(not `astro.config.mjs`, which cannot emit real 301s on a static build):
+
+```
+/home-new/ / 301
+/why /about/ 301
+/why/ /about/ 301
+/project/ /projects/ 301
+/stay/ /stays/ 301
+/project/* /projects/:splat 301
+/stay/* /stays/:splat 301
+```
+
+All seven return 301 under `wrangler dev`, with the splat preserving the slug.
+A `/project/<slug>` without a trailing slash lands on `/projects/<slug>` and
+then redirects again for the slash — one extra hop, only for legacy URLs.
+No legacy path appeared in the top 160 paths in Umami, but that history only
+starts in August 2026, so these are insurance rather than a response to
+measured traffic.
 
 ---
 
@@ -410,11 +466,18 @@ One exemption — Bratislava, because no Slovakia listings exist.
 | T8.1 | Make `og:type` configurable — `article` for posts, `website` elsewhere | `BaseHead.astro` | done |
 | T8.2 | Change Twitter tags from `property=` to `name=` (all five are wrong today) | `BaseHead.astro` | done |
 | T8.3 | Add `og:site_name` and `og:locale` (`en_GB`) | `BaseHead.astro` | done |
-| T8.4 | Add `article:published_time` and `article:modified_time` on posts | `BaseHead.astro` | S |
-| T8.5 | Ensure the fallback image is at least 1200×630 (current placeholder is used on many pages) | `public/` | S |
-| T8.6 | Add `twitter:site` if an account exists | `BaseHead.astro` | S |
+| T8.4 | Add `article:published_time` and `article:modified_time` on posts | `BaseHead.astro` | done |
+| T8.5 | Ensure the fallback image is at least 1200×630 (current placeholder is used on many pages) | `public/` | done |
+| T8.6 | Add `twitter:site` if an account exists | `BaseHead.astro` | skipped |
 
 **Acceptance:** a post shares with `og:type=article`; `.astro` output contains `name="twitter:card"`.
+
+**Shipped 17 November 2026.** T8.4 emits `article:published_time` and
+`article:modified_time` on posts only — `published` and `lastUpdated` are
+threaded from `BlogPostLayout` through `MainLayout` to `BaseHead`, and the tags
+are suppressed unless `ogType` is `article`. T8.5 needed no work: the placeholder
+is already exactly 1200×630. T8.6 is skipped until there is an account to point
+at.
 
 ---
 
@@ -423,10 +486,25 @@ One exemption — Bratislava, because no Slovakia listings exist.
 | ID | Task | File | Effort |
 |---|---|---|---|
 | T9.1 | `ProjectCard.astro` passes `alt=""`, and the rendered output drops the attribute entirely — 9 of 10 images on `/projects/` have no `alt` at all. Use the project title | `ProjectCard.astro` | done |
-| T9.2 | **455 of 523 images in blog posts have empty alt text** (`![](...)`) — 87% of all content images. Start with the 12 pages in §1.3, then work backwards. This is an editorial backlog, not a code fix | 71 MDX files | L |
-| T9.3 | Add a fallback so an image with an empty alt is attributable rather than absent: pass the post title as alt when the source alt is blank | `remark-responsive-images.mjs` | S |
-| T9.4 | Ensure post cover images are passed as `og:image` at full resolution (currently a Cloudinary URL, verify dimensions) | `BlogPostLayout.astro` | S |
+| T9.2 | **455 of 523 images in blog posts have empty alt text** (`![](...)`) — 87% of all content images. Start with the 12 pages in §1.3, then work backwards. This is an editorial backlog, not a code fix | 71 MDX files | deferred |
+| T9.3 | Add a fallback so an image with an empty alt is attributable rather than absent: pass the post title as alt when the source alt is blank | `remark-responsive-images.mjs` | done |
+| T9.4 | Ensure post cover images are passed as `og:image` at full resolution (currently a Cloudinary URL, verify dimensions) | `BaseHead.astro` | done |
 | T9.5 | Confirm hero images on listing pages keep `fetchpriority="high"` and cards keep `loading="lazy"` — verified true on the live build | `ProjectPage.astro`, `ResponsiveImage.astro` | done |
+
+**Shipped 17 November 2026.** T9.2 stays a backlog by decision: 455 of 523 images
+still have an empty alt, and the 12 CTR posts alone have 79 of 80 — the right fix
+is real alt text written while reviewing each post, not generated filler. T9.3 is
+the interim guard: the remark plugin reads the post title from the frontmatter and
+uses it when an image has no alt, so no content image is unattributed. Every
+image in a post then shares the same alt until T9.2 replaces it; that is a known
+limitation, not an oversight.
+
+T9.4 turned up a real problem. `og:image` was the raw Cloudinary upload, and the
+originals are not all large enough — the Lugano cover is 1000×667. `BaseHead` now
+rewrites untransformed Cloudinary URLs to `w_1200,h_630,c_fill,g_auto` (the ratio
+link previews crop to) and leaves the local placeholder and any already-transformed
+URL alone. Verified: the transformed Lugano URL returns 1200×630, and the home page
+still uses the placeholder unchanged.
 
 ---
 
@@ -478,18 +556,18 @@ The 480 locale hubs are the weakest surface on the site. **271 do not appear in 
 
 | ID | Task | File | Effort |
 |---|---|---|---|
-| T11.1 | Decide the survival rule for locale hubs. Recommendation: keep a locale hub only if it has 3+ published listings **and** either GSC impressions or a matching blog post; otherwise drop it from the sitemap and `noindex` it | decision | S |
-| T11.2 | Collapse locale hubs where the city equals the country (`aruba/aruba`, `singapore/singapore`, `hong-kong/hong-kong`) into the country hub with a 301 | route code | S |
+| T11.1 | Decide the survival rule for locale hubs. Recommendation: keep a locale hub only if it has 3+ published listings **and** either GSC impressions or a matching blog post; otherwise drop it from the sitemap and `noindex` it | decision | deferred |
+| T11.2 | Collapse locale hubs where the city equals the country (`aruba/aruba`, `singapore/singapore`, `hong-kong/hong-kong`) into the country hub with a 301 | route code | deferred |
 | T11.3 | Add a real intro paragraph per country hub — 80–120 words covering what kinds of projects exist there, which regions, and one concrete example. This is the single highest-value content task on the directory | editorial + route prop | L |
 | T11.4 | Add breadcrumbs to hub pages (`Breadcrumbs` already exists and is used on detail pages) | hub routes | done |
 | T11.5 | Add `ItemList` structured data to hubs | hub routes | done |
 | T11.6 | Link each country hub to the 2–3 most relevant blog posts for that country, and add a return link from those posts | hub routes + W5 | done |
 | T11.7 | Trim slug and country values on import (`richTextToPlainText` returns untrimmed text). Notion is already clean; this is the guard against regression | `src/content.config.ts` | done |
-| T11.8 | Investigate `/stays/italy/` returning 404 while `/projects/italy/` returns 200 — either a stay is tagged with a misspelt country, or no stay covers Italy and the dropdown is misleading | Notion data | S |
-| T11.9 | Consider `noindex, follow` on paginated hub pages beyond page 1. They currently generate 115 impressions and zero clicks from 93 URLs | hub routes | S |
+| T11.8 | Investigate `/stays/italy/` returning 404 while `/projects/italy/` returns 200 — either a stay is tagged with a misspelt country, or no stay covers Italy and the dropdown is misleading | Notion data | resolved |
+| T11.9 | Consider `noindex, follow` on paginated hub pages beyond page 1. They currently generate 115 impressions and zero clicks from 93 URLs | hub routes | done |
 | T11.10 | ~~Fix `/stays/kirtipur-community-homestay/`~~ — resolved in Notion; tracked as a redirect under T11.13 | — | done |
 | T11.11 | ~~Normalise slugs on import~~ — Notion is clean. Keep T11.7 as the regression guard | — | done |
-| T11.12 | Add a build-time guard that fails the build if any published listing lacks a generated page, or if any slug contains a space or stray whitespace | build script | M |
+| T11.12 | Add a build-time guard that fails the build if any published listing lacks a generated page, or if any slug contains a space or stray whitespace | build script | done |
 | T11.13 | **Add 301 redirects for the three old malformed URLs before the next deploy** — Google has indexed all three and Kirtipur earns 2 clicks | `public/_redirects` | done |
 
 **Shipped 16 November 2026 (T11.4–T11.6).** All four hub routes now render
@@ -504,7 +582,44 @@ Czechia") and is derived from the top match, so it can never point at a hub that
 does not exist. 60 of 681 hubs have at least one matching post; the rest have no
 travel guide for their place yet.
 
-**Caution on T11.1:** do not prune a locale hub that still earns clicks, and do not `noindex` a hub that is the only crawl path to a listing. Check the GSC export per URL before removing anything.
+**Shipped 17 November 2026 (T11.8, T11.9, T11.12).**
+
+- **T11.8 resolved, no action.** No stay is tagged Italy and nothing in the build
+  links to `/stays/italy/`. The 404 is correct: the directory has no stays there.
+- **T11.9 applied to the country and locale hubs only.** Page 2+ now carries
+  `noindex, follow` through a new `robots` prop on `BaseHead`, which takes
+  precedence over `noindex` so the crawler still follows the tail. The build has
+  **39** such pages, not 93: the other 54 were pagination of the `/projects/` and
+  `/stays/` indexes, which keep their generated titles and stay indexable. The
+  sitemap filter now drops the noindexed URLs too, so no page is submitted that
+  asks not to be indexed. Sitemap 1,278 → 1,239.
+- **T11.12 added `scripts/verify-listings.mjs` and `pnpm run seo:listings`**, run
+  as its own step in the deploy workflow before `wrangler deploy`. It fails when a
+  published listing has no page, a slug carries whitespace or an escape, a built
+  path contains `%20`, or no hub page links to the listing. It also checks every
+  listing is linked from a hub page, which is the crawl-path guarantee T11.1 and
+  T11.9 both assume. Duplicate slugs are reported but do not fail the run: **four
+  pairs of Notion records currently share a slug** (Social Bite, Surfers Against
+  Sewage, Red Wings, Surfrider Foundation), so one record in each pair collapses
+  into the same page. That is a Notion fix, and blocking every deploy until it is
+  done would stop unrelated work. Promote it to a failure once the data is clean.
+
+**T11.1 and T11.2 are deferred, deliberately, not dropped.** They are superseded
+by the Locations migration in `docs/plans/roadmap.md` Bucket 2: once locations
+are standardised and the URL scheme becomes location-first, the survival rule is
+better expressed as a build-time "fewer than 3 listings, no page at all" rule than
+as `noindex` on URLs whose shape is about to change. Implementing both now would
+mean doing the work twice and churning the index in between. Current shape, for
+whoever picks this up: 109 project country hubs, 418 project locale hubs, 30 stay
+country hubs, 68 stay locale hubs; 351 of the 418 project locale hubs and all 68
+stay locale hubs have fewer than three listings. Three locale hubs duplicate their
+parent (`projects/aruba/aruba`, `projects/singapore/singapore`,
+`stays/hong-kong/hong-kong`).
+
+**Caution when this is revived:** do not prune a locale hub that still earns
+clicks, and do not `noindex` a hub that is the only crawl path to a listing. Check
+the GSC export per URL first. `pnpm run seo:listings` gives you the second half of
+that check for free: it fails if any listing is linked from no hub page.
 
 **What this is not:** it is not a URL restructure. The routes are fine. The work is copy, metadata, internal links and pruning — substantially cheaper than rebuilding the scheme, and it does not need to wait on the location data model session.
 
@@ -519,8 +634,8 @@ travel guide for their place yet.
 | **Phase 2** — 2 days | W2 entirely, plus T2.10–T2.11 (hub titles) | Where the traffic actually is — **complete 16 Nov 2026** |
 | **Phase 3** — 2 days | W3, W4 | Rich results plus authorship — **complete 16 Nov 2026** |
 | **Phase 4** — 2–3 days | W5, T11.4–T11.6 | Turns the archive into a route into the directory — **complete 16 Nov 2026** |
-| **Phase 5** — 3–4 days | W6, W7 rest, W9 rest, T11.1–T11.2, T11.8–T11.9, T11.11–T11.12 | Consolidation and pruning, best done before new content |
-| **Phase 6** — ongoing | T11.3, W9.4 | Hub copy is editorial work, one country at a time |
+| **Phase 5** — 3–4 days | W6 (assessed, no merges), W7 rest, W9 rest, T11.8–T11.9, T11.12. T11.1–T11.2 deferred to the Locations migration | Consolidation and pruning, best done before new content — **complete 17 Nov 2026** |
+| **Phase 6** — ongoing | T11.3, the T9.2 alt-text backlog | Editorial work, one country and one post at a time |
 
 Phases 0–2 are roughly one week of work and capture the majority of the upside, because the impression base already exists.
 
@@ -541,7 +656,8 @@ Run after each phase.
 - [ ] No two pages share a `<title>`
 - [ ] `twitter:card` uses `name=`, not `property=`
 - [ ] A blog post contains at least 3 internal links, at least 1 to a listing
-- [ ] `pnpm run seo:audit`, `pnpm run seo:schema` and `pnpm run seo:links` all exit clean against a fresh `dist/`
+- [ ] `pnpm run seo:audit`, `pnpm run seo:schema`, `pnpm run seo:links` and `pnpm run seo:listings` all exit clean against a fresh `dist/`
+- [ ] No noindexed URL is submitted in the sitemap
 - [ ] A country hub links to 2–3 related posts, and one of those posts links back to the hub
 - [ ] Unknown URL returns HTTP 404
 - [ ] Every published listing returns 200 at its canonical URL — no listing is shadowed by a country hub
@@ -639,6 +755,7 @@ shipped. Do not mark a phase complete until its §5 checks pass.
 | 16 Nov 2026 | Phase 2 | T2.1–T2.11 | Pass (local build) | See below |
 | 16 Nov 2026 | Phase 3 | T3.1–T3.7, T4.1–T4.5 | Pass (local build) | See below |
 | 16 Nov 2026 | Phase 4 | T5.1–T5.7, T11.4–T11.6 | Pass (local build) | See below; deviations recorded |
+| 17 Nov 2026 | Phase 5 | T6.5, T7.2–T7.4, T8.4–T8.5, T9.3–T9.4, T11.8–T11.9, T11.12 | Pass (local build) | See below; T6.1–T6.4 closed, T6.7 / T9.2 / T11.1–T11.2 deferred |
 
 ### Phase 0 — detail, 12 November 2026
 
@@ -784,9 +901,79 @@ descriptions, 1 duplicate group). Spot-checked in `dist`:
 4. Locale hubs match city-level posts only, rather than inheriting the country hub's suggestions.
 5. Hub related-posts render on page 1 only.
 6. Destination posts are exempt from the listing-link rule where the place has no listings, and thematic posts are exempt entirely.
-7. T5.5 applied to all 12 CTR posts even though four are Phase 5 merge candidates. The links move with the content if those merges go ahead.
+7. T5.5 applied to all 12 CTR posts even though four were Phase 5 merge candidates. Phase 5 closed those merges, so the links stay where they are.
 
 **Not yet verified:** that Google follows the new internal links and re-crawls the hub layer needs the deploy plus Search Console data. The expected signal is not a CTR jump but more impressions and deeper crawl on the 589 hub URLs, and first clicks on the previously unlinked listings.
+
+### Phase 5 — detail, 17 November 2026
+
+The consolidation phase, rescoped after review. The largest task in the original
+brief (merging duplicate posts) turned out to be the one task the evidence did not
+support, and the largest technical task (pruning locale hubs) was deferred to the
+Locations migration rather than done twice.
+
+| Task | What shipped |
+|---|---|
+| T6.1–T6.4 | **Closed without merging.** North Cyprus, Budapest, Oslo and Morocco are not duplicates: each set targets distinct queries (attractions vs practical tips vs winter vs vegan vs itinerary vs tours). Merging would have deleted ranking pages. Phase 4's related-posts block already links each set, so the internal-linking motive had gone. Before Phase 4, only 3 of those 11 pages linked to a sibling |
+| T6.5 | Retitled the Jungfrau pair to "Sledging in the Jungfrau Region" and "Winter Hiking in the Jungfrau Region", with descriptions split the same way. This removes the shared "A Non-Skier's Guide to…" prefix — the only genuine cannibalisation signal — and brings both titles under 60 characters |
+| T6.6 | Moot. Nothing merged, so no redirect needed. Recorded so a future merge uses `public/_redirects`, not `astro.config.mjs` |
+| T6.7 | Deferred. Destination tags would compete with the hub layer for the same place queries. Revisit after the location-first URL migration |
+| T7.2 | Verified: the 404 page already carries a description from Phase 2 |
+| T7.3, T7.4 | Seven 301 rules added to `public/_redirects`: `/home-new/`, `/why`, `/why/`, `/project/`, `/stay/`, `/project/*`, `/stay/*`. All tested under `wrangler dev`. The splat preserves the slug; the bare prefixes go to the collection indexes |
+| T8.4 | `published` and `lastUpdated` threaded `BlogPostLayout` → `MainLayout` → `BaseHead`, which emits `article:published_time` and `article:modified_time` only when `ogType` is `article`. Listing and static pages emit neither |
+| T8.5 | Verified, no change: the placeholder is already 1200×630 |
+| T8.6 | Skipped: there is no X account to attribute to |
+| T9.2 | Deferred to the owner's per-post editorial pass. 455 of 523 images remain unattributed, 79 of 80 in the 12 CTR posts |
+| T9.3 | The remark plugin now reads the post title from frontmatter and uses it when an image has no alt. Every content image becomes attributable; every image in a post shares that alt until T9.2 replaces it with real text |
+| T9.4 | Found and fixed a real defect: `og:image` was the raw upload, and originals are not all large enough (Lugano's cover is 1000×667). `BaseHead` rewrites untransformed Cloudinary URLs to `w_1200,h_630,c_fill,g_auto,q_auto,f_auto`; the local placeholder and pre-transformed URLs are untouched |
+| T11.1, T11.2 | Deferred to the Locations migration, where the rule becomes "fewer than 3 listings, no page generated" and the URL scheme changes anyway. Current shape recorded in W11 for whoever picks it up |
+| T11.8 | Resolved, no action: no stay is tagged Italy and nothing links to `/stays/italy/` |
+| T11.9 | Page 2+ of country and locale hubs carries `noindex, follow`, via a new `robots` prop on `BaseHead` that takes precedence over `noindex`. 39 pages, not 93 — the other 54 are `/projects/` and `/stays/` index pagination, which stay indexable. The sitemap filter drops the noindexed URLs: 1,278 → 1,239 |
+| T11.12 | New `scripts/verify-listings.mjs` and `pnpm run seo:listings`, run as its own step before `wrangler deploy`. Fails on: a listing with no page, a slug with whitespace or an escape, a built path containing `%20`, or a listing no hub page links to. Duplicate slugs are reported but do not fail — four Notion pairs share a slug today |
+
+**Verification.** `pnpm run build` clean at 1,300 pages. `pnpm run seo:listings`:
+496 published listings, 689 hub pages checked, 0 missing pages, 0 malformed paths,
+**4 duplicate-slug pairs reported** (Social Bite, Surfers Against Sewage, Red
+Wings, Surfrider Foundation), no failures. `pnpm run seo:schema`: 1,253/1,301
+pages with JSON-LD, unchanged distribution, no problems. `pnpm run seo:links`: 48
+destination posts, 0 failures, 1 exemption, 0 orphans. `pnpm run seo:audit`: 1,245
+indexable pages (56 noindex, up from 17), titles over 60 down from 531 to 529 and
+descriptions over 155 down from 62 to 60 — both from the Jungfrau rewrite.
+
+Checked directly in `dist`:
+
+- `/blog/brno/` carries `article:published_time` 2019-02-19 and `article:modified_time` 2026-06-18; the project page carries neither.
+- `/projects/india/2/` carries `noindex, follow`; `/projects/india/` carries no robots tag.
+- `/search/` still carries `noindex, nofollow`.
+- No noindexed URL appears in `sitemap-0.xml`, and no paginated hub URL does either; `/projects/2/` and `/blog/2/` remain.
+- `og:image` on `/blog/lugano-day-trip/` is the transformed URL, and fetching it returns exactly 1200×630.
+- Every body image in `/blog/brno/` now has `alt="Is Brno Worth Visiting? Yes — Here's Why"`.
+- `wrangler dev`: all seven new rules return 301 with the expected `Location`; `/projects/awamaki/` still returns 200.
+
+**Deviations from the original task text, agreed during review:** W6 was closed
+without merges after each pair was compared on query intent; T6.6 therefore became
+moot and T6.7 was deferred; T11.1 and T11.2 were deferred to the Locations
+migration instead of pruning under a URL scheme that is about to change; T9.2 was
+left as an editorial backlog and only the T9.3 fallback shipped; T8.6 was skipped
+for want of an account. One task grew beyond its wording: T9.4 found that "pass
+the cover image at full resolution" was itself the problem, so share images are
+now requested at the 1200×630 that previews crop to.
+
+**Not yet verified:** the redirects on the live domain, the social-card crop on
+LinkedIn and Facebook, and whether Google responds to the paginated-page noindex
+with more crawl on page 1. The last one needs several weeks of Search Console
+data.
+
+**Deferred, with reasons, so nobody re-opens them by accident:** T6.7 (tag
+taxonomy), T9.2 (alt text), T11.1 and T11.2 (locale hub pruning and collapsing).
+The first two are editorial, the last two belong to the Locations migration.
+
+**Follow-up found during the phase:** four pairs of Notion project records share a
+slug, so one record in each pair never gets its own page. They are identical
+title pairs, so they may be genuine duplicates that should be deleted or merged in
+Notion rather than given distinct slugs. Once fixed, `seo:listings` should treat
+duplicate slugs as a failure.
+
 
 
 ---

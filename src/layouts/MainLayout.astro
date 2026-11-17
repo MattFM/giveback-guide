@@ -12,7 +12,10 @@ interface Props {
     headerVariant?: "default" | "transparent";
     headerTheme?: "light" | "dark";
     noindex?: boolean;
+    robots?: string;
     ogType?: "website" | "article";
+    published?: Date;
+    modified?: Date;
     schema?: SchemaNode | SchemaNode[];
 }
 
@@ -23,7 +26,10 @@ const {
     headerVariant = "default",
     headerTheme = "light",
     noindex,
+    robots,
     ogType,
+    published,
+    modified,
     schema,
 } = Astro.props;
 ---
@@ -31,7 +37,7 @@ const {
 <!doctype html>
 <html lang="en">
     <head>
-        <BaseHead title={title} description={description} image={image} noindex={noindex} ogType={ogType} schema={schema} />
+        <BaseHead title={title} description={description} image={image} noindex={noindex} robots={robots} ogType={ogType} published={published} modified={modified} schema={schema} />
     </head>
     <body>
         <a

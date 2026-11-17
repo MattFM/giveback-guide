@@ -39,6 +39,42 @@ function normalise(value: string): string {
     return value.trim().replace(/\s+/g, " ");
 }
 
+/** The size link previews expect, and the ratio they crop to. */
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
+
+/**
+ * Normalise a share image to the 1200x630 that link previews crop to.
+ *
+ * Cover images come from Notion as the original Cloudinary upload, and the
+ * originals are not all large enough: a 1000x667 image is a soft, wrongly
+ * proportioned card on LinkedIn. Asking Cloudinary for the exact size fixes
+ * both, for any source, without a second upload.
+ *
+ * Only untransformed Cloudinary URLs are rewritten. Anything else — the local
+ * placeholder, or a URL that already carries a transformation chain — is
+ * returned unchanged.
+ */
+export function ogImageUrl(image: string | undefined): string | undefined {
+    if (!image) return image;
+    const upload = "/image/upload/";
+    const index = image.indexOf(upload);
+    if (index === -1) return image;
+
+    const head = image.slice(0, index + upload.length);
+    const tail = image.slice(index + upload.length);
+    const firstSegment = tail.split("/")[0] ?? "";
+
+    // Raw uploads start with a version (`v1744196280`) or with the file name
+    // itself. A transformation chain does not.
+    const isRawUpload =
+        /^v\d+$/.test(firstSegment) || /\.(jpe?g|png|webp|avif|gif)$/i.test(firstSegment);
+    if (!isRawUpload) return image;
+
+    const transformation = `w_${OG_WIDTH},h_${OG_HEIGHT},c_fill,g_auto,q_auto,f_auto`;
+    return `${head}${transformation}/${tail}`;
+}
+
 /** Shorten to `max` characters without splitting the last word. */
 function truncateAtWord(value: string, max: number): string {
     if (value.length <= max) return value;

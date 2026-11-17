@@ -32,6 +32,14 @@ const SITEMAP_EXCLUDED_PREFIXES = [
   '/report/',
 ];
 
+/**
+ * Page 2+ of a country or locale hub. These pages carry `noindex, follow`
+ * (T11.9), so they should not be submitted in the sitemap either. The
+ * collection indexes (`/projects/2/`) are deliberately not matched: they keep
+ * their generated titles and stay indexable.
+ */
+const PAGINATED_HUB = /^\/(projects|stays)\/(?:[^/]+\/)+\d+\/$/;
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://giveback.guide',
@@ -52,9 +60,10 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const { pathname } = new URL(page);
-        return !SITEMAP_EXCLUDED_PREFIXES.some((prefix) =>
-          pathname.startsWith(prefix)
-        );
+        if (SITEMAP_EXCLUDED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+          return false;
+        }
+        return !PAGINATED_HUB.test(pathname);
       },
     }),
     pagefind()
