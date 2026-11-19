@@ -9,6 +9,7 @@ pnpm run build            # Build for production (uses --no-deprecation flag)
 
 # Content Management
 pnpm run astro            # Direct Astro CLI access
+pnpm run notion:backup    # Manual Notion backup (see docs/notion-backup.md)
 ```
 
 **Testing**: No formal test suite. Use manual testing:

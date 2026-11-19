@@ -36,9 +36,7 @@ const [relatedListings, relatedPosts] = await Promise.all([
 ]);
 
 const relatedPlace =
-    relatedListings.hub?.label ||
-    destinations[0]?.country ||
-    "";
+    relatedListings.hub?.label || destinations[0]?.country || "";
 const relatedHeading =
     destinations.length > 1
         ? "Places to give back on this trip"
@@ -97,17 +95,15 @@ const schema = articleSchema({
         pagefindImageMeta="image[src], image_alt[alt]"
     >
         <p class="mb-4" data-pagefind-meta="categories">
-            {
-                validTags.map((tag) => (
-                    <Badge
-                        href={`/blog/${getTagSlug(tag)}/`}
-                        variant="outline"
-                        class="mr-2 mb-2 rounded-full text-sm"
-                    >
-                        {tag}
-                    </Badge>
-                ))
-            }
+            {validTags.map((tag) => (
+                <Badge
+                    href={`/blog/${getTagSlug(tag)}/`}
+                    variant="outline"
+                    class="mr-2 mb-2 rounded-full text-sm"
+                >
+                    {tag}
+                </Badge>
+            ))}
         </p>
 
         <h1
@@ -147,10 +143,13 @@ const schema = articleSchema({
                     <a
                         href="/about/authors/"
                         class="font-medium text-gray-700 underline decoration-gray-300 underline-offset-2 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400"
-                    >{authors.join(" & ")}</a>,{" "}
-                    <span class="text-gray-500 dark:text-gray-400"
-                        >founders and editors</span
                     >
+                        {authors.join(" & ")}
+                    </a>
+                    ,{" "}
+                    <span class="text-gray-500 dark:text-gray-400">
+                        co-founders of Give Back Guide
+                    </span>
                 </span>
             </li>
             <li class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -172,35 +171,39 @@ const schema = articleSchema({
                     ></path>
                 </svg>
                 <span>
-                    Published: <time datetime={published.toISOString()}>{formattedDate}</time>
+                    Published:{" "}
+                    <time datetime={published.toISOString()}>
+                        {formattedDate}
+                    </time>
                 </span>
             </li>
-            {
-                hasBeenUpdated && (
-                    <li class="flex items-center space-x-3 rtl:space-x-reverse">
-                        <svg
-                            class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
-                            />
-                        </svg>
-                        <span>
-                            Last updated: <time datetime={lastUpdated.toISOString()}>{formattedUpdatedDate}</time>
-                        </span>
-                    </li>
-                )
-            }
+            {hasBeenUpdated && (
+                <li class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <svg
+                        class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
+                        />
+                    </svg>
+                    <span>
+                        Last updated:{" "}
+                        <time datetime={lastUpdated.toISOString()}>
+                            {formattedUpdatedDate}
+                        </time>
+                    </span>
+                </li>
+            )}
         </ul>
     </SplitHero>
 
@@ -222,75 +225,71 @@ const schema = articleSchema({
                 <AboutCallout />
             </div>
 
-            {
-                relatedListings.listings.length > 0 && (
-                    <section
-                        class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700"
-                        aria-labelledby="related-listings-heading"
+            {relatedListings.listings.length > 0 && (
+                <section
+                    class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700"
+                    aria-labelledby="related-listings-heading"
+                >
+                    <h2
+                        id="related-listings-heading"
+                        class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                     >
-                        <h2
-                            id="related-listings-heading"
-                            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-                        >
-                            {relatedHeading}
-                        </h2>
-                        <p class="mb-6 text-gray-600 dark:text-gray-400">
-                            Directory listings connected to this guide.
+                        {relatedHeading}
+                    </h2>
+                    <p class="mb-6 text-gray-600 dark:text-gray-400">
+                        Directory listings connected to this guide.
+                    </p>
+                    <ul class="space-y-6">
+                        {relatedListings.listings.map((listing) => (
+                            <li>
+                                <CompactListingCard
+                                    href={listing.href}
+                                    image={listing.image}
+                                    title={listing.title}
+                                    place={listing.place}
+                                    kind={listing.kind}
+                                    slug={listing.slug}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                    {relatedListings.hub && (
+                        <p class="mt-6">
+                            <a
+                                href={relatedListings.hub.href}
+                                class="font-medium text-purple-600 underline decoration-purple-300 underline-offset-2 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                            >
+                                {hubLabel} {relatedListings.hub.label}
+                            </a>
                         </p>
-                        <ul class="space-y-6">
-                            {relatedListings.listings.map((listing) => (
-                                <li>
-                                    <CompactListingCard
-                                        href={listing.href}
-                                        image={listing.image}
-                                        title={listing.title}
-                                        place={listing.place}
-                                        kind={listing.kind}
-                                        slug={listing.slug}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                        {relatedListings.hub && (
-                            <p class="mt-6">
-                                <a
-                                    href={relatedListings.hub.href}
-                                    class="font-medium text-purple-600 underline decoration-purple-300 underline-offset-2 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
-                                >
-                                    {hubLabel} {relatedListings.hub.label}
-                                </a>
-                            </p>
-                        )}
-                    </section>
-                )
-            }
+                    )}
+                </section>
+            )}
 
-            {
-                relatedPosts.length > 0 && (
-                    <section
-                        class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700"
-                        aria-labelledby="related-posts-heading"
+            {relatedPosts.length > 0 && (
+                <section
+                    class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700"
+                    aria-labelledby="related-posts-heading"
+                >
+                    <h2
+                        id="related-posts-heading"
+                        class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                     >
-                        <h2
-                            id="related-posts-heading"
-                            class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-                        >
-                            More from the blog
-                        </h2>
-                        <ul class="space-y-6">
-                            {relatedPosts.map((post) => (
-                                <li>
-                                    <CompactBlogCard
-                                        href={post.href}
-                                        image={post.image}
-                                        title={post.title}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                )
-            }
+                        More from the blog
+                    </h2>
+                    <ul class="space-y-6">
+                        {relatedPosts.map((post) => (
+                            <li>
+                                <CompactBlogCard
+                                    href={post.href}
+                                    image={post.image}
+                                    title={post.title}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
 
             <div class="mt-12">
                 <SupportCTA />
@@ -302,14 +301,16 @@ const schema = articleSchema({
 <script is:inline>
     (function () {
         function insertAboutCallout() {
-            const article = document.querySelector('[data-pagefind-body]');
-            const calloutContainer = document.getElementById('about-callout-container');
+            const article = document.querySelector("[data-pagefind-body]");
+            const calloutContainer = document.getElementById(
+                "about-callout-container",
+            );
             if (!article || !calloutContainer) return;
 
             const callout = calloutContainer.firstElementChild;
             if (!callout) return;
 
-            const firstH2 = article.querySelector('h2');
+            const firstH2 = article.querySelector("h2");
             if (firstH2) {
                 firstH2.parentNode.insertBefore(callout, firstH2);
             }
@@ -317,8 +318,8 @@ const schema = articleSchema({
             calloutContainer.remove();
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', insertAboutCallout);
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", insertAboutCallout);
         } else {
             insertAboutCallout();
         }

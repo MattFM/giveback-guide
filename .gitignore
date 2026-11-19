@@ -4,6 +4,8 @@ dist/
 .astro/
 # durable Notion render cache (regenerated from the Notion API)
 .cache/
+# Notion backups (written to the private backup repository, never committed here)
+backups/
 
 # dependencies
 node_modules/
