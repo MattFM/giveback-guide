@@ -1,5 +1,5 @@
 ---
-// src/components/Analytics.astro
+// src/components/utility/Analytics.astro
 ---
 
 <!--
@@ -11,6 +11,52 @@
   `data-performance` enables Core Web Vitals collection. It was off, which is
   why the Umami performance report was empty.
 -->
+
+<!--
+  Bot gate.
+
+  Umami calls `beforeSend` with every payload just before it is sent; returning
+  a falsy value cancels the send. This drops the scraper that has been inflating
+  the Singapore figures — it reports a 1280x1200 screen, en-US, a Chrome-on-
+  Windows user agent, one pageview per visit, and a fresh IP every time.
+
+  Deliberately narrow: the screen check only fires when the language and user
+  agent match as well, so a genuine reader with an unusual display is still
+  counted. The webdriver and headless checks only ever match automated browsers.
+
+  This block must stay inline and above the tracker below, because
+  `window.umamiConfig` has to exist before `script.js` runs. To remove the gate,
+  delete this block — nothing else depends on it.
+-->
+<script is:inline>
+  window.umamiConfig = {
+    beforeSend: function (type, payload) {
+      if (!payload) return payload;
+
+      var userAgent = navigator.userAgent || "";
+
+      // Automated browsers are never genuine readers.
+      if (navigator.webdriver) return false;
+      if (/HeadlessChrome|PhantomJS|Selenium|Puppeteer/i.test(userAgent)) return false;
+
+      // The scraper fingerprint measured in Umami: 158 of 165 "Singapore"
+      // sessions in the week to 18 November 2026, all identical.
+      var desktopChromeOnWindows =
+        /Chrome\//.test(userAgent) && /Windows NT/.test(userAgent);
+
+      if (
+        payload.screen === "1280x1200" &&
+        payload.language === "en-US" &&
+        desktopChromeOnWindows
+      ) {
+        return false;
+      }
+
+      return payload;
+    },
+  };
+</script>
+
 <script
     defer
     src="https://umami.giveback.guide/script.js"
