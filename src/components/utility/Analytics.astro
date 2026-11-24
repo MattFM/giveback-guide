@@ -16,13 +16,19 @@
   Bot gate.
 
   Umami calls `beforeSend` with every payload just before it is sent; returning
-  a falsy value cancels the send. This drops the scraper that has been inflating
-  the Singapore figures — it reports a 1280x1200 screen, en-US, a Chrome-on-
-  Windows user agent, one pageview per visit, and a fresh IP every time.
+  a falsy value cancels the send. This drops the headless-Chrome farm that has
+  been inflating the figures since roughly September 2026. It rotates its IP
+  address with every hit and spoofs a normal Chrome user agent, so Umami's own
+  bot filter (which only reads the user agent string) waves it through. What it
+  cannot vary convincingly is its screen size, and that is what this checks.
 
-  Deliberately narrow: the screen check only fires when the language and user
-  agent match as well, so a genuine reader with an unusual display is still
-  counted. The webdriver and headless checks only ever match automated browsers.
+  Deliberately narrow: every screen check also requires the language and a
+  matching desktop user agent, so a genuine reader on an unusual display is
+  still counted. The webdriver and headless checks only ever match automated
+  browsers.
+
+  1920x1080 is left alone on purpose — it is far too common among real readers,
+  so traffic claiming it is handled at the edge by the Cloudflare rule instead.
 
   This block must stay inline and above the tracker below, because
   `window.umamiConfig` has to exist before `script.js` runs. To remove the gate,
@@ -39,18 +45,21 @@
       if (navigator.webdriver) return false;
       if (/HeadlessChrome|PhantomJS|Selenium|Puppeteer/i.test(userAgent)) return false;
 
-      // The scraper fingerprint measured in Umami: 158 of 165 "Singapore"
-      // sessions in the week to 18 November 2026, all identical.
-      var desktopChromeOnWindows =
-        /Chrome\//.test(userAgent) && /Windows NT/.test(userAgent);
+      var isChrome = /Chrome\//.test(userAgent);
+      var isWindowsDesktop = /Windows NT/.test(userAgent);
+      var isLinuxDesktop = /X11; Linux/.test(userAgent);
+      var isMacDesktop = /Macintosh/.test(userAgent);
 
-      if (
-        payload.screen === "1280x1200" &&
-        payload.language === "en-US" &&
-        desktopChromeOnWindows
-      ) {
-        return false;
+      // Screens no real reader plausibly reports, all seen in the same scraper
+      // traffic, all paired with en-US regardless of the country it claims.
+      if (payload.language === "en-US") {
+        if (payload.screen === "1280x1200" && isChrome && isWindowsDesktop) return false;
+        if (payload.screen === "1536x960" && isChrome && isLinuxDesktop) return false;
       }
+
+      // A Mac cannot report an 800x600 screen, so the user agent is invented.
+      // Applied regardless of language: no real Mac reports this size.
+      if (payload.screen === "800x600" && isMacDesktop) return false;
 
       return payload;
     },
